@@ -10,10 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "convex": "^1.29.3",
     "openai": "^6.9.1"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
     "typescript": "5.9.3"
   }
 }
