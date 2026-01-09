@@ -2,7 +2,11 @@ import OpenAI from "openai";
 import { internalAction, internalMutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import { missingEnvVariableUrl } from "./utils";
+
+// Helper function for missing env variable message
+function missingEnvVariableUrl(name: string, url: string): string {
+  return `Missing ${name} environment variable. Get one at ${url}`;
+}
 
 export const openaiKeySet = query({
   args: {},
