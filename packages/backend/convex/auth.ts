@@ -3,7 +3,28 @@
 import { v } from "convex/values";
 import { action, internalMutation, internalQuery } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 import bcrypt from "bcryptjs";
+
+// Type definitions for return values
+type LoginSuccess = {
+  success: true;
+  token: string;
+  user: {
+    id: string;
+    username: string;
+    name: string;
+    roleId: string;
+    storeId?: string;
+  };
+};
+
+type LoginFailure = {
+  success: false;
+  error: string;
+};
+
+type LoginResult = LoginSuccess | LoginFailure;
 
 // Internal query to get user by username
 export const getUserByUsername = internalQuery({
@@ -136,24 +157,24 @@ export const login = action({
       error: v.string(),
     })
   ),
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<LoginResult> => {
     // Get user
     const user = await ctx.runQuery(internal.auth.getUserByUsername, {
       username: args.username,
     });
 
     if (!user) {
-      return { success: false, error: "Invalid username or password" };
+      return { success: false as const, error: "Invalid username or password" };
     }
 
     if (!user.isActive) {
-      return { success: false, error: "Account is disabled" };
+      return { success: false as const, error: "Account is disabled" };
     }
 
     // Verify password
     const validPassword = await bcrypt.compare(args.password, user.passwordHash);
     if (!validPassword) {
-      return { success: false, error: "Invalid username or password" };
+      return { success: false as const, error: "Invalid username or password" };
     }
 
     // Generate session token
@@ -168,7 +189,7 @@ export const login = action({
     });
 
     return {
-      success: true,
+      success: true as const,
       token,
       user: {
         id: user._id,
@@ -215,7 +236,7 @@ export const verifyManagerPin = action({
     pin: v.string(),
   },
   returns: v.boolean(),
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<boolean> => {
     const user = await ctx.runQuery(internal.auth.getUserById, {
       userId: args.userId,
     });

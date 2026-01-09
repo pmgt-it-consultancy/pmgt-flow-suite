@@ -8,8 +8,12 @@
  * @module
  */
 
+import type * as auth from "../auth.js";
 import type * as notes from "../notes.js";
 import type * as openai from "../openai.js";
+import type * as seed from "../seed.js";
+import type * as sessions from "../sessions.js";
+import type * as stores from "../stores.js";
 import type * as utils from "../utils.js";
 
 import type {
@@ -19,8 +23,12 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   notes: typeof notes;
   openai: typeof openai;
+  seed: typeof seed;
+  sessions: typeof sessions;
+  stores: typeof stores;
   utils: typeof utils;
 }>;
 

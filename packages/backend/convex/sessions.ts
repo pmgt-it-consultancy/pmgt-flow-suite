@@ -35,25 +35,25 @@ export const validateSession = query({
       .first();
 
     if (!session) {
-      return { valid: false };
+      return { valid: false as const };
     }
 
     if (session.expiresAt < Date.now()) {
-      return { valid: false };
+      return { valid: false as const };
     }
 
     const user = await ctx.db.get(session.userId);
     if (!user || !user.isActive) {
-      return { valid: false };
+      return { valid: false as const };
     }
 
     const role = await ctx.db.get(user.roleId);
     if (!role) {
-      return { valid: false };
+      return { valid: false as const };
     }
 
     return {
-      valid: true,
+      valid: true as const,
       user: {
         _id: user._id,
         username: user.username,
@@ -95,9 +95,10 @@ export const getCurrentUser = query({
   handler: async (ctx, args) => {
     if (!args.token) return null;
 
+    const token = args.token;
     const session = await ctx.db
       .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .withIndex("by_token", (q) => q.eq("token", token))
       .first();
 
     if (!session || session.expiresAt < Date.now()) {

@@ -6,6 +6,12 @@ import { internal } from "./_generated/api";
 import bcrypt from "bcryptjs";
 import { DEFAULT_ROLE_PERMISSIONS } from "./lib/permissions";
 
+// Type definition for seed result
+type SeedResult = {
+  success: boolean;
+  message: string;
+};
+
 // Internal mutation to insert seed data
 export const insertSeedData = internalMutation({
   args: {
@@ -73,7 +79,7 @@ export const seed = action({
     success: v.boolean(),
     message: v.string(),
   }),
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<SeedResult> => {
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(args.superAdminPassword, salt);
