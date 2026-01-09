@@ -12,6 +12,7 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "convex": "^1.29.3",
+    "convex-helpers": "^0.1.108",
     "openai": "^6.9.1"
   },
   "devDependencies": {
