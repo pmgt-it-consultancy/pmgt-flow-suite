@@ -1,0 +1,425 @@
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
+import { Doc, Id } from "./_generated/dataModel";
+import {
+  calculateScPwdDiscount,
+  calculateItemTotals,
+  aggregateOrderTotals,
+  ItemCalculation,
+} from "./lib/taxCalculations";
+import { requirePermission } from "./lib/permissions";
+
+// Discount types
+const discountTypeValidator = v.union(
+  v.literal("senior_citizen"),
+  v.literal("pwd"),
+  v.literal("promo"),
+  v.literal("manual")
+);
+
+// Apply SC/PWD discount to an order item
+export const applyScPwdDiscount = mutation({
+  args: {
+    token: v.string(),
+    orderId: v.id("orders"),
+    orderItemId: v.id("orderItems"),
+    discountType: v.union(v.literal("senior_citizen"), v.literal("pwd")),
+    customerName: v.string(),
+    customerId: v.string(), // SC/PWD ID number
+    quantityApplied: v.number(),
+    managerId: v.id("users"), // Manager who approved
+  },
+  returns: v.id("orderDiscounts"),
+  handler: async (ctx, args) => {
+    // Validate session
+    const session = await ctx.db
+      .query("sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .first();
+
+    if (!session || session.expiresAt < Date.now()) {
+      throw new Error("Invalid session");
+    }
+
+    // Verify manager has approval permission
+    await requirePermission(ctx, args.managerId, "discounts.approve");
+
+    // Get order and validate status
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open") {
+      throw new Error("Cannot apply discount to closed order");
+    }
+
+    // Get order item
+    const orderItem = await ctx.db.get(args.orderItemId);
+    if (!orderItem) throw new Error("Order item not found");
+    if (orderItem.orderId !== args.orderId) {
+      throw new Error("Item does not belong to this order");
+    }
+    if (orderItem.isVoided) {
+      throw new Error("Cannot apply discount to voided item");
+    }
+
+    // Validate quantity
+    if (args.quantityApplied > orderItem.quantity) {
+      throw new Error("Discount quantity exceeds item quantity");
+    }
+
+    // Check for existing SC/PWD discount on this item
+    const existingDiscount = await ctx.db
+      .query("orderDiscounts")
+      .withIndex("by_orderItem", (q) => q.eq("orderItemId", args.orderItemId))
+      .first();
+
+    if (existingDiscount) {
+      throw new Error("Item already has a discount applied");
+    }
+
+    // Calculate SC/PWD discount
+    const scPwd = calculateScPwdDiscount(orderItem.productPrice);
+    const discountAmount = scPwd.discountAmount * args.quantityApplied;
+    const vatExemptAmount = scPwd.vatExemptAmount * args.quantityApplied;
+
+    // Create discount record
+    const discountId = await ctx.db.insert("orderDiscounts", {
+      orderId: args.orderId,
+      orderItemId: args.orderItemId,
+      discountType: args.discountType,
+      customerName: args.customerName,
+      customerId: args.customerId,
+      quantityApplied: args.quantityApplied,
+      discountAmount,
+      vatExemptAmount,
+      approvedBy: args.managerId,
+      createdAt: Date.now(),
+    });
+
+    // Recalculate order totals
+    await recalculateOrderTotalsWithDiscounts(ctx, args.orderId);
+
+    return discountId;
+  },
+});
+
+// Apply promo or manual discount to an order
+export const applyOrderDiscount = mutation({
+  args: {
+    token: v.string(),
+    orderId: v.id("orders"),
+    discountType: v.union(v.literal("promo"), v.literal("manual")),
+    customerName: v.string(),
+    discountAmount: v.number(),
+    managerId: v.id("users"), // Manager who approved
+  },
+  returns: v.id("orderDiscounts"),
+  handler: async (ctx, args) => {
+    // Validate session
+    const session = await ctx.db
+      .query("sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .first();
+
+    if (!session || session.expiresAt < Date.now()) {
+      throw new Error("Invalid session");
+    }
+
+    // Verify manager has approval permission
+    await requirePermission(ctx, args.managerId, "discounts.approve");
+
+    // Get order and validate status
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open") {
+      throw new Error("Cannot apply discount to closed order");
+    }
+
+    // Validate discount doesn't exceed order total
+    if (args.discountAmount > order.grossSales) {
+      throw new Error("Discount exceeds order total");
+    }
+
+    // Create discount record (order-level, no orderItemId)
+    const discountId = await ctx.db.insert("orderDiscounts", {
+      orderId: args.orderId,
+      orderItemId: undefined,
+      discountType: args.discountType,
+      customerName: args.customerName,
+      customerId: "", // Not applicable for promo/manual
+      quantityApplied: 1,
+      discountAmount: args.discountAmount,
+      vatExemptAmount: 0, // Promo/manual don't exempt VAT
+      approvedBy: args.managerId,
+      createdAt: Date.now(),
+    });
+
+    // Recalculate order totals
+    await recalculateOrderTotalsWithDiscounts(ctx, args.orderId);
+
+    return discountId;
+  },
+});
+
+// Remove a discount
+export const removeDiscount = mutation({
+  args: {
+    token: v.string(),
+    discountId: v.id("orderDiscounts"),
+    managerId: v.id("users"), // Manager who approved
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    // Validate session
+    const session = await ctx.db
+      .query("sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .first();
+
+    if (!session || session.expiresAt < Date.now()) {
+      throw new Error("Invalid session");
+    }
+
+    // Verify manager has approval permission
+    await requirePermission(ctx, args.managerId, "discounts.approve");
+
+    // Get discount
+    const discount = await ctx.db.get(args.discountId);
+    if (!discount) throw new Error("Discount not found");
+
+    // Validate order is still open
+    const order = await ctx.db.get(discount.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open") {
+      throw new Error("Cannot remove discount from closed order");
+    }
+
+    // Delete discount
+    await ctx.db.delete(args.discountId);
+
+    // Recalculate order totals
+    await recalculateOrderTotalsWithDiscounts(ctx, discount.orderId);
+
+    return null;
+  },
+});
+
+// Get discounts for an order
+export const getOrderDiscounts = query({
+  args: {
+    token: v.string(),
+    orderId: v.id("orders"),
+  },
+  returns: v.array(
+    v.object({
+      _id: v.id("orderDiscounts"),
+      orderItemId: v.optional(v.id("orderItems")),
+      itemName: v.optional(v.string()),
+      discountType: discountTypeValidator,
+      customerName: v.string(),
+      customerId: v.string(),
+      quantityApplied: v.number(),
+      discountAmount: v.number(),
+      vatExemptAmount: v.number(),
+      approvedByName: v.string(),
+      createdAt: v.number(),
+    })
+  ),
+  handler: async (ctx, args) => {
+    // Validate session
+    const session = await ctx.db
+      .query("sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .first();
+
+    if (!session || session.expiresAt < Date.now()) {
+      throw new Error("Invalid session");
+    }
+
+    // Get discounts
+    const discounts = await ctx.db
+      .query("orderDiscounts")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .collect();
+
+    // Get additional info
+    const results = await Promise.all(
+      discounts.map(async (discount) => {
+        let itemName: string | undefined;
+        if (discount.orderItemId) {
+          const item = await ctx.db.get(discount.orderItemId);
+          itemName = item?.productName;
+        }
+
+        const approver = await ctx.db.get(discount.approvedBy);
+        const approvedByName = approver?.name ?? "Unknown";
+
+        return {
+          _id: discount._id,
+          orderItemId: discount.orderItemId,
+          itemName,
+          discountType: discount.discountType,
+          customerName: discount.customerName,
+          customerId: discount.customerId,
+          quantityApplied: discount.quantityApplied,
+          discountAmount: discount.discountAmount,
+          vatExemptAmount: discount.vatExemptAmount,
+          approvedByName,
+          createdAt: discount.createdAt,
+        };
+      })
+    );
+
+    return results;
+  },
+});
+
+// Helper: Recalculate order totals including all discounts
+async function recalculateOrderTotalsWithDiscounts(
+  ctx: { db: any },
+  orderId: Id<"orders">
+): Promise<void> {
+  // Get all active (non-voided) items
+  const items = await ctx.db
+    .query("orderItems")
+    .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
+    .collect();
+
+  const activeItems: Doc<"orderItems">[] = items.filter(
+    (i: Doc<"orderItems">) => !i.isVoided
+  );
+
+  // Get all discounts for this order
+  const discounts: Doc<"orderDiscounts">[] = await ctx.db
+    .query("orderDiscounts")
+    .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
+    .collect();
+
+  // Group item-level discounts by orderItemId
+  const itemDiscounts = new Map<string, Doc<"orderDiscounts">>();
+  let orderLevelDiscountAmount = 0;
+
+  for (const discount of discounts) {
+    if (discount.orderItemId) {
+      itemDiscounts.set(discount.orderItemId, discount);
+    } else {
+      orderLevelDiscountAmount += discount.discountAmount;
+    }
+  }
+
+  // Calculate each item's totals
+  const itemCalculations: ItemCalculation[] = await Promise.all(
+    activeItems.map(async (item: Doc<"orderItems">) => {
+      const product = await ctx.db.get(item.productId);
+      const isVatable = product?.isVatable ?? true;
+
+      // Check for SC/PWD discount on this item
+      const discount = itemDiscounts.get(item._id);
+      const scPwdQuantity =
+        discount &&
+        (discount.discountType === "senior_citizen" ||
+          discount.discountType === "pwd")
+          ? discount.quantityApplied
+          : 0;
+
+      return calculateItemTotals(
+        item.productPrice,
+        item.quantity,
+        isVatable,
+        scPwdQuantity
+      );
+    })
+  );
+
+  // Aggregate totals
+  const totals = aggregateOrderTotals(itemCalculations);
+
+  // Apply order-level discounts
+  const netSalesAfterOrderDiscount = totals.netSales - orderLevelDiscountAmount;
+  const totalDiscountAmount = totals.discountAmount + orderLevelDiscountAmount;
+
+  // Update order
+  await ctx.db.patch(orderId, {
+    grossSales: totals.grossSales,
+    vatableSales: totals.vatableSales,
+    vatAmount: totals.vatAmount,
+    vatExemptSales: totals.vatExemptSales,
+    nonVatSales: totals.nonVatSales,
+    discountAmount: totalDiscountAmount,
+    netSales: netSalesAfterOrderDiscount,
+  });
+}
+
+// Get SC/PWD discount summary for BIR reporting
+export const getScPwdSummary = query({
+  args: {
+    token: v.string(),
+    storeId: v.id("stores"),
+    startDate: v.number(),
+    endDate: v.number(),
+  },
+  returns: v.object({
+    seniorCitizenCount: v.number(),
+    seniorCitizenAmount: v.number(),
+    pwdCount: v.number(),
+    pwdAmount: v.number(),
+    totalCount: v.number(),
+    totalAmount: v.number(),
+  }),
+  handler: async (ctx, args) => {
+    // Validate session
+    const session = await ctx.db
+      .query("sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .first();
+
+    if (!session || session.expiresAt < Date.now()) {
+      throw new Error("Invalid session");
+    }
+
+    // Get orders for the store in date range
+    const orders = await ctx.db
+      .query("orders")
+      .withIndex("by_store_createdAt", (q) =>
+        q
+          .eq("storeId", args.storeId)
+          .gte("createdAt", args.startDate)
+          .lte("createdAt", args.endDate)
+      )
+      .collect();
+
+    const orderIds = new Set(orders.map((o) => o._id));
+
+    // Get all SC/PWD discounts
+    let scCount = 0;
+    let scAmount = 0;
+    let pwdCount = 0;
+    let pwdAmount = 0;
+
+    // Iterate through orders and get discounts
+    for (const order of orders) {
+      const discounts = await ctx.db
+        .query("orderDiscounts")
+        .withIndex("by_order", (q) => q.eq("orderId", order._id))
+        .collect();
+
+      for (const discount of discounts) {
+        if (discount.discountType === "senior_citizen") {
+          scCount += discount.quantityApplied;
+          scAmount += discount.discountAmount;
+        } else if (discount.discountType === "pwd") {
+          pwdCount += discount.quantityApplied;
+          pwdAmount += discount.discountAmount;
+        }
+      }
+    }
+
+    return {
+      seniorCitizenCount: scCount,
+      seniorCitizenAmount: scAmount,
+      pwdCount: pwdCount,
+      pwdAmount: pwdAmount,
+      totalCount: scCount + pwdCount,
+      totalAmount: scAmount + pwdAmount,
+    };
+  },
+});

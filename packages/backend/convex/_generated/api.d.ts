@@ -8,9 +8,11 @@
  * @module
  */
 
+import type * as auditLogs from "../auditLogs.js";
 import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
 import type * as checkout from "../checkout.js";
+import type * as discounts from "../discounts.js";
 import type * as notes from "../notes.js";
 import type * as openai from "../openai.js";
 import type * as orders from "../orders.js";
@@ -20,6 +22,7 @@ import type * as sessions from "../sessions.js";
 import type * as stores from "../stores.js";
 import type * as tables from "../tables.js";
 import type * as utils from "../utils.js";
+import type * as voids from "../voids.js";
 
 import type {
   ApiFromModules,
@@ -28,9 +31,11 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auditLogs: typeof auditLogs;
   auth: typeof auth;
   categories: typeof categories;
   checkout: typeof checkout;
+  discounts: typeof discounts;
   notes: typeof notes;
   openai: typeof openai;
   orders: typeof orders;
@@ -40,6 +45,7 @@ declare const fullApi: ApiFromModules<{
   stores: typeof stores;
   tables: typeof tables;
   utils: typeof utils;
+  voids: typeof voids;
 }>;
 
 /**
