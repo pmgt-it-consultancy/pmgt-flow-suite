@@ -1,4 +1,3 @@
-import { useClerk } from "@clerk/clerk-react";
 import { LogOut, Paintbrush2 } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
@@ -12,6 +11,13 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 
+// TODO: Implement logout with POS session in Phase 9
+const handleLogout = () => {
+  // Clear session cookie and redirect to login
+  document.cookie = "pos_session_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+  window.location.href = "/login";
+};
+
 export function UserNav({
   image,
   name,
@@ -21,8 +27,6 @@ export function UserNav({
   name: string;
   email: string;
 }) {
-  const { signOut } = useClerk();
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -45,14 +49,14 @@ export function UserNav({
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href="/notes">
+        <Link href="/dashboard">
           <DropdownMenuItem className="hover:cursor-pointer hover:bg-gray-200">
             <Paintbrush2 className="mr-2 h-4 w-4 text-black" />
             <span className="text-black">Dashboard</span>
           </DropdownMenuItem>
         </Link>
         <DropdownMenuItem
-          onClick={() => signOut()}
+          onClick={handleLogout}
           className="hover:cursor-pointer hover:bg-gray-200"
         >
           <LogOut className="mr-2 h-4 w-4 text-black" />

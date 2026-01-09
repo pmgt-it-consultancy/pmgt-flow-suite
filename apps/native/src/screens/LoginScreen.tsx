@@ -1,34 +1,47 @@
-import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  Alert,
+} from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
-import { useOAuth } from "@clerk/clerk-expo";
-import { AntDesign } from "@expo/vector-icons";
 
+// TODO: Implement actual POS login in Phase 10
+// This is a placeholder until Android POS UI implementation
 const LoginScreen = ({ navigation }) => {
-  const { startOAuthFlow: startGoogleAuthFlow } = useOAuth({
-    strategy: "oauth_google",
-  });
-  const { startOAuthFlow: startAppleAuthFlow } = useOAuth({
-    strategy: "oauth_apple",
-  });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onPress = async (authType: string) => {
+  const onLogin = async () => {
+    if (!username || !password) {
+      Alert.alert("Error", "Please enter username and password");
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      if (authType === "google") {
-        const { createdSessionId, setActive } = await startGoogleAuthFlow();
-        if (createdSessionId) {
-          setActive({ session: createdSessionId });
-          navigation.navigate("NotesDashboardScreen");
-        }
-      } else if (authType === "apple") {
-        const { createdSessionId, setActive } = await startAppleAuthFlow();
-        if (createdSessionId) {
-          setActive({ session: createdSessionId });
-          navigation.navigate("NotesDashboardScreen");
-        }
-      }
+      // TODO: Call api.auth.login action in Phase 10
+      // For now, just navigate to dashboard as placeholder
+      Alert.alert(
+        "Phase 10 Implementation",
+        "Login functionality will be implemented in Phase 10 (Android POS UI)",
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("NotesDashboardScreen"),
+          },
+        ]
+      );
     } catch (err) {
-      console.error("OAuth error", err);
+      console.error("Login error", err);
+      Alert.alert("Error", "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -36,39 +49,45 @@ const LoginScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.card}>
         <Image
-          source={require("../assets/icons/logo.png")} // Ensure the correct path to your logo image file
+          source={require("../assets/icons/logo.png")}
           style={styles.logo}
         />
-        <Text style={styles.title}>Log in to your account</Text>
-        <Text style={styles.subtitle}>Welcome! Please login below.</Text>
+        <Text style={styles.title}>POS Login</Text>
+        <Text style={styles.subtitle}>Enter your credentials to continue</Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+
         <TouchableOpacity
-          style={styles.buttonGoogle}
-          onPress={() => onPress("google")}
+          style={[styles.buttonLogin, isLoading && styles.buttonDisabled]}
+          onPress={onLogin}
+          disabled={isLoading}
         >
-          <Image
-            style={styles.googleIcon}
-            source={require("../assets/icons/google.png")}
-          />
-          <Text style={{ ...styles.buttonText, color: "#344054" }}>
-            Continue with Google
+          <Text style={styles.buttonText}>
+            {isLoading ? "Logging in..." : "Login"}
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.buttonApple}
-          onPress={() => onPress("apple")}
-        >
-          <AntDesign name="apple" size={24} color="black" />
-          <Text
-            style={{ ...styles.buttonText, color: "#344054", marginLeft: 12 }}
-          >
-            Continue with Apple
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoText}>
+            POS authentication will be implemented in Phase 10
           </Text>
-        </TouchableOpacity>
-
-        <View style={styles.signupContainer}>
-          <Text style={{ fontFamily: "Regular" }}>Don’t have an account? </Text>
-          <Text>Sign up above.</Text>
         </View>
       </View>
     </View>
@@ -79,12 +98,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    justifyContent: "center",
   },
   card: {
     backgroundColor: "#fff",
-    padding: 10,
+    padding: 20,
     alignItems: "center",
-    width: "98%",
+    width: "100%",
   },
   logo: {
     width: 74,
@@ -114,13 +134,16 @@ const styles = StyleSheet.create({
     fontFamily: "Regular",
     fontSize: RFValue(14),
   },
-  buttonEmail: {
+  buttonLogin: {
     backgroundColor: "#0D87E1",
     padding: 15,
     borderRadius: 10,
     width: "100%",
-    marginBottom: 24,
+    marginTop: 8,
     minHeight: 44,
+  },
+  buttonDisabled: {
+    backgroundColor: "#A0C4E8",
   },
   buttonText: {
     textAlign: "center",
@@ -128,68 +151,18 @@ const styles = StyleSheet.create({
     fontFamily: "SemiBold",
     fontSize: RFValue(14),
   },
-  buttonTextWithIcon: {
-    marginLeft: 10,
-  },
-  dividerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+  infoContainer: {
+    marginTop: 24,
+    padding: 16,
+    backgroundColor: "#F0F9FF",
+    borderRadius: 8,
     width: "100%",
-    marginBottom: 24,
   },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#000",
-  },
-  dividerText: {
-    marginHorizontal: 10,
-    color: "#000",
-    fontFamily: "Medium",
-  },
-  buttonGoogle: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FFF",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#D0D5DD",
-    width: "100%",
-    marginBottom: 12,
-    height: 44,
-  },
-  buttonApple: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#D0D5DD",
-    width: "100%",
-    marginBottom: 32,
-  },
-  signupContainer: {
-    flexDirection: "row",
-  },
-  signupText: {
-    color: "#4D9DE0",
-    fontFamily: "SemiBold",
-  },
-  googleIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 12,
-  },
-  errorText: {
-    fontSize: RFValue(14),
-    color: "tomato",
-    fontFamily: "Medium",
-    alignSelf: "flex-start",
-    marginBottom: 8,
-    marginLeft: 4,
+  infoText: {
+    textAlign: "center",
+    color: "#0D87E1",
+    fontFamily: "Regular",
+    fontSize: RFValue(12),
   },
 });
 

@@ -4,7 +4,6 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Logo from "./common/Logo";
 import Link from "next/link";
-import { useUser } from "@clerk/clerk-react";
 import { UserNav } from "./common/UserNav";
 import { usePathname } from "next/navigation";
 
@@ -19,8 +18,14 @@ const navigation: NavigationItem[] = [
   { name: "Reviews", href: "#reviews", current: false },
 ];
 
+// TODO: Replace with actual auth state from POS session
+// This is a placeholder until Phase 9 Web Admin UI implementation
+const useCurrentUser = () => {
+  return { user: null }; // Will be implemented with session validation
+};
+
 export default function Header() {
-  const { user } = useUser();
+  const { user } = useCurrentUser();
   const pathname = usePathname();
 
   return (
@@ -57,30 +62,30 @@ export default function Header() {
                 )}
                 {user ? (
                   <div className="hidden sm:flex absolute inset-y-0 right-0 gap-6 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                    <Link href="/notes">
+                    <Link href="/dashboard">
                       <button
                         type="button"
                         className=" text-white text-center text-xl not-italic font-normal leading-[normal] font-montserrat px-[22px] py-[11px] button"
                       >
-                        See your Notes
+                        Dashboard
                       </button>
                     </Link>
                     <UserNav
-                      image={user?.imageUrl}
-                      name={user?.fullName!}
-                      email={user?.primaryEmailAddress?.emailAddress!}
+                      image="/images/profile.png"
+                      name="User"
+                      email="user@example.com"
                     />
                   </div>
                 ) : (
                   <div className="hidden sm:flex absolute inset-y-0 right-0 gap-6 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                     <Link
-                      href="/notes"
+                      href="/login"
                       className="border rounded-lg border-solid border-[#2D2D2D] text-[#2D2D2D] text-center text-xl not-italic font-normal leading-[normal] font-montserrat px-[22px] py-2.5"
                     >
                       Sign in
                     </Link>
                     <Link
-                      href="/notes"
+                      href="/login"
                       className=" text-white text-center text-xl not-italic font-normal leading-[normal] font-montserrat px-[22px] py-[11px] button"
                     >
                       Get Started
@@ -118,13 +123,13 @@ export default function Header() {
               ))}
               <div className="flex gap-6 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <Link
-                  href="/notes"
+                  href="/login"
                   className="border rounded-lg border-solid border-[#2D2D2D] text-[#2D2D2D] text-center text-xl not-italic font-normal leading-[normal] font-montserrat px-5 py-[5px]"
                 >
                   Sign in
                 </Link>
                 <Link
-                  href="/notes"
+                  href="/login"
                   className=" text-white text-center text-xl not-italic font-normal leading-[normal] font-montserrat px-5 py-1.5 button"
                 >
                   Get Started

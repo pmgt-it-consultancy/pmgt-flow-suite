@@ -11,23 +11,30 @@ import {
 } from "react-native";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
-import { useAuth, useUser } from "@clerk/clerk-expo";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 
+// TODO: Replace with actual POS session user in Phase 10
+// This is a placeholder until Android POS UI implementation
+const useCurrentUser = () => {
+  return {
+    user: null, // Will be populated from POS session
+    firstName: "User",
+    imageUrl: null,
+  };
+};
+
 const NotesDashboardScreen = ({ navigation }) => {
-  const user = useUser();
-  const imageUrl = user?.user?.imageUrl;
-  const firstName = user?.user?.firstName;
+  const { firstName, imageUrl } = useCurrentUser();
 
   const allNotes = useQuery(api.notes.getNotes);
   const [search, setSearch] = useState("");
 
   const finalNotes = search
-    ? allNotes.filter(
+    ? allNotes?.filter(
         (note) =>
           note.title.toLowerCase().includes(search.toLowerCase()) ||
-          note.content.toLowerCase().includes(search.toLowerCase()),
+          note.content.toLowerCase().includes(search.toLowerCase())
       )
     : allNotes;
 
@@ -49,7 +56,7 @@ const NotesDashboardScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={require("../assets/icons/logo2small.png")} // Replace with your logo image file
+          source={require("../assets/icons/logo2small.png")}
           style={styles.logo}
         />
       </View>
