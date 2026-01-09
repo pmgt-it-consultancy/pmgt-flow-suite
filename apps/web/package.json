@@ -10,8 +10,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@clerk/clerk-react": "^5.57.1",
-    "@clerk/nextjs": "^6.35.6",
     "@convex-dev/react-query": "^0.1.0",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
