@@ -6,12 +6,25 @@ export const loginSchema = z.object({
 });
 
 export const createUserSchema = z.object({
-  username: z.string().min(3).max(50),
-  password: z.string().min(6).max(100),
-  name: z.string().min(1).max(100),
-  roleId: z.string(),
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters")
+    .max(50, "Username must be at most 50 characters"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .max(100, "Password must be at most 100 characters"),
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(100, "Name must be at most 100 characters"),
+  roleId: z.string().min(1, "Role is required"),
   storeId: z.string().optional(),
-  pin: z.string().length(4).optional(),
+  pin: z
+    .string()
+    .length(4, "PIN must be exactly 4 digits")
+    .regex(/^\d{4}$/, "PIN must contain only digits")
+    .optional(),
 });
 
 export const managerPinSchema = z.object({
