@@ -9,8 +9,10 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as categories from "../categories.js";
 import type * as notes from "../notes.js";
 import type * as openai from "../openai.js";
+import type * as products from "../products.js";
 import type * as seed from "../seed.js";
 import type * as sessions from "../sessions.js";
 import type * as stores from "../stores.js";
@@ -24,8 +26,10 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  categories: typeof categories;
   notes: typeof notes;
   openai: typeof openai;
+  products: typeof products;
   seed: typeof seed;
   sessions: typeof sessions;
   stores: typeof stores;
