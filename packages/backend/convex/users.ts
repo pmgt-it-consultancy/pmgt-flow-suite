@@ -119,6 +119,59 @@ export const list = query({
   },
 });
 
+// List managers for a store (for PIN approval)
+export const listManagers = query({
+  args: {
+    token: v.string(),
+    storeId: v.id("stores"),
+  },
+  returns: v.array(
+    v.object({
+      _id: v.id("users"),
+      name: v.string(),
+      roleName: v.string(),
+    })
+  ),
+  handler: async (ctx, args) => {
+    // Validate session
+    const session = await ctx.db
+      .query("sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .first();
+
+    if (!session || session.expiresAt < Date.now()) {
+      throw new Error("Invalid session");
+    }
+
+    // Get users for this store
+    const users = await ctx.db
+      .query("users")
+      .withIndex("by_store", (q) => q.eq("storeId", args.storeId))
+      .collect();
+
+    // Filter to only active users with PINs and manager+ roles
+    const managers: { _id: Id<"users">; name: string; roleName: string }[] = [];
+
+    for (const user of users) {
+      if (!user.isActive || !user.pin) continue;
+
+      const role = await ctx.db.get(user.roleId);
+      if (!role) continue;
+
+      // Include managers, admins, and super admins (not just branch-level cashiers)
+      if (role.scopeLevel === "system" || role.scopeLevel === "parent") {
+        managers.push({
+          _id: user._id,
+          name: user.name,
+          roleName: role.name,
+        });
+      }
+    }
+
+    return managers;
+  },
+});
+
 // Get single user
 export const get = query({
   args: {

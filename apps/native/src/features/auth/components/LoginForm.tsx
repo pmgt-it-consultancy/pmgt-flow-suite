@@ -1,0 +1,103 @@
+import React, { useState } from "react";
+import { View, Image } from "uniwind/components";
+import { Alert } from "react-native";
+import { Text, Button, Input } from "../../shared/components/ui";
+import { useAuth } from "../context";
+
+interface LoginFormProps {
+  onLoginSuccess?: () => void;
+}
+
+export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
+  const { login, isLoading: isAuthLoading } = useAuth();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isLoading = isAuthLoading || isSubmitting;
+
+  const handleLogin = async () => {
+    if (!username.trim()) {
+      Alert.alert("Error", "Please enter your username");
+      return;
+    }
+
+    if (!password) {
+      Alert.alert("Error", "Please enter your password");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await login(username.trim(), password);
+
+      if (!result.success) {
+        Alert.alert("Login Failed", result.error || "Invalid credentials");
+      } else {
+        onLoginSuccess?.();
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      Alert.alert("Error", "An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <View className="w-full items-center px-5">
+      <Image
+        source={require("../../../assets/icons/logo.png")}
+        className="w-20 h-20 mt-5"
+        resizeMode="contain"
+      />
+
+      <Text variant="heading" size="2xl" className="mt-12">
+        POS Login
+      </Text>
+
+      <Text variant="muted" className="mt-2 mb-8 text-center">
+        Enter your credentials to continue
+      </Text>
+
+      <View className="w-full gap-4">
+        <Input
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+          autoCorrect={false}
+          editable={!isLoading}
+          returnKeyType="next"
+        />
+
+        <Input
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          autoCapitalize="none"
+          autoCorrect={false}
+          editable={!isLoading}
+          returnKeyType="done"
+          onSubmitEditing={handleLogin}
+        />
+
+        <Button
+          variant="primary"
+          size="lg"
+          loading={isLoading}
+          disabled={isLoading}
+          onPress={handleLogin}
+          className="mt-2"
+        >
+          Login
+        </Button>
+      </View>
+
+      <Text variant="muted" size="xs" className="mt-10">
+        PMGT Flow Suite POS v1.0
+      </Text>
+    </View>
+  );
+};

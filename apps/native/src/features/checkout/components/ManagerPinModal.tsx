@@ -1,0 +1,144 @@
+import React, { useState, useCallback } from "react";
+import { View, TextInput, TouchableOpacity, ActivityIndicator } from "uniwind/components";
+import { Alert } from "react-native";
+import { useQuery, useAction } from "convex/react";
+import { api } from "@packages/backend/convex/_generated/api";
+import { Id } from "@packages/backend/convex/_generated/dataModel";
+import { Text, Modal, Button } from "../../shared/components/ui";
+import { useSessionToken, useAuth } from "../../auth/context";
+
+interface ManagerPinModalProps {
+  visible: boolean;
+  title?: string;
+  description?: string;
+  onClose: () => void;
+  onSuccess: (managerId: Id<"users">) => void;
+}
+
+export const ManagerPinModal = ({
+  visible,
+  title = "Manager Approval",
+  description = "Enter manager PIN to proceed",
+  onClose,
+  onSuccess,
+}: ManagerPinModalProps) => {
+  const { user } = useAuth();
+  const token = useSessionToken();
+  const [selectedManagerId, setSelectedManagerId] = useState<Id<"users"> | null>(null);
+  const [pin, setPin] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  // Query managers for this store
+  const managers = useQuery(
+    api.users.listManagers,
+    token && user?.storeId ? { token, storeId: user.storeId } : "skip"
+  );
+
+  const verifyPin = useAction(api.auth.verifyManagerPin);
+
+  const handleVerify = useCallback(async () => {
+    if (!token || !selectedManagerId || !pin) return;
+
+    setIsVerifying(true);
+    try {
+      const isValid = await verifyPin({
+        userId: selectedManagerId,
+        pin,
+      });
+
+      if (isValid) {
+        onSuccess(selectedManagerId);
+        setPin("");
+        setSelectedManagerId(null);
+      } else {
+        Alert.alert("Invalid PIN", "The PIN entered is incorrect");
+      }
+    } catch (error) {
+      console.error("Verify PIN error:", error);
+      Alert.alert("Error", "Failed to verify PIN");
+    } finally {
+      setIsVerifying(false);
+    }
+  }, [token, selectedManagerId, pin, verifyPin, onSuccess]);
+
+  const handleClose = useCallback(() => {
+    setPin("");
+    setSelectedManagerId(null);
+    onClose();
+  }, [onClose]);
+
+  return (
+    <Modal
+      visible={visible}
+      title={title}
+      onClose={handleClose}
+      onRequestClose={handleClose}
+      position="center"
+    >
+      <Text variant="muted" className="mb-4">
+        {description}
+      </Text>
+
+      {/* Manager Selection */}
+      <Text className="text-gray-700 font-medium mb-2">Select Manager</Text>
+      <View className="mb-4">
+        {managers === undefined ? (
+          <ActivityIndicator size="small" color="#0D87E1" />
+        ) : managers.length === 0 ? (
+          <Text variant="muted" className="text-center py-4">
+            No managers found
+          </Text>
+        ) : (
+          managers.map((manager) => (
+            <TouchableOpacity
+              key={manager._id}
+              className={`flex-row items-center p-3 border rounded-lg mb-2 ${
+                selectedManagerId === manager._id
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-200"
+              }`}
+              onPress={() => setSelectedManagerId(manager._id)}
+              activeOpacity={0.7}
+            >
+              <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center mr-3">
+                <Text className="text-gray-600 font-semibold">
+                  {manager.name.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+              <View className="flex-1">
+                <Text className="text-gray-900 font-medium">{manager.name}</Text>
+                <Text variant="muted" size="xs">
+                  {manager.roleName}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        )}
+      </View>
+
+      {/* PIN Input */}
+      <Text className="text-gray-700 font-medium mb-2">Enter PIN</Text>
+      <TextInput
+        className="border border-gray-200 rounded-lg p-3 text-xl text-center tracking-widest"
+        placeholder="••••"
+        placeholderTextColor="#9CA3AF"
+        value={pin}
+        onChangeText={setPin}
+        keyboardType="number-pad"
+        secureTextEntry
+        maxLength={6}
+      />
+
+      <Button
+        variant="primary"
+        size="lg"
+        loading={isVerifying}
+        disabled={!selectedManagerId || !pin || isVerifying}
+        onPress={handleVerify}
+        className={`mt-5 ${!selectedManagerId || !pin ? "opacity-50" : ""}`}
+      >
+        Verify & Approve
+      </Button>
+    </Modal>
+  );
+};

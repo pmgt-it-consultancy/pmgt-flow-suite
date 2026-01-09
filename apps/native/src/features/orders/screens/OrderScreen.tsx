@@ -1,0 +1,273 @@
+import React, { useState, useCallback, useMemo } from "react";
+import { View, FlatList, ActivityIndicator } from "uniwind/components";
+import { Alert } from "react-native";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@packages/backend/convex/_generated/api";
+import { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useSessionToken } from "../../auth/context";
+import { Text } from "../../shared/components/ui";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  OrderHeader,
+  SearchBar,
+  CategoryFilter,
+  ProductCard,
+  CartItem,
+  CartFooter,
+  AddItemModal,
+} from "../components";
+
+interface OrderScreenProps {
+  navigation: any;
+  route: {
+    params: {
+      orderId: Id<"orders">;
+      tableId?: Id<"tables">;
+      tableName?: string;
+    };
+  };
+}
+
+interface SelectedProduct {
+  id: Id<"products">;
+  name: string;
+  price: number;
+}
+
+export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
+  const { orderId, tableId, tableName } = route.params;
+  const token = useSessionToken();
+
+  const [selectedCategory, setSelectedCategory] = useState<Id<"categories"> | "all">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isAddingItem, setIsAddingItem] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<SelectedProduct | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [notes, setNotes] = useState("");
+
+  // Queries
+  const order = useQuery(api.orders.get, token ? { token, orderId } : "skip");
+  const products = useQuery(
+    api.products.list,
+    token && order?.storeId ? { token, storeId: order.storeId } : "skip"
+  );
+  const categories = useQuery(
+    api.categories.list,
+    token && order?.storeId ? { token, storeId: order.storeId } : "skip"
+  );
+
+  // Mutations
+  const addItem = useMutation(api.orders.addItem);
+  const updateItemQuantity = useMutation(api.orders.updateItemQuantity);
+  const removeItem = useMutation(api.orders.removeItem);
+
+  // Filtered products
+  const filteredProducts = useMemo(() => {
+    return products?.filter((p) => {
+      const matchesCategory = selectedCategory === "all" || p.categoryId === selectedCategory;
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch && p.isActive;
+    });
+  }, [products, selectedCategory, searchQuery]);
+
+  // Cart data
+  const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
+  const cartTotal = useMemo(() => activeItems.reduce((sum, item) => sum + item.lineTotal, 0), [activeItems]);
+  const cartItemCount = useMemo(() => activeItems.reduce((sum, item) => sum + item.quantity, 0), [activeItems]);
+
+  const handleBack = useCallback(() => navigation.goBack(), [navigation]);
+
+  const handleAddProduct = useCallback((product: SelectedProduct) => {
+    setSelectedProduct(product);
+    setQuantity(1);
+    setNotes("");
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedProduct(null);
+  }, []);
+
+  const handleConfirmAdd = useCallback(async () => {
+    if (!token || !selectedProduct) return;
+
+    setIsAddingItem(true);
+    try {
+      await addItem({
+        token,
+        orderId,
+        productId: selectedProduct.id,
+        quantity,
+        notes: notes || undefined,
+      });
+      setSelectedProduct(null);
+    } catch (error) {
+      console.error("Add item error:", error);
+      Alert.alert("Error", "Failed to add item to order");
+    } finally {
+      setIsAddingItem(false);
+    }
+  }, [token, selectedProduct, orderId, quantity, notes, addItem]);
+
+  const handleIncrement = useCallback(
+    async (itemId: Id<"orderItems">, currentQty: number) => {
+      if (!token) return;
+      try {
+        await updateItemQuantity({ token, orderItemId: itemId, quantity: currentQty + 1 });
+      } catch (error) {
+        console.error("Update quantity error:", error);
+        Alert.alert("Error", "Failed to update quantity");
+      }
+    },
+    [token, updateItemQuantity]
+  );
+
+  const handleDecrement = useCallback(
+    async (itemId: Id<"orderItems">, currentQty: number) => {
+      if (!token) return;
+
+      if (currentQty <= 1) {
+        Alert.alert("Remove Item", "Are you sure you want to remove this item?", [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Remove",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await removeItem({ token, orderItemId: itemId });
+              } catch (error) {
+                console.error("Remove item error:", error);
+                Alert.alert("Error", "Failed to remove item");
+              }
+            },
+          },
+        ]);
+        return;
+      }
+
+      try {
+        await updateItemQuantity({ token, orderItemId: itemId, quantity: currentQty - 1 });
+      } catch (error) {
+        console.error("Update quantity error:", error);
+        Alert.alert("Error", "Failed to update quantity");
+      }
+    },
+    [token, updateItemQuantity, removeItem]
+  );
+
+  const handleCheckout = useCallback(() => {
+    if (activeItems.length === 0) {
+      Alert.alert("Empty Order", "Add items to the order before checkout");
+      return;
+    }
+    navigation.navigate("CheckoutScreen", { orderId, tableId, tableName });
+  }, [activeItems.length, navigation, orderId, tableId, tableName]);
+
+  if (!token || !order) {
+    return (
+      <View className="flex-1 justify-center items-center bg-gray-100">
+        <ActivityIndicator size="large" color="#0D87E1" />
+      </View>
+    );
+  }
+
+  const orderTypeLabel = order.orderType === "dine_in" ? "Dine-In" : "Take-out";
+
+  return (
+    <View className="flex-1 bg-gray-100">
+      <OrderHeader
+        title={tableName ?? `Order #${order.orderNumber}`}
+        subtitle={orderTypeLabel}
+        onBack={handleBack}
+      />
+
+      <View className="flex-1 flex-row">
+        {/* Menu Section */}
+        <View className="flex-2 bg-white border-r border-gray-200">
+          <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
+
+          <CategoryFilter
+            categories={categories ?? []}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+
+          <FlatList
+            data={filteredProducts}
+            numColumns={2}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <ProductCard
+                id={item._id}
+                name={item.name}
+                price={item.price}
+                onPress={handleAddProduct}
+              />
+            )}
+            contentContainerStyle={{ padding: 8 }}
+            columnWrapperStyle={{ justifyContent: "space-between" }}
+            ListEmptyComponent={
+              <View className="flex-1 items-center justify-center py-10">
+                <Text variant="muted">No products found</Text>
+              </View>
+            }
+          />
+        </View>
+
+        {/* Cart Section */}
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center px-3 py-3 border-b border-gray-200">
+            <Text variant="heading">Order Items</Text>
+            <Text variant="muted" size="sm">
+              {cartItemCount} items
+            </Text>
+          </View>
+
+          <FlatList
+            data={activeItems}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <CartItem
+                id={item._id}
+                productName={item.productName}
+                productPrice={item.productPrice}
+                quantity={item.quantity}
+                lineTotal={item.lineTotal}
+                notes={item.notes}
+                onIncrement={handleIncrement}
+                onDecrement={handleDecrement}
+              />
+            )}
+            ListEmptyComponent={
+              <View className="flex-1 items-center justify-center py-16">
+                <Ionicons name="cart-outline" size={48} color="#D1D5DB" />
+                <Text variant="muted" className="mt-2">
+                  No items in order
+                </Text>
+              </View>
+            }
+          />
+
+          <CartFooter
+            subtotal={cartTotal}
+            itemCount={cartItemCount}
+            onCheckout={handleCheckout}
+          />
+        </View>
+      </View>
+
+      <AddItemModal
+        visible={!!selectedProduct}
+        product={selectedProduct}
+        quantity={quantity}
+        notes={notes}
+        isLoading={isAddingItem}
+        onClose={handleCloseModal}
+        onQuantityChange={setQuantity}
+        onNotesChange={setNotes}
+        onConfirm={handleConfirmAdd}
+      />
+    </View>
+  );
+};
+
+export default OrderScreen;

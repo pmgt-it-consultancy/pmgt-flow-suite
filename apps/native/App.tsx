@@ -1,9 +1,10 @@
+import "./src/global.css";
 import { View, StatusBar, Platform } from "react-native";
 import { useFonts } from "expo-font";
 import { LogBox } from "react-native";
 import Navigation from "./src/navigation/Navigation";
 import ConvexClientProvider from "./ConvexClientProvider";
-import { AuthProvider } from "./src/context/AuthContext";
+import { AuthProvider } from "./src/features/auth";
 
 export default function App() {
   LogBox.ignoreLogs(["Warning: ..."]);
