@@ -18,10 +18,12 @@ import type * as openai from "../openai.js";
 import type * as orders from "../orders.js";
 import type * as products from "../products.js";
 import type * as reports from "../reports.js";
+import type * as roles from "../roles.js";
 import type * as seed from "../seed.js";
 import type * as sessions from "../sessions.js";
 import type * as stores from "../stores.js";
 import type * as tables from "../tables.js";
+import type * as users from "../users.js";
 import type * as utils from "../utils.js";
 import type * as voids from "../voids.js";
 
@@ -42,10 +44,12 @@ declare const fullApi: ApiFromModules<{
   orders: typeof orders;
   products: typeof products;
   reports: typeof reports;
+  roles: typeof roles;
   seed: typeof seed;
   sessions: typeof sessions;
   stores: typeof stores;
   tables: typeof tables;
+  users: typeof users;
   utils: typeof utils;
   voids: typeof voids;
 }>;

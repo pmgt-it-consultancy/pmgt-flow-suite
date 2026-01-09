@@ -340,7 +340,8 @@ async function generateProductSalesBreakdown(
   }
 
   // Insert product sales records
-  for (const [_, data] of productSalesMap) {
+  const productSalesEntries = Array.from(productSalesMap.values());
+  for (const data of productSalesEntries) {
     // Only insert if we have a valid categoryId
     if (data.categoryId) {
       await ctx.db.insert("dailyProductSales", {

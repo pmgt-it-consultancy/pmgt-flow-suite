@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -7,46 +7,67 @@ import {
   Image,
   TextInput,
   Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
+import { useAuth } from "../context/AuthContext";
 
-// TODO: Implement actual POS login in Phase 10
-// This is a placeholder until Android POS UI implementation
-const LoginScreen = ({ navigation }) => {
+interface LoginScreenProps {
+  navigation: any;
+}
+
+const LoginScreen = ({ navigation }: LoginScreenProps) => {
+  const { login, isLoading: isAuthLoading, isAuthenticated } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onLogin = async () => {
-    if (!username || !password) {
-      Alert.alert("Error", "Please enter username and password");
+  // Navigate to tables screen when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "TablesScreen" }],
+      });
+    }
+  }, [isAuthenticated, navigation]);
+
+  const handleLogin = async () => {
+    if (!username.trim()) {
+      Alert.alert("Error", "Please enter your username");
       return;
     }
 
-    setIsLoading(true);
+    if (!password) {
+      Alert.alert("Error", "Please enter your password");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      // TODO: Call api.auth.login action in Phase 10
-      // For now, just navigate to dashboard as placeholder
-      Alert.alert(
-        "Phase 10 Implementation",
-        "Login functionality will be implemented in Phase 10 (Android POS UI)",
-        [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate("NotesDashboardScreen"),
-          },
-        ]
-      );
+      const result = await login(username.trim(), password);
+
+      if (!result.success) {
+        Alert.alert("Login Failed", result.error || "Invalid credentials");
+      }
+      // Navigation happens automatically via useEffect when isAuthenticated changes
     } catch (err) {
-      console.error("Login error", err);
-      Alert.alert("Error", "Login failed. Please try again.");
+      console.error("Login error:", err);
+      Alert.alert("Error", "An unexpected error occurred. Please try again.");
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
+  const isLoading = isAuthLoading || isSubmitting;
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
       <View style={styles.card}>
         <Image
           source={require("../assets/icons/logo.png")}
@@ -62,6 +83,8 @@ const LoginScreen = ({ navigation }) => {
           onChangeText={setUsername}
           autoCapitalize="none"
           autoCorrect={false}
+          editable={!isLoading}
+          returnKeyType="next"
         />
 
         <TextInput
@@ -72,25 +95,28 @@ const LoginScreen = ({ navigation }) => {
           secureTextEntry
           autoCapitalize="none"
           autoCorrect={false}
+          editable={!isLoading}
+          returnKeyType="done"
+          onSubmitEditing={handleLogin}
         />
 
         <TouchableOpacity
           style={[styles.buttonLogin, isLoading && styles.buttonDisabled]}
-          onPress={onLogin}
+          onPress={handleLogin}
           disabled={isLoading}
         >
-          <Text style={styles.buttonText}>
-            {isLoading ? "Logging in..." : "Login"}
-          </Text>
+          {isLoading ? (
+            <ActivityIndicator color="#FFF" />
+          ) : (
+            <Text style={styles.buttonText}>Login</Text>
+          )}
         </TouchableOpacity>
 
-        <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>
-            POS authentication will be implemented in Phase 10
-          </Text>
+        <View style={styles.versionContainer}>
+          <Text style={styles.versionText}>PMGT Flow Suite POS v1.0</Text>
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -119,7 +145,7 @@ const styles = StyleSheet.create({
   subtitle: {
     marginTop: 8,
     fontSize: RFValue(14),
-    color: "#000",
+    color: "#666",
     fontFamily: "Regular",
     marginBottom: 32,
     textAlign: "center",
@@ -133,6 +159,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontFamily: "Regular",
     fontSize: RFValue(14),
+    backgroundColor: "#FFF",
   },
   buttonLogin: {
     backgroundColor: "#0D87E1",
@@ -140,7 +167,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "100%",
     marginTop: 8,
-    minHeight: 44,
+    minHeight: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonDisabled: {
     backgroundColor: "#A0C4E8",
@@ -151,18 +180,14 @@ const styles = StyleSheet.create({
     fontFamily: "SemiBold",
     fontSize: RFValue(14),
   },
-  infoContainer: {
-    marginTop: 24,
-    padding: 16,
-    backgroundColor: "#F0F9FF",
-    borderRadius: 8,
-    width: "100%",
+  versionContainer: {
+    marginTop: 40,
   },
-  infoText: {
+  versionText: {
     textAlign: "center",
-    color: "#0D87E1",
+    color: "#999",
     fontFamily: "Regular",
-    fontSize: RFValue(12),
+    fontSize: RFValue(10),
   },
 });
 

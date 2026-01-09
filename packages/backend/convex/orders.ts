@@ -605,6 +605,81 @@ export const updateCustomerName = mutation({
   },
 });
 
+// List active (open) orders for a store - used by POS table view
+export const listActive = query({
+  args: {
+    token: v.string(),
+    storeId: v.id("stores"),
+  },
+  returns: v.array(
+    v.object({
+      _id: v.id("orders"),
+      orderNumber: v.string(),
+      orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
+      tableId: v.optional(v.id("tables")),
+      tableName: v.optional(v.string()),
+      customerName: v.optional(v.string()),
+      subtotal: v.number(),
+      itemCount: v.number(),
+      createdAt: v.number(),
+    })
+  ),
+  handler: async (ctx, args) => {
+    // Validate session
+    const session = await ctx.db
+      .query("sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .first();
+
+    if (!session || session.expiresAt < Date.now()) {
+      throw new Error("Invalid session");
+    }
+
+    // Get open orders for this store
+    const orders = await ctx.db
+      .query("orders")
+      .withIndex("by_store_status", (q) =>
+        q.eq("storeId", args.storeId).eq("status", "open")
+      )
+      .collect();
+
+    // Get additional info for each order
+    const results = await Promise.all(
+      orders.map(async (order) => {
+        // Get table name
+        let tableName: string | undefined;
+        if (order.tableId) {
+          const table = await ctx.db.get(order.tableId);
+          tableName = table?.name;
+        }
+
+        // Get item count
+        const items = await ctx.db
+          .query("orderItems")
+          .withIndex("by_order", (q) => q.eq("orderId", order._id))
+          .collect();
+
+        const activeItems = items.filter((i) => !i.isVoided);
+        const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
+
+        return {
+          _id: order._id,
+          orderNumber: order.orderNumber,
+          orderType: order.orderType,
+          tableId: order.tableId,
+          tableName,
+          customerName: order.customerName,
+          subtotal: order.netSales,
+          itemCount,
+          createdAt: order.createdAt,
+        };
+      })
+    );
+
+    return results;
+  },
+});
+
 // Get today's open orders for a store (for POS dashboard)
 export const getTodaysOpenOrders = query({
   args: {
