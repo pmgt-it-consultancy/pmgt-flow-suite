@@ -1,9 +1,9 @@
 "use node";
 
 import { v } from "convex/values";
-import { internalMutation, action } from "./_generated/server";
+import { action } from "./_generated/server";
 import { internal } from "./_generated/api";
-import bcrypt from "bcryptjs";
+import { createAccount } from "@convex-dev/auth/server";
 import { DEFAULT_ROLE_PERMISSIONS } from "./lib/permissions";
 
 // Type definition for seed result
@@ -12,66 +12,10 @@ type SeedResult = {
   message: string;
 };
 
-// Internal mutation to insert seed data
-export const insertSeedData = internalMutation({
-  args: {
-    roles: v.array(
-      v.object({
-        name: v.string(),
-        permissions: v.array(v.string()),
-        scopeLevel: v.union(
-          v.literal("system"),
-          v.literal("parent"),
-          v.literal("branch")
-        ),
-        isSystem: v.boolean(),
-      })
-    ),
-    superAdmin: v.object({
-      username: v.string(),
-      passwordHash: v.string(),
-      name: v.string(),
-    }),
-  },
-  returns: v.object({
-    success: v.boolean(),
-    message: v.string(),
-  }),
-  handler: async (ctx, args) => {
-    // Check if already seeded
-    const existingRoles = await ctx.db.query("roles").first();
-    if (existingRoles) {
-      return { success: false, message: "Database already seeded" };
-    }
-
-    // Create roles
-    const roleIds: Record<string, any> = {};
-    for (const role of args.roles) {
-      const id = await ctx.db.insert("roles", role);
-      roleIds[role.name] = id;
-    }
-
-    // Create super admin user
-    await ctx.db.insert("users", {
-      username: args.superAdmin.username,
-      passwordHash: args.superAdmin.passwordHash,
-      name: args.superAdmin.name,
-      roleId: roleIds["Super Admin"],
-      storeId: undefined,
-      isActive: true,
-      pin: undefined,
-      createdAt: Date.now(),
-      lastLoginAt: undefined,
-    });
-
-    return { success: true, message: "Database seeded successfully" };
-  },
-});
-
-// Action to seed the database (uses Node.js for bcrypt)
+// Action to seed the database
 export const seed = action({
   args: {
-    superAdminUsername: v.string(),
+    superAdminEmail: v.string(),
     superAdminPassword: v.string(),
     superAdminName: v.string(),
   },
@@ -80,10 +24,6 @@ export const seed = action({
     message: v.string(),
   }),
   handler: async (ctx, args): Promise<SeedResult> => {
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(args.superAdminPassword, salt);
-
     // Define roles
     const roles = [
       {
@@ -112,14 +52,36 @@ export const seed = action({
       },
     ];
 
-    // Insert seed data
-    return await ctx.runMutation(internal.seed.insertSeedData, {
-      roles,
-      superAdmin: {
-        username: args.superAdminUsername,
-        passwordHash,
+    // Step 1: Create roles and get Super Admin role ID
+    const seedResult = await ctx.runMutation(
+      internal.helpers.seedHelpers.insertRolesAndPrepare,
+      { roles }
+    );
+
+    if (!seedResult.success) {
+      return seedResult;
+    }
+
+    // Step 2: Create user with proper password hashing via Convex Auth
+    // The createAccount function handles scrypt hashing internally
+    const { user } = await createAccount(ctx, {
+      provider: "password",
+      account: {
+        id: args.superAdminEmail.toLowerCase(),
+        secret: args.superAdminPassword, // Plain password - library handles hashing
+      },
+      profile: {
         name: args.superAdminName,
+        email: args.superAdminEmail.toLowerCase(),
       },
     });
+
+    // Step 3: Update the created user with our custom fields (roleId, isActive)
+    await ctx.runMutation(internal.helpers.seedHelpers.updateUserWithRole, {
+      userId: user._id,
+      roleId: seedResult.superAdminRoleId!,
+    });
+
+    return { success: true, message: "Database seeded successfully" };
   },
 });
