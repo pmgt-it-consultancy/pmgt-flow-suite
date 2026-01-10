@@ -2,11 +2,14 @@ import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
 import { requirePermission } from "./lib/permissions";
+import {
+  getAuthenticatedUser,
+  getAuthenticatedUserWithRole,
+} from "./lib/auth";
 
 // List stores based on user scope
 export const list = query({
   args: {
-    token: v.string(),
     parentOnly: v.optional(v.boolean()),
   },
   returns: v.array(
@@ -25,25 +28,18 @@ export const list = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session and get user
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Get authenticated user with role using Convex Auth
+    const currentUser = await getAuthenticatedUserWithRole(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
-    const user = await ctx.db.get(session.userId);
-    if (!user || !user.isActive) {
-      throw new Error("User not found or inactive");
-    }
-
-    const role = await ctx.db.get(user.roleId);
+    const { role } = currentUser;
     if (!role) {
       throw new Error("Role not found");
     }
+
+    const user = currentUser;
 
     let stores: Doc<"stores">[] = [];
 
@@ -103,7 +99,6 @@ export const list = query({
 // Get single store
 export const get = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
   },
   returns: v.union(
@@ -125,14 +120,10 @@ export const get = query({
     v.null()
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     const store = await ctx.db.get(args.storeId);
@@ -143,7 +134,6 @@ export const get = query({
 // Create store
 export const create = mutation({
   args: {
-    token: v.string(),
     name: v.string(),
     parentId: v.optional(v.id("stores")),
     address1: v.string(),
@@ -154,22 +144,15 @@ export const create = mutation({
   },
   returns: v.id("stores"),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Get authenticated user using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
 
     // Check permission - creating branch vs parent store
     const permission = args.parentId ? "stores.create_branch" : "stores.manage";
-    await requirePermission(ctx, user._id, permission);
+    await requirePermission(ctx, currentUser._id, permission);
 
     return await ctx.db.insert("stores", {
       name: args.name,
@@ -191,7 +174,6 @@ export const create = mutation({
 // Update store
 export const update = mutation({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     name: v.optional(v.string()),
     address1: v.optional(v.string()),
@@ -205,22 +187,15 @@ export const update = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Get authenticated user using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
+    await requirePermission(ctx, currentUser._id, "stores.manage");
 
-    await requirePermission(ctx, user._id, "stores.manage");
-
-    const { token, storeId, ...updates } = args;
+    const { storeId, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, v]) => v !== undefined)
     );
@@ -232,17 +207,13 @@ export const update = mutation({
 
 // Generate upload URL for logo
 export const generateLogoUploadUrl = mutation({
-  args: { token: v.string() },
+  args: {},
   returns: v.string(),
-  handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+  handler: async (ctx) => {
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     return await ctx.storage.generateUploadUrl();
@@ -252,26 +223,18 @@ export const generateLogoUploadUrl = mutation({
 // Update store logo
 export const updateLogo = mutation({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     storageId: v.id("_storage"),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
-
-    await requirePermission(ctx, user._id, "stores.manage");
+    await requirePermission(ctx, currentUser._id, "stores.manage");
 
     await ctx.db.patch(args.storeId, { logo: args.storageId });
     return null;

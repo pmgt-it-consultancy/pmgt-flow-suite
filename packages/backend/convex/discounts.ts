@@ -8,6 +8,7 @@ import {
   ItemCalculation,
 } from "./lib/taxCalculations";
 import { requirePermission } from "./lib/permissions";
+import { requireAuth } from "./lib/auth";
 
 // Discount types
 const discountTypeValidator = v.union(
@@ -20,7 +21,6 @@ const discountTypeValidator = v.union(
 // Apply SC/PWD discount to an order item
 export const applyScPwdDiscount = mutation({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
     orderItemId: v.id("orderItems"),
     discountType: v.union(v.literal("senior_citizen"), v.literal("pwd")),
@@ -31,15 +31,8 @@ export const applyScPwdDiscount = mutation({
   },
   returns: v.id("orderDiscounts"),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Verify manager has approval permission
     await requirePermission(ctx, args.managerId, "discounts.approve");
@@ -105,7 +98,6 @@ export const applyScPwdDiscount = mutation({
 // Apply promo or manual discount to an order
 export const applyOrderDiscount = mutation({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
     discountType: v.union(v.literal("promo"), v.literal("manual")),
     customerName: v.string(),
@@ -114,15 +106,8 @@ export const applyOrderDiscount = mutation({
   },
   returns: v.id("orderDiscounts"),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Verify manager has approval permission
     await requirePermission(ctx, args.managerId, "discounts.approve");
@@ -163,21 +148,13 @@ export const applyOrderDiscount = mutation({
 // Remove a discount
 export const removeDiscount = mutation({
   args: {
-    token: v.string(),
     discountId: v.id("orderDiscounts"),
     managerId: v.id("users"), // Manager who approved
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Verify manager has approval permission
     await requirePermission(ctx, args.managerId, "discounts.approve");
@@ -206,7 +183,6 @@ export const removeDiscount = mutation({
 // Get discounts for an order
 export const getOrderDiscounts = query({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
   },
   returns: v.array(
@@ -225,15 +201,8 @@ export const getOrderDiscounts = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get discounts
     const discounts = await ctx.db
@@ -352,7 +321,6 @@ async function recalculateOrderTotalsWithDiscounts(
 // Get SC/PWD discount summary for BIR reporting
 export const getScPwdSummary = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     startDate: v.number(),
     endDate: v.number(),
@@ -366,15 +334,8 @@ export const getScPwdSummary = query({
     totalAmount: v.number(),
   }),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get orders for the store in date range
     const orders = await ctx.db

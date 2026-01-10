@@ -2,11 +2,11 @@ import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
 import { requirePermission } from "./lib/permissions";
+import { requireAuth } from "./lib/auth";
 
 // List categories for a store
 export const list = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     parentId: v.optional(v.id("categories")),
     includeInactive: v.optional(v.boolean()),
@@ -25,15 +25,8 @@ export const list = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get categories for the store
     let categories: Doc<"categories">[];
@@ -96,7 +89,6 @@ export const list = query({
 // Get single category
 export const get = query({
   args: {
-    token: v.string(),
     categoryId: v.id("categories"),
   },
   returns: v.union(
@@ -112,15 +104,8 @@ export const get = query({
     v.null()
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     const category = await ctx.db.get(args.categoryId);
     return category;
@@ -130,7 +115,6 @@ export const get = query({
 // Create category
 export const create = mutation({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     name: v.string(),
     parentId: v.optional(v.id("categories")),
@@ -138,18 +122,8 @@ export const create = mutation({
   },
   returns: v.id("categories"),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
+    // Require authenticated user
+    const user = await requireAuth(ctx);
 
     // Check permission
     await requirePermission(ctx, user._id, "categories.manage");
@@ -185,7 +159,6 @@ export const create = mutation({
 // Update category
 export const update = mutation({
   args: {
-    token: v.string(),
     categoryId: v.id("categories"),
     name: v.optional(v.string()),
     parentId: v.optional(v.id("categories")),
@@ -194,18 +167,8 @@ export const update = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
+    // Require authenticated user
+    const user = await requireAuth(ctx);
 
     await requirePermission(ctx, user._id, "categories.manage");
 
@@ -225,7 +188,7 @@ export const update = mutation({
       }
     }
 
-    const { token, categoryId, ...updates } = args;
+    const { categoryId, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, v]) => v !== undefined)
     );
@@ -238,23 +201,12 @@ export const update = mutation({
 // Reorder categories
 export const reorder = mutation({
   args: {
-    token: v.string(),
     categoryIds: v.array(v.id("categories")),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
+    // Require authenticated user
+    const user = await requireAuth(ctx);
 
     await requirePermission(ctx, user._id, "categories.manage");
 
@@ -270,7 +222,6 @@ export const reorder = mutation({
 // Get category tree (hierarchical)
 export const getTree = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     includeInactive: v.optional(v.boolean()),
   },
@@ -293,15 +244,8 @@ export const getTree = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get all categories for the store
     let allCategories = await ctx.db

@@ -1,1 +1,1 @@
-export { AuthProvider, useAuth, useSessionToken } from "./AuthContext";
+export { AuthProvider, useAuth } from "./AuthContext";

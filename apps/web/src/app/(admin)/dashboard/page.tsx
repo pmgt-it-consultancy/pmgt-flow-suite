@@ -2,7 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { useAuth, useSessionToken } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,13 +17,12 @@ import {
 import { formatCurrency, formatDate } from "@/lib/format";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
-  const token = useSessionToken();
+  const { user, isAuthenticated } = useAuth();
 
   // Get stores for the user (if Super Admin, all stores; otherwise, assigned store)
   const stores = useQuery(
     api.stores.list,
-    token ? { token } : "skip"
+    isAuthenticated ? {} : "skip"
   );
 
   // Get today's date
@@ -36,9 +35,8 @@ export default function DashboardPage() {
   // Get daily report for the primary store
   const dailyReport = useQuery(
     api.reports.getDailyReport,
-    token && primaryStoreId
+    primaryStoreId
       ? {
-          token,
           storeId: primaryStoreId,
           reportDate: todayDateStr,
         }
@@ -48,9 +46,8 @@ export default function DashboardPage() {
   // Get top selling products for the primary store
   const topProducts = useQuery(
     api.reports.getTopSellingProducts,
-    token && primaryStoreId
+    primaryStoreId
       ? {
-          token,
           storeId: primaryStoreId,
           reportDate: todayDateStr,
           limit: 5,

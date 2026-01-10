@@ -9,16 +9,16 @@ interface LoginFormProps {
 }
 
 export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
-  const { login, isLoading: isAuthLoading } = useAuth();
-  const [username, setUsername] = useState("");
+  const { signIn, isLoading: isAuthLoading } = useAuth();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isLoading = isAuthLoading || isSubmitting;
 
   const handleLogin = async () => {
-    if (!username.trim()) {
-      Alert.alert("Error", "Please enter your username");
+    if (!email.trim()) {
+      Alert.alert("Error", "Please enter your email");
       return;
     }
 
@@ -29,7 +29,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
 
     setIsSubmitting(true);
     try {
-      const result = await login(username.trim(), password);
+      const result = await signIn(email.trim(), password);
 
       if (!result.success) {
         Alert.alert("Login Failed", result.error || "Invalid credentials");
@@ -62,11 +62,12 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
 
       <View className="w-full gap-4">
         <Input
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
           autoCapitalize="none"
           autoCorrect={false}
+          keyboardType="email-address"
           editable={!isLoading}
           returnKeyType="next"
         />

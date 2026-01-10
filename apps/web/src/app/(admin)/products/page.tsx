@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth, useSessionToken } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -64,8 +64,7 @@ const initialFormData: ProductFormData = {
 };
 
 export default function ProductsPage() {
-  const { user } = useAuth();
-  const token = useSessionToken();
+  const { user, isAuthenticated } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Id<"products"> | null>(null);
   const [formData, setFormData] = useState<ProductFormData>(initialFormData);
@@ -76,14 +75,14 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Queries
-  const stores = useQuery(api.stores.list, token ? { token } : "skip");
+  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
   const categories = useQuery(
     api.categories.list,
-    token && selectedStoreId ? { token, storeId: selectedStoreId } : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip"
   );
   const products = useQuery(
     api.products.list,
-    token && selectedStoreId ? { token, storeId: selectedStoreId } : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip"
   );
 
   // Mutations
@@ -119,13 +118,12 @@ export default function ProductsPage() {
   };
 
   const handleSubmit = async () => {
-    if (!token || !formData.storeId || !formData.categoryId) return;
+    if (!isAuthenticated || !formData.storeId || !formData.categoryId) return;
 
     setIsSubmitting(true);
     try {
       if (editingProduct) {
         await updateProduct({
-          token,
           productId: editingProduct,
           categoryId: formData.categoryId,
           name: formData.name,
@@ -137,7 +135,6 @@ export default function ProductsPage() {
         toast.success("Product updated successfully");
       } else {
         await createProduct({
-          token,
           storeId: formData.storeId,
           categoryId: formData.categoryId,
           name: formData.name,

@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth, useSessionToken } from "../../auth/context";
+import { useAuth } from "../../auth/context";
 import { Text, Button, IconButton } from "../../shared/components/ui";
 import { useFormatCurrency, ReceiptData, printReceipt, shareReceipt } from "../../shared";
 import {
@@ -34,8 +34,7 @@ type DiscountType = "senior_citizen" | "pwd" | null;
 
 export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const { orderId, tableId, tableName } = route.params;
-  const { user } = useAuth();
-  const token = useSessionToken();
+  const { user, isLoading, isAuthenticated } = useAuth();
   const formatCurrency = useFormatCurrency();
 
   // UI State
@@ -55,16 +54,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const [pendingManagerAction, setPendingManagerAction] = useState<"apply" | "remove" | null>(null);
   const [discountToRemove, setDiscountToRemove] = useState<Id<"orderDiscounts"> | null>(null);
 
-  // Queries
-  const order = useQuery(api.orders.get, token ? { token, orderId } : "skip");
+  // Queries - auth is handled automatically by Convex Auth
+  const order = useQuery(api.orders.get, { orderId });
   const store = useQuery(
     api.stores.get,
-    token && order?.storeId ? { token, storeId: order.storeId } : "skip"
+    order?.storeId ? { storeId: order.storeId } : "skip"
   );
-  const discounts = useQuery(
-    api.discounts.getOrderDiscounts,
-    token ? { token, orderId } : "skip"
-  );
+  const discounts = useQuery(api.discounts.getOrderDiscounts, { orderId });
 
   // Mutations
   const processCashPayment = useMutation(api.checkout.processCashPayment);
@@ -125,7 +121,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       if (pendingManagerAction === "apply" && discountType && selectedItemId) {
         try {
           await applyScPwdDiscount({
-            token: token!,
             orderId,
             orderItemId: selectedItemId,
             discountType,
@@ -140,7 +135,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         }
       } else if (pendingManagerAction === "remove" && discountToRemove) {
         try {
-          await removeDiscount({ token: token!, discountId: discountToRemove, managerId });
+          await removeDiscount({ discountId: discountToRemove, managerId });
         } catch (error: any) {
           Alert.alert("Error", error.message || "Failed to remove discount");
         }
@@ -149,7 +144,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       setPendingManagerAction(null);
       setDiscountToRemove(null);
     },
-    [pendingManagerAction, discountType, selectedItemId, discountName, discountIdNumber, discountToRemove, token, orderId, applyScPwdDiscount, removeDiscount]
+    [pendingManagerAction, discountType, selectedItemId, discountName, discountIdNumber, discountToRemove, orderId, applyScPwdDiscount, removeDiscount]
   );
 
   // Receipt helpers
@@ -199,7 +194,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   );
 
   const handleProcessPayment = useCallback(async () => {
-    if (!token || !order) return;
+    if (!order) return;
 
     const cashAmount = parseFloat(cashReceived);
 
@@ -219,10 +214,10 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       let finalChange = 0;
 
       if (paymentMethod === "cash") {
-        const result = await processCashPayment({ token, orderId, cashReceived: cashAmount });
+        const result = await processCashPayment({ orderId, cashReceived: cashAmount });
         finalChange = result.changeGiven;
       } else {
-        await processCardPayment({ token, orderId });
+        await processCardPayment({ orderId });
       }
 
       Alert.alert(
@@ -259,9 +254,9 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     } finally {
       setIsProcessing(false);
     }
-  }, [token, order, cashReceived, paymentMethod, processCashPayment, processCardPayment, orderId, formatCurrency, createReceiptData, navigation]);
+  }, [order, cashReceived, paymentMethod, processCashPayment, processCardPayment, orderId, formatCurrency, createReceiptData, navigation]);
 
-  if (!token || !order) {
+  if (isLoading || !isAuthenticated || !order) {
     return (
       <View className="flex-1 justify-center items-center bg-gray-100">
         <ActivityIndicator size="large" color="#0D87E1" />

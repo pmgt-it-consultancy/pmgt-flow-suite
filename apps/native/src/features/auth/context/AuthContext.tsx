@@ -1,137 +1,89 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import * as SecureStore from "expo-secure-store";
-import { useAction, useQuery } from "convex/react";
+import React, { createContext, useContext, ReactNode, useCallback } from "react";
+import { useConvexAuth } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 
-const TOKEN_KEY = "pos_session_token";
-
 interface User {
   _id: Id<"users">;
-  username: string;
-  name: string;
-  roleId: Id<"roles">;
+  email?: string;
+  name?: string;
+  roleId?: Id<"roles">;
   storeId?: Id<"stores">;
   role: {
+    _id: Id<"roles">;
     name: string;
     permissions: string[];
     scopeLevel: "system" | "parent" | "branch";
-  };
+  } | null;
 }
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  logout: () => Promise<void>;
+  signIn: (email: string, password: string, flow?: "signIn" | "signUp") => Promise<{ success: boolean; error?: string }>;
+  signOut: () => Promise<void>;
   hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const { isLoading: isAuthLoading, isAuthenticated: isConvexAuthenticated } = useConvexAuth();
+  const { signIn: convexSignIn, signOut: convexSignOut } = useAuthActions();
 
-  const loginAction = useAction(api.auth.login);
-  const logoutAction = useAction(api.auth.logout);
-
-  // Query current user when token is available
+  // Query current user when authenticated (Convex Auth handles auth context automatically)
   const currentUser = useQuery(
     api.sessions.getCurrentUser,
-    token ? { token } : "skip"
+    isConvexAuthenticated ? {} : "skip"
   );
 
-  // Load stored token on mount
-  useEffect(() => {
-    const loadToken = async () => {
+  // Determine loading state
+  const isLoading = isAuthLoading || (isConvexAuthenticated && currentUser === undefined);
+
+  const signIn = useCallback(
+    async (
+      email: string,
+      password: string,
+      flow: "signIn" | "signUp" = "signIn"
+    ): Promise<{ success: boolean; error?: string }> => {
       try {
-        const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
-        if (storedToken) {
-          setToken(storedToken);
-        }
-      } catch (error) {
-        console.error("Error loading token:", error);
-      } finally {
-        setIsInitialized(true);
-      }
-    };
-    loadToken();
-  }, []);
-
-  // Update loading state based on query state
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
-
-    // If token exists but query hasn't returned yet, still loading
-    if (currentUser === undefined) {
-      setIsLoading(true);
-      return;
-    }
-
-    // If user is null (invalid session), clear token
-    if (currentUser === null) {
-      SecureStore.deleteItemAsync(TOKEN_KEY).catch(console.error);
-      setToken(null);
-    }
-
-    setIsLoading(false);
-  }, [token, currentUser, isInitialized]);
-
-  const login = async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    try {
-      setIsLoading(true);
-      const result = await loginAction({ username, password });
-
-      if (result.success === true) {
-        await SecureStore.setItemAsync(TOKEN_KEY, result.token);
-        setToken(result.token);
+        await convexSignIn("password", { email, password, flow });
         return { success: true };
-      } else {
-        // TypeScript needs explicit check for success === false to narrow the type
-        return { success: false, error: "error" in result ? result.error : "Login failed" };
+      } catch (error) {
+        console.error("Sign in error:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : "Authentication failed";
+        return { success: false, error: errorMessage };
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      return { success: false, error: "An unexpected error occurred" };
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [convexSignIn]
+  );
 
-  const logout = async () => {
+  const signOut = useCallback(async () => {
     try {
-      if (token) {
-        await logoutAction({ token });
-      }
+      await convexSignOut();
     } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      await SecureStore.deleteItemAsync(TOKEN_KEY);
-      setToken(null);
+      console.error("Sign out error:", error);
     }
-  };
+  }, [convexSignOut]);
 
-  const hasPermission = (permission: string): boolean => {
-    if (!currentUser || !currentUser.role) return false;
-    return currentUser.role.permissions.includes(permission);
-  };
+  const hasPermission = useCallback(
+    (permission: string): boolean => {
+      if (!currentUser || !currentUser.role) return false;
+      return currentUser.role.permissions.includes(permission);
+    },
+    [currentUser]
+  );
 
   const value: AuthContextType = {
     user: currentUser ?? null,
-    token,
     isLoading,
-    isAuthenticated: !!currentUser,
-    login,
-    logout,
+    isAuthenticated: isConvexAuthenticated && !!currentUser,
+    signIn,
+    signOut,
     hasPermission,
   };
 
@@ -144,9 +96,4 @@ export function useAuth() {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
-
-export function useSessionToken() {
-  const { token } = useAuth();
-  return token;
 }

@@ -1,131 +1,70 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
+import {
+  getAuthenticatedUser,
+  getAuthenticatedUserWithRole,
+} from "./lib/auth";
 
-export const validateSession = query({
-  args: { token: v.string() },
+/**
+ * Get current authenticated user with role information
+ * This replaces the old token-based getCurrentUser query
+ */
+export const getCurrentUser = query({
+  args: {},
   returns: v.union(
     v.object({
-      valid: v.literal(true),
-      user: v.object({
-        _id: v.id("users"),
-        username: v.string(),
-        name: v.string(),
-        roleId: v.id("roles"),
-        storeId: v.optional(v.id("stores")),
-      }),
-      role: v.object({
-        _id: v.id("roles"),
-        name: v.string(),
-        permissions: v.array(v.string()),
-        scopeLevel: v.union(
-          v.literal("system"),
-          v.literal("parent"),
-          v.literal("branch")
-        ),
-      }),
+      _id: v.id("users"),
+      email: v.optional(v.string()),
+      name: v.optional(v.string()),
+      roleId: v.optional(v.id("roles")),
+      storeId: v.optional(v.id("stores")),
+      role: v.union(
+        v.object({
+          _id: v.id("roles"),
+          name: v.string(),
+          permissions: v.array(v.string()),
+          scopeLevel: v.union(
+            v.literal("system"),
+            v.literal("parent"),
+            v.literal("branch")
+          ),
+        }),
+        v.null()
+      ),
     }),
-    v.object({
-      valid: v.literal(false),
-    })
+    v.null()
   ),
-  handler: async (ctx, args) => {
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session) {
-      return { valid: false as const };
-    }
-
-    if (session.expiresAt < Date.now()) {
-      return { valid: false as const };
-    }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user || !user.isActive) {
-      return { valid: false as const };
-    }
-
-    const role = await ctx.db.get(user.roleId);
-    if (!role) {
-      return { valid: false as const };
-    }
+  handler: async (ctx) => {
+    const userWithRole = await getAuthenticatedUserWithRole(ctx);
+    if (!userWithRole) return null;
 
     return {
-      valid: true as const,
-      user: {
-        _id: user._id,
-        username: user.username,
-        name: user.name,
-        roleId: user.roleId,
-        storeId: user.storeId,
-      },
-      role: {
-        _id: role._id,
-        name: role.name,
-        permissions: role.permissions,
-        scopeLevel: role.scopeLevel,
-      },
+      _id: userWithRole._id,
+      email: userWithRole.email,
+      name: userWithRole.name,
+      roleId: userWithRole.roleId,
+      storeId: userWithRole.storeId,
+      role: userWithRole.role
+        ? {
+            _id: userWithRole.role._id,
+            name: userWithRole.role.name,
+            permissions: userWithRole.role.permissions,
+            scopeLevel: userWithRole.role.scopeLevel,
+          }
+        : null,
     };
   },
 });
 
-export const getCurrentUser = query({
-  args: { token: v.optional(v.string()) },
-  returns: v.union(
-    v.object({
-      _id: v.id("users"),
-      username: v.string(),
-      name: v.string(),
-      roleId: v.id("roles"),
-      storeId: v.optional(v.id("stores")),
-      role: v.object({
-        name: v.string(),
-        permissions: v.array(v.string()),
-        scopeLevel: v.union(
-          v.literal("system"),
-          v.literal("parent"),
-          v.literal("branch")
-        ),
-      }),
-    }),
-    v.null()
-  ),
-  handler: async (ctx, args) => {
-    if (!args.token) return null;
-
-    const token = args.token;
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      return null;
-    }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user || !user.isActive) {
-      return null;
-    }
-
-    const role = await ctx.db.get(user.roleId);
-    if (!role) {
-      return null;
-    }
-
-    return {
-      _id: user._id,
-      username: user.username,
-      name: user.name,
-      roleId: user.roleId,
-      storeId: user.storeId,
-      role: {
-        name: role.name,
-        permissions: role.permissions,
-        scopeLevel: role.scopeLevel,
-      },
-    };
+/**
+ * Check if current session is valid
+ * This replaces the old token-based validateSession query
+ */
+export const isAuthenticated = query({
+  args: {},
+  returns: v.boolean(),
+  handler: async (ctx) => {
+    const user = await getAuthenticatedUser(ctx);
+    return user !== null;
   },
 });

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useSessionToken } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -65,14 +65,14 @@ const initialFormData: StoreFormData = {
 };
 
 export default function StoresPage() {
-  const token = useSessionToken();
+  const { isAuthenticated } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingStore, setEditingStore] = useState<Id<"stores"> | null>(null);
   const [formData, setFormData] = useState<StoreFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Queries
-  const stores = useQuery(api.stores.list, token ? { token } : "skip");
+  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
 
   // Mutations
   const createStore = useMutation(api.stores.create);
@@ -103,13 +103,12 @@ export default function StoresPage() {
   };
 
   const handleSubmit = async () => {
-    if (!token) return;
+    if (!isAuthenticated) return;
 
     setIsSubmitting(true);
     try {
       if (editingStore) {
         await updateStore({
-          token,
           storeId: editingStore,
           name: formData.name,
           address1: formData.address1,
@@ -122,7 +121,6 @@ export default function StoresPage() {
         toast.success("Store updated successfully");
       } else {
         await createStore({
-          token,
           name: formData.name,
           parentId: formData.parentId,
           address1: formData.address1,

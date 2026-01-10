@@ -2,28 +2,21 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 import { requirePermission } from "./lib/permissions";
+import { getAuthenticatedUser } from "./lib/auth";
 
 // Generate or get daily report for a store
 export const generateDailyReport = mutation({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     reportDate: v.string(), // YYYY-MM-DD format
   },
   returns: v.id("dailyReports"),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
 
     // Check for existing report
     const existingReport = await ctx.db
@@ -40,7 +33,7 @@ export const generateDailyReport = mutation({
       await ctx.db.patch(existingReport._id, {
         ...reportData,
         generatedAt: Date.now(),
-        generatedBy: session.userId,
+        generatedBy: currentUser._id,
       });
 
       return existingReport._id;
@@ -55,7 +48,7 @@ export const generateDailyReport = mutation({
       reportDate: args.reportDate,
       ...reportData,
       generatedAt: Date.now(),
-      generatedBy: session.userId,
+      generatedBy: currentUser._id,
       isPrinted: false,
       printedAt: undefined,
     });
@@ -356,7 +349,6 @@ async function generateProductSalesBreakdown(
 // Get daily report
 export const getDailyReport = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     reportDate: v.string(),
   },
@@ -389,14 +381,10 @@ export const getDailyReport = query({
     v.null()
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Get report
@@ -443,7 +431,6 @@ export const getDailyReport = query({
 // Get product sales for a day
 export const getDailyProductSales = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     reportDate: v.string(),
     categoryId: v.optional(v.id("categories")),
@@ -462,14 +449,10 @@ export const getDailyProductSales = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Get product sales
@@ -511,23 +494,18 @@ export const getDailyProductSales = query({
 // Mark report as printed
 export const markReportPrinted = mutation({
   args: {
-    token: v.string(),
     reportId: v.id("dailyReports"),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Verify permission
-    await requirePermission(ctx, session.userId, "reports.print_eod");
+    await requirePermission(ctx, currentUser._id, "reports.print_eod");
 
     // Update report
     await ctx.db.patch(args.reportId, {
@@ -542,7 +520,6 @@ export const markReportPrinted = mutation({
 // Get date range report (summary across multiple days)
 export const getDateRangeReport = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     startDate: v.string(),
     endDate: v.string(),
@@ -572,18 +549,14 @@ export const getDateRangeReport = query({
     ),
   }),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Verify permission for date range (all_dates)
-    await requirePermission(ctx, session.userId, "reports.all_dates");
+    await requirePermission(ctx, currentUser._id, "reports.all_dates");
 
     // Get all reports in date range
     const allReports = await ctx.db
@@ -661,7 +634,6 @@ export const getDateRangeReport = query({
 // Get branch summary (for multi-store overview)
 export const getBranchSummary = query({
   args: {
-    token: v.string(),
     parentStoreId: v.optional(v.id("stores")),
     reportDate: v.string(),
   },
@@ -677,18 +649,14 @@ export const getBranchSummary = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Verify permission
-    await requirePermission(ctx, session.userId, "reports.branch_summary");
+    await requirePermission(ctx, currentUser._id, "reports.branch_summary");
 
     // Get stores (either branches of parent or all stores)
     let stores;
@@ -736,7 +704,6 @@ export const getBranchSummary = query({
 // Get hourly sales breakdown for a day
 export const getHourlySales = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     reportDate: v.string(),
   },
@@ -748,14 +715,10 @@ export const getHourlySales = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Parse date range
@@ -806,7 +769,6 @@ export const getHourlySales = query({
 // Get top selling products
 export const getTopSellingProducts = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     reportDate: v.string(),
     limit: v.optional(v.number()),
@@ -821,14 +783,10 @@ export const getTopSellingProducts = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Get product sales
@@ -858,7 +816,6 @@ export const getTopSellingProducts = query({
 // Get category sales summary
 export const getCategorySales = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     reportDate: v.string(),
   },
@@ -873,14 +830,10 @@ export const getCategorySales = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Get product sales

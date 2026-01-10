@@ -10,10 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@auth/core": "^0.37.0",
+    "@convex-dev/auth": "^0.0.90",
+    "@types/node": "^25.0.5",
     "bcryptjs": "^3.0.3",
     "convex": "^1.29.3",
     "convex-helpers": "^0.1.108",
-    "openai": "^6.9.1"
+    "openai": "^6.9.1",
+    "scrypt-kdf": "^4.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",

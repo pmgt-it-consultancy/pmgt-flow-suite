@@ -1,11 +1,11 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { calculateChange } from "./lib/taxCalculations";
+import { getAuthenticatedUser } from "./lib/auth";
 
 // Process cash payment
 export const processCashPayment = mutation({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
     cashReceived: v.number(),
   },
@@ -14,18 +14,11 @@ export const processCashPayment = mutation({
     changeGiven: v.number(),
   }),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const user = await getAuthenticatedUser(ctx);
+    if (!user) {
+      throw new Error("Authentication required");
     }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
 
     // Get order
     const order = await ctx.db.get(args.orderId);
@@ -71,25 +64,17 @@ export const processCashPayment = mutation({
 // Process card/e-wallet payment
 export const processCardPayment = mutation({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
   },
   returns: v.object({
     success: v.boolean(),
   }),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const user = await getAuthenticatedUser(ctx);
+    if (!user) {
+      throw new Error("Authentication required");
     }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
 
     // Get order
     const order = await ctx.db.get(args.orderId);
@@ -126,7 +111,6 @@ export const processCardPayment = mutation({
 // Get receipt data for printing
 export const getReceipt = query({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
   },
   returns: v.union(
@@ -177,14 +161,10 @@ export const getReceipt = query({
     v.null()
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Get order
@@ -257,19 +237,14 @@ export const getReceipt = query({
 // Cancel an unpaid order
 export const cancelOrder = mutation({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     // Get order
@@ -307,7 +282,6 @@ export const cancelOrder = mutation({
 // Quick calculation for change (before completing payment)
 export const calculateChangeAmount = query({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
     cashReceived: v.number(),
   },
@@ -318,14 +292,10 @@ export const calculateChangeAmount = query({
     isValid: v.boolean(),
   }),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     const order = await ctx.db.get(args.orderId);

@@ -2,11 +2,11 @@ import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
 import { requirePermission } from "./lib/permissions";
+import { requireAuth } from "./lib/auth";
 
 // List tables for a store
 export const list = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     status: v.optional(
       v.union(v.literal("available"), v.literal("occupied"))
@@ -27,15 +27,8 @@ export const list = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get tables for the store
     let tables: Doc<"tables">[];
@@ -80,7 +73,6 @@ export const list = query({
 // Get single table
 export const get = query({
   args: {
-    token: v.string(),
     tableId: v.id("tables"),
   },
   returns: v.union(
@@ -98,15 +90,8 @@ export const get = query({
     v.null()
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     const table = await ctx.db.get(args.tableId);
     return table;
@@ -116,7 +101,6 @@ export const get = query({
 // Create table
 export const create = mutation({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     name: v.string(),
     capacity: v.optional(v.number()),
@@ -124,18 +108,8 @@ export const create = mutation({
   },
   returns: v.id("tables"),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
+    // Require authenticated user
+    const user = await requireAuth(ctx);
 
     // Check permission
     await requirePermission(ctx, user._id, "tables.manage");
@@ -170,7 +144,6 @@ export const create = mutation({
 // Update table
 export const update = mutation({
   args: {
-    token: v.string(),
     tableId: v.id("tables"),
     name: v.optional(v.string()),
     capacity: v.optional(v.number()),
@@ -179,18 +152,8 @@ export const update = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
+    // Require authenticated user
+    const user = await requireAuth(ctx);
 
     await requirePermission(ctx, user._id, "tables.manage");
 
@@ -202,7 +165,7 @@ export const update = mutation({
       }
     }
 
-    const { token, tableId, ...updates } = args;
+    const { tableId, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, v]) => v !== undefined)
     );
@@ -215,22 +178,14 @@ export const update = mutation({
 // Update table status (used when orders are opened/closed)
 export const updateStatus = mutation({
   args: {
-    token: v.string(),
     tableId: v.id("tables"),
     status: v.union(v.literal("available"), v.literal("occupied")),
     currentOrderId: v.optional(v.id("orders")),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     const table = await ctx.db.get(args.tableId);
     if (!table) throw new Error("Table not found");
@@ -247,23 +202,12 @@ export const updateStatus = mutation({
 // Reorder tables
 export const reorder = mutation({
   args: {
-    token: v.string(),
     tableIds: v.array(v.id("tables")),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
+    // Require authenticated user
+    const user = await requireAuth(ctx);
 
     await requirePermission(ctx, user._id, "tables.manage");
 
@@ -279,7 +223,6 @@ export const reorder = mutation({
 // Get available tables for a store (POS use)
 export const getAvailable = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
   },
   returns: v.array(
@@ -290,15 +233,8 @@ export const getAvailable = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get available and active tables
     const tables = await ctx.db
@@ -322,7 +258,6 @@ export const getAvailable = query({
 // Get table with current order details (for POS view)
 export const getWithOrder = query({
   args: {
-    token: v.string(),
     tableId: v.id("tables"),
   },
   returns: v.union(
@@ -345,15 +280,8 @@ export const getWithOrder = query({
     v.null()
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     const table = await ctx.db.get(args.tableId);
     if (!table) return null;
@@ -405,7 +333,6 @@ export const getWithOrder = query({
 // Get all tables with order summaries (for POS floor view)
 export const listWithOrders = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
   },
   returns: v.array(
@@ -427,15 +354,8 @@ export const listWithOrders = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get active tables for the store
     const tables = await ctx.db

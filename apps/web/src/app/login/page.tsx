@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -17,17 +17,18 @@ import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isLoading: authLoading, isAuthenticated } = useAuth();
-  const [username, setUsername] = useState("");
+  const { signIn, isLoading: authLoading, isAuthenticated } = useAuth();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Redirect if already authenticated
-  if (isAuthenticated && !authLoading) {
-    router.push("/dashboard");
-    return null;
-  }
+  // Redirect if already authenticated (must be in useEffect to avoid setState during render)
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +36,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const result = await login(username, password);
+      const result = await signIn(email, password);
 
       if (result.success) {
         toast.success("Login successful");
@@ -53,6 +54,7 @@ export default function LoginPage() {
     }
   };
 
+  // Show loading only during initial auth check
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -75,14 +77,15 @@ export default function LoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                type="text"
-                placeholder="Enter your username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 disabled={isSubmitting}
+                autoComplete="email"
                 required
               />
             </div>
@@ -95,6 +98,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isSubmitting}
+                autoComplete="current-password"
                 required
               />
             </div>
@@ -108,7 +112,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={isSubmitting || !username || !password}
+              disabled={isSubmitting || !email || !password}
             >
               {isSubmitting ? "Signing in..." : "Sign In"}
             </Button>
@@ -117,7 +121,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center text-sm text-gray-500">
             <p>Default credentials:</p>
             <p className="font-mono text-xs mt-1">
-              superadmin / superadmin123
+              superadmin@pmgt.com / superadmin123
             </p>
           </div>
         </CardContent>

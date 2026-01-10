@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth, useSessionToken } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -59,8 +59,7 @@ const initialFormData: CategoryFormData = {
 };
 
 export default function CategoriesPage() {
-  const { user } = useAuth();
-  const token = useSessionToken();
+  const { user, isAuthenticated } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Id<"categories"> | null>(null);
   const [formData, setFormData] = useState<CategoryFormData>(initialFormData);
@@ -70,10 +69,10 @@ export default function CategoriesPage() {
   );
 
   // Queries
-  const stores = useQuery(api.stores.list, token ? { token } : "skip");
+  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
   const categories = useQuery(
     api.categories.list,
-    token && selectedStoreId ? { token, storeId: selectedStoreId } : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip"
   );
 
   // Mutations
@@ -105,13 +104,12 @@ export default function CategoriesPage() {
   };
 
   const handleSubmit = async () => {
-    if (!token || !formData.storeId) return;
+    if (!isAuthenticated || !formData.storeId) return;
 
     setIsSubmitting(true);
     try {
       if (editingCategory) {
         await updateCategory({
-          token,
           categoryId: editingCategory,
           name: formData.name,
           parentId: formData.parentId,
@@ -121,7 +119,6 @@ export default function CategoriesPage() {
         toast.success("Category updated successfully");
       } else {
         await createCategory({
-          token,
           storeId: formData.storeId,
           name: formData.name,
           parentId: formData.parentId,

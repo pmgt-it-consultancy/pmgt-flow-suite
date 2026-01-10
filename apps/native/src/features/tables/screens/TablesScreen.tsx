@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth, useSessionToken } from "../../auth/context";
+import { useAuth } from "../../auth/context";
 import { Header, TableCard, QuickActions, EmptyState } from "../components";
 
 interface TablesScreenProps {
@@ -12,20 +12,19 @@ interface TablesScreenProps {
 }
 
 export const TablesScreen = ({ navigation }: TablesScreenProps) => {
-  const { user, logout } = useAuth();
-  const token = useSessionToken();
+  const { user, signOut, isLoading, isAuthenticated } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
 
   // Query tables for user's store
   const tables = useQuery(
     api.tables.list,
-    token && user?.storeId ? { token, storeId: user.storeId } : "skip"
+    user?.storeId ? { storeId: user.storeId } : "skip"
   );
 
   // Query orders to check which tables have active orders
   const orders = useQuery(
     api.orders.listActive,
-    token && user?.storeId ? { token, storeId: user.storeId } : "skip"
+    user?.storeId ? { storeId: user.storeId } : "skip"
   );
 
   // Create order mutation
@@ -38,12 +37,12 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
   }, []);
 
   const handleLogout = useCallback(async () => {
-    await logout();
+    await signOut();
     navigation.reset({
       index: 0,
       routes: [{ name: "LoginScreen" }],
     });
-  }, [logout, navigation]);
+  }, [signOut, navigation]);
 
   const getTableOrderInfo = useCallback(
     (tableId: Id<"tables">) => {
@@ -60,7 +59,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
 
   const handleSelectTable = useCallback(
     async (tableId: Id<"tables">, tableName: string) => {
-      if (!token || !user?.storeId) return;
+      if (!user?.storeId) return;
 
       const orderInfo = getTableOrderInfo(tableId);
 
@@ -80,7 +79,6 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
             onPress: async () => {
               try {
                 const orderId = await createOrder({
-                  token,
                   storeId: user.storeId!,
                   tableId,
                   orderType: "dine_in",
@@ -99,10 +97,10 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
         ]);
       }
     },
-    [token, user?.storeId, getTableOrderInfo, navigation, createOrder]
+    [user?.storeId, getTableOrderInfo, navigation, createOrder]
   );
 
-  if (!token) {
+  if (isLoading || !isAuthenticated) {
     return (
       <View className="flex-1 justify-center items-center bg-gray-100">
         <ActivityIndicator size="large" color="#0D87E1" />

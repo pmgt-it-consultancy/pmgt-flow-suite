@@ -1,5 +1,5 @@
 // Auth Feature
-export { AuthProvider, useAuth, useSessionToken } from "./auth";
+export { AuthProvider, useAuth } from "./auth";
 export { LoginScreen } from "./auth";
 
 // Tables Feature

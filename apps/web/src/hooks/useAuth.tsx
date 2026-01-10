@@ -3,21 +3,22 @@
 import {
   createContext,
   useContext,
-  useState,
-  useEffect,
   useCallback,
   ReactNode,
+  useEffect,
 } from "react";
-import { useAction, useQuery } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { useConvexAuth } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 // Types
 interface User {
   _id: Id<"users">;
-  username: string;
-  name: string;
-  roleId: Id<"roles">;
+  email?: string;
+  name?: string;
+  roleId?: Id<"roles">;
   storeId?: Id<"stores">;
   permissions: string[];
   roleName: string;
@@ -28,134 +29,78 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  logout: () => Promise<void>;
+  signIn: (
+    email: string,
+    password: string,
+    flow?: "signIn" | "signUp"
+  ) => Promise<{ success: boolean; error?: string }>;
+  signOut: () => Promise<void>;
   hasPermission: (permission: string) => boolean;
   hasAnyPermission: (permissions: string[]) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Token storage key
-const TOKEN_KEY = "pos_session_token";
-
-// Get token from localStorage
-function getToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem(TOKEN_KEY);
-}
-
-// Set token in localStorage
-function setToken(token: string): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(TOKEN_KEY, token);
-}
-
-// Remove token from localStorage
-function removeToken(): void {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(TOKEN_KEY);
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [token, setTokenState] = useState<string | null>(null);
+  const {
+    isLoading: isAuthLoading,
+    isAuthenticated: isConvexAuthenticated,
+  } = useConvexAuth();
+  const { signIn: convexSignIn, signOut: convexSignOut } = useAuthActions();
 
-  // Convex actions
-  const loginAction = useAction(api.auth.login);
-  const logoutAction = useAction(api.auth.logout);
-
-  // Validate session query - only runs when we have a token
-  const sessionValidation = useQuery(
-    api.sessions.validateSession,
-    token ? { token } : "skip"
+  // Query current user when authenticated (Convex Auth handles auth context automatically)
+  const currentUser = useQuery(
+    api.sessions.getCurrentUser,
+    isConvexAuthenticated ? {} : "skip"
   );
 
-  // Initialize token from localStorage
-  useEffect(() => {
-    const storedToken = getToken();
-    if (storedToken) {
-      setTokenState(storedToken);
-    } else {
-      setIsLoading(false);
-    }
-  }, []);
+  // Determine loading state
+  const isLoading =
+    isAuthLoading || (isConvexAuthenticated && currentUser === undefined);
 
-  // Update user when session validation returns
-  useEffect(() => {
-    if (sessionValidation === undefined && token) {
-      // Still loading
-      return;
-    }
+  // Build user object with permissions from role
+  const user: User | null =
+    currentUser && currentUser.role
+      ? {
+          _id: currentUser._id,
+          email: currentUser.email,
+          name: currentUser.name,
+          roleId: currentUser.roleId,
+          storeId: currentUser.storeId,
+          permissions: currentUser.role.permissions,
+          roleName: currentUser.role.name,
+          storeName: undefined, // Fetched separately if needed
+        }
+      : null;
 
-    if (!sessionValidation || !sessionValidation.valid) {
-      // Invalid session
-      setUser(null);
-      setIsLoading(false);
-      if (token) {
-        removeToken();
-        setTokenState(null);
-      }
-    } else {
-      // Valid session
-      setUser({
-        _id: sessionValidation.user._id,
-        username: sessionValidation.user.username,
-        name: sessionValidation.user.name,
-        roleId: sessionValidation.user.roleId,
-        storeId: sessionValidation.user.storeId,
-        permissions: sessionValidation.role.permissions,
-        roleName: sessionValidation.role.name,
-        storeName: undefined, // Will be fetched separately if needed
-      });
-      setIsLoading(false);
-    }
-  }, [sessionValidation, token]);
-
-  // Login function
-  const login = useCallback(
+  // Sign in function using Convex Auth Password provider
+  const signIn = useCallback(
     async (
-      username: string,
-      password: string
+      email: string,
+      password: string,
+      flow: "signIn" | "signUp" = "signIn"
     ): Promise<{ success: boolean; error?: string }> => {
       try {
-        const result = await loginAction({ username, password });
-
-        if (result.success && "token" in result) {
-          setToken(result.token);
-          setTokenState(result.token);
-          return { success: true };
-        } else if (!result.success && "error" in result) {
-          return { success: false, error: result.error };
-        } else {
-          return { success: false, error: "Login failed" };
-        }
+        await convexSignIn("password", { email, password, flow });
+        return { success: true };
       } catch (error) {
-        console.error("Login error:", error);
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : "Login failed",
-        };
+        console.error("Sign in error:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : "Authentication failed";
+        return { success: false, error: errorMessage };
       }
     },
-    [loginAction]
+    [convexSignIn]
   );
 
-  // Logout function
-  const logout = useCallback(async () => {
+  // Sign out function
+  const signOut = useCallback(async () => {
     try {
-      if (token) {
-        await logoutAction({ token });
-      }
+      await convexSignOut();
     } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      removeToken();
-      setTokenState(null);
-      setUser(null);
+      console.error("Sign out error:", error);
     }
-  }, [logoutAction, token]);
+  }, [convexSignOut]);
 
   // Permission check functions
   const hasPermission = useCallback(
@@ -177,9 +122,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthContextType = {
     user,
     isLoading,
-    isAuthenticated: !!user,
-    login,
-    logout,
+    isAuthenticated: isConvexAuthenticated && !!user,
+    signIn,
+    signOut,
     hasPermission,
     hasAnyPermission,
   };
@@ -193,17 +138,6 @@ export function useAuth(): AuthContextType {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
-
-// Hook to get the current session token
-export function useSessionToken(): string | null {
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    setToken(getToken());
-  }, []);
-
-  return token;
 }
 
 // Hook to require authentication (redirect if not authenticated)
@@ -220,7 +154,10 @@ export function useRequireAuth(redirectTo = "/login") {
 }
 
 // Hook to require a specific permission
-export function useRequirePermission(permission: string, redirectTo = "/dashboard") {
+export function useRequirePermission(
+  permission: string,
+  redirectTo = "/dashboard"
+) {
   const { hasPermission, isLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {

@@ -116,6 +116,7 @@ export async function hasPermission(
 ): Promise<boolean> {
   const user = await ctx.db.get(userId);
   if (!user || !user.isActive) return false;
+  if (!user.roleId) return false;
 
   const role = await ctx.db.get(user.roleId);
   if (!role) return false;

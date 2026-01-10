@@ -1,7 +1,32 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
+  // Convex Auth tables (authAccounts, authRateLimits, authRefreshTokens, authSessions, authVerificationCodes, authVerifiers)
+  ...authTables,
+
+  // Extended users table with custom fields for our POS system
+  users: defineTable({
+    // Convex Auth required fields
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+
+    // Custom POS system fields
+    roleId: v.optional(v.id("roles")),
+    storeId: v.optional(v.id("stores")),
+    pin: v.optional(v.string()), // Manager PIN (bcrypt hashed)
+    isActive: v.optional(v.boolean()),
+  })
+    .index("email", ["email"])
+    .index("phone", ["phone"])
+    .index("by_store", ["storeId"]),
+
   // Keep notes temporarily for migration
   notes: defineTable({
     userId: v.string(),
@@ -10,7 +35,7 @@ export default defineSchema({
     summary: v.optional(v.string()),
   }),
 
-  // ===== AUTH =====
+  // ===== ROLES =====
   roles: defineTable({
     name: v.string(),
     permissions: v.array(v.string()),
@@ -21,29 +46,6 @@ export default defineSchema({
     ),
     isSystem: v.boolean(),
   }),
-
-  users: defineTable({
-    username: v.string(),
-    passwordHash: v.string(),
-    name: v.string(),
-    roleId: v.id("roles"),
-    storeId: v.optional(v.id("stores")),
-    isActive: v.boolean(),
-    pin: v.optional(v.string()),
-    createdAt: v.number(),
-    lastLoginAt: v.optional(v.number()),
-  })
-    .index("by_username", ["username"])
-    .index("by_store", ["storeId"]),
-
-  sessions: defineTable({
-    userId: v.id("users"),
-    token: v.string(),
-    expiresAt: v.number(),
-    createdAt: v.number(),
-  })
-    .index("by_token", ["token"])
-    .index("by_user", ["userId"]),
 
   // ===== STORES =====
   stores: defineTable({

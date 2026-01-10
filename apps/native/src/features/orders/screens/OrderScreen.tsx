@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useSessionToken } from "../../auth/context";
+import { useAuth } from "../../auth/context";
 import { Text } from "../../shared/components/ui";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -36,7 +36,7 @@ interface SelectedProduct {
 
 export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const { orderId, tableId, tableName } = route.params;
-  const token = useSessionToken();
+  const { isLoading, isAuthenticated } = useAuth();
 
   const [selectedCategory, setSelectedCategory] = useState<Id<"categories"> | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,15 +45,15 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
 
-  // Queries
-  const order = useQuery(api.orders.get, token ? { token, orderId } : "skip");
+  // Queries - auth is handled automatically by Convex Auth
+  const order = useQuery(api.orders.get, { orderId });
   const products = useQuery(
     api.products.list,
-    token && order?.storeId ? { token, storeId: order.storeId } : "skip"
+    order?.storeId ? { storeId: order.storeId } : "skip"
   );
   const categories = useQuery(
     api.categories.list,
-    token && order?.storeId ? { token, storeId: order.storeId } : "skip"
+    order?.storeId ? { storeId: order.storeId } : "skip"
   );
 
   // Mutations
@@ -88,12 +88,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   }, []);
 
   const handleConfirmAdd = useCallback(async () => {
-    if (!token || !selectedProduct) return;
+    if (!selectedProduct) return;
 
     setIsAddingItem(true);
     try {
       await addItem({
-        token,
         orderId,
         productId: selectedProduct.id,
         quantity,
@@ -106,25 +105,22 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     } finally {
       setIsAddingItem(false);
     }
-  }, [token, selectedProduct, orderId, quantity, notes, addItem]);
+  }, [selectedProduct, orderId, quantity, notes, addItem]);
 
   const handleIncrement = useCallback(
     async (itemId: Id<"orderItems">, currentQty: number) => {
-      if (!token) return;
       try {
-        await updateItemQuantity({ token, orderItemId: itemId, quantity: currentQty + 1 });
+        await updateItemQuantity({ orderItemId: itemId, quantity: currentQty + 1 });
       } catch (error) {
         console.error("Update quantity error:", error);
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [token, updateItemQuantity]
+    [updateItemQuantity]
   );
 
   const handleDecrement = useCallback(
     async (itemId: Id<"orderItems">, currentQty: number) => {
-      if (!token) return;
-
       if (currentQty <= 1) {
         Alert.alert("Remove Item", "Are you sure you want to remove this item?", [
           { text: "Cancel", style: "cancel" },
@@ -133,7 +129,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             style: "destructive",
             onPress: async () => {
               try {
-                await removeItem({ token, orderItemId: itemId });
+                await removeItem({ orderItemId: itemId });
               } catch (error) {
                 console.error("Remove item error:", error);
                 Alert.alert("Error", "Failed to remove item");
@@ -145,13 +141,13 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       }
 
       try {
-        await updateItemQuantity({ token, orderItemId: itemId, quantity: currentQty - 1 });
+        await updateItemQuantity({ orderItemId: itemId, quantity: currentQty - 1 });
       } catch (error) {
         console.error("Update quantity error:", error);
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [token, updateItemQuantity, removeItem]
+    [updateItemQuantity, removeItem]
   );
 
   const handleCheckout = useCallback(() => {
@@ -162,7 +158,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     navigation.navigate("CheckoutScreen", { orderId, tableId, tableName });
   }, [activeItems.length, navigation, orderId, tableId, tableName]);
 
-  if (!token || !order) {
+  if (isLoading || !isAuthenticated || !order) {
     return (
       <View className="flex-1 justify-center items-center bg-gray-100">
         <ActivityIndicator size="large" color="#0D87E1" />

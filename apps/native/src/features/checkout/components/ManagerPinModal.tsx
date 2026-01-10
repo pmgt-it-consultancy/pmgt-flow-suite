@@ -5,7 +5,7 @@ import { useQuery, useAction } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { Text, Modal, Button } from "../../shared/components/ui";
-import { useSessionToken, useAuth } from "../../auth/context";
+import { useAuth } from "../../auth/context";
 
 interface ManagerPinModalProps {
   visible: boolean;
@@ -23,35 +23,34 @@ export const ManagerPinModal = ({
   onSuccess,
 }: ManagerPinModalProps) => {
   const { user } = useAuth();
-  const token = useSessionToken();
   const [selectedManagerId, setSelectedManagerId] = useState<Id<"users"> | null>(null);
   const [pin, setPin] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
 
-  // Query managers for this store
+  // Query managers for this store - auth handled by Convex Auth provider
   const managers = useQuery(
-    api.users.listManagers,
-    token && user?.storeId ? { token, storeId: user.storeId } : "skip"
+    api.helpers.usersHelpers.listManagers,
+    user?.storeId ? { storeId: user.storeId } : "skip"
   );
 
-  const verifyPin = useAction(api.auth.verifyManagerPin);
+  const verifyPin = useAction(api.users.verifyPin);
 
   const handleVerify = useCallback(async () => {
-    if (!token || !selectedManagerId || !pin) return;
+    if (!selectedManagerId || !pin) return;
 
     setIsVerifying(true);
     try {
-      const isValid = await verifyPin({
+      const result = await verifyPin({
         userId: selectedManagerId,
         pin,
       });
 
-      if (isValid) {
+      if (result.success) {
         onSuccess(selectedManagerId);
         setPin("");
         setSelectedManagerId(null);
       } else {
-        Alert.alert("Invalid PIN", "The PIN entered is incorrect");
+        Alert.alert("Invalid PIN", result.error || "The PIN entered is incorrect");
       }
     } catch (error) {
       console.error("Verify PIN error:", error);
@@ -59,7 +58,7 @@ export const ManagerPinModal = ({
     } finally {
       setIsVerifying(false);
     }
-  }, [token, selectedManagerId, pin, verifyPin, onSuccess]);
+  }, [selectedManagerId, pin, verifyPin, onSuccess]);
 
   const handleClose = useCallback(() => {
     setPin("");

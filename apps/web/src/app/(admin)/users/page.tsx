@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth, useSessionToken } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -44,28 +44,25 @@ import { Plus, Pencil, Users, Search, Key } from "lucide-react";
 import { formatDate } from "@/lib/format";
 
 interface UserFormData {
-  username: string;
+  email: string;
   password: string;
   name: string;
   roleId: Id<"roles"> | undefined;
   storeId: Id<"stores"> | undefined;
-  pin: string;
   isActive: boolean;
 }
 
 const initialFormData: UserFormData = {
-  username: "",
+  email: "",
   password: "",
   name: "",
   roleId: undefined,
   storeId: undefined,
-  pin: "",
   isActive: true,
 };
 
 export default function UsersPage() {
-  const { user } = useAuth();
-  const token = useSessionToken();
+  const { user, isAuthenticated } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<Id<"users"> | null>(null);
@@ -79,25 +76,25 @@ export default function UsersPage() {
   );
 
   // Queries
-  const stores = useQuery(api.stores.list, token ? { token } : "skip");
-  const roles = useQuery(api.roles.list, token ? { token } : "skip");
+  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
+  const roles = useQuery(api.roles.list, isAuthenticated ? {} : "skip");
   const users = useQuery(
-    api.users.list,
-    token
-      ? { token, storeId: selectedStoreId }
+    api.helpers.usersHelpers.list,
+    isAuthenticated
+      ? { storeId: selectedStoreId }
       : "skip"
   );
 
   // Mutations & Actions
   const createUser = useAction(api.users.create);
-  const updateUser = useMutation(api.users.update);
+  const updateUser = useMutation(api.helpers.usersHelpers.update);
   const resetPassword = useAction(api.users.resetPassword);
 
   // Filter users by search query
   const filteredUsers = users?.filter(
     (u) =>
-      u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.username.toLowerCase().includes(searchQuery.toLowerCase())
+      (u.name?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()) ||
+      (u.email?.toLowerCase() ?? "").includes(searchQuery.toLowerCase())
   );
 
   const handleOpenCreate = () => {
@@ -112,12 +109,11 @@ export default function UsersPage() {
   const handleOpenEdit = (userItem: NonNullable<typeof users>[number]) => {
     setEditingUser(userItem._id);
     setFormData({
-      username: userItem.username,
+      email: userItem.email ?? "",
       password: "", // Don't show existing password
-      name: userItem.name,
+      name: userItem.name ?? "",
       roleId: userItem.roleId,
       storeId: userItem.storeId,
-      pin: "", // Don't show existing PIN
       isActive: userItem.isActive,
     });
     setIsDialogOpen(true);
@@ -130,37 +126,39 @@ export default function UsersPage() {
   };
 
   const handleSubmit = async () => {
-    if (!token || !formData.roleId) return;
+    if (!isAuthenticated || !formData.roleId) return;
 
     setIsSubmitting(true);
     try {
       if (editingUser) {
         await updateUser({
-          token,
           userId: editingUser,
           name: formData.name,
           roleId: formData.roleId,
           storeId: formData.storeId,
-          pin: formData.pin || undefined,
           isActive: formData.isActive,
         });
         toast.success("User updated successfully");
       } else {
-        if (!formData.password) {
-          toast.error("Password is required for new users");
+        if (!formData.password || !formData.email) {
+          toast.error("Email and password are required for new users");
           setIsSubmitting(false);
           return;
         }
-        await createUser({
-          token,
-          username: formData.username,
+        const result = await createUser({
+          email: formData.email,
           password: formData.password,
           name: formData.name,
           roleId: formData.roleId,
           storeId: formData.storeId,
-          pin: formData.pin || undefined,
         });
-        toast.success("User created successfully");
+        if (result.success) {
+          toast.success("User created successfully");
+        } else {
+          toast.error(result.error);
+          setIsSubmitting(false);
+          return;
+        }
       }
       setIsDialogOpen(false);
       setFormData(initialFormData);
@@ -175,12 +173,11 @@ export default function UsersPage() {
   };
 
   const handleResetPassword = async () => {
-    if (!token || !resetPasswordUserId || !newPassword) return;
+    if (!isAuthenticated || !resetPasswordUserId || !newPassword) return;
 
     setIsSubmitting(true);
     try {
       await resetPassword({
-        token,
         userId: resetPasswordUserId,
         newPassword,
       });
@@ -245,7 +242,7 @@ export default function UsersPage() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
-                placeholder="Search users by name or username..."
+                placeholder="Search users by name or email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -282,10 +279,9 @@ export default function UsersPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Username</TableHead>
+                  <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Store</TableHead>
-                  <TableHead>Last Login</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -294,9 +290,9 @@ export default function UsersPage() {
                 {filteredUsers?.map((userItem) => (
                   <TableRow key={userItem._id}>
                     <TableCell className="font-medium">
-                      {userItem.name}
+                      {userItem.name ?? "—"}
                     </TableCell>
-                    <TableCell>{userItem.username}</TableCell>
+                    <TableCell>{userItem.email ?? "—"}</TableCell>
                     <TableCell>
                       <Badge
                         variant={
@@ -311,11 +307,6 @@ export default function UsersPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>{userItem.storeName ?? "All Stores"}</TableCell>
-                    <TableCell>
-                      {userItem.lastLoginAt
-                        ? formatDate(userItem.lastLoginAt)
-                        : "Never"}
-                    </TableCell>
                     <TableCell>
                       <Badge
                         variant={userItem.isActive ? "default" : "destructive"}
@@ -377,19 +368,20 @@ export default function UsersPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                value={formData.username}
+                id="email"
+                type="email"
+                value={formData.email}
                 onChange={(e) =>
-                  setFormData({ ...formData, username: e.target.value })
+                  setFormData({ ...formData, email: e.target.value })
                 }
-                placeholder="Enter username"
+                placeholder="Enter email address"
                 disabled={!!editingUser}
               />
               {editingUser && (
                 <p className="text-xs text-gray-500">
-                  Username cannot be changed after creation.
+                  Email cannot be changed after creation.
                 </p>
               )}
             </div>
@@ -461,23 +453,6 @@ export default function UsersPage() {
               </p>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="pin">Manager PIN (Optional)</Label>
-              <Input
-                id="pin"
-                type="password"
-                maxLength={6}
-                value={formData.pin}
-                onChange={(e) =>
-                  setFormData({ ...formData, pin: e.target.value })
-                }
-                placeholder="4-6 digit PIN for void approvals"
-              />
-              <p className="text-xs text-gray-500">
-                Used for approving voids and discounts on POS.
-              </p>
-            </div>
-
             {editingUser && (
               <div className="grid gap-2">
                 <Label htmlFor="isActive">Status</Label>
@@ -515,7 +490,7 @@ export default function UsersPage() {
               disabled={
                 isSubmitting ||
                 !formData.name ||
-                !formData.username ||
+                !formData.email ||
                 !formData.roleId ||
                 (!editingUser && !formData.password)
               }

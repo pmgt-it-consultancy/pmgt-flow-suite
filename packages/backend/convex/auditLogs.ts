@@ -1,11 +1,11 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { requireAuth } from "./lib/auth";
 
 // Log an audit event
 export const log = mutation({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     action: v.string(),
     entityType: v.string(),
@@ -14,15 +14,8 @@ export const log = mutation({
   },
   returns: v.id("auditLogs"),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    const user = await requireAuth(ctx);
 
     return await ctx.db.insert("auditLogs", {
       storeId: args.storeId,
@@ -30,7 +23,7 @@ export const log = mutation({
       entityType: args.entityType,
       entityId: args.entityId,
       details: args.details ?? "",
-      userId: session.userId,
+      userId: user._id,
       createdAt: Date.now(),
     });
   },
@@ -39,7 +32,6 @@ export const log = mutation({
 // Get audit logs for a store
 export const list = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     action: v.optional(v.string()),
     entityType: v.optional(v.string()),
@@ -59,15 +51,8 @@ export const list = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Build query
     let logs = await ctx.db
@@ -122,7 +107,6 @@ export const list = query({
 // Get audit logs for a specific entity
 export const getByEntity = query({
   args: {
-    token: v.string(),
     entityType: v.string(),
     entityId: v.string(),
     limit: v.optional(v.number()),
@@ -138,15 +122,8 @@ export const getByEntity = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get logs for entity
     let logs = await ctx.db
@@ -179,7 +156,6 @@ export const getByEntity = query({
 // Get void-related audit logs (for reporting)
 export const getVoidLogs = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     startDate: v.number(),
     endDate: v.number(),
@@ -195,15 +171,8 @@ export const getVoidLogs = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get void logs for store
     const allLogs = await ctx.db
@@ -242,7 +211,6 @@ export const getVoidLogs = query({
 // Get discount-related audit logs (for reporting)
 export const getDiscountLogs = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     startDate: v.number(),
     endDate: v.number(),
@@ -258,15 +226,8 @@ export const getDiscountLogs = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get discount logs for store
     const allLogs = await ctx.db
@@ -305,7 +266,6 @@ export const getDiscountLogs = query({
 // Summary of actions by user (for accountability)
 export const getUserActionSummary = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     startDate: v.number(),
     endDate: v.number(),
@@ -321,15 +281,8 @@ export const getUserActionSummary = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get logs for store in date range
     const allLogs = await ctx.db
@@ -384,7 +337,7 @@ export const getUserActionSummary = query({
       Array.from(userMap.entries()).map(async ([userId, summary]) => {
         const userIdTyped = userId as Id<"users">;
         const user = await ctx.db.get(userIdTyped);
-        const userName = user && "name" in user ? user.name : "Unknown";
+        const userName = user?.name ?? "Unknown";
         return {
           userId: userIdTyped,
           userName,

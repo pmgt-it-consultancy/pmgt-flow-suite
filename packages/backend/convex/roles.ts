@@ -1,13 +1,10 @@
-"use node";
-
 import { v } from "convex/values";
 import { query } from "./_generated/server";
+import { getAuthenticatedUserWithRole } from "./lib/auth";
 
 // List all roles
 export const list = query({
-  args: {
-    token: v.string(),
-  },
+  args: {},
   returns: v.array(
     v.object({
       _id: v.id("roles"),
@@ -21,23 +18,14 @@ export const list = query({
       isSystem: v.boolean(),
     })
   ),
-  handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+  handler: async (ctx) => {
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUserWithRole(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
-    const user = await ctx.db.get(session.userId);
-    if (!user || !user.isActive) {
-      throw new Error("User not found or inactive");
-    }
-
-    const role = await ctx.db.get(user.roleId);
+    const { role } = currentUser;
     if (!role) {
       throw new Error("Role not found");
     }
@@ -70,7 +58,6 @@ export const list = query({
 // Get single role
 export const get = query({
   args: {
-    token: v.string(),
     roleId: v.id("roles"),
   },
   returns: v.union(
@@ -88,14 +75,10 @@ export const get = query({
     v.null()
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
+    // Verify authentication using Convex Auth
+    const currentUser = await getAuthenticatedUserWithRole(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
     }
 
     const role = await ctx.db.get(args.roleId);

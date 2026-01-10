@@ -6,6 +6,7 @@ import {
   aggregateOrderTotals,
   ItemCalculation,
 } from "./lib/taxCalculations";
+import { requireAuth } from "./lib/auth";
 
 // Generate next order number for today
 async function getNextOrderNumber(
@@ -34,7 +35,6 @@ async function getNextOrderNumber(
 // Create a new order
 export const create = mutation({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
     tableId: v.optional(v.id("tables")),
@@ -42,18 +42,8 @@ export const create = mutation({
   },
   returns: v.id("orders"),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const user = await ctx.db.get(session.userId);
-    if (!user) throw new Error("User not found");
+    // Require authenticated user
+    const user = await requireAuth(ctx);
 
     // Validate dine-in orders have a table
     if (args.orderType === "dine_in" && !args.tableId) {
@@ -112,7 +102,6 @@ export const create = mutation({
 // Get single order with items
 export const get = query({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
   },
   returns: v.union(
@@ -158,15 +147,8 @@ export const get = query({
     v.null()
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     const order = await ctx.db.get(args.orderId);
     if (!order) return null;
@@ -231,7 +213,6 @@ export const get = query({
 // List orders for a store
 export const list = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
     status: v.optional(
       v.union(v.literal("open"), v.literal("paid"), v.literal("voided"))
@@ -252,15 +233,8 @@ export const list = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get orders
     let orders: Doc<"orders">[];
@@ -322,20 +296,12 @@ export const list = query({
 // Get open order for a table
 export const getOpenByTable = query({
   args: {
-    token: v.string(),
     tableId: v.id("tables"),
   },
   returns: v.union(v.id("orders"), v.null()),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get the table's current order
     const table = await ctx.db.get(args.tableId);
@@ -352,7 +318,6 @@ export const getOpenByTable = query({
 // Add item to order
 export const addItem = mutation({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
     productId: v.id("products"),
     quantity: v.number(),
@@ -360,15 +325,8 @@ export const addItem = mutation({
   },
   returns: v.id("orderItems"),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Validate order is open
     const order = await ctx.db.get(args.orderId);
@@ -406,21 +364,13 @@ export const addItem = mutation({
 // Update item quantity
 export const updateItemQuantity = mutation({
   args: {
-    token: v.string(),
     orderItemId: v.id("orderItems"),
     quantity: v.number(),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get order item
     const item = await ctx.db.get(args.orderItemId);
@@ -451,21 +401,13 @@ export const updateItemQuantity = mutation({
 // Update item notes
 export const updateItemNotes = mutation({
   args: {
-    token: v.string(),
     orderItemId: v.id("orderItems"),
     notes: v.optional(v.string()),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get order item
     const item = await ctx.db.get(args.orderItemId);
@@ -486,21 +428,13 @@ export const updateItemNotes = mutation({
 // Remove item from order (decreases quantity or removes entirely)
 export const removeItem = mutation({
   args: {
-    token: v.string(),
     orderItemId: v.id("orderItems"),
     quantityToRemove: v.optional(v.number()),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get order item
     const item = await ctx.db.get(args.orderItemId);
@@ -578,21 +512,13 @@ async function recalculateOrderTotals(
 // Update customer name (for takeout orders)
 export const updateCustomerName = mutation({
   args: {
-    token: v.string(),
     orderId: v.id("orders"),
     customerName: v.optional(v.string()),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
@@ -608,7 +534,6 @@ export const updateCustomerName = mutation({
 // List active (open) orders for a store - used by POS table view
 export const listActive = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
   },
   returns: v.array(
@@ -625,15 +550,8 @@ export const listActive = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get open orders for this store
     const orders = await ctx.db
@@ -683,7 +601,6 @@ export const listActive = query({
 // Get today's open orders for a store (for POS dashboard)
 export const getTodaysOpenOrders = query({
   args: {
-    token: v.string(),
     storeId: v.id("stores"),
   },
   returns: v.array(
@@ -699,15 +616,8 @@ export const getTodaysOpenOrders = query({
     })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
+    // Require authenticated user
+    await requireAuth(ctx);
 
     // Get start of today
     const today = new Date();

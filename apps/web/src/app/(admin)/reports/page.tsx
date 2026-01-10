@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth, useSessionToken } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -52,8 +52,7 @@ import {
 import { formatCurrency, formatDate, formatDateString } from "@/lib/format";
 
 export default function ReportsPage() {
-  const { user } = useAuth();
-  const token = useSessionToken();
+  const { user, isAuthenticated } = useAuth();
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedStoreId, setSelectedStoreId] = useState<Id<"stores"> | undefined>(
     user?.storeId
@@ -67,35 +66,35 @@ export default function ReportsPage() {
   const [dateRangeEnd, setDateRangeEnd] = useState(formatDateString(new Date()));
 
   // Queries
-  const stores = useQuery(api.stores.list, token ? { token } : "skip");
+  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
   const dailyReport = useQuery(
     api.reports.getDailyReport,
-    token && selectedStoreId
-      ? { token, storeId: selectedStoreId, reportDate }
+    isAuthenticated && selectedStoreId
+      ? { storeId: selectedStoreId, reportDate }
       : "skip"
   );
   const productSales = useQuery(
     api.reports.getDailyProductSales,
-    token && selectedStoreId
-      ? { token, storeId: selectedStoreId, reportDate }
+    isAuthenticated && selectedStoreId
+      ? { storeId: selectedStoreId, reportDate }
       : "skip"
   );
   const categorySales = useQuery(
     api.reports.getCategorySales,
-    token && selectedStoreId
-      ? { token, storeId: selectedStoreId, reportDate }
+    isAuthenticated && selectedStoreId
+      ? { storeId: selectedStoreId, reportDate }
       : "skip"
   );
   const hourlySales = useQuery(
     api.reports.getHourlySales,
-    token && selectedStoreId
-      ? { token, storeId: selectedStoreId, reportDate }
+    isAuthenticated && selectedStoreId
+      ? { storeId: selectedStoreId, reportDate }
       : "skip"
   );
   const dateRangeReport = useQuery(
     api.reports.getDateRangeReport,
-    token && selectedStoreId
-      ? { token, storeId: selectedStoreId, startDate: dateRangeStart, endDate: dateRangeEnd }
+    isAuthenticated && selectedStoreId
+      ? { storeId: selectedStoreId, startDate: dateRangeStart, endDate: dateRangeEnd }
       : "skip"
   );
 
@@ -104,12 +103,11 @@ export default function ReportsPage() {
   const markPrinted = useMutation(api.reports.markReportPrinted);
 
   const handleGenerateReport = async () => {
-    if (!token || !selectedStoreId) return;
+    if (!isAuthenticated || !selectedStoreId) return;
 
     setIsGenerating(true);
     try {
       await generateReport({
-        token,
         storeId: selectedStoreId,
         reportDate,
       });
@@ -124,10 +122,10 @@ export default function ReportsPage() {
   };
 
   const handleMarkPrinted = async () => {
-    if (!token || !dailyReport?._id) return;
+    if (!isAuthenticated || !dailyReport?._id) return;
 
     try {
-      await markPrinted({ token, reportId: dailyReport._id });
+      await markPrinted({ reportId: dailyReport._id });
       toast.success("Report marked as printed");
     } catch (error) {
       toast.error(

@@ -1,388 +1,281 @@
 "use node";
 
 import { v } from "convex/values";
-import { query, mutation, action, internalMutation } from "./_generated/server";
-import { api, internal } from "./_generated/api";
-import { Doc, Id } from "./_generated/dataModel";
-import { requirePermission } from "./lib/permissions";
+import { action } from "./_generated/server";
+import { internal } from "./_generated/api";
 import bcrypt from "bcryptjs";
+import * as Scrypt from "scrypt-kdf";
+import { createAccount } from "@convex-dev/auth/server";
 
-// List users based on user scope
-export const list = query({
+/**
+ * User management actions
+ *
+ * Admin user management:
+ * - create: Create new user accounts (admin only)
+ * - resetPassword: Reset user passwords (admin only)
+ *
+ * POS-specific user management:
+ * - Setting/updating manager PINs (for void approvals, etc.)
+ * - Profile queries are in helpers/usersHelpers.ts
+ */
+
+// Action to set or update a user's PIN (handles bcrypt hashing)
+export const setPin = action({
   args: {
-    token: v.string(),
-    storeId: v.optional(v.id("stores")),
-  },
-  returns: v.array(
-    v.object({
-      _id: v.id("users"),
-      username: v.string(),
-      name: v.string(),
-      roleId: v.id("roles"),
-      roleName: v.string(),
-      storeId: v.optional(v.id("stores")),
-      storeName: v.optional(v.string()),
-      isActive: v.boolean(),
-      createdAt: v.number(),
-      lastLoginAt: v.optional(v.number()),
-    })
-  ),
-  handler: async (ctx, args) => {
-    // Validate session and get user
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const currentUser = await ctx.db.get(session.userId);
-    if (!currentUser || !currentUser.isActive) {
-      throw new Error("User not found or inactive");
-    }
-
-    const currentRole = await ctx.db.get(currentUser.roleId);
-    if (!currentRole) {
-      throw new Error("Role not found");
-    }
-
-    let users: Doc<"users">[] = [];
-
-    if (currentRole.scopeLevel === "system") {
-      // Super Admin: all users (optionally filter by store)
-      if (args.storeId) {
-        users = await ctx.db
-          .query("users")
-          .withIndex("by_store", (q) => q.eq("storeId", args.storeId))
-          .collect();
-        // Also include users with no store (Super Admins)
-        const noStoreUsers = await ctx.db
-          .query("users")
-          .withIndex("by_store", (q) => q.eq("storeId", undefined))
-          .collect();
-        users = [...users, ...noStoreUsers];
-      } else {
-        users = await ctx.db.query("users").collect();
-      }
-    } else if (currentRole.scopeLevel === "parent" && currentUser.storeId) {
-      // Admin: users in parent store + branches
-      const branches = await ctx.db
-        .query("stores")
-        .withIndex("by_parent", (q) => q.eq("parentId", currentUser.storeId))
-        .collect();
-      const storeIds = [currentUser.storeId, ...branches.map((b) => b._id)];
-
-      // Get users for each store
-      for (const storeId of storeIds) {
-        const storeUsers = await ctx.db
-          .query("users")
-          .withIndex("by_store", (q) => q.eq("storeId", storeId))
-          .collect();
-        users.push(...storeUsers);
-      }
-    } else if (currentUser.storeId) {
-      // Manager: users in same store only
-      users = await ctx.db
-        .query("users")
-        .withIndex("by_store", (q) => q.eq("storeId", currentUser.storeId))
-        .collect();
-    }
-
-    // Enrich with role and store names
-    const enrichedUsers = await Promise.all(
-      users.map(async (user) => {
-        const role = await ctx.db.get(user.roleId);
-        let storeName: string | undefined;
-        if (user.storeId) {
-          const store = await ctx.db.get(user.storeId);
-          storeName = store?.name;
-        }
-
-        return {
-          _id: user._id,
-          username: user.username,
-          name: user.name,
-          roleId: user.roleId,
-          roleName: role?.name ?? "Unknown",
-          storeId: user.storeId,
-          storeName,
-          isActive: user.isActive,
-          createdAt: user.createdAt,
-          lastLoginAt: user.lastLoginAt,
-        };
-      })
-    );
-
-    return enrichedUsers;
-  },
-});
-
-// List managers for a store (for PIN approval)
-export const listManagers = query({
-  args: {
-    token: v.string(),
-    storeId: v.id("stores"),
-  },
-  returns: v.array(
-    v.object({
-      _id: v.id("users"),
-      name: v.string(),
-      roleName: v.string(),
-    })
-  ),
-  handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    // Get users for this store
-    const users = await ctx.db
-      .query("users")
-      .withIndex("by_store", (q) => q.eq("storeId", args.storeId))
-      .collect();
-
-    // Filter to only active users with PINs and manager+ roles
-    const managers: { _id: Id<"users">; name: string; roleName: string }[] = [];
-
-    for (const user of users) {
-      if (!user.isActive || !user.pin) continue;
-
-      const role = await ctx.db.get(user.roleId);
-      if (!role) continue;
-
-      // Include managers, admins, and super admins (not just branch-level cashiers)
-      if (role.scopeLevel === "system" || role.scopeLevel === "parent") {
-        managers.push({
-          _id: user._id,
-          name: user.name,
-          roleName: role.name,
-        });
-      }
-    }
-
-    return managers;
-  },
-});
-
-// Get single user
-export const get = query({
-  args: {
-    token: v.string(),
     userId: v.id("users"),
+    pin: v.string(),
   },
   returns: v.union(
-    v.object({
-      _id: v.id("users"),
-      username: v.string(),
-      name: v.string(),
-      roleId: v.id("roles"),
-      storeId: v.optional(v.id("stores")),
-      isActive: v.boolean(),
-      pin: v.optional(v.string()),
-      createdAt: v.number(),
-      lastLoginAt: v.optional(v.number()),
-    }),
-    v.null()
+    v.object({ success: v.literal(true) }),
+    v.object({ success: v.literal(false), error: v.string() })
   ),
   handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const user = await ctx.db.get(args.userId);
-    if (!user) return null;
-
-    return {
-      _id: user._id,
-      username: user.username,
-      name: user.name,
-      roleId: user.roleId,
-      storeId: user.storeId,
-      isActive: user.isActive,
-      pin: user.pin,
-      createdAt: user.createdAt,
-      lastLoginAt: user.lastLoginAt,
-    };
-  },
-});
-
-// Internal mutation to create user (called by action after password hashing)
-export const insertUser = internalMutation({
-  args: {
-    username: v.string(),
-    passwordHash: v.string(),
-    name: v.string(),
-    roleId: v.id("roles"),
-    storeId: v.optional(v.id("stores")),
-    pin: v.optional(v.string()),
-    creatorId: v.id("users"),
-  },
-  returns: v.id("users"),
-  handler: async (ctx, args) => {
-    // Check for duplicate username
-    const existing = await ctx.db
-      .query("users")
-      .withIndex("by_username", (q) => q.eq("username", args.username))
-      .first();
-
-    if (existing) {
-      throw new Error("Username already exists");
-    }
-
-    // Verify creator has permission
-    await requirePermission(ctx, args.creatorId, "users.manage");
-
-    return await ctx.db.insert("users", {
-      username: args.username,
-      passwordHash: args.passwordHash,
-      name: args.name,
-      roleId: args.roleId,
-      storeId: args.storeId,
-      isActive: true,
-      pin: args.pin,
-      createdAt: Date.now(),
-      lastLoginAt: undefined,
-    });
-  },
-});
-
-// Action to create user (handles password hashing with bcrypt)
-export const create = action({
-  args: {
-    token: v.string(),
-    username: v.string(),
-    password: v.string(),
-    name: v.string(),
-    roleId: v.id("roles"),
-    storeId: v.optional(v.id("stores")),
-    pin: v.optional(v.string()),
-  },
-  returns: v.id("users"),
-  handler: async (ctx, args): Promise<Id<"users">> => {
-    // Validate session using the sessions module
-    const sessionResult = await ctx.runQuery(api.sessions.validateSession, {
-      token: args.token,
-    });
-
-    if (!sessionResult.valid) {
-      throw new Error("Invalid session");
-    }
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(args.password, salt);
-
-    // Create user
-    return await ctx.runMutation(internal.users.insertUser, {
-      username: args.username,
-      passwordHash,
-      name: args.name,
-      roleId: args.roleId,
-      storeId: args.storeId,
-      pin: args.pin,
-      creatorId: sessionResult.user._id,
-    });
-  },
-});
-
-// Update user (non-password fields)
-export const update = mutation({
-  args: {
-    token: v.string(),
-    userId: v.id("users"),
-    name: v.optional(v.string()),
-    roleId: v.optional(v.id("roles")),
-    storeId: v.optional(v.id("stores")),
-    pin: v.optional(v.string()),
-    isActive: v.optional(v.boolean()),
-  },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    // Validate session
-    const session = await ctx.db
-      .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
-      .first();
-
-    if (!session || session.expiresAt < Date.now()) {
-      throw new Error("Invalid session");
-    }
-
-    const currentUser = await ctx.db.get(session.userId);
-    if (!currentUser) throw new Error("User not found");
-
-    await requirePermission(ctx, currentUser._id, "users.manage");
-
-    const { token, userId, ...updates } = args;
-    const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, v]) => v !== undefined)
+    // Validate authentication
+    const currentUserId = await ctx.runQuery(
+      internal.helpers.usersHelpers.getAuthenticatedUserId,
+      {}
     );
 
-    await ctx.db.patch(userId, filteredUpdates);
-    return null;
+    if (!currentUserId) {
+      return { success: false as const, error: "Authentication required" };
+    }
+
+    // Validate PIN format (4-6 digits)
+    if (!/^\d{4,6}$/.test(args.pin)) {
+      return {
+        success: false as const,
+        error: "PIN must be 4-6 digits",
+      };
+    }
+
+    try {
+      // Hash the PIN
+      const salt = await bcrypt.genSalt(10);
+      const hashedPin = await bcrypt.hash(args.pin, salt);
+
+      // Update the user's PIN
+      await ctx.runMutation(internal.helpers.usersHelpers.setUserPinInternal, {
+        userId: args.userId,
+        hashedPin,
+        updaterId: currentUserId,
+      });
+
+      return { success: true as const };
+    } catch (error) {
+      return {
+        success: false as const,
+        error: error instanceof Error ? error.message : "Failed to set PIN",
+      };
+    }
   },
 });
 
-// Internal mutation to update password
-export const updatePasswordInternal = internalMutation({
+// Action to verify a PIN (for void approvals, etc.)
+export const verifyPin = action({
   args: {
     userId: v.id("users"),
-    passwordHash: v.string(),
-    updaterId: v.id("users"),
+    pin: v.string(),
   },
-  returns: v.null(),
+  returns: v.union(
+    v.object({ success: v.literal(true) }),
+    v.object({ success: v.literal(false), error: v.string() })
+  ),
   handler: async (ctx, args) => {
-    // Verify updater has permission
-    await requirePermission(ctx, args.updaterId, "users.manage");
+    // Validate authentication
+    const currentUserId = await ctx.runQuery(
+      internal.helpers.usersHelpers.getAuthenticatedUserId,
+      {}
+    );
 
-    await ctx.db.patch(args.userId, { passwordHash: args.passwordHash });
-    return null;
+    if (!currentUserId) {
+      return { success: false as const, error: "Authentication required" };
+    }
+
+    // Get the user's hashed PIN
+    const userPin = await ctx.runQuery(
+      internal.helpers.usersHelpers.getUserPinInternal,
+      { userId: args.userId }
+    );
+
+    if (!userPin) {
+      return { success: false as const, error: "PIN not set for this user" };
+    }
+
+    // Verify PIN
+    const isValid = await bcrypt.compare(args.pin, userPin);
+
+    if (!isValid) {
+      return { success: false as const, error: "Invalid PIN" };
+    }
+
+    return { success: true as const };
   },
 });
 
-// Action to reset password
+/**
+ * Create a new user (admin only)
+ * Uses Convex Auth to properly hash passwords and create auth account
+ */
+export const create = action({
+  args: {
+    email: v.string(),
+    password: v.string(),
+    name: v.string(),
+    roleId: v.optional(v.id("roles")),
+    storeId: v.optional(v.id("stores")),
+  },
+  returns: v.union(
+    v.object({ success: v.literal(true), userId: v.id("users") }),
+    v.object({ success: v.literal(false), error: v.string() })
+  ),
+  handler: async (ctx, args) => {
+    // Validate authentication
+    const currentUserId = await ctx.runQuery(
+      internal.helpers.usersHelpers.getAuthenticatedUserId,
+      {}
+    );
+
+    if (!currentUserId) {
+      return { success: false as const, error: "Authentication required" };
+    }
+
+    // Check if user has permission to create users
+    const hasPermission = await ctx.runQuery(
+      internal.helpers.permissionsHelpers.checkUserPermission,
+      { userId: currentUserId, permission: "users.manage" }
+    );
+
+    if (!hasPermission) {
+      return { success: false as const, error: "Permission denied" };
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(args.email)) {
+      return { success: false as const, error: "Invalid email format" };
+    }
+
+    // Check for existing account with this email
+    const existing = await ctx.runQuery(
+      internal.helpers.usersHelpers.getAuthAccountByEmail,
+      { email: args.email }
+    );
+
+    if (existing) {
+      return { success: false as const, error: "Email already in use" };
+    }
+
+    try {
+      // Create user with Convex Auth (handles password hashing internally)
+      const { user } = await createAccount(ctx, {
+        provider: "password",
+        account: {
+          id: args.email.toLowerCase(),
+          secret: args.password,
+        },
+        profile: {
+          name: args.name,
+          email: args.email.toLowerCase(),
+        },
+      });
+
+      // Update user with custom fields (roleId, storeId, isActive)
+      await ctx.runMutation(
+        internal.helpers.usersHelpers.updateUserAfterCreate,
+        {
+          userId: user._id,
+          roleId: args.roleId,
+          storeId: args.storeId,
+          isActive: true,
+        }
+      );
+
+      return { success: true as const, userId: user._id };
+    } catch (error) {
+      console.error("Create user error:", error);
+      return {
+        success: false as const,
+        error: error instanceof Error ? error.message : "Failed to create user",
+      };
+    }
+  },
+});
+
+/**
+ * Reset a user's password (admin only)
+ * Hashes the new password and updates the auth account
+ */
 export const resetPassword = action({
   args: {
-    token: v.string(),
     userId: v.id("users"),
     newPassword: v.string(),
   },
-  returns: v.null(),
-  handler: async (ctx, args): Promise<null> => {
-    // Validate session using the sessions module
-    const sessionResult = await ctx.runQuery(api.sessions.validateSession, {
-      token: args.token,
-    });
+  returns: v.union(
+    v.object({ success: v.literal(true) }),
+    v.object({ success: v.literal(false), error: v.string() })
+  ),
+  handler: async (ctx, args) => {
+    // Validate authentication
+    const currentUserId = await ctx.runQuery(
+      internal.helpers.usersHelpers.getAuthenticatedUserId,
+      {}
+    );
 
-    if (!sessionResult.valid) {
-      throw new Error("Invalid session");
+    if (!currentUserId) {
+      return { success: false as const, error: "Authentication required" };
     }
 
-    // Hash new password
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(args.newPassword, salt);
+    // Check if user has permission to manage users
+    const hasPermission = await ctx.runQuery(
+      internal.helpers.permissionsHelpers.checkUserPermission,
+      { userId: currentUserId, permission: "users.manage" }
+    );
 
-    // Update password
-    await ctx.runMutation(internal.users.updatePasswordInternal, {
+    if (!hasPermission) {
+      return { success: false as const, error: "Permission denied" };
+    }
+
+    // Get user email to find their auth account
+    const user = await ctx.runQuery(internal.helpers.usersHelpers.getUserById, {
       userId: args.userId,
-      passwordHash,
-      updaterId: sessionResult.user._id,
     });
 
-    return null;
+    if (!user || !user.email) {
+      return { success: false as const, error: "User not found" };
+    }
+
+    // Find the auth account
+    const authAccount = await ctx.runQuery(
+      internal.helpers.usersHelpers.getAuthAccountByEmail,
+      { email: user.email }
+    );
+
+    if (!authAccount) {
+      return { success: false as const, error: "Auth account not found" };
+    }
+
+    try {
+      // Hash new password using scrypt (same as Convex Auth Password provider)
+      const keyBuffer = await Scrypt.kdf(args.newPassword, { logN: 15, r: 8, p: 1 });
+      const hashedPassword = Buffer.from(keyBuffer).toString("base64");
+
+      // Update auth account with new password
+      await ctx.runMutation(
+        internal.helpers.usersHelpers.updateAuthAccountSecret,
+        {
+          accountId: authAccount.accountId,
+          newSecret: hashedPassword,
+        }
+      );
+
+      return { success: true as const };
+    } catch (error) {
+      console.error("Reset password error:", error);
+      return {
+        success: false as const,
+        error:
+          error instanceof Error ? error.message : "Failed to reset password",
+      };
+    }
   },
 });
