@@ -127,7 +127,23 @@ export const get = query({
     }
 
     const store = await ctx.db.get(args.storeId);
-    return store;
+    if (!store) return null;
+
+    return {
+      _id: store._id,
+      name: store.name,
+      parentId: store.parentId,
+      logo: store.logo,
+      address1: store.address1,
+      address2: store.address2,
+      tin: store.tin,
+      min: store.min,
+      vatRate: store.vatRate,
+      printerMac: store.printerMac,
+      kitchenPrinterMac: store.kitchenPrinterMac,
+      isActive: store.isActive,
+      createdAt: store.createdAt,
+    };
   },
 });
 
