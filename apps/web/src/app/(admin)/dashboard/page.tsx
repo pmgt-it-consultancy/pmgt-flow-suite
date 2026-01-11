@@ -3,6 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -18,6 +19,7 @@ import { formatCurrency, formatDate } from "@/lib/format";
 
 export default function DashboardPage() {
   const { user, isAuthenticated } = useAuth();
+  const { selectedStoreId } = useAdminStore();
 
   // Get stores for the user (if Super Admin, all stores; otherwise, assigned store)
   const stores = useQuery(
@@ -29,8 +31,8 @@ export default function DashboardPage() {
   const now = new Date();
   const todayDateStr = formatDateString(now);
 
-  // For dashboard summary, we'll use the first store or user's assigned store
-  const primaryStoreId = user?.storeId || stores?.[0]?._id;
+  // Use the globally selected store for dashboard data
+  const primaryStoreId = selectedStoreId;
 
   // Get daily report for the primary store
   const dailyReport = useQuery(

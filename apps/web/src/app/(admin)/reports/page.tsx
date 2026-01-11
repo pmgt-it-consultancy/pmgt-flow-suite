@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -52,11 +53,9 @@ import {
 import { formatCurrency, formatDate, formatDateString } from "@/lib/format";
 
 export default function ReportsPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { selectedStoreId } = useAdminStore();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedStoreId, setSelectedStoreId] = useState<Id<"stores"> | undefined>(
-    user?.storeId
-  );
   const [reportDate, setReportDate] = useState(formatDateString(new Date()));
   const [dateRangeStart, setDateRangeStart] = useState(() => {
     const date = new Date();
@@ -66,7 +65,6 @@ export default function ReportsPage() {
   const [dateRangeEnd, setDateRangeEnd] = useState(formatDateString(new Date()));
 
   // Queries
-  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
   const dailyReport = useQuery(
     api.reports.getDailyReport,
     isAuthenticated && selectedStoreId
@@ -153,46 +151,20 @@ export default function ReportsPage() {
         </Button>
       </div>
 
-      {/* Filters */}
+      {/* Date Filter */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center gap-4 flex-wrap">
-            {stores && stores.length > 1 && (
-              <>
-                <Label htmlFor="storeFilter" className="whitespace-nowrap">
-                  Store:
-                </Label>
-                <Select
-                  value={selectedStoreId ?? ""}
-                  onValueChange={(value) =>
-                    setSelectedStoreId(value as Id<"stores">)
-                  }
-                >
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Select store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stores.map((store) => (
-                      <SelectItem key={store._id} value={store._id}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </>
-            )}
-            <div className="flex items-center gap-2">
-              <Label htmlFor="reportDate" className="whitespace-nowrap">
-                Date:
-              </Label>
-              <Input
-                id="reportDate"
-                type="date"
-                value={reportDate}
-                onChange={(e) => setReportDate(e.target.value)}
-                className="w-40"
-              />
-            </div>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="reportDate" className="whitespace-nowrap">
+              Date:
+            </Label>
+            <Input
+              id="reportDate"
+              type="date"
+              value={reportDate}
+              onChange={(e) => setReportDate(e.target.value)}
+              className="w-40"
+            />
           </div>
         </CardContent>
       </Card>

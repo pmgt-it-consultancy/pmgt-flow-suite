@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useStoreAccess } from "@/hooks/useStoreAccess";
+import { useAdminStore } from "@/stores/useAdminStore";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,8 +14,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User, Bell, Menu } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { LogOut, User, Bell, Menu, Store, Building } from "lucide-react";
 import { toast } from "sonner";
+import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -21,16 +32,52 @@ interface HeaderProps {
 export function Header({ onMenuClick }: HeaderProps) {
   const router = useRouter();
   const { user, signOut } = useAuth();
+  const { accessibleStores, canChangeStore, defaultStoreId, isLoading } =
+    useStoreAccess();
+  const { selectedStoreId, setSelectedStoreId } = useAdminStore();
+
+  // Auto-select default store on mount if none selected
+  useEffect(() => {
+    if (!isLoading && !selectedStoreId && defaultStoreId) {
+      setSelectedStoreId(defaultStoreId);
+    }
+  }, [isLoading, selectedStoreId, defaultStoreId, setSelectedStoreId]);
+
+  // Also auto-select first store for Super Admins with no assigned store
+  useEffect(() => {
+    if (
+      !isLoading &&
+      !selectedStoreId &&
+      !defaultStoreId &&
+      accessibleStores.length > 0
+    ) {
+      setSelectedStoreId(accessibleStores[0]._id);
+    }
+  }, [
+    isLoading,
+    selectedStoreId,
+    defaultStoreId,
+    accessibleStores,
+    setSelectedStoreId,
+  ]);
 
   const handleLogout = async () => {
     try {
       await signOut();
+      setSelectedStoreId(null); // Clear store selection on logout
       toast.success("Logged out successfully");
       router.push("/login");
     } catch (error) {
       toast.error("Logout failed");
     }
   };
+
+  const handleStoreChange = (storeId: string) => {
+    setSelectedStoreId(storeId as Id<"stores">);
+  };
+
+  // Find the currently selected store
+  const selectedStore = accessibleStores.find((s) => s._id === selectedStoreId);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-white px-6">
@@ -44,22 +91,58 @@ export function Header({ onMenuClick }: HeaderProps) {
         >
           <Menu className="h-5 w-5" />
         </Button>
-
-        {/* Page title or breadcrumb could go here */}
-        <div className="hidden lg:block">
-          {user?.storeName && (
-            <span className="text-sm text-gray-500">
-              Store: <span className="font-medium text-gray-900">{user.storeName}</span>
-            </span>
-          )}
-        </div>
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Store Selector */}
+        {accessibleStores.length > 0 && (
+          <div className="flex items-center gap-2">
+            <Store className="h-4 w-4 text-gray-500" />
+            <Select
+              value={selectedStoreId ?? ""}
+              onValueChange={handleStoreChange}
+              disabled={!canChangeStore || isLoading}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select store">
+                  {selectedStore ? (
+                    <span className="flex items-center gap-2">
+                      {selectedStore.parentId ? (
+                        <Building className="h-3 w-3 text-gray-400" />
+                      ) : (
+                        <Store className="h-3 w-3 text-primary" />
+                      )}
+                      {selectedStore.name}
+                    </span>
+                  ) : (
+                    "Select store"
+                  )}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {accessibleStores.map((store) => (
+                  <SelectItem key={store._id} value={store._id}>
+                    <span className="flex items-center gap-2">
+                      {store.parentId ? (
+                        <Building className="h-3 w-3 text-gray-400" />
+                      ) : (
+                        <Store className="h-3 w-3 text-primary" />
+                      )}
+                      {store.name}
+                      {!store.isActive && (
+                        <span className="text-xs text-gray-400">(Inactive)</span>
+                      )}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         {/* Notifications */}
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          {/* Notification badge could go here */}
         </Button>
 
         {/* User menu */}

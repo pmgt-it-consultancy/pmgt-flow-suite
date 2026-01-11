@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -64,18 +65,15 @@ const initialFormData: ProductFormData = {
 };
 
 export default function ProductsPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { selectedStoreId } = useAdminStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Id<"products"> | null>(null);
   const [formData, setFormData] = useState<ProductFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedStoreId, setSelectedStoreId] = useState<Id<"stores"> | undefined>(
-    user?.storeId
-  );
   const [searchQuery, setSearchQuery] = useState("");
 
   // Queries
-  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
   const categories = useQuery(
     api.categories.list,
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip"
@@ -98,7 +96,7 @@ export default function ProductsPage() {
     setEditingProduct(null);
     setFormData({
       ...initialFormData,
-      storeId: selectedStoreId,
+      storeId: selectedStoreId ?? undefined,
     });
     setIsDialogOpen(true);
   };
@@ -170,45 +168,17 @@ export default function ProductsPage() {
         </Button>
       </div>
 
-      {/* Filters */}
+      {/* Search */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center gap-4">
-            {stores && stores.length > 1 && (
-              <>
-                <Label htmlFor="storeFilter" className="whitespace-nowrap">
-                  Store:
-                </Label>
-                <Select
-                  value={selectedStoreId ?? "all"}
-                  onValueChange={(value) =>
-                    setSelectedStoreId(
-                      value === "all" ? undefined : (value as Id<"stores">)
-                    )
-                  }
-                >
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Select store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stores.map((store) => (
-                      <SelectItem key={store._id} value={store._id}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </>
-            )}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <Input
-                placeholder="Search products by name or SKU..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              placeholder="Search products by name or SKU..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
           </div>
         </CardContent>
       </Card>
@@ -308,33 +278,6 @@ export default function ProductsPage() {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            {!editingProduct && stores && stores.length > 1 && (
-              <div className="grid gap-2">
-                <Label htmlFor="store">Store</Label>
-                <Select
-                  value={formData.storeId ?? ""}
-                  onValueChange={(value) =>
-                    setFormData({
-                      ...formData,
-                      storeId: value as Id<"stores">,
-                      categoryId: undefined,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stores.map((store) => (
-                      <SelectItem key={store._id} value={store._id}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
             <div className="grid gap-2">
               <Label htmlFor="category">Category</Label>
               <Select

@@ -5,6 +5,7 @@ import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -62,7 +63,8 @@ const initialFormData: UserFormData = {
 };
 
 export default function UsersPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { selectedStoreId } = useAdminStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<Id<"users"> | null>(null);
@@ -71,9 +73,6 @@ export default function UsersPage() {
   const [newPassword, setNewPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStoreId, setSelectedStoreId] = useState<Id<"stores"> | undefined>(
-    user?.storeId
-  );
 
   // Queries
   const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
@@ -81,7 +80,7 @@ export default function UsersPage() {
   const users = useQuery(
     api.helpers.usersHelpers.list,
     isAuthenticated
-      ? { storeId: selectedStoreId }
+      ? { storeId: selectedStoreId ?? undefined }
       : "skip"
   );
 
@@ -101,7 +100,7 @@ export default function UsersPage() {
     setEditingUser(null);
     setFormData({
       ...initialFormData,
-      storeId: selectedStoreId,
+      storeId: selectedStoreId ?? undefined,
     });
     setIsDialogOpen(true);
   };
@@ -208,46 +207,17 @@ export default function UsersPage() {
         </Button>
       </div>
 
-      {/* Filters */}
+      {/* Search */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center gap-4">
-            {stores && stores.length > 1 && (
-              <>
-                <Label htmlFor="storeFilter" className="whitespace-nowrap">
-                  Store:
-                </Label>
-                <Select
-                  value={selectedStoreId ?? "all"}
-                  onValueChange={(value) =>
-                    setSelectedStoreId(
-                      value === "all" ? undefined : (value as Id<"stores">)
-                    )
-                  }
-                >
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="All stores" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Stores</SelectItem>
-                    {stores.map((store) => (
-                      <SelectItem key={store._id} value={store._id}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </>
-            )}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <Input
-                placeholder="Search users by name or email..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              placeholder="Search users by name or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
           </div>
         </CardContent>
       </Card>

@@ -10,7 +10,6 @@ import {
   Package,
   Users,
   FileText,
-  Settings,
   Tag,
   Grid3X3,
   Receipt,
@@ -77,12 +76,6 @@ const navItems: NavItem[] = [
     href: "/audit-logs",
     icon: <FileText className="h-5 w-5" />,
     permission: "orders.view",
-  },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: <Settings className="h-5 w-5" />,
-    permission: "system.settings",
   },
 ];
 

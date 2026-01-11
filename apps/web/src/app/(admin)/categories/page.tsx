@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -59,17 +60,14 @@ const initialFormData: CategoryFormData = {
 };
 
 export default function CategoriesPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { selectedStoreId } = useAdminStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Id<"categories"> | null>(null);
   const [formData, setFormData] = useState<CategoryFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedStoreId, setSelectedStoreId] = useState<Id<"stores"> | undefined>(
-    user?.storeId
-  );
 
   // Queries
-  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
   const categories = useQuery(
     api.categories.list,
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip"
@@ -86,7 +84,7 @@ export default function CategoriesPage() {
     setEditingCategory(null);
     setFormData({
       ...initialFormData,
-      storeId: selectedStoreId,
+      storeId: selectedStoreId ?? undefined,
     });
     setIsDialogOpen(true);
   };
@@ -151,38 +149,6 @@ export default function CategoriesPage() {
           Add Category
         </Button>
       </div>
-
-      {/* Store Filter */}
-      {stores && stores.length > 1 && (
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <Label htmlFor="storeFilter" className="whitespace-nowrap">
-                Filter by Store:
-              </Label>
-              <Select
-                value={selectedStoreId ?? "all"}
-                onValueChange={(value) =>
-                  setSelectedStoreId(
-                    value === "all" ? undefined : (value as Id<"stores">)
-                  )
-                }
-              >
-                <SelectTrigger className="w-64">
-                  <SelectValue placeholder="Select store" />
-                </SelectTrigger>
-                <SelectContent>
-                  {stores.map((store) => (
-                    <SelectItem key={store._id} value={store._id}>
-                      {store.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Categories Table */}
       <Card>
@@ -284,33 +250,6 @@ export default function CategoriesPage() {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            {!editingCategory && stores && stores.length > 1 && (
-              <div className="grid gap-2">
-                <Label htmlFor="store">Store</Label>
-                <Select
-                  value={formData.storeId ?? ""}
-                  onValueChange={(value) =>
-                    setFormData({
-                      ...formData,
-                      storeId: value as Id<"stores">,
-                      parentId: undefined,
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stores.map((store) => (
-                      <SelectItem key={store._id} value={store._id}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
             <div className="grid gap-2">
               <Label htmlFor="name">Category Name</Label>
               <Input

@@ -14,6 +14,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 // Types
+type ScopeLevel = "system" | "parent" | "branch";
+
 interface User {
   _id: Id<"users">;
   email?: string;
@@ -22,6 +24,7 @@ interface User {
   storeId?: Id<"stores">;
   permissions: string[];
   roleName: string;
+  scopeLevel: ScopeLevel;
   storeName?: string;
 }
 
@@ -69,6 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           storeId: currentUser.storeId,
           permissions: currentUser.role.permissions,
           roleName: currentUser.role.name,
+          scopeLevel: currentUser.role.scopeLevel,
           storeName: undefined, // Fetched separately if needed
         }
       : null;
