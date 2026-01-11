@@ -1,27 +1,20 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Public routes that don't require authentication
-const publicRoutes = ["/", "/login"];
-
+/**
+ * Middleware for Next.js
+ * 
+ * Note: Authentication is handled client-side by Convex Auth.
+ * Convex Auth stores tokens in localStorage (not accessible from middleware).
+ * The AdminLayout component handles auth redirects on the client.
+ * 
+ * This middleware can be used for:
+ * - Adding security headers
+ * - Logging/analytics
+ * - Other server-side concerns that don't require auth state
+ */
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Allow public routes
-  if (publicRoutes.some((route) => pathname === route)) {
-    return NextResponse.next();
-  }
-
-  // Check for session token in cookies
-  const token = request.cookies.get("pos_session_token")?.value;
-
-  // Redirect to login if no token
-  if (!token) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
+  // Allow all requests - auth is handled client-side by Convex Auth
   return NextResponse.next();
 }
 
