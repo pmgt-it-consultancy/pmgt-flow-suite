@@ -1,4 +1,3 @@
-import React from "react";
 import Logo from "../common/Logo";
 import Menu from "../common/Menu";
 
@@ -35,8 +34,7 @@ const Footer = () => {
           </h3>
           <div className="flex justify-between">
             <p className="text-gray-600 font-montserrat text-base not-italic font-normal leading-6">
-              Save countless hours of note-taking and organize your notes
-              easier.
+              Save countless hours of note-taking and organize your notes easier.
             </p>
             <p className="text-gray-600 font-inter text-base not-italic font-normal leading-6">
               © 2023 UseNotes. All rights reserved.
@@ -53,8 +51,7 @@ const Footer = () => {
               Take more efficient notes with UseNotes
             </h3>
             <p className="text-[#101828] font-montserrat text-base not-italic font-light leading-[18px]">
-              Save countless hours of note-taking and organize your notes
-              easier.
+              Save countless hours of note-taking and organize your notes easier.
             </p>
           </div>
           <div className="min-w-[100px]">

@@ -1,17 +1,9 @@
-import { v } from "convex/values";
-import {
-  query,
-  mutation,
-  internalQuery,
-  internalMutation,
-} from "../_generated/server";
-import { Doc, Id } from "../_generated/dataModel";
-import { requirePermission } from "../lib/permissions";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import {
-  getAuthenticatedUser,
-  getAuthenticatedUserWithRole,
-} from "../lib/auth";
+import { v } from "convex/values";
+import type { Doc, Id } from "../_generated/dataModel";
+import { internalMutation, internalQuery, mutation, query } from "../_generated/server";
+import { getAuthenticatedUser, getAuthenticatedUserWithRole } from "../lib/auth";
+import { requirePermission } from "../lib/permissions";
 
 /**
  * Internal query to get authenticated user ID
@@ -46,7 +38,7 @@ export const list = query({
       storeId: v.optional(v.id("stores")),
       storeName: v.optional(v.string()),
       isActive: v.boolean(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Get authenticated user with role
@@ -77,10 +69,7 @@ export const list = query({
       } else {
         users = await ctx.db.query("users").collect();
       }
-    } else if (
-      currentUser.role.scopeLevel === "parent" &&
-      currentUser.storeId
-    ) {
+    } else if (currentUser.role.scopeLevel === "parent" && currentUser.storeId) {
       // Admin: users in parent store + branches
       const branches = await ctx.db
         .query("stores")
@@ -124,7 +113,7 @@ export const list = query({
           storeName,
           isActive: user.isActive ?? true,
         };
-      })
+      }),
     );
 
     return enrichedUsers;
@@ -141,7 +130,7 @@ export const listManagers = query({
       _id: v.id("users"),
       name: v.string(),
       roleName: v.string(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Validate authentication
@@ -195,7 +184,7 @@ export const get = query({
       isActive: v.boolean(),
       hasPin: v.boolean(),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Validate authentication
@@ -240,7 +229,7 @@ export const update = mutation({
 
     const { userId, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, v]) => v !== undefined)
+      Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
     await ctx.db.patch(userId, filteredUpdates);
@@ -262,7 +251,7 @@ export const getUserById = internalQuery({
       storeId: v.optional(v.id("stores")),
       isActive: v.optional(v.boolean()),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.userId);
@@ -346,7 +335,7 @@ export const updateUserAfterCreate = internalMutation({
   handler: async (ctx, args) => {
     const { userId, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, v]) => v !== undefined)
+      Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
     if (Object.keys(filteredUpdates).length > 0) {
@@ -366,13 +355,13 @@ export const getAuthAccountByEmail = internalQuery({
       accountId: v.id("authAccounts"),
       userId: v.id("users"),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     const account = await ctx.db
       .query("authAccounts")
       .withIndex("providerAndAccountId", (q) =>
-        q.eq("provider", "password").eq("providerAccountId", args.email.toLowerCase())
+        q.eq("provider", "password").eq("providerAccountId", args.email.toLowerCase()),
       )
       .first();
 

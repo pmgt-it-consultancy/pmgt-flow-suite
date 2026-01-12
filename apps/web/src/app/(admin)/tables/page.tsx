@@ -1,27 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdminStore } from "@/stores/useAdminStore";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { Grid3X3, Pencil, Plus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -30,19 +17,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner";
-import { Plus, Pencil, Grid3X3 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 interface TableFormData {
   name: string;
@@ -69,7 +56,7 @@ export default function TablesPage() {
   // Queries
   const tables = useQuery(
     api.tables.list,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
 
   // Mutations
@@ -125,9 +112,7 @@ export default function TablesPage() {
       setFormData(initialFormData);
       setEditingTable(null);
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to save table"
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to save table");
     } finally {
       setIsSubmitting(false);
     }
@@ -164,9 +149,7 @@ export default function TablesPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Tables</CardTitle>
-          <CardDescription>
-            {tables?.length ?? 0} table(s) in total
-          </CardDescription>
+          <CardDescription>{tables?.length ?? 0} table(s) in total</CardDescription>
         </CardHeader>
         <CardContent>
           {!selectedStoreId ? (
@@ -213,11 +196,7 @@ export default function TablesPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleOpenEdit(table)}
-                      >
+                      <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(table)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
                     </TableCell>
@@ -233,9 +212,7 @@ export default function TablesPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {editingTable ? "Edit Table" : "Create Table"}
-            </DialogTitle>
+            <DialogTitle>{editingTable ? "Edit Table" : "Create Table"}</DialogTitle>
             <DialogDescription>
               {editingTable
                 ? "Update the table details below."
@@ -249,9 +226,7 @@ export default function TablesPage() {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="e.g., Table 1, Booth A"
               />
             </div>
@@ -267,7 +242,7 @@ export default function TablesPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      capacity: parseInt(e.target.value) || 1,
+                      capacity: parseInt(e.target.value, 10) || 1,
                     })
                   }
                 />
@@ -282,7 +257,7 @@ export default function TablesPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      sortOrder: parseInt(e.target.value) || 0,
+                      sortOrder: parseInt(e.target.value, 10) || 0,
                     })
                   }
                 />
@@ -311,10 +286,7 @@ export default function TablesPage() {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || !formData.name}
-            >
+            <Button onClick={handleSubmit} disabled={isSubmitting || !formData.name}>
               {isSubmitting ? "Saving..." : editingTable ? "Update" : "Create"}
             </Button>
           </DialogFooter>

@@ -1,6 +1,7 @@
-import React, { forwardRef } from "react";
+import type React from "react";
+import { forwardRef } from "react";
+import type { TextInput, TextInputProps } from "react-native";
 import { TextInput as UniwindTextInput, View } from "uniwind/components";
-import { TextInput, TextInputProps } from "react-native";
 import { Text } from "./Text";
 
 interface InputProps extends TextInputProps {
@@ -40,7 +41,7 @@ export const Input = forwardRef<React.ElementRef<typeof TextInput>, InputProps>(
         )}
       </View>
     );
-  }
+  },
 );
 
 Input.displayName = "Input";

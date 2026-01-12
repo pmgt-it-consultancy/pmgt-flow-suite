@@ -1,5 +1,4 @@
-import React from "react";
-import { View, TextInput, TouchableOpacity } from "uniwind/components";
+import { TextInput, TouchableOpacity, View } from "uniwind/components";
 import { Text } from "../../shared/components/ui";
 
 const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000];

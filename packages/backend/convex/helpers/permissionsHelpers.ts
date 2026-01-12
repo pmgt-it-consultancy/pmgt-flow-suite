@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { internalQuery } from "../_generated/server";
-import { hasPermission, Permission } from "../lib/permissions";
+import { hasPermission, type Permission } from "../lib/permissions";
 
 /**
  * Internal query to check if a user has a specific permission

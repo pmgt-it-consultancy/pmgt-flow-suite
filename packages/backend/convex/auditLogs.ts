@@ -1,6 +1,6 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
+import type { Id } from "./_generated/dataModel";
+import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 
 // Log an audit event
@@ -48,7 +48,7 @@ export const list = query({
       details: v.string(),
       userName: v.string(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -97,7 +97,7 @@ export const list = query({
           userName: user?.name ?? "Unknown",
           createdAt: log.createdAt,
         };
-      })
+      }),
     );
 
     return results;
@@ -119,17 +119,17 @@ export const getByEntity = query({
       details: v.string(),
       userName: v.string(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
     await requireAuth(ctx);
 
     // Get logs for entity
-    let logs = await ctx.db
+    const logs = await ctx.db
       .query("auditLogs")
       .withIndex("by_entity", (q) =>
-        q.eq("entityType", args.entityType).eq("entityId", args.entityId)
+        q.eq("entityType", args.entityType).eq("entityId", args.entityId),
       )
       .order("desc")
       .take(args.limit ?? 50);
@@ -146,7 +146,7 @@ export const getByEntity = query({
           userName: user?.name ?? "Unknown",
           createdAt: log.createdAt,
         };
-      })
+      }),
     );
 
     return results;
@@ -168,7 +168,7 @@ export const getVoidLogs = query({
       details: v.string(),
       userName: v.string(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -186,7 +186,7 @@ export const getVoidLogs = query({
       (l) =>
         (l.action === "void_item" || l.action === "void_order") &&
         l.createdAt >= args.startDate &&
-        l.createdAt <= args.endDate
+        l.createdAt <= args.endDate,
     );
 
     // Get user names
@@ -201,7 +201,7 @@ export const getVoidLogs = query({
           userName: user?.name ?? "Unknown",
           createdAt: log.createdAt,
         };
-      })
+      }),
     );
 
     return results;
@@ -223,7 +223,7 @@ export const getDiscountLogs = query({
       details: v.string(),
       userName: v.string(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -241,7 +241,7 @@ export const getDiscountLogs = query({
       (l) =>
         (l.action === "apply_discount" || l.action === "remove_discount") &&
         l.createdAt >= args.startDate &&
-        l.createdAt <= args.endDate
+        l.createdAt <= args.endDate,
     );
 
     // Get user names
@@ -256,7 +256,7 @@ export const getDiscountLogs = query({
           userName: user?.name ?? "Unknown",
           createdAt: log.createdAt,
         };
-      })
+      }),
     );
 
     return results;
@@ -278,7 +278,7 @@ export const getUserActionSummary = query({
       voidAmount: v.number(),
       discountCount: v.number(),
       discountAmount: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -291,7 +291,7 @@ export const getUserActionSummary = query({
       .collect();
 
     const filteredLogs = allLogs.filter(
-      (l) => l.createdAt >= args.startDate && l.createdAt <= args.endDate
+      (l) => l.createdAt >= args.startDate && l.createdAt <= args.endDate,
     );
 
     // Group by user
@@ -346,7 +346,7 @@ export const getUserActionSummary = query({
           discountCount: summary.discountCount,
           discountAmount: summary.discountAmount,
         };
-      })
+      }),
     );
 
     return results.filter((r) => r.voidCount > 0 || r.discountCount > 0);

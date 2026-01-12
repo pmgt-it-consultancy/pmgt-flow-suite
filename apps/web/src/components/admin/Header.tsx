@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { Bell, Building, LogOut, Menu, Store, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
-import { useStoreAccess } from "@/hooks/useStoreAccess";
-import { useAdminStore } from "@/stores/useAdminStore";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,9 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LogOut, User, Bell, Menu, Store, Building } from "lucide-react";
-import { toast } from "sonner";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useAuth } from "@/hooks/useAuth";
+import { useStoreAccess } from "@/hooks/useStoreAccess";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -32,8 +32,7 @@ interface HeaderProps {
 export function Header({ onMenuClick }: HeaderProps) {
   const router = useRouter();
   const { user, signOut } = useAuth();
-  const { accessibleStores, canChangeStore, defaultStoreId, isLoading } =
-    useStoreAccess();
+  const { accessibleStores, canChangeStore, defaultStoreId, isLoading } = useStoreAccess();
   const { selectedStoreId, setSelectedStoreId } = useAdminStore();
 
   // Auto-select default store on mount if none selected
@@ -45,21 +44,10 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   // Also auto-select first store for Super Admins with no assigned store
   useEffect(() => {
-    if (
-      !isLoading &&
-      !selectedStoreId &&
-      !defaultStoreId &&
-      accessibleStores.length > 0
-    ) {
+    if (!isLoading && !selectedStoreId && !defaultStoreId && accessibleStores.length > 0) {
       setSelectedStoreId(accessibleStores[0]._id);
     }
-  }, [
-    isLoading,
-    selectedStoreId,
-    defaultStoreId,
-    accessibleStores,
-    setSelectedStoreId,
-  ]);
+  }, [isLoading, selectedStoreId, defaultStoreId, accessibleStores, setSelectedStoreId]);
 
   const handleLogout = async () => {
     try {
@@ -67,7 +55,7 @@ export function Header({ onMenuClick }: HeaderProps) {
       setSelectedStoreId(null); // Clear store selection on logout
       toast.success("Logged out successfully");
       router.push("/login");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Logout failed");
     }
   };
@@ -83,12 +71,7 @@ export function Header({ onMenuClick }: HeaderProps) {
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-white px-6">
       <div className="flex items-center gap-4">
         {/* Mobile menu button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="lg:hidden"
-          onClick={onMenuClick}
-        >
+        <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenuClick}>
           <Menu className="h-5 w-5" />
         </Button>
       </div>
@@ -129,9 +112,7 @@ export function Header({ onMenuClick }: HeaderProps) {
                         <Store className="h-3 w-3 text-primary" />
                       )}
                       {store.name}
-                      {!store.isActive && (
-                        <span className="text-xs text-gray-400">(Inactive)</span>
-                      )}
+                      {!store.isActive && <span className="text-xs text-gray-400">(Inactive)</span>}
                     </span>
                   </SelectItem>
                 ))}

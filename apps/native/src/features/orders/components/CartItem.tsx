@@ -1,9 +1,7 @@
-import React from "react";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { View } from "uniwind/components";
-import { Ionicons } from "@expo/vector-icons";
-import { Text, IconButton } from "../../shared/components/ui";
+import { IconButton, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 interface CartItemProps {
   id: Id<"orderItems">;
@@ -53,9 +51,7 @@ export const CartItem = ({
             iconColor="#EF4444"
             onPress={() => onDecrement(id, quantity)}
           />
-          <Text className="text-gray-900 font-semibold px-3">
-            {quantity}
-          </Text>
+          <Text className="text-gray-900 font-semibold px-3">{quantity}</Text>
           <IconButton
             icon="add"
             size="sm"
@@ -64,9 +60,7 @@ export const CartItem = ({
             onPress={() => onIncrement(id, quantity)}
           />
         </View>
-        <Text className="text-gray-900 font-semibold">
-          {formatCurrency(lineTotal)}
-        </Text>
+        <Text className="text-gray-900 font-semibold">{formatCurrency(lineTotal)}</Text>
       </View>
     </View>
   );

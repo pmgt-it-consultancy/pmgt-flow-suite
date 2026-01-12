@@ -11,14 +11,8 @@ export const createStoreSchema = z.object({
     .min(1, "Address is required")
     .max(200, "Address must be at most 200 characters"),
   address2: z.string().max(200, "Address line 2 must be at most 200 characters").optional(),
-  tin: z
-    .string()
-    .min(1, "TIN is required")
-    .max(20, "TIN must be at most 20 characters"),
-  min: z
-    .string()
-    .min(1, "MIN is required")
-    .max(20, "MIN must be at most 20 characters"),
+  tin: z.string().min(1, "TIN is required").max(20, "TIN must be at most 20 characters"),
+  min: z.string().min(1, "MIN is required").max(20, "MIN must be at most 20 characters"),
   vatRate: z
     .number()
     .min(0, "VAT rate cannot be negative")

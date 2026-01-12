@@ -1,10 +1,9 @@
 import "./src/global.css";
-import { View, StatusBar, Platform } from "react-native";
 import { useFonts } from "expo-font";
-import { LogBox } from "react-native";
-import Navigation from "./src/navigation/Navigation";
+import { LogBox, Platform, StatusBar, View } from "react-native";
 import ConvexClientProvider from "./ConvexClientProvider";
 import { AuthProvider } from "./src/features/auth";
+import Navigation from "./src/navigation/Navigation";
 
 export default function App() {
   LogBox.ignoreLogs(["Warning: ..."]);
@@ -26,19 +25,14 @@ export default function App() {
     return null;
   }
 
-  const STATUS_BAR_HEIGHT =
-    Platform.OS === "ios" ? 50 : StatusBar.currentHeight;
+  const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 50 : StatusBar.currentHeight;
 
   return (
     <ConvexClientProvider>
       <AuthProvider>
         <View style={{ flex: 1 }}>
           <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#0D87E1" }}>
-            <StatusBar
-              translucent
-              backgroundColor={"#0D87E1"}
-              barStyle="light-content"
-            />
+            <StatusBar translucent backgroundColor={"#0D87E1"} barStyle="light-content" />
           </View>
           <Navigation />
         </View>

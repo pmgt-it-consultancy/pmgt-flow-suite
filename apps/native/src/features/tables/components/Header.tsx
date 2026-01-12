@@ -1,8 +1,6 @@
-import React from "react";
-import { View } from "uniwind/components";
 import { Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Text, IconButton } from "../../shared/components/ui";
+import { View } from "uniwind/components";
+import { IconButton, Text } from "../../shared/components/ui";
 
 interface HeaderProps {
   userName: string;
@@ -11,18 +9,14 @@ interface HeaderProps {
 
 export const Header = ({ userName, onLogout }: HeaderProps) => {
   const handleLogoutPress = () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Logout",
-          style: "destructive",
-          onPress: onLogout,
-        },
-      ]
-    );
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: onLogout,
+      },
+    ]);
   };
 
   return (
@@ -35,11 +29,7 @@ export const Header = ({ userName, onLogout }: HeaderProps) => {
           Select a table to get started
         </Text>
       </View>
-      <IconButton
-        icon="log-out-outline"
-        variant="destructive"
-        onPress={handleLogoutPress}
-      />
+      <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
     </View>
   );
 };

@@ -1,6 +1,5 @@
-import React from "react";
-import { View, TextInput } from "uniwind/components";
 import { Ionicons } from "@expo/vector-icons";
+import { TextInput, View } from "uniwind/components";
 
 interface SearchBarProps {
   value: string;

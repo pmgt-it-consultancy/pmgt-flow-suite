@@ -1,17 +1,10 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useCallback,
-  ReactNode,
-  useEffect,
-} from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useConvexAuth } from "convex/react";
-import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useConvexAuth, useQuery } from "convex/react";
+import { createContext, type ReactNode, useCallback, useContext, useEffect } from "react";
 
 // Types
 type ScopeLevel = "system" | "parent" | "branch";
@@ -35,7 +28,7 @@ interface AuthContextType {
   signIn: (
     email: string,
     password: string,
-    flow?: "signIn" | "signUp"
+    flow?: "signIn" | "signUp",
   ) => Promise<{ success: boolean; error?: string }>;
   signOut: () => Promise<void>;
   hasPermission: (permission: string) => boolean;
@@ -45,56 +38,47 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const {
-    isLoading: isAuthLoading,
-    isAuthenticated: isConvexAuthenticated,
-  } = useConvexAuth();
+  const { isLoading: isAuthLoading, isAuthenticated: isConvexAuthenticated } = useConvexAuth();
   const { signIn: convexSignIn, signOut: convexSignOut } = useAuthActions();
 
   // Query current user when authenticated (Convex Auth handles auth context automatically)
-  const currentUser = useQuery(
-    api.sessions.getCurrentUser,
-    isConvexAuthenticated ? {} : "skip"
-  );
+  const currentUser = useQuery(api.sessions.getCurrentUser, isConvexAuthenticated ? {} : "skip");
 
   // Determine loading state
-  const isLoading =
-    isAuthLoading || (isConvexAuthenticated && currentUser === undefined);
+  const isLoading = isAuthLoading || (isConvexAuthenticated && currentUser === undefined);
 
   // Build user object with permissions from role
-  const user: User | null =
-    currentUser && currentUser.role
-      ? {
-          _id: currentUser._id,
-          email: currentUser.email,
-          name: currentUser.name,
-          roleId: currentUser.roleId,
-          storeId: currentUser.storeId,
-          permissions: currentUser.role.permissions,
-          roleName: currentUser.role.name,
-          scopeLevel: currentUser.role.scopeLevel,
-          storeName: undefined, // Fetched separately if needed
-        }
-      : null;
+  const user: User | null = currentUser?.role
+    ? {
+        _id: currentUser._id,
+        email: currentUser.email,
+        name: currentUser.name,
+        roleId: currentUser.roleId,
+        storeId: currentUser.storeId,
+        permissions: currentUser.role.permissions,
+        roleName: currentUser.role.name,
+        scopeLevel: currentUser.role.scopeLevel,
+        storeName: undefined, // Fetched separately if needed
+      }
+    : null;
 
   // Sign in function using Convex Auth Password provider
   const signIn = useCallback(
     async (
       email: string,
       password: string,
-      flow: "signIn" | "signUp" = "signIn"
+      flow: "signIn" | "signUp" = "signIn",
     ): Promise<{ success: boolean; error?: string }> => {
       try {
         await convexSignIn("password", { email, password, flow });
         return { success: true };
       } catch (error) {
         console.error("Sign in error:", error);
-        const errorMessage =
-          error instanceof Error ? error.message : "Authentication failed";
+        const errorMessage = error instanceof Error ? error.message : "Authentication failed";
         return { success: false, error: errorMessage };
       }
     },
-    [convexSignIn]
+    [convexSignIn],
   );
 
   // Sign out function
@@ -112,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!user) return false;
       return user.permissions.includes(permission);
     },
-    [user]
+    [user],
   );
 
   const hasAnyPermission = useCallback(
@@ -120,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!user) return false;
       return permissions.some((p) => user.permissions.includes(p));
     },
-    [user]
+    [user],
   );
 
   const value: AuthContextType = {
@@ -158,10 +142,7 @@ export function useRequireAuth(redirectTo = "/login") {
 }
 
 // Hook to require a specific permission
-export function useRequirePermission(
-  permission: string,
-  redirectTo = "/dashboard"
-) {
+export function useRequirePermission(permission: string, redirectTo = "/dashboard") {
   const { hasPermission, isLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {

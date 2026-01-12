@@ -1,6 +1,5 @@
-import React from "react";
 import { View } from "uniwind/components";
-import { Text, Card, Separator } from "../../shared/components/ui";
+import { Card, Separator, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface TotalsSummaryProps {
@@ -27,24 +26,18 @@ export const TotalsSummary = ({
       <Card variant="elevated">
         <View className="flex-row justify-between py-2">
           <Text variant="muted">Gross Sales</Text>
-          <Text className="text-gray-900 font-medium">
-            {formatCurrency(grossSales)}
-          </Text>
+          <Text className="text-gray-900 font-medium">{formatCurrency(grossSales)}</Text>
         </View>
 
         <View className="flex-row justify-between py-2">
           <Text variant="muted">VAT (12%)</Text>
-          <Text className="text-gray-900 font-medium">
-            {formatCurrency(vatAmount)}
-          </Text>
+          <Text className="text-gray-900 font-medium">{formatCurrency(vatAmount)}</Text>
         </View>
 
         {discountAmount > 0 && (
           <View className="flex-row justify-between py-2">
             <Text className="text-green-500">Discount</Text>
-            <Text className="text-green-500 font-medium">
-              -{formatCurrency(discountAmount)}
-            </Text>
+            <Text className="text-green-500 font-medium">-{formatCurrency(discountAmount)}</Text>
           </View>
         )}
 
@@ -54,19 +47,13 @@ export const TotalsSummary = ({
           <Text variant="heading" size="lg">
             Total Due
           </Text>
-          <Text className="text-blue-500 font-bold text-xl">
-            {formatCurrency(netSales)}
-          </Text>
+          <Text className="text-blue-500 font-bold text-xl">{formatCurrency(netSales)}</Text>
         </View>
 
         {showChange && (
           <View className="flex-row justify-between py-2">
-            <Text className="text-green-500 font-medium text-base">
-              Change
-            </Text>
-            <Text className="text-green-500 font-bold text-lg">
-              {formatCurrency(change)}
-            </Text>
+            <Text className="text-green-500 font-medium text-base">Change</Text>
+            <Text className="text-green-500 font-bold text-lg">{formatCurrency(change)}</Text>
           </View>
         )}
       </Card>

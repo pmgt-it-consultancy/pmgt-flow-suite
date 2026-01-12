@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
 import { useAuth } from "./useAuth";
 
 export interface AccessibleStore {
@@ -34,10 +34,7 @@ export function useStoreAccess(): StoreAccessResult {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
 
   // Query stores - backend already filters based on user role
-  const stores = useQuery(
-    api.stores.list,
-    isAuthenticated ? {} : "skip"
-  );
+  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
 
   const isLoading = authLoading || (isAuthenticated && stores === undefined);
 

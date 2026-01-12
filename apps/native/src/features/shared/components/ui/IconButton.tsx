@@ -1,7 +1,8 @@
-import React, { forwardRef } from "react";
-import { TouchableOpacity as UniwindTouchableOpacity } from "uniwind/components";
-import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import type React from "react";
+import { forwardRef } from "react";
+import type { TouchableOpacity, TouchableOpacityProps } from "react-native";
+import { TouchableOpacity as UniwindTouchableOpacity } from "uniwind/components";
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
@@ -13,7 +14,10 @@ interface IconButtonProps extends TouchableOpacityProps {
   className?: string;
 }
 
-const sizeConfig: Record<NonNullable<IconButtonProps["size"]>, { padding: string; iconSize: number }> = {
+const sizeConfig: Record<
+  NonNullable<IconButtonProps["size"]>,
+  { padding: string; iconSize: number }
+> = {
   sm: { padding: "p-1.5", iconSize: 18 },
   md: { padding: "p-2", iconSize: 22 },
   lg: { padding: "p-3", iconSize: 26 },
@@ -35,19 +39,12 @@ const defaultIconColors: Record<NonNullable<IconButtonProps["variant"]>, string>
 
 export const IconButton = forwardRef<React.ElementRef<typeof TouchableOpacity>, IconButtonProps>(
   (
-    {
-      icon,
-      size = "md",
-      variant = "default",
-      iconColor,
-      disabled,
-      className = "",
-      ...props
-    },
-    ref
+    { icon, size = "md", variant = "default", iconColor, disabled, className = "", ...props },
+    ref,
   ) => {
     const config = sizeConfig[size];
-    const classes = `${variantClasses[variant]} ${config.padding} ${disabled ? "opacity-50" : ""} ${className}`.trim();
+    const classes =
+      `${variantClasses[variant]} ${config.padding} ${disabled ? "opacity-50" : ""} ${className}`.trim();
     const color = iconColor ?? defaultIconColors[variant];
 
     return (
@@ -61,7 +58,7 @@ export const IconButton = forwardRef<React.ElementRef<typeof TouchableOpacity>, 
         <Ionicons name={icon} size={config.iconSize} color={color} />
       </UniwindTouchableOpacity>
     );
-  }
+  },
 );
 
 IconButton.displayName = "IconButton";

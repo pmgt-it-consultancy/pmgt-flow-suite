@@ -10,13 +10,9 @@ export const list = query({
       _id: v.id("roles"),
       name: v.string(),
       permissions: v.array(v.string()),
-      scopeLevel: v.union(
-        v.literal("system"),
-        v.literal("parent"),
-        v.literal("branch")
-      ),
+      scopeLevel: v.union(v.literal("system"), v.literal("parent"), v.literal("branch")),
       isSystem: v.boolean(),
-    })
+    }),
   ),
   handler: async (ctx) => {
     // Verify authentication using Convex Auth
@@ -65,14 +61,10 @@ export const get = query({
       _id: v.id("roles"),
       name: v.string(),
       permissions: v.array(v.string()),
-      scopeLevel: v.union(
-        v.literal("system"),
-        v.literal("parent"),
-        v.literal("branch")
-      ),
+      scopeLevel: v.union(v.literal("system"), v.literal("parent"), v.literal("branch")),
       isSystem: v.boolean(),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Verify authentication using Convex Auth

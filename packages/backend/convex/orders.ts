@@ -1,18 +1,15 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
-import { Doc, Id } from "./_generated/dataModel";
-import {
-  calculateItemTotals,
-  aggregateOrderTotals,
-  ItemCalculation,
-} from "./lib/taxCalculations";
+import type { Doc, Id } from "./_generated/dataModel";
+import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
+import {
+  aggregateOrderTotals,
+  calculateItemTotals,
+  type ItemCalculation,
+} from "./lib/taxCalculations";
 
 // Generate next order number for today
-async function getNextOrderNumber(
-  ctx: { db: any },
-  storeId: Id<"stores">
-): Promise<string> {
+async function getNextOrderNumber(ctx: { db: any }, storeId: Id<"stores">): Promise<string> {
   // Get today's date in YYYY-MM-DD format
   const today = new Date();
   const dateString = today.toISOString().split("T")[0];
@@ -23,7 +20,7 @@ async function getNextOrderNumber(
   const todaysOrders = await ctx.db
     .query("orders")
     .withIndex("by_store_createdAt", (q: any) =>
-      q.eq("storeId", storeId).gte("createdAt", startOfDay)
+      q.eq("storeId", storeId).gte("createdAt", startOfDay),
     )
     .filter((q: any) => q.lt(q.field("createdAt"), endOfDay))
     .collect();
@@ -121,9 +118,7 @@ export const get = query({
       nonVatSales: v.number(),
       discountAmount: v.number(),
       netSales: v.number(),
-      paymentMethod: v.optional(
-        v.union(v.literal("cash"), v.literal("card_ewallet"))
-      ),
+      paymentMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
       cashReceived: v.optional(v.number()),
       changeGiven: v.optional(v.number()),
       createdBy: v.id("users"),
@@ -141,10 +136,10 @@ export const get = query({
           notes: v.optional(v.string()),
           isVoided: v.boolean(),
           lineTotal: v.number(),
-        })
+        }),
       ),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -214,9 +209,7 @@ export const get = query({
 export const list = query({
   args: {
     storeId: v.id("stores"),
-    status: v.optional(
-      v.union(v.literal("open"), v.literal("paid"), v.literal("voided"))
-    ),
+    status: v.optional(v.union(v.literal("open"), v.literal("paid"), v.literal("voided"))),
     limit: v.optional(v.number()),
   },
   returns: v.array(
@@ -230,7 +223,7 @@ export const list = query({
       netSales: v.number(),
       itemCount: v.number(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -243,9 +236,7 @@ export const list = query({
       const status = args.status;
       orders = await ctx.db
         .query("orders")
-        .withIndex("by_store_status", (q) =>
-          q.eq("storeId", args.storeId).eq("status", status)
-        )
+        .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", status))
         .order("desc")
         .take(args.limit ?? 100);
     } else {
@@ -286,7 +277,7 @@ export const list = query({
           itemCount,
           createdAt: order.createdAt,
         };
-      })
+      }),
     );
 
     return results;
@@ -468,19 +459,14 @@ export const removeItem = mutation({
 });
 
 // Helper function to recalculate order totals
-async function recalculateOrderTotals(
-  ctx: { db: any },
-  orderId: Id<"orders">
-): Promise<void> {
+async function recalculateOrderTotals(ctx: { db: any }, orderId: Id<"orders">): Promise<void> {
   // Get all active (non-voided) items
   const items = await ctx.db
     .query("orderItems")
     .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
     .collect();
 
-  const activeItems: Doc<"orderItems">[] = items.filter(
-    (i: Doc<"orderItems">) => !i.isVoided
-  );
+  const activeItems: Doc<"orderItems">[] = items.filter((i: Doc<"orderItems">) => !i.isVoided);
 
   // Get product info for VAT status
   const itemCalculations: ItemCalculation[] = await Promise.all(
@@ -491,7 +477,7 @@ async function recalculateOrderTotals(
       // For now, no SC/PWD discounts in basic calculation
       // Those are handled separately in the discounts module
       return calculateItemTotals(item.productPrice, item.quantity, isVatable, 0);
-    })
+    }),
   );
 
   // Aggregate totals
@@ -547,7 +533,7 @@ export const listActive = query({
       subtotal: v.number(),
       itemCount: v.number(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -556,9 +542,7 @@ export const listActive = query({
     // Get open orders for this store
     const orders = await ctx.db
       .query("orders")
-      .withIndex("by_store_status", (q) =>
-        q.eq("storeId", args.storeId).eq("status", "open")
-      )
+      .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "open"))
       .collect();
 
     // Get additional info for each order
@@ -591,7 +575,7 @@ export const listActive = query({
           itemCount,
           createdAt: order.createdAt,
         };
-      })
+      }),
     );
 
     return results;
@@ -613,7 +597,7 @@ export const getTodaysOpenOrders = query({
       netSales: v.number(),
       itemCount: v.number(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -621,18 +605,12 @@ export const getTodaysOpenOrders = query({
 
     // Get start of today
     const today = new Date();
-    const startOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    ).getTime();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
 
     // Get today's open orders
     const orders = await ctx.db
       .query("orders")
-      .withIndex("by_store_status", (q) =>
-        q.eq("storeId", args.storeId).eq("status", "open")
-      )
+      .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "open"))
       .filter((q) => q.gte(q.field("createdAt"), startOfDay))
       .collect();
 
@@ -663,7 +641,7 @@ export const getTodaysOpenOrders = query({
           itemCount,
           createdAt: order.createdAt,
         };
-      })
+      }),
     );
 
     return results.sort((a, b) => b.createdAt - a.createdAt);

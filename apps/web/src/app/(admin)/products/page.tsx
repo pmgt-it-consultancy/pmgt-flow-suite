@@ -1,27 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdminStore } from "@/stores/useAdminStore";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { Package, Pencil, Plus, Search } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -40,9 +26,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
-import { Plus, Pencil, Package, Search } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency } from "@/lib/format";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 interface ProductFormData {
   storeId: Id<"stores"> | undefined;
@@ -76,11 +70,11 @@ export default function ProductsPage() {
   // Queries
   const categories = useQuery(
     api.categories.list,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
   const products = useQuery(
     api.products.list,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
 
   // Mutations
@@ -88,8 +82,8 @@ export default function ProductsPage() {
   const updateProduct = useMutation(api.products.update);
 
   // Filter products by search query
-  const filteredProducts = products?.filter(
-    (p) => p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProducts = products?.filter((p) =>
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleOpenCreate = () => {
@@ -146,9 +140,7 @@ export default function ProductsPage() {
       setFormData(initialFormData);
       setEditingProduct(null);
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to save product"
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to save product");
     } finally {
       setIsSubmitting(false);
     }
@@ -187,9 +179,7 @@ export default function ProductsPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Products</CardTitle>
-          <CardDescription>
-            {filteredProducts?.length ?? 0} product(s) found
-          </CardDescription>
+          <CardDescription>{filteredProducts?.length ?? 0} product(s) found</CardDescription>
         </CardHeader>
         <CardContent>
           {!selectedStoreId ? (
@@ -226,13 +216,9 @@ export default function ProductsPage() {
               <TableBody>
                 {filteredProducts?.map((product) => (
                   <TableRow key={product._id}>
-                    <TableCell className="font-medium">
-                      {product.name}
-                    </TableCell>
+                    <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>{product.categoryName}</TableCell>
-                    <TableCell className="text-right">
-                      {formatCurrency(product.price)}
-                    </TableCell>
+                    <TableCell className="text-right">{formatCurrency(product.price)}</TableCell>
                     <TableCell>
                       <Badge variant={product.isVatable ? "default" : "secondary"}>
                         {product.isVatable ? "VAT" : "Non-VAT"}
@@ -240,18 +226,12 @@ export default function ProductsPage() {
                     </TableCell>
                     <TableCell>{product.sortOrder}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant={product.isActive ? "default" : "destructive"}
-                      >
+                      <Badge variant={product.isActive ? "default" : "destructive"}>
                         {product.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleOpenEdit(product)}
-                      >
+                      <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(product)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
                     </TableCell>
@@ -267,9 +247,7 @@ export default function ProductsPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>
-              {editingProduct ? "Edit Product" : "Create Product"}
-            </DialogTitle>
+            <DialogTitle>{editingProduct ? "Edit Product" : "Create Product"}</DialogTitle>
             <DialogDescription>
               {editingProduct
                 ? "Update the product details below."
@@ -296,15 +274,14 @@ export default function ProductsPage() {
                 <SelectContent>
                   {categories?.map((category) => (
                     <SelectItem key={category._id} value={category._id}>
-                      {category.parentId ? "└ " : ""}{category.name}
+                      {category.parentId ? "└ " : ""}
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {(!categories || categories.length === 0) && (
-                <p className="text-xs text-red-500">
-                  Please create a category first.
-                </p>
+                <p className="text-xs text-red-500">Please create a category first.</p>
               )}
             </div>
 
@@ -313,9 +290,7 @@ export default function ProductsPage() {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter product name"
               />
             </div>
@@ -345,7 +320,7 @@ export default function ProductsPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      sortOrder: parseInt(e.target.value) || 0,
+                      sortOrder: parseInt(e.target.value, 10) || 0,
                     })
                   }
                 />

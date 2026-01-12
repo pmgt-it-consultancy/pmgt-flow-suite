@@ -1,13 +1,12 @@
-import React from "react";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 // Import screens from features
 import { LoginScreen } from "../features/auth";
-import { TablesScreen } from "../features/tables";
-import { OrderScreen } from "../features/orders";
 import { CheckoutScreen } from "../features/checkout";
+import { OrderScreen } from "../features/orders";
+import { TablesScreen } from "../features/tables";
 
 // Define navigation parameter types
 export type RootStackParamList = {

@@ -1,17 +1,14 @@
-import { Component, ReactNode } from "react";
+import { Component, type ReactNode } from "react";
 
 // General error boundary for catching rendering errors
-export class ErrorBoundary extends Component<
-  { children: ReactNode },
-  { error: ReactNode | null }
-> {
+export class ErrorBoundary extends Component<{ children: ReactNode }, { error: ReactNode | null }> {
   constructor(props: { children: ReactNode }) {
     super(props);
     this.state = { error: null };
   }
 
   static getDerivedStateFromError(error: unknown) {
-    const errorText = "" + (error as any).toString();
+    const errorText = `${(error as any).toString()}`;
     return {
       error: (
         <>
@@ -27,9 +24,7 @@ export class ErrorBoundary extends Component<
     if (this.state.error !== null) {
       return (
         <div className="bg-destructive/30 p-8 flex flex-col gap-4 container">
-          <h1 className="text-xl font-bold">
-            Caught an error while rendering:
-          </h1>
+          <h1 className="text-xl font-bold">Caught an error while rendering:</h1>
           {this.state.error}
         </div>
       );

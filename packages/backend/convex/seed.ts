@@ -1,9 +1,9 @@
 "use node";
 
-import { v } from "convex/values";
-import { action } from "./_generated/server";
-import { internal } from "./_generated/api";
 import { createAccount } from "@convex-dev/auth/server";
+import { v } from "convex/values";
+import { internal } from "./_generated/api";
+import { action } from "./_generated/server";
 import { DEFAULT_ROLE_PERMISSIONS } from "./lib/permissions";
 
 // Type definition for seed result
@@ -34,29 +34,28 @@ export const seed = action({
       },
       {
         name: "Admin",
-        permissions: DEFAULT_ROLE_PERMISSIONS["Admin"],
+        permissions: DEFAULT_ROLE_PERMISSIONS.Admin,
         scopeLevel: "parent" as const,
         isSystem: true,
       },
       {
         name: "Manager",
-        permissions: DEFAULT_ROLE_PERMISSIONS["Manager"],
+        permissions: DEFAULT_ROLE_PERMISSIONS.Manager,
         scopeLevel: "branch" as const,
         isSystem: true,
       },
       {
         name: "Staff",
-        permissions: DEFAULT_ROLE_PERMISSIONS["Staff"],
+        permissions: DEFAULT_ROLE_PERMISSIONS.Staff,
         scopeLevel: "branch" as const,
         isSystem: true,
       },
     ];
 
     // Step 1: Create roles and get Super Admin role ID
-    const seedResult = await ctx.runMutation(
-      internal.helpers.seedHelpers.insertRolesAndPrepare,
-      { roles }
-    );
+    const seedResult = await ctx.runMutation(internal.helpers.seedHelpers.insertRolesAndPrepare, {
+      roles,
+    });
 
     if (!seedResult.success) {
       return seedResult;

@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from "react";
-import { View, TextInput, TouchableOpacity, ActivityIndicator } from "uniwind/components";
-import { Alert } from "react-native";
-import { useQuery, useAction } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { Text, Modal, Button } from "../../shared/components/ui";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useAction, useQuery } from "convex/react";
+import { useCallback, useState } from "react";
+import { Alert } from "react-native";
+import { ActivityIndicator, TextInput, TouchableOpacity, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
+import { Button, Modal, Text } from "../../shared/components/ui";
 
 interface ManagerPinModalProps {
   visible: boolean;
@@ -30,7 +30,7 @@ export const ManagerPinModal = ({
   // Query managers for this store - auth handled by Convex Auth provider
   const managers = useQuery(
     api.helpers.usersHelpers.listManagers,
-    user?.storeId ? { storeId: user.storeId } : "skip"
+    user?.storeId ? { storeId: user.storeId } : "skip",
   );
 
   const verifyPin = useAction(api.users.verifyPin);
@@ -92,9 +92,7 @@ export const ManagerPinModal = ({
             <TouchableOpacity
               key={manager._id}
               className={`flex-row items-center p-3 border rounded-lg mb-2 ${
-                selectedManagerId === manager._id
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-200"
+                selectedManagerId === manager._id ? "border-blue-500 bg-blue-50" : "border-gray-200"
               }`}
               onPress={() => setSelectedManagerId(manager._id)}
               activeOpacity={0.7}

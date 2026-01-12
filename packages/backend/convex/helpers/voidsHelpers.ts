@@ -1,7 +1,7 @@
-import { v } from "convex/values";
-import { internalMutation, internalQuery } from "../_generated/server";
-import { Id } from "../_generated/dataModel";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { v } from "convex/values";
+import type { Id } from "../_generated/dataModel";
+import { internalMutation, internalQuery } from "../_generated/server";
 
 /**
  * Internal query to get authenticated user ID
@@ -31,7 +31,7 @@ export const getManagerWithPin = internalQuery({
       pin: v.optional(v.string()),
       isActive: v.boolean(),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.managerId);
@@ -46,16 +46,10 @@ export const getManagerWithPin = internalQuery({
   },
 });
 
-
 // Helper to recalculate order totals
-async function recalculateOrderTotals(
-  ctx: { db: any },
-  orderId: Id<"orders">
-): Promise<void> {
+async function recalculateOrderTotals(ctx: { db: any }, orderId: Id<"orders">): Promise<void> {
   // Import dynamically to avoid circular deps
-  const { calculateItemTotals, aggregateOrderTotals } = await import(
-    "../lib/taxCalculations"
-  );
+  const { calculateItemTotals, aggregateOrderTotals } = await import("../lib/taxCalculations");
 
   // Get all active (non-voided) items
   const items = await ctx.db
@@ -71,7 +65,7 @@ async function recalculateOrderTotals(
       const product = await ctx.db.get(item.productId);
       const isVatable = product?.isVatable ?? true;
       return calculateItemTotals(item.productPrice, item.quantity, isVatable, 0);
-    })
+    }),
   );
 
   // Aggregate totals
@@ -235,7 +229,7 @@ export const getOrderVoidsInternal = internalQuery({
       approvedByName: v.string(),
       requestedByName: v.string(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     const voids = await ctx.db
@@ -258,7 +252,7 @@ export const getOrderVoidsInternal = internalQuery({
           requestedByName: requester?.name ?? "Unknown",
           createdAt: v.createdAt,
         };
-      })
+      }),
     );
 
     return results;

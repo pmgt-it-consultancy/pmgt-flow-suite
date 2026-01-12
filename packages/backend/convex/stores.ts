@@ -1,11 +1,8 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
-import { Doc } from "./_generated/dataModel";
+import type { Doc } from "./_generated/dataModel";
+import { mutation, query } from "./_generated/server";
+import { getAuthenticatedUser, getAuthenticatedUserWithRole } from "./lib/auth";
 import { requirePermission } from "./lib/permissions";
-import {
-  getAuthenticatedUser,
-  getAuthenticatedUserWithRole,
-} from "./lib/auth";
 
 // List stores based on user scope
 export const list = query({
@@ -25,7 +22,7 @@ export const list = query({
       isActive: v.boolean(),
       createdAt: v.number(),
       branchCount: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Get authenticated user with role using Convex Auth
@@ -89,7 +86,7 @@ export const list = query({
           createdAt: store.createdAt,
           branchCount: branches.length,
         };
-      })
+      }),
     );
 
     return storesWithBranchCount;
@@ -117,7 +114,7 @@ export const get = query({
       isActive: v.boolean(),
       createdAt: v.number(),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Verify authentication using Convex Auth
@@ -213,7 +210,7 @@ export const update = mutation({
 
     const { storeId, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, v]) => v !== undefined)
+      Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
     await ctx.db.patch(storeId, filteredUpdates);

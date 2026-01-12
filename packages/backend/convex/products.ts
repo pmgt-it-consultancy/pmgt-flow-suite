@@ -1,8 +1,8 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
-import { Doc } from "./_generated/dataModel";
-import { requirePermission } from "./lib/permissions";
+import type { Doc } from "./_generated/dataModel";
+import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
+import { requirePermission } from "./lib/permissions";
 
 // List products for a store
 export const list = query({
@@ -24,7 +24,7 @@ export const list = query({
       sortOrder: v.number(),
       createdAt: v.number(),
       updatedAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -71,7 +71,7 @@ export const list = query({
           createdAt: product.createdAt,
           updatedAt: product.updatedAt,
         };
-      })
+      }),
     );
 
     return productsWithCategories;
@@ -96,7 +96,7 @@ export const get = query({
       createdAt: v.number(),
       updatedAt: v.number(),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -140,9 +140,7 @@ export const create = mutation({
         .collect();
 
       sortOrder =
-        existingProducts.length > 0
-          ? Math.max(...existingProducts.map((p) => p.sortOrder)) + 1
-          : 0;
+        existingProducts.length > 0 ? Math.max(...existingProducts.map((p) => p.sortOrder)) + 1 : 0;
     }
 
     const now = Date.now();
@@ -192,7 +190,7 @@ export const update = mutation({
 
     const { productId, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, v]) => v !== undefined)
+      Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
     await ctx.db.patch(productId, {
@@ -210,7 +208,7 @@ export const bulkUpdatePrices = mutation({
       v.object({
         productId: v.id("products"),
         price: v.number(),
-      })
+      }),
     ),
   },
   returns: v.null(),
@@ -272,7 +270,7 @@ export const search = query({
       categoryName: v.string(),
       price: v.number(),
       isVatable: v.boolean(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -281,16 +279,12 @@ export const search = query({
     // Get active products for the store
     const products = await ctx.db
       .query("products")
-      .withIndex("by_store_active", (q) =>
-        q.eq("storeId", args.storeId).eq("isActive", true)
-      )
+      .withIndex("by_store_active", (q) => q.eq("storeId", args.storeId).eq("isActive", true))
       .collect();
 
     // Filter by search term (case-insensitive)
     const searchLower = args.searchTerm.toLowerCase();
-    const filtered = products.filter((p) =>
-      p.name.toLowerCase().includes(searchLower)
-    );
+    const filtered = products.filter((p) => p.name.toLowerCase().includes(searchLower));
 
     // Limit results
     const limited = args.limit ? filtered.slice(0, args.limit) : filtered;
@@ -307,7 +301,7 @@ export const search = query({
           price: product.price,
           isVatable: product.isVatable,
         };
-      })
+      }),
     );
 
     return results;
@@ -330,9 +324,9 @@ export const getByCategory = query({
           name: v.string(),
           price: v.number(),
           isVatable: v.boolean(),
-        })
+        }),
       ),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -348,9 +342,7 @@ export const getByCategory = query({
     // Get active products for the store
     const products = await ctx.db
       .query("products")
-      .withIndex("by_store_active", (q) =>
-        q.eq("storeId", args.storeId).eq("isActive", true)
-      )
+      .withIndex("by_store_active", (q) => q.eq("storeId", args.storeId).eq("isActive", true))
       .collect();
 
     // Group products by category
@@ -381,7 +373,7 @@ export const getByCategory = query({
             parentCategoryName,
             products: categoryProducts,
           };
-        })
+        }),
     );
 
     // Filter out empty categories

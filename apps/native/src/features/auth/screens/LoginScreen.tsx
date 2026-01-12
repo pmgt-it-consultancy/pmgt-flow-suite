@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { View, KeyboardAvoidingView } from "uniwind/components";
+import { useEffect } from "react";
 import { Platform } from "react-native";
-import { useAuth } from "../context";
+import { KeyboardAvoidingView, View } from "uniwind/components";
 import { LoginForm } from "../components";
+import { useAuth } from "../context";
 
 interface LoginScreenProps {
   navigation: any;

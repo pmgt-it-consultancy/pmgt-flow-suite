@@ -1,6 +1,6 @@
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 interface AdminState {
   selectedStoreId: Id<"stores"> | null;
@@ -15,6 +15,6 @@ export const useAdminStore = create<AdminState>()(
     }),
     {
       name: "admin-store",
-    }
-  )
+    },
+  ),
 );

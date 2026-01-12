@@ -1,26 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth } from "@/hooks/useAuth";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { Building, Pencil, Plus, Store } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -29,7 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -39,8 +26,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
-import { Plus, Pencil, Store, Building, Trash2 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
 
 interface StoreFormData {
   name: string;
@@ -135,9 +129,7 @@ export default function StoresPage() {
       setFormData(initialFormData);
       setEditingStore(null);
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to save store"
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to save store");
     } finally {
       setIsSubmitting(false);
     }
@@ -149,9 +141,7 @@ export default function StoresPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Stores</h1>
-          <p className="text-gray-500">
-            Manage your stores and branches
-          </p>
+          <p className="text-gray-500">Manage your stores and branches</p>
         </div>
         <Button onClick={handleOpenCreate}>
           <Plus className="mr-2 h-4 w-4" />
@@ -163,9 +153,7 @@ export default function StoresPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Stores</CardTitle>
-          <CardDescription>
-            {stores?.length ?? 0} store(s) in total
-          </CardDescription>
+          <CardDescription>{stores?.length ?? 0} store(s) in total</CardDescription>
         </CardHeader>
         <CardContent>
           {!stores ? (
@@ -208,24 +196,16 @@ export default function StoresPage() {
                         {store.parentId ? "Branch" : "Parent"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="max-w-xs truncate">
-                      {store.address1}
-                    </TableCell>
+                    <TableCell className="max-w-xs truncate">{store.address1}</TableCell>
                     <TableCell>{store.tin}</TableCell>
                     <TableCell>{store.vatRate}%</TableCell>
                     <TableCell>
-                      <Badge
-                        variant={store.isActive ? "default" : "destructive"}
-                      >
+                      <Badge variant={store.isActive ? "default" : "destructive"}>
                         {store.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleOpenEdit(store)}
-                      >
+                      <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(store)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
                     </TableCell>
@@ -241,9 +221,7 @@ export default function StoresPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>
-              {editingStore ? "Edit Store" : "Create Store"}
-            </DialogTitle>
+            <DialogTitle>{editingStore ? "Edit Store" : "Create Store"}</DialogTitle>
             <DialogDescription>
               {editingStore
                 ? "Update the store details below."
@@ -257,9 +235,7 @@ export default function StoresPage() {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter store name"
               />
             </div>
@@ -299,9 +275,7 @@ export default function StoresPage() {
               <Input
                 id="address1"
                 value={formData.address1}
-                onChange={(e) =>
-                  setFormData({ ...formData, address1: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, address1: e.target.value })}
                 placeholder="Street address"
               />
             </div>
@@ -311,9 +285,7 @@ export default function StoresPage() {
               <Input
                 id="address2"
                 value={formData.address2}
-                onChange={(e) =>
-                  setFormData({ ...formData, address2: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, address2: e.target.value })}
                 placeholder="Building, floor, etc."
               />
             </div>
@@ -324,9 +296,7 @@ export default function StoresPage() {
                 <Input
                   id="tin"
                   value={formData.tin}
-                  onChange={(e) =>
-                    setFormData({ ...formData, tin: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, tin: e.target.value })}
                   placeholder="000-000-000-000"
                 />
               </div>
@@ -335,9 +305,7 @@ export default function StoresPage() {
                 <Input
                   id="min"
                   value={formData.min}
-                  onChange={(e) =>
-                    setFormData({ ...formData, min: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, min: e.target.value })}
                   placeholder="Machine ID Number"
                 />
               </div>
@@ -393,7 +361,13 @@ export default function StoresPage() {
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={isSubmitting || !formData.name || !formData.address1 || !formData.tin || !formData.min}
+              disabled={
+                isSubmitting ||
+                !formData.name ||
+                !formData.address1 ||
+                !formData.tin ||
+                !formData.min
+              }
             >
               {isSubmitting ? "Saving..." : editingStore ? "Update" : "Create"}
             </Button>

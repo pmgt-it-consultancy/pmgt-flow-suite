@@ -1,6 +1,7 @@
-import React, { forwardRef } from "react";
+import type React from "react";
+import { forwardRef } from "react";
+import type { Text as RNText, TextProps as RNTextProps } from "react-native";
 import { Text as UniwindText } from "uniwind/components";
-import { Text as RNText, TextProps as RNTextProps } from "react-native";
 
 interface TextProps extends RNTextProps {
   variant?: "default" | "heading" | "subheading" | "muted" | "error" | "success";
@@ -31,7 +32,7 @@ export const Text = forwardRef<React.ElementRef<typeof RNText>, TextProps>(
   ({ variant = "default", size = "base", className = "", ...props }, ref) => {
     const classes = `${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim();
     return <UniwindText ref={ref} className={classes} {...props} />;
-  }
+  },
 );
 
 Text.displayName = "Text";

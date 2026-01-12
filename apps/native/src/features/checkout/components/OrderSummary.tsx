@@ -1,6 +1,5 @@
-import React from "react";
 import { View } from "uniwind/components";
-import { Text, Card } from "../../shared/components/ui";
+import { Card, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface OrderItem {
@@ -24,16 +23,11 @@ export const OrderSummary = ({ items }: OrderSummaryProps) => {
       </Text>
       <Card variant="elevated">
         {items.map((item) => (
-          <View
-            key={item._id}
-            className="flex-row justify-between py-2 border-b border-gray-100"
-          >
+          <View key={item._id} className="flex-row justify-between py-2 border-b border-gray-100">
             <Text className="text-gray-700 flex-1">
               {item.quantity}x {item.productName}
             </Text>
-            <Text className="text-gray-900 font-medium">
-              {formatCurrency(item.lineTotal)}
-            </Text>
+            <Text className="text-gray-900 font-medium">{formatCurrency(item.lineTotal)}</Text>
           </View>
         ))}
       </Card>

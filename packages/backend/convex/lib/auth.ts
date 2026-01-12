@@ -1,6 +1,6 @@
-import { QueryCtx, MutationCtx, ActionCtx } from "../_generated/server";
-import { Id, Doc } from "../_generated/dataModel";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import type { Id } from "../_generated/dataModel";
+import type { MutationCtx, QueryCtx } from "../_generated/server";
 
 /**
  * Get the currently authenticated user from Convex Auth
@@ -54,10 +54,7 @@ export async function requireAuthWithRole(ctx: QueryCtx | MutationCtx) {
 /**
  * Get user by ID with role information
  */
-export async function getUserWithRole(
-  ctx: QueryCtx | MutationCtx,
-  userId: Id<"users">
-) {
+export async function getUserWithRole(ctx: QueryCtx | MutationCtx, userId: Id<"users">) {
   const user = await ctx.db.get(userId);
   if (!user) return null;
 
@@ -70,10 +67,7 @@ export async function getUserWithRole(
 /**
  * Get the stores accessible by a user based on their role scope
  */
-export async function getUserStoreScope(
-  ctx: QueryCtx | MutationCtx,
-  userId: Id<"users">
-) {
+export async function getUserStoreScope(ctx: QueryCtx | MutationCtx, userId: Id<"users">) {
   const user = await ctx.db.get(userId);
   if (!user) return { storeIds: [], scopeLevel: null };
 

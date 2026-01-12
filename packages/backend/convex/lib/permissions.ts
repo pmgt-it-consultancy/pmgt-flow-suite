@@ -1,5 +1,5 @@
-import { QueryCtx, MutationCtx } from "../_generated/server";
-import { Id } from "../_generated/dataModel";
+import type { Id } from "../_generated/dataModel";
+import type { MutationCtx, QueryCtx } from "../_generated/server";
 
 export const PERMISSIONS = {
   // Orders
@@ -112,7 +112,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, Permission[]> = {
 export async function hasPermission(
   ctx: QueryCtx | MutationCtx,
   userId: Id<"users">,
-  permission: Permission
+  permission: Permission,
 ): Promise<boolean> {
   const user = await ctx.db.get(userId);
   if (!user || !user.isActive) return false;
@@ -127,7 +127,7 @@ export async function hasPermission(
 export async function requirePermission(
   ctx: QueryCtx | MutationCtx,
   userId: Id<"users">,
-  permission: Permission
+  permission: Permission,
 ): Promise<void> {
   const allowed = await hasPermission(ctx, userId, permission);
   if (!allowed) {

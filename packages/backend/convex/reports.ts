@@ -1,8 +1,8 @@
 import { v } from "convex/values";
+import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
-import { requirePermission } from "./lib/permissions";
 import { getAuthenticatedUser } from "./lib/auth";
+import { requirePermission } from "./lib/permissions";
 
 // Generate or get daily report for a store
 export const generateDailyReport = mutation({
@@ -22,7 +22,7 @@ export const generateDailyReport = mutation({
     const existingReport = await ctx.db
       .query("dailyReports")
       .withIndex("by_store_date", (q) =>
-        q.eq("storeId", args.storeId).eq("reportDate", args.reportDate)
+        q.eq("storeId", args.storeId).eq("reportDate", args.reportDate),
       )
       .first();
 
@@ -64,7 +64,7 @@ export const generateDailyReport = mutation({
 async function aggregateDailyData(
   ctx: { db: any },
   storeId: Id<"stores">,
-  reportDate: string
+  reportDate: string,
 ): Promise<{
   grossSales: number;
   vatableSales: number;
@@ -92,10 +92,7 @@ async function aggregateDailyData(
   const orders = await ctx.db
     .query("orders")
     .withIndex("by_store_createdAt", (q: any) =>
-      q
-        .eq("storeId", storeId)
-        .gte("createdAt", startOfDay)
-        .lte("createdAt", endOfDay)
+      q.eq("storeId", storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
     )
     .collect();
 
@@ -216,7 +213,7 @@ function roundToTwo(num: number): number {
 async function generateProductSalesBreakdown(
   ctx: { db: any },
   storeId: Id<"stores">,
-  reportDate: string
+  reportDate: string,
 ): Promise<void> {
   // Parse date range
   const startOfDay = new Date(reportDate).setHours(0, 0, 0, 0);
@@ -225,9 +222,7 @@ async function generateProductSalesBreakdown(
   // Delete existing product sales for this date
   const existingProductSales = await ctx.db
     .query("dailyProductSales")
-    .withIndex("by_store_date", (q: any) =>
-      q.eq("storeId", storeId).eq("reportDate", reportDate)
-    )
+    .withIndex("by_store_date", (q: any) => q.eq("storeId", storeId).eq("reportDate", reportDate))
     .collect();
 
   for (const ps of existingProductSales) {
@@ -238,10 +233,7 @@ async function generateProductSalesBreakdown(
   const orders = await ctx.db
     .query("orders")
     .withIndex("by_store_createdAt", (q: any) =>
-      q
-        .eq("storeId", storeId)
-        .gte("createdAt", startOfDay)
-        .lte("createdAt", endOfDay)
+      q.eq("storeId", storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
     )
     .collect();
 
@@ -378,7 +370,7 @@ export const getDailyReport = query({
       isPrinted: v.boolean(),
       printedAt: v.optional(v.number()),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Verify authentication using Convex Auth
@@ -391,7 +383,7 @@ export const getDailyReport = query({
     const report = await ctx.db
       .query("dailyReports")
       .withIndex("by_store_date", (q) =>
-        q.eq("storeId", args.storeId).eq("reportDate", args.reportDate)
+        q.eq("storeId", args.storeId).eq("reportDate", args.reportDate),
       )
       .first();
 
@@ -446,7 +438,7 @@ export const getDailyProductSales = query({
       grossAmount: v.number(),
       voidedQuantity: v.number(),
       voidedAmount: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Verify authentication using Convex Auth
@@ -456,7 +448,7 @@ export const getDailyProductSales = query({
     }
 
     // Get product sales
-    let productSales;
+    let productSales: Doc<"dailyProductSales">[];
     if (args.categoryId !== undefined) {
       const categoryId = args.categoryId;
       productSales = await ctx.db
@@ -465,14 +457,14 @@ export const getDailyProductSales = query({
           q
             .eq("storeId", args.storeId)
             .eq("reportDate", args.reportDate)
-            .eq("categoryId", categoryId)
+            .eq("categoryId", categoryId),
         )
         .collect();
     } else {
       productSales = await ctx.db
         .query("dailyProductSales")
         .withIndex("by_store_date", (q) =>
-          q.eq("storeId", args.storeId).eq("reportDate", args.reportDate)
+          q.eq("storeId", args.storeId).eq("reportDate", args.reportDate),
         )
         .collect();
     }
@@ -545,7 +537,7 @@ export const getDateRangeReport = query({
         reportDate: v.string(),
         netSales: v.number(),
         transactionCount: v.number(),
-      })
+      }),
     ),
   }),
   handler: async (ctx, args) => {
@@ -565,7 +557,7 @@ export const getDateRangeReport = query({
       .collect();
 
     const reports = allReports.filter(
-      (r) => r.reportDate >= args.startDate && r.reportDate <= args.endDate
+      (r) => r.reportDate >= args.startDate && r.reportDate <= args.endDate,
     );
 
     // Aggregate totals
@@ -646,7 +638,7 @@ export const getBranchSummary = query({
       voidAmount: v.number(),
       averageTicket: v.number(),
       hasReport: v.boolean(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Verify authentication using Convex Auth
@@ -659,7 +651,7 @@ export const getBranchSummary = query({
     await requirePermission(ctx, currentUser._id, "reports.branch_summary");
 
     // Get stores (either branches of parent or all stores)
-    let stores;
+    let stores: Doc<"stores">[];
     if (args.parentStoreId) {
       stores = await ctx.db
         .query("stores")
@@ -678,7 +670,7 @@ export const getBranchSummary = query({
         const report = await ctx.db
           .query("dailyReports")
           .withIndex("by_store_date", (q) =>
-            q.eq("storeId", store._id).eq("reportDate", args.reportDate)
+            q.eq("storeId", store._id).eq("reportDate", args.reportDate),
           )
           .first();
 
@@ -691,7 +683,7 @@ export const getBranchSummary = query({
           averageTicket: report?.averageTicket ?? 0,
           hasReport: !!report,
         };
-      })
+      }),
     );
 
     // Sort by net sales descending
@@ -712,7 +704,7 @@ export const getHourlySales = query({
       hour: v.number(),
       transactionCount: v.number(),
       netSales: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Verify authentication using Convex Auth
@@ -729,10 +721,7 @@ export const getHourlySales = query({
     const orders = await ctx.db
       .query("orders")
       .withIndex("by_store_createdAt", (q) =>
-        q
-          .eq("storeId", args.storeId)
-          .gte("createdAt", startOfDay)
-          .lte("createdAt", endOfDay)
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
       )
       .collect();
 
@@ -780,7 +769,7 @@ export const getTopSellingProducts = query({
       categoryName: v.string(),
       quantitySold: v.number(),
       grossAmount: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Verify authentication using Convex Auth
@@ -793,7 +782,7 @@ export const getTopSellingProducts = query({
     const productSales = await ctx.db
       .query("dailyProductSales")
       .withIndex("by_store_date", (q) =>
-        q.eq("storeId", args.storeId).eq("reportDate", args.reportDate)
+        q.eq("storeId", args.storeId).eq("reportDate", args.reportDate),
       )
       .collect();
 
@@ -827,7 +816,7 @@ export const getCategorySales = query({
       productCount: v.number(),
       totalQuantitySold: v.number(),
       totalGrossAmount: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Verify authentication using Convex Auth
@@ -840,7 +829,7 @@ export const getCategorySales = query({
     const productSales = await ctx.db
       .query("dailyProductSales")
       .withIndex("by_store_date", (q) =>
-        q.eq("storeId", args.storeId).eq("reportDate", args.reportDate)
+        q.eq("storeId", args.storeId).eq("reportDate", args.reportDate),
       )
       .collect();
 

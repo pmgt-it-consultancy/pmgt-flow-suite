@@ -1,15 +1,11 @@
 // Auth Feature
-export { AuthProvider, useAuth } from "./auth";
-export { LoginScreen } from "./auth";
-
-// Tables Feature
-export { TablesScreen } from "./tables";
-
-// Orders Feature
-export { OrderScreen } from "./orders";
-
+export { AuthProvider, LoginScreen, useAuth } from "./auth";
 // Checkout Feature
 export { CheckoutScreen } from "./checkout";
 
+// Orders Feature
+export { OrderScreen } from "./orders";
 // Shared
 export * from "./shared";
+// Tables Feature
+export { TablesScreen } from "./tables";

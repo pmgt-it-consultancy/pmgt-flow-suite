@@ -1,19 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdminStore } from "@/stores/useAdminStore";
-import { Button } from "@/components/ui/button";
+import { useMutation, useQuery } from "convex/react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  BarChart3,
+  Calendar,
+  Clock,
+  DollarSign,
+  FileText,
+  Printer,
+  RefreshCw,
+  ShoppingCart,
+  TrendingUp,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -22,35 +28,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import { toast } from "sonner";
-import {
-  Calendar,
-  FileText,
-  TrendingUp,
-  DollarSign,
-  ShoppingCart,
-  Clock,
-  BarChart3,
-  Printer,
-  RefreshCw,
-} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency, formatDate, formatDateString } from "@/lib/format";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 export default function ReportsPage() {
   const { isAuthenticated } = useAuth();
@@ -67,33 +48,25 @@ export default function ReportsPage() {
   // Queries
   const dailyReport = useQuery(
     api.reports.getDailyReport,
-    isAuthenticated && selectedStoreId
-      ? { storeId: selectedStoreId, reportDate }
-      : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId, reportDate } : "skip",
   );
   const productSales = useQuery(
     api.reports.getDailyProductSales,
-    isAuthenticated && selectedStoreId
-      ? { storeId: selectedStoreId, reportDate }
-      : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId, reportDate } : "skip",
   );
   const categorySales = useQuery(
     api.reports.getCategorySales,
-    isAuthenticated && selectedStoreId
-      ? { storeId: selectedStoreId, reportDate }
-      : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId, reportDate } : "skip",
   );
   const hourlySales = useQuery(
     api.reports.getHourlySales,
-    isAuthenticated && selectedStoreId
-      ? { storeId: selectedStoreId, reportDate }
-      : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId, reportDate } : "skip",
   );
   const dateRangeReport = useQuery(
     api.reports.getDateRangeReport,
     isAuthenticated && selectedStoreId
       ? { storeId: selectedStoreId, startDate: dateRangeStart, endDate: dateRangeEnd }
-      : "skip"
+      : "skip",
   );
 
   // Mutations
@@ -111,9 +84,7 @@ export default function ReportsPage() {
       });
       toast.success("Report generated successfully");
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to generate report"
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to generate report");
     } finally {
       setIsGenerating(false);
     }
@@ -126,16 +97,12 @@ export default function ReportsPage() {
       await markPrinted({ reportId: dailyReport._id });
       toast.success("Report marked as printed");
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to mark as printed"
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to mark as printed");
     }
   };
 
   // Find max hourly sales for bar chart scaling
-  const maxHourlySales = hourlySales
-    ? Math.max(...hourlySales.map((h) => h.netSales), 1)
-    : 1;
+  const maxHourlySales = hourlySales ? Math.max(...hourlySales.map((h) => h.netSales), 1) : 1;
 
   return (
     <div className="space-y-6">
@@ -202,7 +169,9 @@ export default function ReportsPage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center h-32 text-gray-500">
                 <Calendar className="h-8 w-8 mb-2" />
-                <p>No report found for this date. Click &quot;Generate Report&quot; to create one.</p>
+                <p>
+                  No report found for this date. Click &quot;Generate Report&quot; to create one.
+                </p>
               </CardContent>
             </Card>
           ) : (
@@ -214,7 +183,8 @@ export default function ReportsPage() {
                     <div>
                       <CardTitle>Daily Sales Report</CardTitle>
                       <CardDescription>
-                        {formatDate(new Date(reportDate).getTime())} - Generated by {dailyReport.generatedByName}
+                        {formatDate(new Date(reportDate).getTime())} - Generated by{" "}
+                        {dailyReport.generatedByName}
                       </CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
@@ -265,12 +235,28 @@ export default function ReportsPage() {
                     <CardTitle className="text-lg">Sales Breakdown</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <DetailRow label="Vatable Sales" value={formatCurrency(dailyReport.vatableSales)} />
-                    <DetailRow label="VAT Amount (12%)" value={formatCurrency(dailyReport.vatAmount)} />
-                    <DetailRow label="VAT-Exempt Sales" value={formatCurrency(dailyReport.vatExemptSales)} />
-                    <DetailRow label="Non-VAT Sales" value={formatCurrency(dailyReport.nonVatSales)} />
+                    <DetailRow
+                      label="Vatable Sales"
+                      value={formatCurrency(dailyReport.vatableSales)}
+                    />
+                    <DetailRow
+                      label="VAT Amount (12%)"
+                      value={formatCurrency(dailyReport.vatAmount)}
+                    />
+                    <DetailRow
+                      label="VAT-Exempt Sales"
+                      value={formatCurrency(dailyReport.vatExemptSales)}
+                    />
+                    <DetailRow
+                      label="Non-VAT Sales"
+                      value={formatCurrency(dailyReport.nonVatSales)}
+                    />
                     <div className="border-t pt-3">
-                      <DetailRow label="Gross Sales" value={formatCurrency(dailyReport.grossSales)} bold />
+                      <DetailRow
+                        label="Gross Sales"
+                        value={formatCurrency(dailyReport.grossSales)}
+                        bold
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -281,16 +267,26 @@ export default function ReportsPage() {
                     <CardTitle className="text-lg">Discounts & Voids</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <DetailRow label="Senior Citizen" value={formatCurrency(dailyReport.seniorDiscounts)} />
+                    <DetailRow
+                      label="Senior Citizen"
+                      value={formatCurrency(dailyReport.seniorDiscounts)}
+                    />
                     <DetailRow label="PWD" value={formatCurrency(dailyReport.pwdDiscounts)} />
                     <DetailRow label="Promo" value={formatCurrency(dailyReport.promoDiscounts)} />
                     <DetailRow label="Manual" value={formatCurrency(dailyReport.manualDiscounts)} />
                     <div className="border-t pt-3">
-                      <DetailRow label="Total Discounts" value={formatCurrency(dailyReport.totalDiscounts)} bold />
+                      <DetailRow
+                        label="Total Discounts"
+                        value={formatCurrency(dailyReport.totalDiscounts)}
+                        bold
+                      />
                     </div>
                     <div className="border-t pt-3">
                       <DetailRow label="Void Count" value={dailyReport.voidCount.toString()} />
-                      <DetailRow label="Void Amount" value={formatCurrency(dailyReport.voidAmount)} />
+                      <DetailRow
+                        label="Void Amount"
+                        value={formatCurrency(dailyReport.voidAmount)}
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -302,7 +298,10 @@ export default function ReportsPage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <DetailRow label="Cash" value={formatCurrency(dailyReport.cashTotal)} />
-                    <DetailRow label="Card/E-Wallet" value={formatCurrency(dailyReport.cardEwalletTotal)} />
+                    <DetailRow
+                      label="Card/E-Wallet"
+                      value={formatCurrency(dailyReport.cardEwalletTotal)}
+                    />
                     <div className="border-t pt-3">
                       <DetailRow label="Total" value={formatCurrency(dailyReport.netSales)} bold />
                     </div>
@@ -320,7 +319,9 @@ export default function ReportsPage() {
                         {categorySales.slice(0, 5).map((cat) => (
                           <div key={cat.categoryId} className="flex justify-between text-sm">
                             <span className="truncate">{cat.categoryName}</span>
-                            <span className="font-medium">{formatCurrency(cat.totalGrossAmount)}</span>
+                            <span className="font-medium">
+                              {formatCurrency(cat.totalGrossAmount)}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -371,7 +372,9 @@ export default function ReportsPage() {
                         <TableCell className="font-medium">{product.productName}</TableCell>
                         <TableCell>{product.categoryName}</TableCell>
                         <TableCell className="text-right">{product.quantitySold}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(product.grossAmount)}</TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(product.grossAmount)}
+                        </TableCell>
                         <TableCell className="text-right">
                           {product.voidedQuantity > 0 ? (
                             <span className="text-red-600">
@@ -519,14 +522,35 @@ export default function ReportsPage() {
                     <CardTitle className="text-lg">Period Summary</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <DetailRow label="Vatable Sales" value={formatCurrency(dateRangeReport.totalVatableSales)} />
-                    <DetailRow label="VAT Amount" value={formatCurrency(dateRangeReport.totalVatAmount)} />
-                    <DetailRow label="VAT-Exempt Sales" value={formatCurrency(dateRangeReport.totalVatExemptSales)} />
-                    <DetailRow label="Non-VAT Sales" value={formatCurrency(dateRangeReport.totalNonVatSales)} />
+                    <DetailRow
+                      label="Vatable Sales"
+                      value={formatCurrency(dateRangeReport.totalVatableSales)}
+                    />
+                    <DetailRow
+                      label="VAT Amount"
+                      value={formatCurrency(dateRangeReport.totalVatAmount)}
+                    />
+                    <DetailRow
+                      label="VAT-Exempt Sales"
+                      value={formatCurrency(dateRangeReport.totalVatExemptSales)}
+                    />
+                    <DetailRow
+                      label="Non-VAT Sales"
+                      value={formatCurrency(dateRangeReport.totalNonVatSales)}
+                    />
                     <div className="border-t pt-3">
-                      <DetailRow label="Total Discounts" value={formatCurrency(dateRangeReport.totalDiscounts)} />
-                      <DetailRow label="Void Amount" value={formatCurrency(dateRangeReport.totalVoidAmount)} />
-                      <DetailRow label="Void Count" value={dateRangeReport.totalVoidCount.toString()} />
+                      <DetailRow
+                        label="Total Discounts"
+                        value={formatCurrency(dateRangeReport.totalDiscounts)}
+                      />
+                      <DetailRow
+                        label="Void Amount"
+                        value={formatCurrency(dateRangeReport.totalVoidAmount)}
+                      />
+                      <DetailRow
+                        label="Void Count"
+                        value={dateRangeReport.totalVoidCount.toString()}
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -536,8 +560,14 @@ export default function ReportsPage() {
                     <CardTitle className="text-lg">Payment Methods</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <DetailRow label="Cash" value={formatCurrency(dateRangeReport.totalCashSales)} />
-                    <DetailRow label="Card/E-Wallet" value={formatCurrency(dateRangeReport.totalCardSales)} />
+                    <DetailRow
+                      label="Cash"
+                      value={formatCurrency(dateRangeReport.totalCashSales)}
+                    />
+                    <DetailRow
+                      label="Card/E-Wallet"
+                      value={formatCurrency(dateRangeReport.totalCardSales)}
+                    />
                   </CardContent>
                 </Card>
               </div>
@@ -560,7 +590,9 @@ export default function ReportsPage() {
                       {dateRangeReport.dailyBreakdown.map((day) => (
                         <TableRow key={day.reportDate}>
                           <TableCell>{formatDate(new Date(day.reportDate).getTime())}</TableCell>
-                          <TableCell className="text-right">{formatCurrency(day.netSales)}</TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(day.netSales)}
+                          </TableCell>
                           <TableCell className="text-right">{day.transactionCount}</TableCell>
                         </TableRow>
                       ))}

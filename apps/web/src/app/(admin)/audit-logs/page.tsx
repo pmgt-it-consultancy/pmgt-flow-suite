@@ -1,26 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdminStore } from "@/stores/useAdminStore";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useQuery } from "convex/react";
+import { AlertTriangle, Ban, CheckCircle, FileText, Percent, Search } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -31,13 +16,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  FileText,
-  Search,
-  Ban,
-  Percent,
-  CheckCircle,
-  AlertTriangle,
-} from "lucide-react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 type ActionType = "void_item" | "void_order" | "discount_applied" | "order_completed" | "all";
 
@@ -56,7 +43,7 @@ export default function AuditLogsPage() {
           action: actionFilter === "all" ? undefined : actionFilter,
           limit: 100,
         }
-      : "skip"
+      : "skip",
   );
 
   // Filter logs by search query
@@ -115,9 +102,7 @@ export default function AuditLogsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Audit Logs</h1>
-          <p className="text-gray-500">
-            View activity logs for compliance and accountability
-          </p>
+          <p className="text-gray-500">View activity logs for compliance and accountability</p>
         </div>
       </div>
 
@@ -163,9 +148,7 @@ export default function AuditLogsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Activity Log</CardTitle>
-          <CardDescription>
-            {filteredLogs?.length ?? 0} log entries found
-          </CardDescription>
+          <CardDescription>{filteredLogs?.length ?? 0} log entries found</CardDescription>
         </CardHeader>
         <CardContent>
           {!selectedStoreId ? (
@@ -196,9 +179,7 @@ export default function AuditLogsPage() {
               <TableBody>
                 {filteredLogs?.map((log) => (
                   <TableRow key={log._id}>
-                    <TableCell className="whitespace-nowrap">
-                      {formatDate(log.createdAt)}
-                    </TableCell>
+                    <TableCell className="whitespace-nowrap">{formatDate(log.createdAt)}</TableCell>
                     <TableCell className="font-medium">{log.userName}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">

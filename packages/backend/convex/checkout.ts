@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { calculateChange } from "./lib/taxCalculations";
 import { getAuthenticatedUser } from "./lib/auth";
+import { calculateChange } from "./lib/taxCalculations";
 
 // Process cash payment
 export const processCashPayment = mutation({
@@ -139,7 +139,7 @@ export const getReceipt = query({
           quantity: v.number(),
           unitPrice: v.number(),
           lineTotal: v.number(),
-        })
+        }),
       ),
 
       // BIR-compliant breakdown
@@ -152,13 +152,11 @@ export const getReceipt = query({
       netSales: v.number(),
 
       // Payment
-      paymentMethod: v.optional(
-        v.union(v.literal("cash"), v.literal("card_ewallet"))
-      ),
+      paymentMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
       cashReceived: v.optional(v.number()),
       changeGiven: v.optional(v.number()),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Verify authentication using Convex Auth

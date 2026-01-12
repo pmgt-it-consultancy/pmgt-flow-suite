@@ -11,14 +11,14 @@
  */
 
 export const VAT_RATE = 0.12;
-export const SC_PWD_DISCOUNT_RATE = 0.20;
+export const SC_PWD_DISCOUNT_RATE = 0.2;
 
 /**
  * Calculate VAT breakdown from a VAT-inclusive price
  */
 export function calculateVatBreakdown(
   vatInclusivePrice: number,
-  isVatable: boolean
+  isVatable: boolean,
 ): {
   vatExclusive: number;
   vatAmount: number;
@@ -85,23 +85,25 @@ export function calculateItemTotals(
   unitPrice: number,
   quantity: number,
   isVatable: boolean,
-  scPwdQuantity: number = 0
+  scPwdQuantity: number = 0,
 ): ItemCalculation {
   const grossAmount = unitPrice * quantity;
   const regularQuantity = quantity - scPwdQuantity;
 
   // Calculate regular (non-discounted) portion
   const regularGross = unitPrice * regularQuantity;
-  const regularVat = isVatable ? calculateVatBreakdown(regularGross, true) : { vatExclusive: regularGross, vatAmount: 0 };
+  const regularVat = isVatable
+    ? calculateVatBreakdown(regularGross, true)
+    : { vatExclusive: regularGross, vatAmount: 0 };
 
   // Calculate SC/PWD portion
-  let scPwdGross = 0;
+  let _scPwdGross = 0;
   let scPwdDiscount = 0;
   let scPwdVatExempt = 0;
   let scPwdNet = 0;
 
   if (scPwdQuantity > 0) {
-    scPwdGross = unitPrice * scPwdQuantity;
+    _scPwdGross = unitPrice * scPwdQuantity;
     const scPwd = calculateScPwdDiscount(unitPrice);
     scPwdDiscount = scPwd.discountAmount * scPwdQuantity;
     scPwdVatExempt = scPwd.vatExemptAmount * scPwdQuantity;
@@ -146,9 +148,7 @@ export interface OrderTotals {
 /**
  * Aggregate order totals from multiple items
  */
-export function aggregateOrderTotals(
-  items: ItemCalculation[]
-): OrderTotals {
+export function aggregateOrderTotals(items: ItemCalculation[]): OrderTotals {
   return items.reduce(
     (totals, item) => ({
       grossSales: totals.grossSales + item.grossAmount,
@@ -167,17 +167,14 @@ export function aggregateOrderTotals(
       nonVatSales: 0,
       discountAmount: 0,
       netSales: 0,
-    }
+    },
   );
 }
 
 /**
  * Calculate change for cash payment
  */
-export function calculateChange(
-  netSales: number,
-  cashReceived: number
-): number {
+export function calculateChange(netSales: number, cashReceived: number): number {
   return cashReceived - netSales;
 }
 

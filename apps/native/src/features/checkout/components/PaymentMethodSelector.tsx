@@ -1,6 +1,5 @@
-import React from "react";
-import { View, TouchableOpacity } from "uniwind/components";
 import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity, View } from "uniwind/components";
 import { Text } from "../../shared/components/ui";
 
 type PaymentMethod = "cash" | "card_ewallet";
@@ -10,10 +9,7 @@ interface PaymentMethodSelectorProps {
   onSelect: (method: PaymentMethod) => void;
 }
 
-export const PaymentMethodSelector = ({
-  selected,
-  onSelect,
-}: PaymentMethodSelectorProps) => {
+export const PaymentMethodSelector = ({ selected, onSelect }: PaymentMethodSelectorProps) => {
   return (
     <View className="px-4 py-3">
       <Text variant="heading" className="mb-3">

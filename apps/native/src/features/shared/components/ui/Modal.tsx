@@ -1,12 +1,12 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Platform, type ModalProps as RNModalProps } from "react-native";
 import {
+  KeyboardAvoidingView,
   Modal as RNModal,
-  View,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  KeyboardAvoidingView,
+  View,
 } from "uniwind/components";
-import { ModalProps as RNModalProps, Platform } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 
 interface ModalProps extends RNModalProps {
@@ -27,13 +27,12 @@ export const Modal = ({
   children,
   ...props
 }: ModalProps) => {
-  const positionClasses = position === "center"
-    ? "justify-center items-center"
-    : "justify-end";
+  const positionClasses = position === "center" ? "justify-center items-center" : "justify-end";
 
-  const contentClasses = position === "center"
-    ? "bg-white rounded-2xl p-5 mx-4 max-w-md w-full"
-    : "bg-white rounded-t-2xl p-5 max-h-[80%]";
+  const contentClasses =
+    position === "center"
+      ? "bg-white rounded-2xl p-5 mx-4 max-w-md w-full"
+      : "bg-white rounded-t-2xl p-5 max-h-[80%]";
 
   return (
     <RNModal transparent animationType="slide" {...props}>

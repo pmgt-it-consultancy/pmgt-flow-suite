@@ -1,7 +1,7 @@
-import OpenAI from "openai";
-import { internalAction, internalMutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import OpenAI from "openai";
 import { internal } from "./_generated/api";
+import { internalAction, internalMutation, query } from "./_generated/server";
 
 // Helper function for missing env variable message
 function missingEnvVariableUrl(name: string, url: string): string {

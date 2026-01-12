@@ -1,20 +1,20 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { View, FlatList, ActivityIndicator } from "uniwind/components";
-import { Alert } from "react-native";
-import { useQuery, useMutation } from "convex/react";
+import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { useCallback, useMemo, useState } from "react";
+import { Alert } from "react-native";
+import { ActivityIndicator, FlatList, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
 import { Text } from "../../shared/components/ui";
-import { Ionicons } from "@expo/vector-icons";
 import {
-  OrderHeader,
-  SearchBar,
-  CategoryFilter,
-  ProductCard,
-  CartItem,
-  CartFooter,
   AddItemModal,
+  CartFooter,
+  CartItem,
+  CategoryFilter,
+  OrderHeader,
+  ProductCard,
+  SearchBar,
 } from "../components";
 
 interface OrderScreenProps {
@@ -49,11 +49,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const order = useQuery(api.orders.get, { orderId });
   const products = useQuery(
     api.products.list,
-    order?.storeId ? { storeId: order.storeId } : "skip"
+    order?.storeId ? { storeId: order.storeId } : "skip",
   );
   const categories = useQuery(
     api.categories.list,
-    order?.storeId ? { storeId: order.storeId } : "skip"
+    order?.storeId ? { storeId: order.storeId } : "skip",
   );
 
   // Mutations
@@ -72,8 +72,14 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
   // Cart data
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
-  const cartTotal = useMemo(() => activeItems.reduce((sum, item) => sum + item.lineTotal, 0), [activeItems]);
-  const cartItemCount = useMemo(() => activeItems.reduce((sum, item) => sum + item.quantity, 0), [activeItems]);
+  const cartTotal = useMemo(
+    () => activeItems.reduce((sum, item) => sum + item.lineTotal, 0),
+    [activeItems],
+  );
+  const cartItemCount = useMemo(
+    () => activeItems.reduce((sum, item) => sum + item.quantity, 0),
+    [activeItems],
+  );
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -116,7 +122,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [updateItemQuantity]
+    [updateItemQuantity],
   );
 
   const handleDecrement = useCallback(
@@ -147,7 +153,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [updateItemQuantity, removeItem]
+    [updateItemQuantity, removeItem],
   );
 
   const handleCheckout = useCallback(() => {
@@ -243,11 +249,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             }
           />
 
-          <CartFooter
-            subtotal={cartTotal}
-            itemCount={cartItemCount}
-            onCheckout={handleCheckout}
-          />
+          <CartFooter subtotal={cartTotal} itemCount={cartItemCount} onCheckout={handleCheckout} />
         </View>
       </View>
 

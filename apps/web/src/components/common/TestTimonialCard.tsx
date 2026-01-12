@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 interface Props {
   data: {
     feature?: boolean;
@@ -19,14 +20,8 @@ const TestTimonialCard = ({ data }: Props) => {
       <div className="flex gap-2">
         {Array(5)
           .fill(0)
-          .map((data, index) => (
-            <Image
-              src="/images/star.svg"
-              width={29}
-              height={29}
-              alt="star"
-              key={index}
-            />
+          .map((_data, index) => (
+            <Image src="/images/star.svg" width={29} height={29} alt="star" key={index} />
           ))}
       </div>
       <blockquote

@@ -4,8 +4,7 @@ import TestTimonialCard from "../common/TestTimonialCard";
 const TestimonialsData = [
   {
     rating: 5,
-    review:
-      "Great note-taking application! The AI features make note-taking a breeze",
+    review: "Great note-taking application! The AI features make note-taking a breeze",
     name: "Ryan Lowry",
     designation: "Engineer & Author",
     profile: "/images/profile.png",
@@ -32,10 +31,7 @@ const TestimonialsData = [
 
 const Testimonials = () => {
   return (
-    <section
-      id="reviews"
-      className="bg_image bg_circle relative overflow-hidden"
-    >
+    <section id="reviews" className="bg_image bg_circle relative overflow-hidden">
       <Image
         src={"/images/blue-circle-right.svg"}
         width={503}

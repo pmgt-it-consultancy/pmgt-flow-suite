@@ -14,10 +14,7 @@ export const createUserSchema = z.object({
     .string()
     .min(6, "Password must be at least 6 characters")
     .max(100, "Password must be at most 100 characters"),
-  name: z
-    .string()
-    .min(1, "Name is required")
-    .max(100, "Name must be at most 100 characters"),
+  name: z.string().min(1, "Name is required").max(100, "Name must be at most 100 characters"),
   roleId: z.string().min(1, "Role is required"),
   storeId: z.string().optional(),
   pin: z

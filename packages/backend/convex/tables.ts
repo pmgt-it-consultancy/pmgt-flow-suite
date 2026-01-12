@@ -1,16 +1,14 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
-import { Doc } from "./_generated/dataModel";
-import { requirePermission } from "./lib/permissions";
+import type { Doc } from "./_generated/dataModel";
+import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
+import { requirePermission } from "./lib/permissions";
 
 // List tables for a store
 export const list = query({
   args: {
     storeId: v.id("stores"),
-    status: v.optional(
-      v.union(v.literal("available"), v.literal("occupied"))
-    ),
+    status: v.optional(v.union(v.literal("available"), v.literal("occupied"))),
     includeInactive: v.optional(v.boolean()),
   },
   returns: v.array(
@@ -24,7 +22,7 @@ export const list = query({
       sortOrder: v.number(),
       isActive: v.boolean(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -37,9 +35,7 @@ export const list = query({
       const status = args.status;
       tables = await ctx.db
         .query("tables")
-        .withIndex("by_store_status", (q) =>
-          q.eq("storeId", args.storeId).eq("status", status)
-        )
+        .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", status))
         .collect();
     } else {
       tables = await ctx.db
@@ -87,7 +83,7 @@ export const get = query({
       isActive: v.boolean(),
       createdAt: v.number(),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -123,9 +119,7 @@ export const create = mutation({
         .collect();
 
       sortOrder =
-        existingTables.length > 0
-          ? Math.max(...existingTables.map((t) => t.sortOrder)) + 1
-          : 0;
+        existingTables.length > 0 ? Math.max(...existingTables.map((t) => t.sortOrder)) + 1 : 0;
     }
 
     return await ctx.db.insert("tables", {
@@ -160,14 +154,14 @@ export const update = mutation({
     // Cannot deactivate a table that has an active order
     if (args.isActive === false) {
       const table = await ctx.db.get(args.tableId);
-      if (table && table.currentOrderId) {
+      if (table?.currentOrderId) {
         throw new Error("Cannot deactivate a table with an active order");
       }
     }
 
     const { tableId, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, v]) => v !== undefined)
+      Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
     await ctx.db.patch(tableId, filteredUpdates);
@@ -192,8 +186,7 @@ export const updateStatus = mutation({
 
     await ctx.db.patch(args.tableId, {
       status: args.status,
-      currentOrderId:
-        args.status === "available" ? undefined : args.currentOrderId,
+      currentOrderId: args.status === "available" ? undefined : args.currentOrderId,
     });
     return null;
   },
@@ -230,7 +223,7 @@ export const getAvailable = query({
       _id: v.id("tables"),
       name: v.string(),
       capacity: v.optional(v.number()),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -239,9 +232,7 @@ export const getAvailable = query({
     // Get available and active tables
     const tables = await ctx.db
       .query("tables")
-      .withIndex("by_store_status", (q) =>
-        q.eq("storeId", args.storeId).eq("status", "available")
-      )
+      .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "available"))
       .collect();
 
     return tables
@@ -274,10 +265,10 @@ export const getWithOrder = query({
           itemCount: v.number(),
           netSales: v.number(),
           createdAt: v.number(),
-        })
+        }),
       ),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -349,9 +340,9 @@ export const listWithOrders = query({
           itemCount: v.number(),
           netSales: v.number(),
           createdAt: v.number(),
-        })
+        }),
       ),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -363,9 +354,7 @@ export const listWithOrders = query({
       .withIndex("by_store", (q) => q.eq("storeId", args.storeId))
       .collect();
 
-    const activeTables = tables
-      .filter((t) => t.isActive)
-      .sort((a, b) => a.sortOrder - b.sortOrder);
+    const activeTables = tables.filter((t) => t.isActive).sort((a, b) => a.sortOrder - b.sortOrder);
 
     // Get order details for each table
     const results = await Promise.all(
@@ -390,10 +379,7 @@ export const listWithOrders = query({
               .collect();
 
             const activeItems = items.filter((i) => !i.isVoided);
-            const itemCount = activeItems.reduce(
-              (sum, i) => sum + i.quantity,
-              0
-            );
+            const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
 
             order = {
               _id: orderDoc._id,
@@ -413,7 +399,7 @@ export const listWithOrders = query({
           sortOrder: table.sortOrder,
           order,
         };
-      })
+      }),
     );
 
     return results;

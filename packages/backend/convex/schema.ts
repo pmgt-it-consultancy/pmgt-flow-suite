@@ -1,6 +1,6 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
   // Convex Auth tables (authAccounts, authRateLimits, authRefreshTokens, authSessions, authVerificationCodes, authVerifiers)
@@ -39,11 +39,7 @@ export default defineSchema({
   roles: defineTable({
     name: v.string(),
     permissions: v.array(v.string()),
-    scopeLevel: v.union(
-      v.literal("system"),
-      v.literal("parent"),
-      v.literal("branch")
-    ),
+    scopeLevel: v.union(v.literal("system"), v.literal("parent"), v.literal("branch")),
     isSystem: v.boolean(),
   }),
 
@@ -116,11 +112,7 @@ export default defineSchema({
     orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
     tableId: v.optional(v.id("tables")),
     customerName: v.optional(v.string()),
-    status: v.union(
-      v.literal("open"),
-      v.literal("paid"),
-      v.literal("voided")
-    ),
+    status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
     grossSales: v.number(),
     vatableSales: v.number(),
     vatAmount: v.number(),
@@ -128,9 +120,7 @@ export default defineSchema({
     nonVatSales: v.number(),
     discountAmount: v.number(),
     netSales: v.number(),
-    paymentMethod: v.optional(
-      v.union(v.literal("cash"), v.literal("card_ewallet"))
-    ),
+    paymentMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
     cashReceived: v.optional(v.number()),
     changeGiven: v.optional(v.number()),
     createdBy: v.id("users"),
@@ -165,7 +155,7 @@ export default defineSchema({
       v.literal("senior_citizen"),
       v.literal("pwd"),
       v.literal("promo"),
-      v.literal("manual")
+      v.literal("manual"),
     ),
     customerName: v.string(),
     customerId: v.string(),

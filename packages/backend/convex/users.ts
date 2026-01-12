@@ -1,11 +1,11 @@
 "use node";
 
-import { v } from "convex/values";
-import { action } from "./_generated/server";
-import { internal } from "./_generated/api";
-import bcrypt from "bcryptjs";
-import * as Scrypt from "scrypt-kdf";
 import { createAccount } from "@convex-dev/auth/server";
+import bcrypt from "bcryptjs";
+import { v } from "convex/values";
+import * as Scrypt from "scrypt-kdf";
+import { internal } from "./_generated/api";
+import { action } from "./_generated/server";
 
 /**
  * User management actions
@@ -27,13 +27,13 @@ export const setPin = action({
   },
   returns: v.union(
     v.object({ success: v.literal(true) }),
-    v.object({ success: v.literal(false), error: v.string() })
+    v.object({ success: v.literal(false), error: v.string() }),
   ),
   handler: async (ctx, args) => {
     // Validate authentication
     const currentUserId = await ctx.runQuery(
       internal.helpers.usersHelpers.getAuthenticatedUserId,
-      {}
+      {},
     );
 
     if (!currentUserId) {
@@ -78,13 +78,13 @@ export const verifyPin = action({
   },
   returns: v.union(
     v.object({ success: v.literal(true) }),
-    v.object({ success: v.literal(false), error: v.string() })
+    v.object({ success: v.literal(false), error: v.string() }),
   ),
   handler: async (ctx, args) => {
     // Validate authentication
     const currentUserId = await ctx.runQuery(
       internal.helpers.usersHelpers.getAuthenticatedUserId,
-      {}
+      {},
     );
 
     if (!currentUserId) {
@@ -92,10 +92,9 @@ export const verifyPin = action({
     }
 
     // Get the user's hashed PIN
-    const userPin = await ctx.runQuery(
-      internal.helpers.usersHelpers.getUserPinInternal,
-      { userId: args.userId }
-    );
+    const userPin = await ctx.runQuery(internal.helpers.usersHelpers.getUserPinInternal, {
+      userId: args.userId,
+    });
 
     if (!userPin) {
       return { success: false as const, error: "PIN not set for this user" };
@@ -126,13 +125,13 @@ export const create = action({
   },
   returns: v.union(
     v.object({ success: v.literal(true), userId: v.id("users") }),
-    v.object({ success: v.literal(false), error: v.string() })
+    v.object({ success: v.literal(false), error: v.string() }),
   ),
   handler: async (ctx, args) => {
     // Validate authentication
     const currentUserId = await ctx.runQuery(
       internal.helpers.usersHelpers.getAuthenticatedUserId,
-      {}
+      {},
     );
 
     if (!currentUserId) {
@@ -142,7 +141,7 @@ export const create = action({
     // Check if user has permission to create users
     const hasPermission = await ctx.runQuery(
       internal.helpers.permissionsHelpers.checkUserPermission,
-      { userId: currentUserId, permission: "users.manage" }
+      { userId: currentUserId, permission: "users.manage" },
     );
 
     if (!hasPermission) {
@@ -156,10 +155,9 @@ export const create = action({
     }
 
     // Check for existing account with this email
-    const existing = await ctx.runQuery(
-      internal.helpers.usersHelpers.getAuthAccountByEmail,
-      { email: args.email }
-    );
+    const existing = await ctx.runQuery(internal.helpers.usersHelpers.getAuthAccountByEmail, {
+      email: args.email,
+    });
 
     if (existing) {
       return { success: false as const, error: "Email already in use" };
@@ -180,15 +178,12 @@ export const create = action({
       });
 
       // Update user with custom fields (roleId, storeId, isActive)
-      await ctx.runMutation(
-        internal.helpers.usersHelpers.updateUserAfterCreate,
-        {
-          userId: user._id,
-          roleId: args.roleId,
-          storeId: args.storeId,
-          isActive: true,
-        }
-      );
+      await ctx.runMutation(internal.helpers.usersHelpers.updateUserAfterCreate, {
+        userId: user._id,
+        roleId: args.roleId,
+        storeId: args.storeId,
+        isActive: true,
+      });
 
       return { success: true as const, userId: user._id };
     } catch (error) {
@@ -212,13 +207,13 @@ export const resetPassword = action({
   },
   returns: v.union(
     v.object({ success: v.literal(true) }),
-    v.object({ success: v.literal(false), error: v.string() })
+    v.object({ success: v.literal(false), error: v.string() }),
   ),
   handler: async (ctx, args) => {
     // Validate authentication
     const currentUserId = await ctx.runQuery(
       internal.helpers.usersHelpers.getAuthenticatedUserId,
-      {}
+      {},
     );
 
     if (!currentUserId) {
@@ -228,7 +223,7 @@ export const resetPassword = action({
     // Check if user has permission to manage users
     const hasPermission = await ctx.runQuery(
       internal.helpers.permissionsHelpers.checkUserPermission,
-      { userId: currentUserId, permission: "users.manage" }
+      { userId: currentUserId, permission: "users.manage" },
     );
 
     if (!hasPermission) {
@@ -245,10 +240,9 @@ export const resetPassword = action({
     }
 
     // Find the auth account
-    const authAccount = await ctx.runQuery(
-      internal.helpers.usersHelpers.getAuthAccountByEmail,
-      { email: user.email }
-    );
+    const authAccount = await ctx.runQuery(internal.helpers.usersHelpers.getAuthAccountByEmail, {
+      email: user.email,
+    });
 
     if (!authAccount) {
       return { success: false as const, error: "Auth account not found" };
@@ -260,21 +254,17 @@ export const resetPassword = action({
       const hashedPassword = Buffer.from(keyBuffer).toString("base64");
 
       // Update auth account with new password
-      await ctx.runMutation(
-        internal.helpers.usersHelpers.updateAuthAccountSecret,
-        {
-          accountId: authAccount.accountId,
-          newSecret: hashedPassword,
-        }
-      );
+      await ctx.runMutation(internal.helpers.usersHelpers.updateAuthAccountSecret, {
+        accountId: authAccount.accountId,
+        newSecret: hashedPassword,
+      });
 
       return { success: true as const };
     } catch (error) {
       console.error("Reset password error:", error);
       return {
         success: false as const,
-        error:
-          error instanceof Error ? error.message : "Failed to reset password",
+        error: error instanceof Error ? error.message : "Failed to reset password",
       };
     }
   },

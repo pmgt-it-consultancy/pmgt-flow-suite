@@ -1,8 +1,8 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
-import { Doc } from "./_generated/dataModel";
-import { requirePermission } from "./lib/permissions";
+import type { Doc } from "./_generated/dataModel";
+import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
+import { requirePermission } from "./lib/permissions";
 
 // List categories for a store
 export const list = query({
@@ -22,7 +22,7 @@ export const list = query({
       createdAt: v.number(),
       productCount: v.number(),
       subcategoryCount: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -36,7 +36,7 @@ export const list = query({
       categories = await ctx.db
         .query("categories")
         .withIndex("by_store_parent", (q) =>
-          q.eq("storeId", args.storeId).eq("parentId", args.parentId)
+          q.eq("storeId", args.storeId).eq("parentId", args.parentId),
         )
         .collect();
     } else {
@@ -79,7 +79,7 @@ export const list = query({
           productCount: products.length,
           subcategoryCount: subcategories.length,
         };
-      })
+      }),
     );
 
     return categoriesWithCounts;
@@ -101,7 +101,7 @@ export const get = query({
       isActive: v.boolean(),
       createdAt: v.number(),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -135,7 +135,7 @@ export const create = mutation({
       const existingCategories = await ctx.db
         .query("categories")
         .withIndex("by_store_parent", (q) =>
-          q.eq("storeId", args.storeId).eq("parentId", args.parentId)
+          q.eq("storeId", args.storeId).eq("parentId", args.parentId),
         )
         .collect();
 
@@ -174,13 +174,13 @@ export const update = mutation({
 
     // Prevent circular references
     if (args.parentId) {
-      const category = await ctx.db.get(args.categoryId);
+      const _category = await ctx.db.get(args.categoryId);
       if (args.parentId === args.categoryId) {
         throw new Error("Category cannot be its own parent");
       }
       // Check if parentId would create a cycle
       let parent = await ctx.db.get(args.parentId);
-      while (parent && parent.parentId) {
+      while (parent?.parentId) {
         if (parent.parentId === args.categoryId) {
           throw new Error("Circular reference detected in category hierarchy");
         }
@@ -190,7 +190,7 @@ export const update = mutation({
 
     const { categoryId, ...updates } = args;
     const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, v]) => v !== undefined)
+      Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
     await ctx.db.patch(categoryId, filteredUpdates);
@@ -239,9 +239,9 @@ export const getTree = query({
           sortOrder: v.number(),
           isActive: v.boolean(),
           productCount: v.number(),
-        })
+        }),
       ),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -290,7 +290,7 @@ export const getTree = query({
               isActive: child.isActive,
               productCount: childProducts.length,
             };
-          })
+          }),
         );
 
         return {
@@ -301,7 +301,7 @@ export const getTree = query({
           productCount: products.length,
           children: childrenWithCounts,
         };
-      })
+      }),
     );
 
     return tree;

@@ -1,27 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdminStore } from "@/stores/useAdminStore";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useAction, useMutation, useQuery } from "convex/react";
+import { Key, Pencil, Plus, Search, Users } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -40,9 +26,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
-import { Plus, Pencil, Users, Search, Key } from "lucide-react";
-import { formatDate } from "@/lib/format";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 interface UserFormData {
   email: string;
@@ -79,9 +72,7 @@ export default function UsersPage() {
   const roles = useQuery(api.roles.list, isAuthenticated ? {} : "skip");
   const users = useQuery(
     api.helpers.usersHelpers.list,
-    isAuthenticated
-      ? { storeId: selectedStoreId ?? undefined }
-      : "skip"
+    isAuthenticated ? { storeId: selectedStoreId ?? undefined } : "skip",
   );
 
   // Mutations & Actions
@@ -93,7 +84,7 @@ export default function UsersPage() {
   const filteredUsers = users?.filter(
     (u) =>
       (u.name?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()) ||
-      (u.email?.toLowerCase() ?? "").includes(searchQuery.toLowerCase())
+      (u.email?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()),
   );
 
   const handleOpenCreate = () => {
@@ -163,9 +154,7 @@ export default function UsersPage() {
       setFormData(initialFormData);
       setEditingUser(null);
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to save user"
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to save user");
     } finally {
       setIsSubmitting(false);
     }
@@ -185,9 +174,7 @@ export default function UsersPage() {
       setResetPasswordUserId(null);
       setNewPassword("");
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to reset password"
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to reset password");
     } finally {
       setIsSubmitting(false);
     }
@@ -226,9 +213,7 @@ export default function UsersPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Users</CardTitle>
-          <CardDescription>
-            {filteredUsers?.length ?? 0} user(s) found
-          </CardDescription>
+          <CardDescription>{filteredUsers?.length ?? 0} user(s) found</CardDescription>
         </CardHeader>
         <CardContent>
           {!users ? (
@@ -259,9 +244,7 @@ export default function UsersPage() {
               <TableBody>
                 {filteredUsers?.map((userItem) => (
                   <TableRow key={userItem._id}>
-                    <TableCell className="font-medium">
-                      {userItem.name ?? "—"}
-                    </TableCell>
+                    <TableCell className="font-medium">{userItem.name ?? "—"}</TableCell>
                     <TableCell>{userItem.email ?? "—"}</TableCell>
                     <TableCell>
                       <Badge
@@ -269,8 +252,8 @@ export default function UsersPage() {
                           userItem.roleName === "Super Admin"
                             ? "default"
                             : userItem.roleName === "Admin"
-                            ? "default"
-                            : "secondary"
+                              ? "default"
+                              : "secondary"
                         }
                       >
                         {userItem.roleName}
@@ -278,9 +261,7 @@ export default function UsersPage() {
                     </TableCell>
                     <TableCell>{userItem.storeName ?? "All Stores"}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant={userItem.isActive ? "default" : "destructive"}
-                      >
+                      <Badge variant={userItem.isActive ? "default" : "destructive"}>
                         {userItem.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
@@ -314,9 +295,7 @@ export default function UsersPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>
-              {editingUser ? "Edit User" : "Create User"}
-            </DialogTitle>
+            <DialogTitle>{editingUser ? "Edit User" : "Create User"}</DialogTitle>
             <DialogDescription>
               {editingUser
                 ? "Update the user details below."
@@ -330,9 +309,7 @@ export default function UsersPage() {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter full name"
               />
             </div>
@@ -343,16 +320,12 @@ export default function UsersPage() {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="Enter email address"
                 disabled={!!editingUser}
               />
               {editingUser && (
-                <p className="text-xs text-gray-500">
-                  Email cannot be changed after creation.
-                </p>
+                <p className="text-xs text-gray-500">Email cannot be changed after creation.</p>
               )}
             </div>
 
@@ -363,9 +336,7 @@ export default function UsersPage() {
                   id="password"
                   type="password"
                   value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Enter password"
                 />
               </div>
@@ -476,9 +447,7 @@ export default function UsersPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Reset Password</DialogTitle>
-            <DialogDescription>
-              Enter a new password for this user.
-            </DialogDescription>
+            <DialogDescription>Enter a new password for this user.</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
@@ -502,10 +471,7 @@ export default function UsersPage() {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleResetPassword}
-              disabled={isSubmitting || !newPassword}
-            >
+            <Button onClick={handleResetPassword} disabled={isSubmitting || !newPassword}>
               {isSubmitting ? "Resetting..." : "Reset Password"}
             </Button>
           </DialogFooter>

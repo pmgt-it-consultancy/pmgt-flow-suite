@@ -78,7 +78,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         <td class="right">${formatCurrency(item.price)}</td>
         <td class="right">${formatCurrency(item.total)}</td>
       </tr>
-    `
+    `,
     )
     .join("");
 
@@ -293,12 +293,16 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
           <span>Subtotal:</span>
           <span>${formatCurrency(data.subtotal)}</span>
         </div>
-        ${discountHtml ? `
+        ${
+          discountHtml
+            ? `
         <div class="total-row discount">
           <span>${data.discount?.description}:</span>
           <span>-${formatCurrency(data.discount?.amount || 0)}</span>
         </div>
-        ` : ""}
+        `
+            : ""
+        }
         <div class="total-row grand-total">
           <span>TOTAL:</span>
           <span>${formatCurrency(data.total)}</span>
@@ -349,9 +353,7 @@ export const printReceipt = async (data: ReceiptData): Promise<void> => {
   await Print.printAsync({ html });
 };
 
-export const generateReceiptPdf = async (
-  data: ReceiptData
-): Promise<string> => {
+export const generateReceiptPdf = async (data: ReceiptData): Promise<string> => {
   const html = generateReceiptHtml(data);
   const { uri } = await Print.printToFileAsync({ html });
   return uri;

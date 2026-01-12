@@ -1,19 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -67,9 +61,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            PMGT POS Admin
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">PMGT POS Admin</CardTitle>
           <CardDescription className="text-center">
             Enter your credentials to access the admin dashboard
           </CardDescription>
@@ -103,26 +95,16 @@ export default function LoginPage() {
               />
             </div>
 
-            {error && (
-              <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md">
-                {error}
-              </div>
-            )}
+            {error && <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md">{error}</div>}
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting || !email || !password}
-            >
+            <Button type="submit" className="w-full" disabled={isSubmitting || !email || !password}>
               {isSubmitting ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-500">
             <p>Default credentials:</p>
-            <p className="font-mono text-xs mt-1">
-              superadmin@pmgt.com / superadmin123
-            </p>
+            <p className="font-mono text-xs mt-1">superadmin@pmgt.com / superadmin123</p>
           </div>
         </CardContent>
       </Card>

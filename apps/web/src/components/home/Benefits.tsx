@@ -8,20 +8,17 @@ const benefits = [
   },
   {
     title: "Seamless Sync",
-    description:
-      "Access your notes anytime, anywhere, with seamless cloud synchronization.",
+    description: "Access your notes anytime, anywhere, with seamless cloud synchronization.",
     image: "/images/cloudSync.png",
   },
   {
     title: "Enhanced Productivity",
-    description:
-      "Let AI handle organization, so you can focus on what matters most.",
+    description: "Let AI handle organization, so you can focus on what matters most.",
     image: "/images/googleCalander.png",
   },
   {
     title: "AI-Powered Insights",
-    description:
-      "Gain valuable insights with smart analytics based on your note patterns.",
+    description: "Gain valuable insights with smart analytics based on your note patterns.",
     image: "/images/bot.png",
   },
 ];
@@ -49,13 +46,7 @@ const Benefits = () => {
             {Array(3)
               .fill(0)
               .map((_, index) => (
-                <Image
-                  src="/images/cricle.svg"
-                  width={183}
-                  height={193}
-                  alt="line"
-                  key={index}
-                />
+                <Image src="/images/cricle.svg" width={183} height={193} alt="line" key={index} />
               ))}
           </div>
 

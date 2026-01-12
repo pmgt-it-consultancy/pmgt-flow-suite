@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Switch } from "@headlessui/react";
 
 function classNames(...classes: string[]) {
@@ -15,11 +14,7 @@ export default function ComplexToggle({
   return (
     <Switch.Group as="div" className="flex items-center">
       <Switch.Label as="span" className="mr-3 text-sm">
-        <span
-          className={`text-gray-900 ${
-            !isSummary ? "font-bold" : "font-medium"
-          }`}
-        >
+        <span className={`text-gray-900 ${!isSummary ? "font-bold" : "font-medium"}`}>
           Original Note
         </span>{" "}
       </Switch.Label>
@@ -40,9 +35,7 @@ export default function ComplexToggle({
         />
       </Switch>
       <Switch.Label as="span" className="ml-3 text-sm">
-        <span
-          className={`text-gray-900 ${isSummary ? "font-bold" : "font-medium"}`}
-        >
+        <span className={`text-gray-900 ${isSummary ? "font-bold" : "font-medium"}`}>
           AI Summary
         </span>{" "}
       </Switch.Label>

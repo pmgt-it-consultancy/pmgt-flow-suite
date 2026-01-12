@@ -1,6 +1,7 @@
-import React, { forwardRef } from "react";
+import type React from "react";
+import { forwardRef } from "react";
+import type { View, ViewProps } from "react-native";
 import { View as UniwindView } from "uniwind/components";
-import { View, ViewProps } from "react-native";
 import { Text } from "./Text";
 
 interface CardProps extends ViewProps {
@@ -18,7 +19,7 @@ export const Card = forwardRef<React.ElementRef<typeof View>, CardProps>(
   ({ variant = "default", className = "", ...props }, ref) => {
     const classes = `${variantClasses[variant]} ${className}`.trim();
     return <UniwindView ref={ref} className={classes} {...props} />;
-  }
+  },
 );
 
 Card.displayName = "Card";
@@ -30,7 +31,7 @@ interface CardHeaderProps extends ViewProps {
 export const CardHeader = forwardRef<React.ElementRef<typeof View>, CardHeaderProps>(
   ({ className = "", ...props }, ref) => {
     return <UniwindView ref={ref} className={`mb-3 ${className}`.trim()} {...props} />;
-  }
+  },
 );
 
 CardHeader.displayName = "CardHeader";
@@ -64,7 +65,7 @@ interface CardContentProps extends ViewProps {
 export const CardContent = forwardRef<React.ElementRef<typeof View>, CardContentProps>(
   ({ className = "", ...props }, ref) => {
     return <UniwindView ref={ref} className={className} {...props} />;
-  }
+  },
 );
 
 CardContent.displayName = "CardContent";
@@ -76,7 +77,7 @@ interface CardFooterProps extends ViewProps {
 export const CardFooter = forwardRef<React.ElementRef<typeof View>, CardFooterProps>(
   ({ className = "", ...props }, ref) => {
     return <UniwindView ref={ref} className={`mt-4 flex-row ${className}`.trim()} {...props} />;
-  }
+  },
 );
 
 CardFooter.displayName = "CardFooter";

@@ -1,9 +1,6 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
-import {
-  getAuthenticatedUser,
-  getAuthenticatedUserWithRole,
-} from "./lib/auth";
+import { getAuthenticatedUser, getAuthenticatedUserWithRole } from "./lib/auth";
 
 /**
  * Get current authenticated user with role information
@@ -23,16 +20,12 @@ export const getCurrentUser = query({
           _id: v.id("roles"),
           name: v.string(),
           permissions: v.array(v.string()),
-          scopeLevel: v.union(
-            v.literal("system"),
-            v.literal("parent"),
-            v.literal("branch")
-          ),
+          scopeLevel: v.union(v.literal("system"), v.literal("parent"), v.literal("branch")),
         }),
-        v.null()
+        v.null(),
       ),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx) => {
     const userWithRole = await getAuthenticatedUserWithRole(ctx);

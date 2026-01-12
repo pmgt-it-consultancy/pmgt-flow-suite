@@ -37,6 +37,7 @@ const Checkbox = ({
               className="text-blue-500"
               target="_blank"
               href="https://dashboard.convex.dev/deployment/settings/environment-variables?var=OPENAI_API_KEY"
+              rel="noopener"
             >
               Set an OPENAI_API_KEY in your environment variables here.
             </a>

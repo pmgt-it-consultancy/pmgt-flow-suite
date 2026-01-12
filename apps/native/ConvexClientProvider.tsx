@@ -1,10 +1,10 @@
 "use client";
 
-import { ReactNode } from "react";
-import { Platform } from "react-native";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
 import * as SecureStore from "expo-secure-store";
+import type { ReactNode } from "react";
+import { Platform } from "react-native";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
@@ -17,19 +17,11 @@ const secureStorage = {
   removeItem: SecureStore.deleteItemAsync,
 };
 
-export default function ConvexClientProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function ConvexClientProvider({ children }: { children: ReactNode }) {
   return (
     <ConvexAuthProvider
       client={convex}
-      storage={
-        Platform.OS === "android" || Platform.OS === "ios"
-          ? secureStorage
-          : undefined
-      }
+      storage={Platform.OS === "android" || Platform.OS === "ios" ? secureStorage : undefined}
     >
       {children}
     </ConvexAuthProvider>

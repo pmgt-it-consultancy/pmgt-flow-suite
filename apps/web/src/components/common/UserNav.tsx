@@ -18,15 +18,7 @@ const handleLogout = () => {
   window.location.href = "/login";
 };
 
-export function UserNav({
-  image,
-  name,
-  email,
-}: {
-  image: string;
-  name: string;
-  email: string;
-}) {
+export function UserNav({ image, name, email }: { image: string; name: string; email: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -42,9 +34,7 @@ export function UserNav({
       <DropdownMenuContent className="w-56 bg-white" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none text-black">
-              {name}
-            </p>
+            <p className="text-sm font-medium leading-none text-black">{name}</p>
             <p className="text-xs leading-none text-black">{email}</p>
           </div>
         </DropdownMenuLabel>
@@ -55,10 +45,7 @@ export function UserNav({
             <span className="text-black">Dashboard</span>
           </DropdownMenuItem>
         </Link>
-        <DropdownMenuItem
-          onClick={handleLogout}
-          className="hover:cursor-pointer hover:bg-gray-200"
-        >
+        <DropdownMenuItem onClick={handleLogout} className="hover:cursor-pointer hover:bg-gray-200">
           <LogOut className="mr-2 h-4 w-4 text-black" />
           <span className="text-black">Log out</span>
         </DropdownMenuItem>

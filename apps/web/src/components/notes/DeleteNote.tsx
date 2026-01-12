@@ -1,8 +1,8 @@
 "use client";
-import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { Fragment, useRef, useState } from "react";
 
 export default function DeleteNote({ deleteAction }: any) {
   const [open, setOpen] = useState(false);
@@ -21,12 +21,7 @@ export default function DeleteNote({ deleteAction }: any) {
       />
 
       <Transition.Root show={open} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-10"
-          initialFocus={cancelButtonRef}
-          onClose={setOpen}
-        >
+        <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -68,9 +63,8 @@ export default function DeleteNote({ deleteAction }: any) {
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
-                            Are you sure you want to delete this note? All of
-                            your data will be permanently removed. This action
-                            cannot be undone.
+                            Are you sure you want to delete this note? All of your data will be
+                            permanently removed. This action cannot be undone.
                           </p>
                         </div>
                       </div>

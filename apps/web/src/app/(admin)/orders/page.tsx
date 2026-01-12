@@ -1,27 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdminStore } from "@/stores/useAdminStore";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { Eye, Receipt, Search, ShoppingBag, UtensilsCrossed } from "lucide-react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -29,7 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -39,7 +24,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Receipt, Search, Eye, UtensilsCrossed, ShoppingBag } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 type OrderStatus = "open" | "paid" | "voided";
 
@@ -59,13 +53,13 @@ export default function OrdersPage() {
           status: statusFilter === "all" ? undefined : statusFilter,
           limit: 100,
         }
-      : "skip"
+      : "skip",
   );
 
   // Get order details when an order is selected
   const orderDetails = useQuery(
     api.orders.get,
-    selectedOrderId ? { orderId: selectedOrderId } : "skip"
+    selectedOrderId ? { orderId: selectedOrderId } : "skip",
   );
 
   // Filter orders by search query
@@ -128,9 +122,7 @@ export default function OrdersPage() {
               </Label>
               <Select
                 value={statusFilter}
-                onValueChange={(value) =>
-                  setStatusFilter(value as OrderStatus | "all")
-                }
+                onValueChange={(value) => setStatusFilter(value as OrderStatus | "all")}
               >
                 <SelectTrigger className="w-[140px]">
                   <SelectValue />
@@ -161,9 +153,7 @@ export default function OrdersPage() {
       <Card>
         <CardHeader>
           <CardTitle>Order History</CardTitle>
-          <CardDescription>
-            {filteredOrders?.length ?? 0} order(s) found
-          </CardDescription>
+          <CardDescription>{filteredOrders?.length ?? 0} order(s) found</CardDescription>
         </CardHeader>
         <CardContent>
           {!selectedStoreId ? (
@@ -197,9 +187,7 @@ export default function OrdersPage() {
               <TableBody>
                 {filteredOrders?.map((order) => (
                   <TableRow key={order._id}>
-                    <TableCell className="font-medium">
-                      {order.orderNumber}
-                    </TableCell>
+                    <TableCell className="font-medium">{order.orderNumber}</TableCell>
                     <TableCell>{formatDate(order.createdAt)}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
@@ -211,9 +199,7 @@ export default function OrdersPage() {
                         {order.orderType === "dine_in" ? "Dine-in" : "Takeout"}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {order.tableName || order.customerName || "-"}
-                    </TableCell>
+                    <TableCell>{order.tableName || order.customerName || "-"}</TableCell>
                     <TableCell>{order.itemCount}</TableCell>
                     <TableCell>{formatCurrency(order.netSales)}</TableCell>
                     <TableCell>{getStatusBadge(order.status)}</TableCell>
@@ -235,15 +221,10 @@ export default function OrdersPage() {
       </Card>
 
       {/* Order Details Dialog */}
-      <Dialog
-        open={!!selectedOrderId}
-        onOpenChange={(open) => !open && setSelectedOrderId(null)}
-      >
+      <Dialog open={!!selectedOrderId} onOpenChange={(open) => !open && setSelectedOrderId(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>
-              Order {orderDetails?.orderNumber}
-            </DialogTitle>
+            <DialogTitle>Order {orderDetails?.orderNumber}</DialogTitle>
             <DialogDescription>
               {orderDetails && formatDate(orderDetails.createdAt)}
             </DialogDescription>
@@ -267,23 +248,19 @@ export default function OrdersPage() {
                 </div>
                 {orderDetails.tableName && (
                   <div>
-                    <span className="text-gray-500">Table:</span>{" "}
-                    {orderDetails.tableName}
+                    <span className="text-gray-500">Table:</span> {orderDetails.tableName}
                   </div>
                 )}
                 {orderDetails.customerName && (
                   <div>
-                    <span className="text-gray-500">Customer:</span>{" "}
-                    {orderDetails.customerName}
+                    <span className="text-gray-500">Customer:</span> {orderDetails.customerName}
                   </div>
                 )}
               </div>
 
               {/* Order Items */}
               <div className="border rounded-lg">
-                <div className="bg-gray-50 px-3 py-2 border-b font-medium text-sm">
-                  Items
-                </div>
+                <div className="bg-gray-50 px-3 py-2 border-b font-medium text-sm">Items</div>
                 <div className="divide-y max-h-[200px] overflow-y-auto">
                   {orderDetails.items.map((item, index) => (
                     <div
@@ -303,9 +280,7 @@ export default function OrdersPage() {
 
               {/* Order Totals */}
               <div className="border rounded-lg">
-                <div className="bg-gray-50 px-3 py-2 border-b font-medium text-sm">
-                  Summary
-                </div>
+                <div className="bg-gray-50 px-3 py-2 border-b font-medium text-sm">Summary</div>
                 <div className="px-3 py-2 space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span>Gross Sales</span>
@@ -324,9 +299,7 @@ export default function OrdersPage() {
 
               {/* Payment Info */}
               {orderDetails.paymentMethod && (
-                <div className="text-sm text-gray-500">
-                  Paid via {orderDetails.paymentMethod}
-                </div>
+                <div className="text-sm text-gray-500">Paid via {orderDetails.paymentMethod}</div>
               )}
             </div>
           )}

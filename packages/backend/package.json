@@ -14,13 +14,13 @@
     "@convex-dev/auth": "^0.0.90",
     "@types/node": "^25.0.5",
     "bcryptjs": "^3.0.3",
-    "convex": "^1.29.3",
+    "convex": "catalog:",
     "convex-helpers": "^0.1.108",
     "openai": "^6.9.1",
     "scrypt-kdf": "^4.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
-    "typescript": "5.9.3"
+    "typescript": "catalog:"
   }
 }

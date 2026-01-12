@@ -1,6 +1,5 @@
-import React from "react";
-import { View } from "uniwind/components";
 import { Ionicons } from "@expo/vector-icons";
+import { View } from "uniwind/components";
 import { Text } from "../../shared/components/ui";
 
 interface EmptyStateProps {

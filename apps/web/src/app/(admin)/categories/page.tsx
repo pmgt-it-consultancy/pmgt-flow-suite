@@ -1,27 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdminStore } from "@/stores/useAdminStore";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { Folder, Pencil, Plus, Tag } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -40,8 +26,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
-import { Plus, Pencil, Tag, Folder, Trash2 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 interface CategoryFormData {
   name: string;
@@ -70,7 +64,7 @@ export default function CategoriesPage() {
   // Queries
   const categories = useQuery(
     api.categories.list,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip"
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
 
   // Mutations
@@ -128,9 +122,7 @@ export default function CategoriesPage() {
       setFormData(initialFormData);
       setEditingCategory(null);
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to save category"
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to save category");
     } finally {
       setIsSubmitting(false);
     }
@@ -154,9 +146,7 @@ export default function CategoriesPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Categories</CardTitle>
-          <CardDescription>
-            {categories?.length ?? 0} category(ies) in total
-          </CardDescription>
+          <CardDescription>{categories?.length ?? 0} category(ies) in total</CardDescription>
         </CardHeader>
         <CardContent>
           {!selectedStoreId ? (
@@ -206,24 +196,18 @@ export default function CategoriesPage() {
                     </TableCell>
                     <TableCell>
                       {category.parentId
-                        ? categories.find((c) => c._id === category.parentId)?.name ?? "-"
+                        ? (categories.find((c) => c._id === category.parentId)?.name ?? "-")
                         : "-"}
                     </TableCell>
                     <TableCell>{category.productCount}</TableCell>
                     <TableCell>{category.sortOrder}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant={category.isActive ? "default" : "destructive"}
-                      >
+                      <Badge variant={category.isActive ? "default" : "destructive"}>
                         {category.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleOpenEdit(category)}
-                      >
+                      <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(category)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
                     </TableCell>
@@ -239,9 +223,7 @@ export default function CategoriesPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {editingCategory ? "Edit Category" : "Create Category"}
-            </DialogTitle>
+            <DialogTitle>{editingCategory ? "Edit Category" : "Create Category"}</DialogTitle>
             <DialogDescription>
               {editingCategory
                 ? "Update the category details below."
@@ -255,9 +237,7 @@ export default function CategoriesPage() {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter category name"
               />
             </div>
@@ -298,13 +278,11 @@ export default function CategoriesPage() {
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    sortOrder: parseInt(e.target.value) || 0,
+                    sortOrder: parseInt(e.target.value, 10) || 0,
                   })
                 }
               />
-              <p className="text-xs text-gray-500">
-                Lower numbers appear first.
-              </p>
+              <p className="text-xs text-gray-500">Lower numbers appear first.</p>
             </div>
 
             {editingCategory && (

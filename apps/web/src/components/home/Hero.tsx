@@ -11,12 +11,14 @@ const Hero = () => {
               The Ultimate <br /> Note-Taking Experience
             </h2>
             <p className="font-montserrat sm:pb-16 max-w-[680px] text-black text-xl sm:text-3xl not-italic font-normal leading-[103.3%] tracking-[-0.5px] sm:tracking-[-0.75px] pb-11">
-              UseNotes harnesses the power of artificial intelligence to
-              revolutionize the way you capture, organize, and recall your
-              thoughts
+              UseNotes harnesses the power of artificial intelligence to revolutionize the way you
+              capture, organize, and recall your thoughts
             </p>
             <Link href={"/notes"}>
-              <button className="button gap-2.5 px-8 py-4 font-montserrat text-white text-xl sm:text-3xl not-italic font-semibold leading-[90.3%] tracking-[-0.5px] sm:tracking-[-0.75px]">
+              <button
+                type="button"
+                className="button gap-2.5 px-8 py-4 font-montserrat text-white text-xl sm:text-3xl not-italic font-semibold leading-[90.3%] tracking-[-0.5px] sm:tracking-[-0.75px]"
+              >
                 Get Started
               </button>
             </Link>

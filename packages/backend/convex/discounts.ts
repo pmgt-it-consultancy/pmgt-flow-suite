@@ -1,21 +1,21 @@
 import { v } from "convex/values";
+import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
-import { Doc, Id } from "./_generated/dataModel";
-import {
-  calculateScPwdDiscount,
-  calculateItemTotals,
-  aggregateOrderTotals,
-  ItemCalculation,
-} from "./lib/taxCalculations";
-import { requirePermission } from "./lib/permissions";
 import { requireAuth } from "./lib/auth";
+import { requirePermission } from "./lib/permissions";
+import {
+  aggregateOrderTotals,
+  calculateItemTotals,
+  calculateScPwdDiscount,
+  type ItemCalculation,
+} from "./lib/taxCalculations";
 
 // Discount types
 const discountTypeValidator = v.union(
   v.literal("senior_citizen"),
   v.literal("pwd"),
   v.literal("promo"),
-  v.literal("manual")
+  v.literal("manual"),
 );
 
 // Apply SC/PWD discount to an order item
@@ -198,7 +198,7 @@ export const getOrderDiscounts = query({
       vatExemptAmount: v.number(),
       approvedByName: v.string(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args) => {
     // Require authenticated user
@@ -235,7 +235,7 @@ export const getOrderDiscounts = query({
           approvedByName,
           createdAt: discount.createdAt,
         };
-      })
+      }),
     );
 
     return results;
@@ -245,7 +245,7 @@ export const getOrderDiscounts = query({
 // Helper: Recalculate order totals including all discounts
 async function recalculateOrderTotalsWithDiscounts(
   ctx: { db: any },
-  orderId: Id<"orders">
+  orderId: Id<"orders">,
 ): Promise<void> {
   // Get all active (non-voided) items
   const items = await ctx.db
@@ -253,9 +253,7 @@ async function recalculateOrderTotalsWithDiscounts(
     .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
     .collect();
 
-  const activeItems: Doc<"orderItems">[] = items.filter(
-    (i: Doc<"orderItems">) => !i.isVoided
-  );
+  const activeItems: Doc<"orderItems">[] = items.filter((i: Doc<"orderItems">) => !i.isVoided);
 
   // Get all discounts for this order
   const discounts: Doc<"orderDiscounts">[] = await ctx.db
@@ -284,19 +282,12 @@ async function recalculateOrderTotalsWithDiscounts(
       // Check for SC/PWD discount on this item
       const discount = itemDiscounts.get(item._id);
       const scPwdQuantity =
-        discount &&
-        (discount.discountType === "senior_citizen" ||
-          discount.discountType === "pwd")
+        discount && (discount.discountType === "senior_citizen" || discount.discountType === "pwd")
           ? discount.quantityApplied
           : 0;
 
-      return calculateItemTotals(
-        item.productPrice,
-        item.quantity,
-        isVatable,
-        scPwdQuantity
-      );
-    })
+      return calculateItemTotals(item.productPrice, item.quantity, isVatable, scPwdQuantity);
+    }),
   );
 
   // Aggregate totals
@@ -344,11 +335,11 @@ export const getScPwdSummary = query({
         q
           .eq("storeId", args.storeId)
           .gte("createdAt", args.startDate)
-          .lte("createdAt", args.endDate)
+          .lte("createdAt", args.endDate),
       )
       .collect();
 
-    const orderIds = new Set(orders.map((o) => o._id));
+    const _orderIds = new Set(orders.map((o) => o._id));
 
     // Get all SC/PWD discounts
     let scCount = 0;

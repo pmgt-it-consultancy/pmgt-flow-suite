@@ -1,21 +1,21 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { View, ScrollView, ActivityIndicator } from "uniwind/components";
-import { Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { useCallback, useMemo, useState } from "react";
+import { Alert } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
-import { Text, Button, IconButton } from "../../shared/components/ui";
-import { useFormatCurrency, ReceiptData, printReceipt, shareReceipt } from "../../shared";
+import { printReceipt, type ReceiptData, shareReceipt, useFormatCurrency } from "../../shared";
+import { Button, IconButton, Text } from "../../shared/components/ui";
 import {
+  CashInput,
+  DiscountModal,
+  DiscountSection,
+  ManagerPinModal,
   OrderSummary,
   PaymentMethodSelector,
-  CashInput,
   TotalsSummary,
-  DiscountSection,
-  DiscountModal,
-  ManagerPinModal,
 } from "../components";
 
 interface CheckoutScreenProps {
@@ -33,7 +33,7 @@ type PaymentMethod = "cash" | "card_ewallet";
 type DiscountType = "senior_citizen" | "pwd" | null;
 
 export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
-  const { orderId, tableId, tableName } = route.params;
+  const { orderId, tableId: _tableId, tableName } = route.params;
   const { user, isLoading, isAuthenticated } = useAuth();
   const formatCurrency = useFormatCurrency();
 
@@ -56,10 +56,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   // Queries - auth is handled automatically by Convex Auth
   const order = useQuery(api.orders.get, { orderId });
-  const store = useQuery(
-    api.stores.get,
-    order?.storeId ? { storeId: order.storeId } : "skip"
-  );
+  const store = useQuery(api.stores.get, order?.storeId ? { storeId: order.storeId } : "skip");
   const discounts = useQuery(api.discounts.getOrderDiscounts, { orderId });
 
   // Mutations
@@ -71,8 +68,8 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   // Computed values
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
   const appliedDiscountItemIds = useMemo(
-    () => discounts?.map((d) => d.orderItemId).filter(Boolean) as Id<"orderItems">[] ?? [],
-    [discounts]
+    () => (discounts?.map((d) => d.orderItemId).filter(Boolean) as Id<"orderItems">[]) ?? [],
+    [discounts],
   );
   const change = useMemo(() => {
     if (paymentMethod !== "cash" || !cashReceived) return 0;
@@ -144,7 +141,17 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       setPendingManagerAction(null);
       setDiscountToRemove(null);
     },
-    [pendingManagerAction, discountType, selectedItemId, discountName, discountIdNumber, discountToRemove, orderId, applyScPwdDiscount, removeDiscount]
+    [
+      pendingManagerAction,
+      discountType,
+      selectedItemId,
+      discountName,
+      discountIdNumber,
+      discountToRemove,
+      orderId,
+      applyScPwdDiscount,
+      removeDiscount,
+    ],
   );
 
   // Receipt helpers
@@ -153,13 +160,20 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       const discountInfo =
         discounts && discounts.length > 0
           ? {
-              type: discounts[0].discountType === "senior_citizen" ? ("sc" as const) : ("pwd" as const),
-              description: discounts.map((d) => `${d.discountType === "senior_citizen" ? "SC" : "PWD"}: ${d.customerName}`).join(", "),
+              type:
+                discounts[0].discountType === "senior_citizen" ? ("sc" as const) : ("pwd" as const),
+              description: discounts
+                .map(
+                  (d) => `${d.discountType === "senior_citizen" ? "SC" : "PWD"}: ${d.customerName}`,
+                )
+                .join(", "),
               amount: discounts.reduce((sum, d) => sum + d.discountAmount, 0),
             }
           : undefined;
 
-      const storeAddress = store ? [store.address1, store.address2].filter(Boolean).join(", ") : undefined;
+      const storeAddress = store
+        ? [store.address1, store.address2].filter(Boolean).join(", ")
+        : undefined;
 
       return {
         storeName: store?.name ?? "Store",
@@ -190,7 +204,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         customerId: discounts?.[0]?.customerId,
       };
     },
-    [discounts, store, order, tableName, user?.name, activeItems, paymentMethod]
+    [discounts, store, order, tableName, user?.name, activeItems, paymentMethod],
   );
 
   const handleProcessPayment = useCallback(async () => {
@@ -199,7 +213,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     const cashAmount = parseFloat(cashReceived);
 
     if (paymentMethod === "cash") {
-      if (!cashReceived || isNaN(cashAmount)) {
+      if (!cashReceived || Number.isNaN(cashAmount)) {
         Alert.alert("Error", "Please enter cash received amount");
         return;
       }
@@ -222,14 +236,18 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
       Alert.alert(
         "Payment Successful",
-        paymentMethod === "cash" ? `Change: ${formatCurrency(finalChange)}` : "Payment processed successfully",
+        paymentMethod === "cash"
+          ? `Change: ${formatCurrency(finalChange)}`
+          : "Payment processed successfully",
         [
           {
             text: "Print Receipt",
             onPress: async () => {
               try {
-                await printReceipt(createReceiptData(finalChange, paymentMethod === "cash" ? cashAmount : undefined));
-              } catch (e) {}
+                await printReceipt(
+                  createReceiptData(finalChange, paymentMethod === "cash" ? cashAmount : undefined),
+                );
+              } catch (_e) {}
               navigation.reset({ index: 0, routes: [{ name: "TablesScreen" }] });
             },
           },
@@ -237,8 +255,10 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
             text: "Share Receipt",
             onPress: async () => {
               try {
-                await shareReceipt(createReceiptData(finalChange, paymentMethod === "cash" ? cashAmount : undefined));
-              } catch (e) {}
+                await shareReceipt(
+                  createReceiptData(finalChange, paymentMethod === "cash" ? cashAmount : undefined),
+                );
+              } catch (_e) {}
               navigation.reset({ index: 0, routes: [{ name: "TablesScreen" }] });
             },
           },
@@ -247,14 +267,24 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
             style: "cancel",
             onPress: () => navigation.reset({ index: 0, routes: [{ name: "TablesScreen" }] }),
           },
-        ]
+        ],
       );
     } catch (error: any) {
       Alert.alert("Error", error.message || "Payment failed");
     } finally {
       setIsProcessing(false);
     }
-  }, [order, cashReceived, paymentMethod, processCashPayment, processCardPayment, orderId, formatCurrency, createReceiptData, navigation]);
+  }, [
+    order,
+    cashReceived,
+    paymentMethod,
+    processCashPayment,
+    processCardPayment,
+    orderId,
+    formatCurrency,
+    createReceiptData,
+    navigation,
+  ]);
 
   if (isLoading || !isAuthenticated || !order) {
     return (
@@ -270,8 +300,12 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       <View className="bg-white flex-row items-center px-4 py-3 border-b border-gray-200">
         <IconButton icon="arrow-back" variant="ghost" onPress={handleBack} className="mr-2" />
         <View className="flex-1">
-          <Text variant="heading" size="lg">Checkout</Text>
-          <Text variant="muted" size="sm">{tableName ?? `Order #${order.orderNumber}`}</Text>
+          <Text variant="heading" size="lg">
+            Checkout
+          </Text>
+          <Text variant="muted" size="sm">
+            {tableName ?? `Order #${order.orderNumber}`}
+          </Text>
         </View>
       </View>
 
@@ -286,9 +320,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
         <PaymentMethodSelector selected={paymentMethod} onSelect={setPaymentMethod} />
 
-        {paymentMethod === "cash" && (
-          <CashInput value={cashReceived} onChange={setCashReceived} />
-        )}
+        {paymentMethod === "cash" && <CashInput value={cashReceived} onChange={setCashReceived} />}
 
         <TotalsSummary
           grossSales={order.grossSales}
@@ -302,7 +334,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
       {/* Footer */}
       <View className="p-4 bg-white border-t border-gray-200">
-        <Button variant="success" size="lg" loading={isProcessing} disabled={isProcessing} onPress={handleProcessPayment}>
+        <Button
+          variant="success"
+          size="lg"
+          loading={isProcessing}
+          disabled={isProcessing}
+          onPress={handleProcessPayment}
+        >
           <View className="flex-row items-center">
             <Ionicons name="checkmark-circle" size={24} color="#FFF" />
             <Text className="text-white font-semibold ml-2">

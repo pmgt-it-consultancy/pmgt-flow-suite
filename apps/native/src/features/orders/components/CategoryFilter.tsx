@@ -1,7 +1,6 @@
-import React from "react";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { ScrollView } from "uniwind/components";
 import { Chip } from "../../shared/components/ui";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 interface Category {
   _id: Id<"categories">;
@@ -26,10 +25,7 @@ export const CategoryFilter = ({
       className="px-3 py-2 border-b border-gray-200"
       contentContainerStyle={{ gap: 8 }}
     >
-      <Chip
-        selected={selectedCategory === "all"}
-        onPress={() => onSelectCategory("all")}
-      >
+      <Chip selected={selectedCategory === "all"} onPress={() => onSelectCategory("all")}>
         All
       </Chip>
       {categories.map((category) => (

@@ -1,9 +1,7 @@
-import React from "react";
-import { View, TextInput } from "uniwind/components";
-import { Ionicons } from "@expo/vector-icons";
-import { Text, Button, Modal, IconButton } from "../../shared/components/ui";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { TextInput, View } from "uniwind/components";
+import { Button, IconButton, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 interface SelectedProduct {
   id: Id<"products">;
@@ -41,12 +39,7 @@ export const AddItemModal = ({
   const total = product.price * quantity;
 
   return (
-    <Modal
-      visible={visible}
-      title="Add to Order"
-      onClose={onClose}
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} title="Add to Order" onClose={onClose} onRequestClose={onClose}>
       <Text variant="heading" size="xl" className="mb-1">
         {product.name}
       </Text>
@@ -65,9 +58,7 @@ export const AddItemModal = ({
             iconColor="#EF4444"
             onPress={() => onQuantityChange(Math.max(1, quantity - 1))}
           />
-          <Text className="text-gray-900 font-semibold text-lg px-5">
-            {quantity}
-          </Text>
+          <Text className="text-gray-900 font-semibold text-lg px-5">{quantity}</Text>
           <IconButton
             icon="add"
             size="md"
@@ -93,9 +84,7 @@ export const AddItemModal = ({
 
       {/* Footer */}
       <View className="flex-row justify-between items-center pt-4 border-t border-gray-200">
-        <Text className="text-gray-900 font-bold text-lg">
-          Total: {formatCurrency(total)}
-        </Text>
+        <Text className="text-gray-900 font-bold text-lg">Total: {formatCurrency(total)}</Text>
         <Button
           variant="primary"
           loading={isLoading}

@@ -2,10 +2,10 @@
 
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import Logo from "./common/Logo";
 import Link from "next/link";
-import { UserNav } from "./common/UserNav";
 import { usePathname } from "next/navigation";
+import Logo from "./common/Logo";
+import { UserNav } from "./common/UserNav";
 
 type NavigationItem = {
   name: string;
@@ -70,11 +70,7 @@ export default function Header() {
                         Dashboard
                       </button>
                     </Link>
-                    <UserNav
-                      image="/images/profile.png"
-                      name="User"
-                      email="user@example.com"
-                    />
+                    <UserNav image="/images/profile.png" name="User" email="user@example.com" />
                   </div>
                 ) : (
                   <div className="hidden sm:flex absolute inset-y-0 right-0 gap-6 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">

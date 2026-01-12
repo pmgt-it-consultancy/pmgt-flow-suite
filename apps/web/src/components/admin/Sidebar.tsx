@@ -1,20 +1,20 @@
 "use client";
 
+import {
+  BarChart3,
+  FileText,
+  Grid3X3,
+  LayoutDashboard,
+  Package,
+  Receipt,
+  Store,
+  Tag,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  LayoutDashboard,
-  Store,
-  Package,
-  Users,
-  FileText,
-  Tag,
-  Grid3X3,
-  Receipt,
-  BarChart3,
-} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface NavItem {
   title: string;
@@ -112,7 +112,7 @@ export function Sidebar() {
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive
                     ? "bg-primary text-primary-foreground"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
                 )}
               >
                 {item.icon}

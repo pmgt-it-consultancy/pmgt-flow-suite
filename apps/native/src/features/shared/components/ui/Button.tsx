@@ -1,6 +1,7 @@
-import React, { forwardRef } from "react";
-import { TouchableOpacity as UniwindTouchableOpacity, ActivityIndicator } from "uniwind/components";
-import { TouchableOpacity, TouchableOpacityProps } from "react-native";
+import type React from "react";
+import { forwardRef } from "react";
+import type { TouchableOpacity, TouchableOpacityProps } from "react-native";
+import { ActivityIndicator, TouchableOpacity as UniwindTouchableOpacity } from "uniwind/components";
 import { Text } from "./Text";
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -52,10 +53,11 @@ export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, Butt
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const isDisabled = disabled || loading;
-    const containerClasses = `flex-row items-center justify-center ${variantClasses[variant]} ${sizeClasses[size]} ${isDisabled ? "opacity-50" : ""} ${className}`.trim();
+    const containerClasses =
+      `flex-row items-center justify-center ${variantClasses[variant]} ${sizeClasses[size]} ${isDisabled ? "opacity-50" : ""} ${className}`.trim();
     const textClasses = `${textVariantClasses[variant]} ${textSizeClasses[size]}`.trim();
 
     return (
@@ -68,7 +70,11 @@ export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, Butt
       >
         {loading ? (
           <ActivityIndicator
-            color={variant === "primary" || variant === "destructive" || variant === "success" ? "#fff" : "#374151"}
+            color={
+              variant === "primary" || variant === "destructive" || variant === "success"
+                ? "#fff"
+                : "#374151"
+            }
             size="small"
           />
         ) : typeof children === "string" ? (
@@ -78,7 +84,7 @@ export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, Butt
         )}
       </UniwindTouchableOpacity>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

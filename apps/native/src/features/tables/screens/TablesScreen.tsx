@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from "react";
-import { View, FlatList, ActivityIndicator, RefreshControl } from "uniwind/components";
-import { Alert } from "react-native";
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { useCallback, useState } from "react";
+import { Alert } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
-import { Header, TableCard, QuickActions, EmptyState } from "../components";
+import { EmptyState, Header, QuickActions, TableCard } from "../components";
 
 interface TablesScreenProps {
   navigation: any;
@@ -16,15 +16,12 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
   const [refreshing, setRefreshing] = useState(false);
 
   // Query tables for user's store
-  const tables = useQuery(
-    api.tables.list,
-    user?.storeId ? { storeId: user.storeId } : "skip"
-  );
+  const tables = useQuery(api.tables.list, user?.storeId ? { storeId: user.storeId } : "skip");
 
   // Query orders to check which tables have active orders
   const orders = useQuery(
     api.orders.listActive,
-    user?.storeId ? { storeId: user.storeId } : "skip"
+    user?.storeId ? { storeId: user.storeId } : "skip",
   );
 
   // Create order mutation
@@ -54,7 +51,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
         total: order.subtotal,
       };
     },
-    [orders]
+    [orders],
   );
 
   const handleSelectTable = useCallback(
@@ -97,7 +94,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
         ]);
       }
     },
-    [user?.storeId, getTableOrderInfo, navigation, createOrder]
+    [user?.storeId, getTableOrderInfo, navigation, createOrder],
   );
 
   if (isLoading || !isAuthenticated) {
@@ -133,10 +130,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
           <ActivityIndicator size="large" color="#0D87E1" />
         </View>
       ) : tables.length === 0 ? (
-        <EmptyState
-          title="No tables found"
-          description="Add tables in the admin panel first"
-        />
+        <EmptyState title="No tables found" description="Add tables in the admin panel first" />
       ) : (
         <FlatList
           data={tables}
@@ -145,9 +139,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
           numColumns={2}
           contentContainerStyle={{ padding: 8 }}
           columnWrapperStyle={{ justifyContent: "space-between" }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         />
       )}
 

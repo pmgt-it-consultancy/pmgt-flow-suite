@@ -1,9 +1,8 @@
-import React from "react";
-import { View, TouchableOpacity } from "uniwind/components";
 import { Ionicons } from "@expo/vector-icons";
-import { Text, Card, Badge } from "../../shared/components/ui";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { TouchableOpacity, View } from "uniwind/components";
+import { Card, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 interface Discount {
   _id: Id<"orderDiscounts">;
@@ -72,9 +71,7 @@ export const DiscountSection = ({
               activeOpacity={0.7}
             >
               <Ionicons name="add" size={20} color="#0D87E1" />
-              <Text className="text-blue-500 font-medium ml-2">
-                Add Another Discount
-              </Text>
+              <Text className="text-blue-500 font-medium ml-2">Add Another Discount</Text>
             </TouchableOpacity>
           </>
         ) : (
@@ -84,9 +81,7 @@ export const DiscountSection = ({
             activeOpacity={0.7}
           >
             <Ionicons name="pricetag-outline" size={20} color="#0D87E1" />
-            <Text className="text-blue-500 font-medium ml-2">
-              Add SC/PWD Discount
-            </Text>
+            <Text className="text-blue-500 font-medium ml-2">Add SC/PWD Discount</Text>
           </TouchableOpacity>
         )}
       </Card>

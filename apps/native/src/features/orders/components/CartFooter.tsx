@@ -1,7 +1,6 @@
-import React from "react";
-import { View } from "uniwind/components";
 import { Ionicons } from "@expo/vector-icons";
-import { Text, Button } from "../../shared/components/ui";
+import { View } from "uniwind/components";
+import { Button, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface CartFooterProps {
@@ -17,12 +16,8 @@ export const CartFooter = ({ subtotal, itemCount, onCheckout }: CartFooterProps)
   return (
     <View className="p-3 border-t border-gray-200 bg-gray-50">
       <View className="flex-row justify-between mb-3">
-        <Text className="text-gray-600 font-medium text-base">
-          Subtotal
-        </Text>
-        <Text className="text-gray-900 font-bold text-lg">
-          {formatCurrency(subtotal)}
-        </Text>
+        <Text className="text-gray-600 font-medium text-base">Subtotal</Text>
+        <Text className="text-gray-900 font-bold text-lg">{formatCurrency(subtotal)}</Text>
       </View>
 
       <Button
@@ -34,9 +29,7 @@ export const CartFooter = ({ subtotal, itemCount, onCheckout }: CartFooterProps)
       >
         <View className="flex-row items-center">
           <Ionicons name="card-outline" size={20} color="#FFF" />
-          <Text className="text-white font-semibold ml-2">
-            Proceed to Checkout
-          </Text>
+          <Text className="text-white font-semibold ml-2">Proceed to Checkout</Text>
         </View>
       </Button>
     </View>

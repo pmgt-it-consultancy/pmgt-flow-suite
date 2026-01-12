@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { View, Image } from "uniwind/components";
+import { useState } from "react";
 import { Alert } from "react-native";
-import { Text, Button, Input } from "../../shared/components/ui";
+import { Image, View } from "uniwind/components";
+import { Button, Input, Text } from "../../shared/components/ui";
 import { useAuth } from "../context";
 
 interface LoginFormProps {

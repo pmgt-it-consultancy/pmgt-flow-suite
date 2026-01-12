@@ -1,9 +1,8 @@
-import React from "react";
-import { View, TouchableOpacity } from "uniwind/components";
 import { Ionicons } from "@expo/vector-icons";
-import { Text, Badge } from "../../shared/components/ui";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { TouchableOpacity, View } from "uniwind/components";
+import { Badge, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 interface TableCardProps {
   id: Id<"tables">;
@@ -58,10 +57,7 @@ export const TableCard = ({
         </View>
       )}
 
-      <Badge
-        variant={isOccupied ? "warning" : "success"}
-        className="self-start"
-      >
+      <Badge variant={isOccupied ? "warning" : "success"} className="self-start">
         {statusLabel}
       </Badge>
     </TouchableOpacity>

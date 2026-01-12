@@ -1,5 +1,5 @@
+import type { ViewProps } from "react-native";
 import { View } from "uniwind/components";
-import { ViewProps } from "react-native";
 import { Text } from "./Text";
 
 interface BadgeProps extends ViewProps {
@@ -46,11 +46,7 @@ export const Badge = ({
 
   return (
     <View className={classes} {...props}>
-      {typeof children === "string" ? (
-        <Text className={textClasses}>{children}</Text>
-      ) : (
-        children
-      )}
+      {typeof children === "string" ? <Text className={textClasses}>{children}</Text> : children}
     </View>
   );
 };

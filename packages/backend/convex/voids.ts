@@ -1,10 +1,10 @@
 "use node";
 
-import { v } from "convex/values";
-import { action } from "./_generated/server";
-import { internal } from "./_generated/api";
-import { Id } from "./_generated/dataModel";
 import bcrypt from "bcryptjs";
+import { v } from "convex/values";
+import { internal } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
+import { action } from "./_generated/server";
 
 // Type definitions for action return types (to avoid circular reference errors)
 type VoidItemResult =
@@ -42,13 +42,13 @@ export const voidOrderItem = action({
     v.object({
       success: v.literal(false),
       error: v.string(),
-    })
+    }),
   ),
   handler: async (ctx, args): Promise<VoidItemResult> => {
     // Get authenticated user ID using Convex Auth
     const requesterId = await ctx.runQuery(
       internal.helpers.voidsHelpers.getAuthenticatedUserId,
-      {}
+      {},
     );
 
     if (!requesterId) {
@@ -56,12 +56,9 @@ export const voidOrderItem = action({
     }
 
     // Get manager with PIN
-    const manager = await ctx.runQuery(
-      internal.helpers.voidsHelpers.getManagerWithPin,
-      {
-        managerId: args.managerId,
-      }
-    );
+    const manager = await ctx.runQuery(internal.helpers.voidsHelpers.getManagerWithPin, {
+      managerId: args.managerId,
+    });
 
     if (!manager || !manager.isActive) {
       return {
@@ -82,15 +79,12 @@ export const voidOrderItem = action({
 
     // Perform void
     try {
-      const voidId = await ctx.runMutation(
-        internal.helpers.voidsHelpers.voidOrderItemInternal,
-        {
-          orderItemId: args.orderItemId,
-          reason: args.reason,
-          requestedBy: requesterId,
-          approvedBy: args.managerId,
-        }
-      );
+      const voidId = await ctx.runMutation(internal.helpers.voidsHelpers.voidOrderItemInternal, {
+        orderItemId: args.orderItemId,
+        reason: args.reason,
+        requestedBy: requesterId,
+        approvedBy: args.managerId,
+      });
 
       return { success: true as const, voidId };
     } catch (error) {
@@ -118,13 +112,13 @@ export const voidOrder = action({
     v.object({
       success: v.literal(false),
       error: v.string(),
-    })
+    }),
   ),
   handler: async (ctx, args): Promise<VoidOrderResult> => {
     // Get authenticated user ID using Convex Auth
     const requesterId = await ctx.runQuery(
       internal.helpers.voidsHelpers.getAuthenticatedUserId,
-      {}
+      {},
     );
 
     if (!requesterId) {
@@ -132,12 +126,9 @@ export const voidOrder = action({
     }
 
     // Get manager with PIN
-    const manager = await ctx.runQuery(
-      internal.helpers.voidsHelpers.getManagerWithPin,
-      {
-        managerId: args.managerId,
-      }
-    );
+    const manager = await ctx.runQuery(internal.helpers.voidsHelpers.getManagerWithPin, {
+      managerId: args.managerId,
+    });
 
     if (!manager || !manager.isActive) {
       return {
@@ -158,15 +149,12 @@ export const voidOrder = action({
 
     // Perform void
     try {
-      const voidId = await ctx.runMutation(
-        internal.helpers.voidsHelpers.voidOrderInternal,
-        {
-          orderId: args.orderId,
-          reason: args.reason,
-          requestedBy: requesterId,
-          approvedBy: args.managerId,
-        }
-      );
+      const voidId = await ctx.runMutation(internal.helpers.voidsHelpers.voidOrderInternal, {
+        orderId: args.orderId,
+        reason: args.reason,
+        requestedBy: requesterId,
+        approvedBy: args.managerId,
+      });
 
       return { success: true as const, voidId };
     } catch (error) {
@@ -193,24 +181,18 @@ export const getOrderVoids = action({
       approvedByName: v.string(),
       requestedByName: v.string(),
       createdAt: v.number(),
-    })
+    }),
   ),
   handler: async (ctx, args): Promise<OrderVoidRecord[]> => {
     // Get authenticated user ID using Convex Auth
-    const userId = await ctx.runQuery(
-      internal.helpers.voidsHelpers.getAuthenticatedUserId,
-      {}
-    );
+    const userId = await ctx.runQuery(internal.helpers.voidsHelpers.getAuthenticatedUserId, {});
 
     if (!userId) {
       throw new Error("Authentication required");
     }
 
-    return await ctx.runQuery(
-      internal.helpers.voidsHelpers.getOrderVoidsInternal,
-      {
-        orderId: args.orderId,
-      }
-    );
+    return await ctx.runQuery(internal.helpers.voidsHelpers.getOrderVoidsInternal, {
+      orderId: args.orderId,
+    });
   },
 });

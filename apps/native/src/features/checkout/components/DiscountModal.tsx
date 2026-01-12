@@ -1,9 +1,8 @@
-import React from "react";
-import { View, ScrollView, TouchableOpacity, TextInput } from "uniwind/components";
 import { Ionicons } from "@expo/vector-icons";
-import { Text, Modal, Button, Chip } from "../../shared/components/ui";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { ScrollView, TextInput, TouchableOpacity, View } from "uniwind/components";
+import { Button, Chip, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
 
 type DiscountType = "senior_citizen" | "pwd" | null;
 
@@ -47,9 +46,7 @@ export const DiscountModal = ({
 }: DiscountModalProps) => {
   const formatCurrency = useFormatCurrency();
 
-  const availableItems = items.filter(
-    (item) => !appliedDiscountItemIds.includes(item._id)
-  );
+  const availableItems = items.filter((item) => !appliedDiscountItemIds.includes(item._id));
 
   const isValid = discountType && selectedItemId && idNumber.trim() && customerName.trim();
 
@@ -86,9 +83,7 @@ export const DiscountModal = ({
           <TouchableOpacity
             key={item._id}
             className={`flex-row items-center p-3 border rounded-lg mb-2 ${
-              selectedItemId === item._id
-                ? "border-blue-500 bg-blue-50"
-                : "border-gray-200"
+              selectedItemId === item._id ? "border-blue-500 bg-blue-50" : "border-gray-200"
             }`}
             onPress={() => onItemSelect(item._id)}
             activeOpacity={0.7}
@@ -96,9 +91,7 @@ export const DiscountModal = ({
             <Text className="flex-1 text-gray-700">
               {item.quantity}x {item.productName}
             </Text>
-            <Text className="text-gray-900 font-medium mr-2">
-              {formatCurrency(item.lineTotal)}
-            </Text>
+            <Text className="text-gray-900 font-medium mr-2">{formatCurrency(item.lineTotal)}</Text>
             {selectedItemId === item._id && (
               <Ionicons name="checkmark-circle" size={20} color="#0D87E1" />
             )}

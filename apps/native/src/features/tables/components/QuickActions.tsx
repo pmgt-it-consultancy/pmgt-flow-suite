@@ -1,7 +1,6 @@
-import React from "react";
-import { View, TouchableOpacity } from "uniwind/components";
-import { Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Alert } from "react-native";
+import { TouchableOpacity, View } from "uniwind/components";
 import { Text } from "../../shared/components/ui";
 
 export const QuickActions = () => {

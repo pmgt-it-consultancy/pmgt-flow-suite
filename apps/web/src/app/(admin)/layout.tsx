@@ -1,19 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
-import { Sidebar } from "@/components/admin/Sidebar";
+import { useEffect, useState } from "react";
 import { Header } from "@/components/admin/Header";
-import { cn } from "@/lib/utils";
+import { Sidebar } from "@/components/admin/Sidebar";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user: _user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Redirect to login if not authenticated
@@ -63,9 +58,7 @@ export default function AdminLayout({
       {/* Main Content */}
       <div className="lg:pl-64">
         <Header onMenuClick={() => setSidebarOpen(true)} />
-        <main className="p-6">
-          {children}
-        </main>
+        <main className="p-6">{children}</main>
       </div>
     </div>
   );

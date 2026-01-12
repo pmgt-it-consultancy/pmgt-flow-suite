@@ -1,6 +1,6 @@
-import { convexAuth } from "@convex-dev/auth/server";
 import { Password } from "@convex-dev/auth/providers/Password";
-import { DataModel } from "./_generated/dataModel";
+import { convexAuth } from "@convex-dev/auth/server";
+import type { DataModel } from "./_generated/dataModel";
 
 // Custom Password provider that uses username instead of email
 const CustomPassword = Password<DataModel>({

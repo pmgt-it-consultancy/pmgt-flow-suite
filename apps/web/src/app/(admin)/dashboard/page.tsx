@@ -1,31 +1,20 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdminStore } from "@/stores/useAdminStore";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "convex/react";
+import { DollarSign, Package, ShoppingCart, Store, TrendingUp, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  DollarSign,
-  ShoppingCart,
-  TrendingUp,
-  Users,
-  Store,
-  Package,
-  AlertCircle,
-} from "lucide-react";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/hooks/useAuth";
+import { formatCurrency } from "@/lib/format";
+import { useAdminStore } from "@/stores/useAdminStore";
 
 export default function DashboardPage() {
   const { user, isAuthenticated } = useAuth();
   const { selectedStoreId } = useAdminStore();
 
   // Get stores for the user (if Super Admin, all stores; otherwise, assigned store)
-  const stores = useQuery(
-    api.stores.list,
-    isAuthenticated ? {} : "skip"
-  );
+  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
 
   // Get today's date
   const now = new Date();
@@ -42,7 +31,7 @@ export default function DashboardPage() {
           storeId: primaryStoreId,
           reportDate: todayDateStr,
         }
-      : "skip"
+      : "skip",
   );
 
   // Get top selling products for the primary store
@@ -54,7 +43,7 @@ export default function DashboardPage() {
           reportDate: todayDateStr,
           limit: 5,
         }
-      : "skip"
+      : "skip",
   );
 
   // Calculate summary values
@@ -112,11 +101,7 @@ export default function DashboardPage() {
           <CardContent>
             {dailyReport ? (
               <div className="space-y-4">
-                <SalesBreakdownItem
-                  label="Cash"
-                  value={dailyReport.cashTotal}
-                  total={todaySales}
-                />
+                <SalesBreakdownItem label="Cash" value={dailyReport.cashTotal} total={todaySales} />
                 <SalesBreakdownItem
                   label="Card/E-Wallet"
                   value={dailyReport.cardEwalletTotal}
@@ -187,10 +172,7 @@ export default function DashboardPage() {
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {stores.map((store) => (
-                  <div
-                    key={store._id}
-                    className="flex items-center gap-4 p-4 border rounded-lg"
-                  >
+                  <div key={store._id} className="flex items-center gap-4 p-4 border rounded-lg">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <Store className="h-5 w-5" />
                     </div>
@@ -271,9 +253,7 @@ function SummaryCard({
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-gray-500">{description}</p>
-        {trend && (
-          <p className="text-xs text-green-600 mt-1">{trend}</p>
-        )}
+        {trend && <p className="text-xs text-green-600 mt-1">{trend}</p>}
       </CardContent>
     </Card>
   );
@@ -297,10 +277,7 @@ function SalesBreakdownItem({
         <span className="font-medium">{formatCurrency(value)}</span>
       </div>
       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-primary rounded-full"
-          style={{ width: `${percentage}%` }}
-        />
+        <div className="h-full bg-primary rounded-full" style={{ width: `${percentage}%` }} />
       </div>
     </div>
   );
