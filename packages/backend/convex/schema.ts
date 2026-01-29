@@ -110,6 +110,24 @@ export default defineSchema({
     storeId: v.id("stores"),
     orderNumber: v.string(),
     orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
+    orderChannel: v.optional(
+      v.union(
+        v.literal("walk_in_dine_in"),
+        v.literal("walk_in_takeout"),
+        v.literal("grab"),
+        v.literal("foodpanda"),
+        v.literal("custom_delivery"),
+      ),
+    ),
+    takeoutStatus: v.optional(
+      v.union(
+        v.literal("pending"),
+        v.literal("preparing"),
+        v.literal("ready_for_pickup"),
+        v.literal("completed"),
+        v.literal("cancelled"),
+      ),
+    ),
     tableId: v.optional(v.id("tables")),
     customerName: v.optional(v.string()),
     status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
@@ -143,7 +161,7 @@ export default defineSchema({
     quantity: v.number(),
     notes: v.optional(v.string()),
     isVoided: v.boolean(),
-    isSentToKitchen: v.boolean(),
+    isSentToKitchen: v.optional(v.boolean()),
     voidedBy: v.optional(v.id("users")),
     voidedAt: v.optional(v.number()),
     voidReason: v.optional(v.string()),

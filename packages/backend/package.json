@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "convex dev",
     "setup": "convex dev --until-success",
+    "deploy": "convex deploy",
     "typecheck": "tsc --noEmit -p convex"
   },
   "author": "",

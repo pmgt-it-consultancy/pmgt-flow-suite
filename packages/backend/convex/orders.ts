@@ -67,12 +67,18 @@ export const create = mutation({
     // Generate order number
     const orderNumber = await getNextOrderNumber(ctx, args.storeId, args.orderType);
 
+    // Determine order channel and takeout status
+    const orderChannel = args.orderType === "dine_in" ? "walk_in_dine_in" : "walk_in_takeout";
+    const takeoutStatus = args.orderType === "takeout" ? "pending" : undefined;
+
     // Create order with zero totals
     const now = Date.now();
     const orderId = await ctx.db.insert("orders", {
       storeId: args.storeId,
       orderNumber,
       orderType: args.orderType,
+      orderChannel,
+      takeoutStatus,
       tableId: args.tableId,
       customerName: args.customerName,
       status: "open",
@@ -119,6 +125,15 @@ export const get = query({
       tableName: v.optional(v.string()),
       customerName: v.optional(v.string()),
       status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
+      takeoutStatus: v.optional(
+        v.union(
+          v.literal("pending"),
+          v.literal("preparing"),
+          v.literal("ready_for_pickup"),
+          v.literal("completed"),
+          v.literal("cancelled"),
+        ),
+      ),
       grossSales: v.number(),
       vatableSales: v.number(),
       vatAmount: v.number(),
@@ -143,7 +158,7 @@ export const get = query({
           quantity: v.number(),
           notes: v.optional(v.string()),
           isVoided: v.boolean(),
-          isSentToKitchen: v.boolean(),
+          isSentToKitchen: v.optional(v.boolean()),
           lineTotal: v.number(),
         }),
       ),
@@ -195,6 +210,7 @@ export const get = query({
       tableName,
       customerName: order.customerName,
       status: order.status,
+      takeoutStatus: order.takeoutStatus,
       grossSales: order.grossSales,
       vatableSales: order.vatableSales,
       vatAmount: order.vatAmount,
@@ -634,6 +650,161 @@ export const updateCustomerName = mutation({
   },
 });
 
+// Update takeout order status (advance workflow)
+export const updateTakeoutStatus = mutation({
+  args: {
+    orderId: v.id("orders"),
+    newStatus: v.union(
+      v.literal("pending"),
+      v.literal("preparing"),
+      v.literal("ready_for_pickup"),
+      v.literal("completed"),
+      v.literal("cancelled"),
+    ),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.orderType !== "takeout") throw new Error("Not a takeout order");
+
+    // Validate status transitions
+    const currentStatus = order.takeoutStatus;
+
+    // Handle undefined/initial state
+    if (!currentStatus) {
+      if (args.newStatus !== "pending") {
+        throw new Error("New takeout orders must start with 'pending' status");
+      }
+    } else {
+      const validTransitions: Record<string, string[]> = {
+        pending: ["preparing", "cancelled"],
+        preparing: ["ready_for_pickup", "cancelled"],
+        ready_for_pickup: ["completed"],
+        completed: [],
+        cancelled: [],
+      };
+
+      const allowedNext = validTransitions[currentStatus] ?? [];
+      if (!allowedNext.includes(args.newStatus)) {
+        throw new Error(`Cannot transition from ${currentStatus} to ${args.newStatus}`);
+      }
+    }
+
+    await ctx.db.patch(args.orderId, { takeoutStatus: args.newStatus });
+    return null;
+  },
+});
+
+// Get today's takeout orders for a store
+export const getTakeoutOrders = query({
+  args: {
+    storeId: v.id("stores"),
+  },
+  returns: v.array(
+    v.object({
+      _id: v.id("orders"),
+      orderNumber: v.string(),
+      customerName: v.optional(v.string()),
+      status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
+      takeoutStatus: v.optional(
+        v.union(
+          v.literal("pending"),
+          v.literal("preparing"),
+          v.literal("ready_for_pickup"),
+          v.literal("completed"),
+          v.literal("cancelled"),
+        ),
+      ),
+      netSales: v.number(),
+      itemCount: v.number(),
+      createdAt: v.number(),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+
+    const orders = await ctx.db
+      .query("orders")
+      .withIndex("by_store_createdAt", (q) =>
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay),
+      )
+      .filter((q) => q.eq(q.field("orderType"), "takeout"))
+      .order("desc")
+      .collect();
+
+    const results = await Promise.all(
+      orders.map(async (order) => {
+        const items = await ctx.db
+          .query("orderItems")
+          .withIndex("by_order", (q) => q.eq("orderId", order._id))
+          .collect();
+
+        const activeItems = items.filter((i) => !i.isVoided);
+        const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
+
+        return {
+          _id: order._id,
+          orderNumber: order.orderNumber,
+          customerName: order.customerName,
+          status: order.status,
+          takeoutStatus: order.takeoutStatus,
+          netSales: order.netSales,
+          itemCount,
+          createdAt: order.createdAt,
+        };
+      }),
+    );
+
+    return results;
+  },
+});
+
+// Get dashboard summary for POS home page
+export const getDashboardSummary = query({
+  args: {
+    storeId: v.id("stores"),
+  },
+  returns: v.object({
+    totalOrdersToday: v.number(),
+    activeDineIn: v.number(),
+    activeTakeout: v.number(),
+    todayRevenue: v.number(),
+  }),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+
+    // Get all today's orders
+    const todaysOrders = await ctx.db
+      .query("orders")
+      .withIndex("by_store_createdAt", (q) =>
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay),
+      )
+      .collect();
+
+    const totalOrdersToday = todaysOrders.length;
+    const activeDineIn = todaysOrders.filter(
+      (o) => o.orderType === "dine_in" && o.status === "open",
+    ).length;
+    const activeTakeout = todaysOrders.filter(
+      (o) => o.orderType === "takeout" && o.status === "open",
+    ).length;
+    const todayRevenue = todaysOrders
+      .filter((o) => o.status === "paid")
+      .reduce((sum, o) => sum + o.netSales, 0);
+
+    return { totalOrdersToday, activeDineIn, activeTakeout, todayRevenue };
+  },
+});
+
 // List active (open) orders for a store - used by POS table view
 export const listActive = query({
   args: {
@@ -647,6 +818,15 @@ export const listActive = query({
       tableId: v.optional(v.id("tables")),
       tableName: v.optional(v.string()),
       customerName: v.optional(v.string()),
+      takeoutStatus: v.optional(
+        v.union(
+          v.literal("pending"),
+          v.literal("preparing"),
+          v.literal("ready_for_pickup"),
+          v.literal("completed"),
+          v.literal("cancelled"),
+        ),
+      ),
       subtotal: v.number(),
       itemCount: v.number(),
       createdAt: v.number(),
@@ -688,6 +868,7 @@ export const listActive = query({
           tableId: order.tableId,
           tableName,
           customerName: order.customerName,
+          takeoutStatus: order.takeoutStatus,
           subtotal: order.netSales,
           itemCount,
           createdAt: order.createdAt,
@@ -711,6 +892,15 @@ export const getTodaysOpenOrders = query({
       orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
       tableName: v.optional(v.string()),
       customerName: v.optional(v.string()),
+      takeoutStatus: v.optional(
+        v.union(
+          v.literal("pending"),
+          v.literal("preparing"),
+          v.literal("ready_for_pickup"),
+          v.literal("completed"),
+          v.literal("cancelled"),
+        ),
+      ),
       netSales: v.number(),
       itemCount: v.number(),
       createdAt: v.number(),
@@ -754,6 +944,7 @@ export const getTodaysOpenOrders = query({
           orderType: order.orderType,
           tableName,
           customerName: order.customerName,
+          takeoutStatus: order.takeoutStatus,
           netSales: order.netSales,
           itemCount,
           createdAt: order.createdAt,
@@ -835,6 +1026,8 @@ export const createAndSendToKitchen = mutation({
       storeId: args.storeId,
       orderNumber,
       orderType: "dine_in",
+      orderChannel: "walk_in_dine_in",
+      takeoutStatus: undefined,
       tableId: args.tableId,
       customerName: undefined,
       status: "open",
