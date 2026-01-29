@@ -3,7 +3,7 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAction, useMutation, useQuery } from "convex/react";
-import { Key, Pencil, Plus, Search, Users } from "lucide-react";
+import { Key, Lock, Pencil, Plus, Search, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -66,6 +66,11 @@ export default function UsersPage() {
   const [newPassword, setNewPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isPinDialogOpen, setIsPinDialogOpen] = useState(false);
+  const [pinUserId, setPinUserId] = useState<Id<"users"> | null>(null);
+  const [pinUserName, setPinUserName] = useState("");
+  const [pinUserHasPin, setPinUserHasPin] = useState(false);
+  const [pinValue, setPinValue] = useState("");
 
   // Queries
   const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
@@ -79,6 +84,8 @@ export default function UsersPage() {
   const createUser = useAction(api.users.create);
   const updateUser = useMutation(api.helpers.usersHelpers.update);
   const resetPassword = useAction(api.users.resetPassword);
+  const setPin = useAction(api.users.setPin);
+  const clearPin = useAction(api.users.clearPin);
 
   // Filter users by search query
   const filteredUsers = users?.filter(
@@ -180,6 +187,56 @@ export default function UsersPage() {
     }
   };
 
+  const handleOpenPinDialog = (userItem: NonNullable<typeof users>[number]) => {
+    setPinUserId(userItem._id);
+    setPinUserName(userItem.name ?? "Unknown");
+    setPinUserHasPin(userItem.hasPin);
+    setPinValue("");
+    setIsPinDialogOpen(true);
+  };
+
+  const handleSetPin = async () => {
+    if (!isAuthenticated || !pinUserId || !pinValue) return;
+
+    setIsSubmitting(true);
+    try {
+      const result = await setPin({ userId: pinUserId, pin: pinValue });
+      if (result.success) {
+        toast.success("PIN set successfully");
+        setIsPinDialogOpen(false);
+        setPinUserId(null);
+        setPinValue("");
+      } else {
+        toast.error(result.error);
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to set PIN");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClearPin = async () => {
+    if (!isAuthenticated || !pinUserId) return;
+
+    setIsSubmitting(true);
+    try {
+      const result = await clearPin({ userId: pinUserId });
+      if (result.success) {
+        toast.success("PIN removed successfully");
+        setIsPinDialogOpen(false);
+        setPinUserId(null);
+        setPinValue("");
+      } else {
+        toast.error(result.error);
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to remove PIN");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -266,6 +323,14 @@ export default function UsersPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleOpenPinDialog(userItem)}
+                        title="Manage PIN"
+                      >
+                        <Lock className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -474,6 +539,62 @@ export default function UsersPage() {
             <Button onClick={handleResetPassword} disabled={isSubmitting || !newPassword}>
               {isSubmitting ? "Resetting..." : "Reset Password"}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* PIN Management Dialog */}
+      <Dialog open={isPinDialogOpen} onOpenChange={setIsPinDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Manage PIN — {pinUserName}</DialogTitle>
+            <DialogDescription>Set or remove the manager PIN for approvals.</DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Status:</span>
+              <Badge variant={pinUserHasPin ? "default" : "secondary"}>
+                {pinUserHasPin ? "PIN set" : "No PIN set"}
+              </Badge>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="pin">New PIN (4-6 digits)</Label>
+              <Input
+                id="pin"
+                type="password"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={6}
+                value={pinValue}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  setPinValue(val);
+                }}
+                placeholder="Enter PIN"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="flex gap-2 sm:justify-between">
+            {pinUserHasPin && (
+              <Button variant="destructive" onClick={handleClearPin} disabled={isSubmitting}>
+                {isSubmitting ? "Removing..." : "Remove PIN"}
+              </Button>
+            )}
+            <div className="flex gap-2 ml-auto">
+              <Button
+                variant="outline"
+                onClick={() => setIsPinDialogOpen(false)}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleSetPin} disabled={isSubmitting || pinValue.length < 4}>
+                {isSubmitting ? "Saving..." : "Save PIN"}
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
