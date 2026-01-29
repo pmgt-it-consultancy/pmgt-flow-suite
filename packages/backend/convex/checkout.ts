@@ -277,6 +277,38 @@ export const cancelOrder = mutation({
   },
 });
 
+// Log receipt reprint for audit trail
+export const logReceiptReprint = mutation({
+  args: {
+    orderId: v.id("orders"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const user = await getAuthenticatedUser(ctx);
+    if (!user) {
+      throw new Error("Authentication required");
+    }
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+
+    await ctx.db.insert("auditLogs", {
+      storeId: order.storeId,
+      action: "receipt_reprint",
+      entityType: "orders",
+      entityId: args.orderId,
+      details: JSON.stringify({
+        orderNumber: order.orderNumber,
+        reprintedBy: user.name ?? "Unknown",
+      }),
+      userId: user._id,
+      createdAt: Date.now(),
+    });
+
+    return null;
+  },
+});
+
 // Quick calculation for change (before completing payment)
 export const calculateChangeAmount = query({
   args: {

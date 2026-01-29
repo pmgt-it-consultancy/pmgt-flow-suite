@@ -6,9 +6,10 @@ interface HeaderProps {
   userName: string;
   onLogout: () => void;
   onSettings: () => void;
+  onOrderHistory: () => void;
 }
 
-export const Header = ({ userName, onLogout, onSettings }: HeaderProps) => {
+export const Header = ({ userName, onLogout, onSettings, onOrderHistory }: HeaderProps) => {
   const handleLogoutPress = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
@@ -31,6 +32,7 @@ export const Header = ({ userName, onLogout, onSettings }: HeaderProps) => {
         </Text>
       </View>
       <View className="flex-row gap-2">
+        <IconButton icon="receipt-outline" onPress={onOrderHistory} />
         <IconButton icon="settings-outline" onPress={onSettings} />
         <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
       </View>

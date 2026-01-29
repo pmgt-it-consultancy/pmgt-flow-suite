@@ -127,6 +127,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
         userName={user?.name ?? "User"}
         onLogout={handleLogout}
         onSettings={() => navigation.navigate("SettingsScreen")}
+        onOrderHistory={() => navigation.navigate("OrderHistoryScreen")}
       />
 
       {tables === undefined ? (

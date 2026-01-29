@@ -284,6 +284,94 @@ export const list = query({
   },
 });
 
+// Get order history with date range, search, and status filtering
+export const getOrderHistory = query({
+  args: {
+    storeId: v.id("stores"),
+    startDate: v.number(),
+    endDate: v.number(),
+    search: v.optional(v.string()),
+    status: v.optional(v.union(v.literal("paid"), v.literal("voided"))),
+    limit: v.optional(v.number()),
+  },
+  returns: v.array(
+    v.object({
+      _id: v.id("orders"),
+      orderNumber: v.string(),
+      orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
+      tableName: v.optional(v.string()),
+      customerName: v.optional(v.string()),
+      status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
+      netSales: v.number(),
+      itemCount: v.number(),
+      createdAt: v.number(),
+      paymentMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    const allOrders = await ctx.db
+      .query("orders")
+      .withIndex("by_store_createdAt", (q) =>
+        q.eq("storeId", args.storeId).gte("createdAt", args.startDate),
+      )
+      .filter((q) => q.lte(q.field("createdAt"), args.endDate))
+      .order("desc")
+      .collect();
+
+    // Apply status filter
+    let filtered = args.status ? allOrders.filter((o) => o.status === args.status) : allOrders;
+
+    // Apply search filter
+    if (args.search) {
+      const search = args.search.toLowerCase();
+      filtered = filtered.filter(
+        (o) =>
+          o.orderNumber.toLowerCase().includes(search) ||
+          (o.customerName && o.customerName.toLowerCase().includes(search)),
+      );
+    }
+
+    // Apply limit
+    const limited = filtered.slice(0, args.limit ?? 50);
+
+    // Resolve table names and item counts
+    const results = await Promise.all(
+      limited.map(async (order) => {
+        let tableName: string | undefined;
+        if (order.tableId) {
+          const table = await ctx.db.get(order.tableId);
+          tableName = table?.name;
+        }
+
+        const items = await ctx.db
+          .query("orderItems")
+          .withIndex("by_order", (q) => q.eq("orderId", order._id))
+          .collect();
+
+        const activeItems = items.filter((i) => !i.isVoided);
+        const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
+
+        return {
+          _id: order._id,
+          orderNumber: order.orderNumber,
+          orderType: order.orderType,
+          tableName,
+          customerName: order.customerName,
+          status: order.status,
+          netSales: order.netSales,
+          itemCount,
+          createdAt: order.createdAt,
+          paymentMethod: order.paymentMethod,
+        };
+      }),
+    );
+
+    return results;
+  },
+});
+
 // Get open order for a table
 export const getOpenByTable = query({
   args: {

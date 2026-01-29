@@ -122,7 +122,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   }, []);
 
   const handleManagerPinSuccess = useCallback(
-    async (managerId: Id<"users">) => {
+    async (managerId: Id<"users">, _pin: string) => {
       setShowManagerPinModal(false);
 
       if (pendingManagerAction === "apply" && discountType && selectedItemId) {

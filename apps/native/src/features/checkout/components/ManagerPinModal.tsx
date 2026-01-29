@@ -13,7 +13,7 @@ interface ManagerPinModalProps {
   title?: string;
   description?: string;
   onClose: () => void;
-  onSuccess: (managerId: Id<"users">) => void;
+  onSuccess: (managerId: Id<"users">, pin: string) => void;
 }
 
 export const ManagerPinModal = ({
@@ -48,7 +48,7 @@ export const ManagerPinModal = ({
       });
 
       if (result.success) {
-        onSuccess(selectedManagerId);
+        onSuccess(selectedManagerId, pin);
         setPin("");
         setSelectedManagerId(null);
       } else {

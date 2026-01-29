@@ -7,9 +7,10 @@ interface CartFooterProps {
   subtotal: number;
   itemCount: number;
   onCheckout: () => void;
+  onCancelOrder: () => void;
 }
 
-export const CartFooter = ({ subtotal, itemCount, onCheckout }: CartFooterProps) => {
+export const CartFooter = ({ subtotal, itemCount, onCheckout, onCancelOrder }: CartFooterProps) => {
   const formatCurrency = useFormatCurrency();
   const isDisabled = itemCount === 0;
 
@@ -30,6 +31,13 @@ export const CartFooter = ({ subtotal, itemCount, onCheckout }: CartFooterProps)
         <View className="flex-row items-center">
           <Ionicons name="card-outline" size={20} color="#FFF" />
           <Text className="text-white font-bold ml-2 text-base">Proceed to Checkout</Text>
+        </View>
+      </Button>
+
+      <Button variant="destructive" size="lg" onPress={onCancelOrder} className="mt-2">
+        <View className="flex-row items-center">
+          <Ionicons name="close-circle-outline" size={20} color="#FFF" />
+          <Text className="text-white font-bold ml-2 text-base">Cancel Order</Text>
         </View>
       </Button>
     </View>

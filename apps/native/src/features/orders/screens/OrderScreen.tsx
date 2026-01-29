@@ -60,6 +60,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const addItem = useMutation(api.orders.addItem);
   const updateItemQuantity = useMutation(api.orders.updateItemQuantity);
   const removeItem = useMutation(api.orders.removeItem);
+  const cancelOrderMutation = useMutation(api.checkout.cancelOrder);
 
   // Filtered products
   const filteredProducts = useMemo(() => {
@@ -155,6 +156,29 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     },
     [updateItemQuantity, removeItem],
   );
+
+  const handleCancelOrder = useCallback(() => {
+    Alert.alert(
+      "Cancel Order",
+      "Are you sure you want to cancel this order? All items will be removed.",
+      [
+        { text: "No", style: "cancel" },
+        {
+          text: "Yes, Cancel",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await cancelOrderMutation({ orderId });
+              navigation.goBack();
+            } catch (error) {
+              console.error("Cancel order error:", error);
+              Alert.alert("Error", "Failed to cancel order");
+            }
+          },
+        },
+      ],
+    );
+  }, [cancelOrderMutation, orderId, navigation]);
 
   const handleCheckout = useCallback(() => {
     if (activeItems.length === 0) {
@@ -254,7 +278,12 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             }
           />
 
-          <CartFooter subtotal={cartTotal} itemCount={cartItemCount} onCheckout={handleCheckout} />
+          <CartFooter
+            subtotal={cartTotal}
+            itemCount={cartItemCount}
+            onCheckout={handleCheckout}
+            onCancelOrder={handleCancelOrder}
+          />
         </View>
       </View>
 

@@ -6,6 +6,7 @@ import { Alert } from "react-native";
 // Import screens from features
 import { LoginScreen } from "../features/auth";
 import { CheckoutScreen } from "../features/checkout";
+import { OrderDetailScreen, OrderHistoryScreen } from "../features/order-history";
 import { OrderScreen } from "../features/orders";
 import { PrinterSettingsScreen, SettingsScreen } from "../features/settings";
 import { usePrinterStore } from "../features/settings/stores/usePrinterStore";
@@ -24,6 +25,10 @@ export type RootStackParamList = {
     orderId: Id<"orders">;
     tableId?: Id<"tables">;
     tableName?: string;
+  };
+  OrderHistoryScreen: undefined;
+  OrderDetailScreen: {
+    orderId: Id<"orders">;
   };
   SettingsScreen: undefined;
   PrinterSettingsScreen: { printerId?: string } | undefined;
@@ -63,6 +68,8 @@ const Navigation = () => {
         <Stack.Screen name="TablesScreen" component={TablesScreen} />
         <Stack.Screen name="OrderScreen" component={OrderScreen} />
         <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
+        <Stack.Screen name="OrderHistoryScreen" component={OrderHistoryScreen} />
+        <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} />
         <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         <Stack.Screen name="PrinterSettingsScreen" component={PrinterSettingsScreen} />
       </Stack.Navigator>
