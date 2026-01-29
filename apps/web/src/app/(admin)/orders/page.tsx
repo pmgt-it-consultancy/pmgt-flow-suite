@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
+import { formatCurrency } from "@/lib/format";
 import { useAdminStore } from "@/stores/useAdminStore";
 
 type OrderStatus = "open" | "paid" | "voided";
@@ -84,13 +85,6 @@ export default function OrdersPage() {
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-PH", {
-      style: "currency",
-      currency: "PHP",
-    }).format(amount / 100); // Convert from centavos
   };
 
   const formatDate = (timestamp: number) => {

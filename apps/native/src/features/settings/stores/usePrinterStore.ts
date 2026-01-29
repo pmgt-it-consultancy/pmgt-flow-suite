@@ -19,6 +19,9 @@ import {
   updatePrinter as storageUpdatePrinter,
 } from "../services/printerStorage";
 
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 1000;
+
 interface PrinterStore {
   printers: PrinterConfig[];
   connectionStatus: Record<string, boolean>;
@@ -63,11 +66,18 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
     const failedPrinters: string[] = [];
     const connectionStatus: Record<string, boolean> = {};
 
-    for (const printer of settings.printers) {
-      const connected = await connectToDevice(printer.id);
-      connectionStatus[printer.id] = connected;
-      if (!connected) {
-        failedPrinters.push(printer.name);
+    for (let i = 0; i < MAX_RETRY_ATTEMPTS; i++) {
+      // No need for exponential backoff here since connection attempts are spaced out by user interaction time
+      if (i > 0) {
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      }
+
+      for (const printer of settings.printers) {
+        const connected = await connectToDevice(printer.id);
+        connectionStatus[printer.id] = connected;
+        if (!connected) {
+          failedPrinters.push(printer.name);
+        }
       }
     }
 
