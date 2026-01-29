@@ -4,6 +4,7 @@ import {
   BarChart3,
   FileText,
   Grid3X3,
+  Home,
   LayoutDashboard,
   Package,
   Receipt,
@@ -28,6 +29,12 @@ const navItems: NavItem[] = [
     title: "Dashboard",
     href: "/dashboard",
     icon: <LayoutDashboard className="h-5 w-5" />,
+  },
+  {
+    title: "POS Home",
+    href: "/pos",
+    icon: <Home className="h-5 w-5" />,
+    permission: "orders.view",
   },
   {
     title: "Stores",
