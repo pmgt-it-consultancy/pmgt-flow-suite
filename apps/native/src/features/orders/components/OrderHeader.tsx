@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { View } from "uniwind/components";
 import { IconButton, Text } from "../../shared/components/ui";
 
@@ -6,9 +5,10 @@ interface OrderHeaderProps {
   title: string;
   subtitle: string;
   onBack: () => void;
+  onTransferTable?: () => void;
 }
 
-export const OrderHeader = ({ title, subtitle, onBack }: OrderHeaderProps) => {
+export const OrderHeader = ({ title, subtitle, onBack, onTransferTable }: OrderHeaderProps) => {
   return (
     <View className="bg-white flex-row items-center px-4 py-2.5 border-b border-gray-200">
       <IconButton icon="arrow-back" variant="ghost" onPress={onBack} className="mr-1" />
@@ -21,6 +21,14 @@ export const OrderHeader = ({ title, subtitle, onBack }: OrderHeaderProps) => {
           {subtitle}
         </Text>
       </View>
+      {onTransferTable && (
+        <IconButton
+          icon="swap-horizontal"
+          variant="ghost"
+          onPress={onTransferTable}
+          iconColor="#6B7280"
+        />
+      )}
     </View>
   );
 };

@@ -1,8 +1,7 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { useCallback, useState } from "react";
-import { Alert } from "react-native";
 import { ActivityIndicator, FlatList, RefreshControl, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
 import { EmptyState, Header, QuickActions, TableCard } from "../components";
@@ -23,9 +22,6 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     api.orders.listActive,
     user?.storeId ? { storeId: user.storeId } : "skip",
   );
-
-  // Create order mutation
-  const createOrder = useMutation(api.orders.create);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -55,7 +51,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
   );
 
   const handleSelectTable = useCallback(
-    async (tableId: Id<"tables">, tableName: string) => {
+    (tableId: Id<"tables">, tableName: string) => {
       if (!user?.storeId) return;
 
       const orderInfo = getTableOrderInfo(tableId);
@@ -66,35 +62,18 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
           orderId: orderInfo.orderId,
           tableId,
           tableName,
+          storeId: user.storeId,
         });
       } else {
-        // Ask to create new order
-        Alert.alert("New Order", `Start a new order for ${tableName}?`, [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Start Order",
-            onPress: async () => {
-              try {
-                const orderId = await createOrder({
-                  storeId: user.storeId!,
-                  tableId,
-                  orderType: "dine_in",
-                });
-                navigation.navigate("OrderScreen", {
-                  orderId,
-                  tableId,
-                  tableName,
-                });
-              } catch (error) {
-                console.error("Create order error:", error);
-                Alert.alert("Error", "Failed to create order");
-              }
-            },
-          },
-        ]);
+        // Navigate to draft mode (no order created yet)
+        navigation.navigate("OrderScreen", {
+          tableId,
+          tableName,
+          storeId: user.storeId,
+        });
       }
     },
-    [user?.storeId, getTableOrderInfo, navigation, createOrder],
+    [user?.storeId, getTableOrderInfo, navigation],
   );
 
   if (isLoading || !isAuthenticated) {

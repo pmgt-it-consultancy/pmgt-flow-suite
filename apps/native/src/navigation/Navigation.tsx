@@ -17,9 +17,10 @@ export type RootStackParamList = {
   LoginScreen: undefined;
   TablesScreen: undefined;
   OrderScreen: {
-    orderId: Id<"orders">;
-    tableId?: Id<"tables">;
-    tableName?: string;
+    orderId?: Id<"orders">;
+    tableId: Id<"tables">;
+    tableName: string;
+    storeId: Id<"stores">;
   };
   CheckoutScreen: {
     orderId: Id<"orders">;

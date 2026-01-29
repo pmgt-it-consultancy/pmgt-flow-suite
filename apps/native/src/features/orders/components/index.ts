@@ -5,3 +5,6 @@ export { CategoryFilter } from "./CategoryFilter";
 export { OrderHeader } from "./OrderHeader";
 export { ProductCard } from "./ProductCard";
 export { SearchBar } from "./SearchBar";
+export { TransferTableModal } from "./TransferTableModal";
+export { ViewBillModal } from "./ViewBillModal";
+export { VoidItemModal } from "./VoidItemModal";

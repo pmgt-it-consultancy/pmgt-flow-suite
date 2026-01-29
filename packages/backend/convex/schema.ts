@@ -143,6 +143,7 @@ export default defineSchema({
     quantity: v.number(),
     notes: v.optional(v.string()),
     isVoided: v.boolean(),
+    isSentToKitchen: v.boolean(),
     voidedBy: v.optional(v.id("users")),
     voidedAt: v.optional(v.number()),
     voidReason: v.optional(v.string()),

@@ -9,24 +9,32 @@ import {
 } from "./lib/taxCalculations";
 
 // Generate next order number for today
-async function getNextOrderNumber(ctx: { db: any }, storeId: Id<"stores">): Promise<string> {
+async function getNextOrderNumber(
+  ctx: { db: any },
+  storeId: Id<"stores">,
+  orderType: "dine_in" | "takeout",
+): Promise<string> {
   // Get today's date in YYYY-MM-DD format
   const today = new Date();
   const dateString = today.toISOString().split("T")[0];
   const startOfDay = new Date(dateString).getTime();
   const endOfDay = startOfDay + 24 * 60 * 60 * 1000;
 
-  // Count today's orders for this store
+  const prefix = orderType === "dine_in" ? "D" : "T";
+
+  // Count today's orders for this store filtered by order type
   const todaysOrders = await ctx.db
     .query("orders")
     .withIndex("by_store_createdAt", (q: any) =>
       q.eq("storeId", storeId).gte("createdAt", startOfDay),
     )
-    .filter((q: any) => q.lt(q.field("createdAt"), endOfDay))
+    .filter((q: any) =>
+      q.and(q.lt(q.field("createdAt"), endOfDay), q.eq(q.field("orderType"), orderType)),
+    )
     .collect();
 
   const nextNumber = todaysOrders.length + 1;
-  return nextNumber.toString().padStart(3, "0");
+  return `${prefix}-${nextNumber.toString().padStart(3, "0")}`;
 }
 
 // Create a new order
@@ -57,7 +65,7 @@ export const create = mutation({
     }
 
     // Generate order number
-    const orderNumber = await getNextOrderNumber(ctx, args.storeId);
+    const orderNumber = await getNextOrderNumber(ctx, args.storeId, args.orderType);
 
     // Create order with zero totals
     const now = Date.now();
@@ -135,6 +143,7 @@ export const get = query({
           quantity: v.number(),
           notes: v.optional(v.string()),
           isVoided: v.boolean(),
+          isSentToKitchen: v.boolean(),
           lineTotal: v.number(),
         }),
       ),
@@ -173,6 +182,7 @@ export const get = query({
       quantity: item.quantity,
       notes: item.notes,
       isVoided: item.isVoided,
+      isSentToKitchen: item.isSentToKitchen,
       lineTotal: item.isVoided ? 0 : item.productPrice * item.quantity,
     }));
 
@@ -428,6 +438,7 @@ export const addItem = mutation({
       quantity: args.quantity,
       notes: args.notes,
       isVoided: false,
+      isSentToKitchen: false,
       voidedBy: undefined,
       voidedAt: undefined,
       voidReason: undefined,
@@ -461,6 +472,11 @@ export const updateItemQuantity = mutation({
     if (!order) throw new Error("Order not found");
     if (order.status !== "open") {
       throw new Error("Cannot modify items in a closed order");
+    }
+
+    // Block quantity changes on sent items
+    if (item.isSentToKitchen) {
+      throw new Error("Cannot modify quantity of kitchen-sent items");
     }
 
     // Update quantity
@@ -509,11 +525,12 @@ export const removeItem = mutation({
   args: {
     orderItemId: v.id("orderItems"),
     quantityToRemove: v.optional(v.number()),
+    voidReason: v.optional(v.string()),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
     // Require authenticated user
-    await requireAuth(ctx);
+    const user = await requireAuth(ctx);
 
     // Get order item
     const item = await ctx.db.get(args.orderItemId);
@@ -527,16 +544,28 @@ export const removeItem = mutation({
       throw new Error("Cannot modify items in a closed order");
     }
 
-    const quantityToRemove = args.quantityToRemove ?? item.quantity;
-
-    if (quantityToRemove >= item.quantity) {
-      // Remove entirely (delete from database since order is still open)
-      await ctx.db.delete(args.orderItemId);
-    } else {
-      // Reduce quantity
+    if (item.isSentToKitchen) {
+      // Sent items must be voided with a reason (not deleted)
+      if (!args.voidReason?.trim()) {
+        throw new Error("Void reason required for kitchen-sent items");
+      }
       await ctx.db.patch(args.orderItemId, {
-        quantity: item.quantity - quantityToRemove,
+        isVoided: true,
+        voidedBy: user._id,
+        voidedAt: Date.now(),
+        voidReason: args.voidReason.trim(),
       });
+    } else {
+      // Unsent items can be deleted or reduced
+      const quantityToRemove = args.quantityToRemove ?? item.quantity;
+
+      if (quantityToRemove >= item.quantity) {
+        await ctx.db.delete(args.orderItemId);
+      } else {
+        await ctx.db.patch(args.orderItemId, {
+          quantity: item.quantity - quantityToRemove,
+        });
+      }
     }
 
     // Recalculate order totals
@@ -733,5 +762,169 @@ export const getTodaysOpenOrders = query({
     );
 
     return results.sort((a, b) => b.createdAt - a.createdAt);
+  },
+});
+
+// Send unsent items to kitchen (marks them as sent)
+export const sendToKitchen = mutation({
+  args: {
+    orderId: v.id("orders"),
+  },
+  returns: v.object({
+    sentItemIds: v.array(v.id("orderItems")),
+  }),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open") throw new Error("Order is not open");
+
+    const items = await ctx.db
+      .query("orderItems")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .collect();
+
+    const unsentItems = items.filter((i) => !i.isVoided && !i.isSentToKitchen);
+    if (unsentItems.length === 0) throw new Error("No new items to send");
+
+    const sentItemIds: Id<"orderItems">[] = [];
+    for (const item of unsentItems) {
+      await ctx.db.patch(item._id, { isSentToKitchen: true });
+      sentItemIds.push(item._id);
+    }
+
+    return { sentItemIds };
+  },
+});
+
+// Create order and send items to kitchen in one step (first-time table order)
+export const createAndSendToKitchen = mutation({
+  args: {
+    storeId: v.id("stores"),
+    tableId: v.id("tables"),
+    items: v.array(
+      v.object({
+        productId: v.id("products"),
+        quantity: v.number(),
+        notes: v.optional(v.string()),
+      }),
+    ),
+  },
+  returns: v.object({
+    orderId: v.id("orders"),
+    orderNumber: v.string(),
+    sentItemIds: v.array(v.id("orderItems")),
+  }),
+  handler: async (ctx, args) => {
+    const user = await requireAuth(ctx);
+
+    if (args.items.length === 0) throw new Error("No items to send");
+
+    // Check table availability
+    const table = await ctx.db.get(args.tableId);
+    if (!table) throw new Error("Table not found");
+    if (table.status === "occupied") throw new Error("Table is already occupied");
+
+    // Generate order number
+    const orderNumber = await getNextOrderNumber(ctx, args.storeId, "dine_in");
+
+    // Create order
+    const now = Date.now();
+    const orderId = await ctx.db.insert("orders", {
+      storeId: args.storeId,
+      orderNumber,
+      orderType: "dine_in",
+      tableId: args.tableId,
+      customerName: undefined,
+      status: "open",
+      grossSales: 0,
+      vatableSales: 0,
+      vatAmount: 0,
+      vatExemptSales: 0,
+      nonVatSales: 0,
+      discountAmount: 0,
+      netSales: 0,
+      paymentMethod: undefined,
+      cashReceived: undefined,
+      changeGiven: undefined,
+      createdBy: user._id,
+      createdAt: now,
+      paidAt: undefined,
+      paidBy: undefined,
+    });
+
+    // Mark table as occupied
+    await ctx.db.patch(args.tableId, {
+      status: "occupied",
+      currentOrderId: orderId,
+    });
+
+    // Insert items and mark as sent
+    const sentItemIds: Id<"orderItems">[] = [];
+    for (const item of args.items) {
+      const product = await ctx.db.get(item.productId);
+      if (!product) throw new Error(`Product not found`);
+      if (!product.isActive) throw new Error(`Product not available: ${product.name}`);
+
+      const itemId = await ctx.db.insert("orderItems", {
+        orderId,
+        productId: item.productId,
+        productName: product.name,
+        productPrice: product.price,
+        quantity: item.quantity,
+        notes: item.notes,
+        isVoided: false,
+        isSentToKitchen: true,
+        voidedBy: undefined,
+        voidedAt: undefined,
+        voidReason: undefined,
+      });
+      sentItemIds.push(itemId);
+    }
+
+    // Recalculate order totals
+    await recalculateOrderTotals(ctx, orderId);
+
+    return { orderId, orderNumber, sentItemIds };
+  },
+});
+
+// Transfer a running bill from one table to another
+export const transferTable = mutation({
+  args: {
+    orderId: v.id("orders"),
+    newTableId: v.id("tables"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open") throw new Error("Order is not open");
+    if (!order.tableId) throw new Error("Order is not a dine-in order");
+
+    // Check new table is available
+    const newTable = await ctx.db.get(args.newTableId);
+    if (!newTable) throw new Error("Table not found");
+    if (newTable.status === "occupied") throw new Error("Target table is already occupied");
+
+    // Release old table
+    await ctx.db.patch(order.tableId, {
+      status: "available",
+      currentOrderId: undefined,
+    });
+
+    // Assign new table
+    await ctx.db.patch(args.newTableId, {
+      status: "occupied",
+      currentOrderId: args.orderId,
+    });
+
+    // Update order
+    await ctx.db.patch(args.orderId, { tableId: args.newTableId });
+
+    return null;
   },
 });

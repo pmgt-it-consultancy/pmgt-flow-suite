@@ -6,6 +6,8 @@ import { useCallback, useMemo, useState } from "react";
 import { Alert } from "react-native";
 import { ActivityIndicator, FlatList, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
+import type { KitchenTicketData } from "../../settings/services/escposFormatter";
+import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Text } from "../../shared/components/ui";
 import {
   AddItemModal,
@@ -15,15 +17,19 @@ import {
   OrderHeader,
   ProductCard,
   SearchBar,
+  TransferTableModal,
+  ViewBillModal,
+  VoidItemModal,
 } from "../components";
 
 interface OrderScreenProps {
   navigation: any;
   route: {
     params: {
-      orderId: Id<"orders">;
-      tableId?: Id<"tables">;
-      tableName?: string;
+      orderId?: Id<"orders">;
+      tableId: Id<"tables">;
+      tableName: string;
+      storeId: Id<"stores">;
     };
   };
 }
@@ -34,33 +40,63 @@ interface SelectedProduct {
   price: number;
 }
 
+interface DraftItem {
+  localId: string;
+  productId: Id<"products">;
+  productName: string;
+  productPrice: number;
+  quantity: number;
+  notes?: string;
+}
+
+let draftIdCounter = 0;
+
 export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
-  const { orderId, tableId, tableName } = route.params;
+  const { tableId, storeId } = route.params;
+  const [currentOrderId, setCurrentOrderId] = useState<Id<"orders"> | undefined>(
+    route.params.orderId,
+  );
+  const [currentTableName, setCurrentTableName] = useState(route.params.tableName);
   const { isLoading, isAuthenticated } = useAuth();
 
+  const isDraftMode = !currentOrderId;
+
+  // Draft mode state
+  const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
+
+  // Shared UI state
   const [selectedCategory, setSelectedCategory] = useState<Id<"categories"> | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<SelectedProduct | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
-  // Queries - auth is handled automatically by Convex Auth
-  const order = useQuery(api.orders.get, { orderId });
-  const products = useQuery(
-    api.products.list,
-    order?.storeId ? { storeId: order.storeId } : "skip",
-  );
-  const categories = useQuery(
-    api.categories.list,
-    order?.storeId ? { storeId: order.storeId } : "skip",
-  );
+  // Modal state
+  const [voidingItem, setVoidingItem] = useState<{
+    id: Id<"orderItems">;
+    name: string;
+    quantity: number;
+  } | null>(null);
+  const [showViewBill, setShowViewBill] = useState(false);
+  const [showTransferTable, setShowTransferTable] = useState(false);
+
+  // Queries
+  const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
+  const products = useQuery(api.products.list, { storeId });
+  const categories = useQuery(api.categories.list, { storeId });
 
   // Mutations
   const addItem = useMutation(api.orders.addItem);
   const updateItemQuantity = useMutation(api.orders.updateItemQuantity);
-  const removeItem = useMutation(api.orders.removeItem);
+  const removeItemMutation = useMutation(api.orders.removeItem);
   const cancelOrderMutation = useMutation(api.checkout.cancelOrder);
+  const sendToKitchenMutation = useMutation(api.orders.sendToKitchen);
+  const createAndSendMutation = useMutation(api.orders.createAndSendToKitchen);
+
+  // Printer
+  const { printKitchenTicket } = usePrinterStore();
 
   // Filtered products
   const filteredProducts = useMemo(() => {
@@ -71,8 +107,24 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     });
   }, [products, selectedCategory, searchQuery]);
 
-  // Cart data
-  const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
+  // Cart data — unified from draft or server
+  const activeItems = useMemo(() => {
+    if (isDraftMode) {
+      return draftItems.map((d) => ({
+        _id: d.localId as unknown as Id<"orderItems">,
+        productId: d.productId,
+        productName: d.productName,
+        productPrice: d.productPrice,
+        quantity: d.quantity,
+        notes: d.notes,
+        isVoided: false,
+        isSentToKitchen: false,
+        lineTotal: d.productPrice * d.quantity,
+      }));
+    }
+    return order?.items.filter((i) => !i.isVoided) ?? [];
+  }, [isDraftMode, draftItems, order]);
+
   const cartTotal = useMemo(
     () => activeItems.reduce((sum, item) => sum + item.lineTotal, 0),
     [activeItems],
@@ -81,6 +133,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     () => activeItems.reduce((sum, item) => sum + item.quantity, 0),
     [activeItems],
   );
+  const hasUnsentItems = useMemo(() => activeItems.some((i) => !i.isSentToKitchen), [activeItems]);
+  const hasSentItems = useMemo(() => activeItems.some((i) => i.isSentToKitchen), [activeItems]);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -97,10 +151,28 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const handleConfirmAdd = useCallback(async () => {
     if (!selectedProduct) return;
 
+    if (isDraftMode) {
+      // Add to local draft
+      setDraftItems((prev) => [
+        ...prev,
+        {
+          localId: `draft-${++draftIdCounter}`,
+          productId: selectedProduct.id,
+          productName: selectedProduct.name,
+          productPrice: selectedProduct.price,
+          quantity,
+          notes: notes || undefined,
+        },
+      ]);
+      setSelectedProduct(null);
+      return;
+    }
+
+    // Add to existing order
     setIsAddingItem(true);
     try {
       await addItem({
-        orderId,
+        orderId: currentOrderId!,
         productId: selectedProduct.id,
         quantity,
         notes: notes || undefined,
@@ -112,10 +184,20 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     } finally {
       setIsAddingItem(false);
     }
-  }, [selectedProduct, orderId, quantity, notes, addItem]);
+  }, [selectedProduct, isDraftMode, currentOrderId, quantity, notes, addItem]);
 
   const handleIncrement = useCallback(
     async (itemId: Id<"orderItems">, currentQty: number) => {
+      if (isDraftMode) {
+        setDraftItems((prev) =>
+          prev.map((d) =>
+            (d.localId as unknown as Id<"orderItems">) === itemId
+              ? { ...d, quantity: d.quantity + 1 }
+              : d,
+          ),
+        );
+        return;
+      }
       try {
         await updateItemQuantity({ orderItemId: itemId, quantity: currentQty + 1 });
       } catch (error) {
@@ -123,11 +205,28 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [updateItemQuantity],
+    [isDraftMode, updateItemQuantity],
   );
 
   const handleDecrement = useCallback(
     async (itemId: Id<"orderItems">, currentQty: number) => {
+      if (isDraftMode) {
+        if (currentQty <= 1) {
+          setDraftItems((prev) =>
+            prev.filter((d) => (d.localId as unknown as Id<"orderItems">) !== itemId),
+          );
+        } else {
+          setDraftItems((prev) =>
+            prev.map((d) =>
+              (d.localId as unknown as Id<"orderItems">) === itemId
+                ? { ...d, quantity: d.quantity - 1 }
+                : d,
+            ),
+          );
+        }
+        return;
+      }
+
       if (currentQty <= 1) {
         Alert.alert("Remove Item", "Are you sure you want to remove this item?", [
           { text: "Cancel", style: "cancel" },
@@ -136,7 +235,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             style: "destructive",
             onPress: async () => {
               try {
-                await removeItem({ orderItemId: itemId });
+                await removeItemMutation({ orderItemId: itemId });
               } catch (error) {
                 console.error("Remove item error:", error);
                 Alert.alert("Error", "Failed to remove item");
@@ -154,10 +253,128 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [updateItemQuantity, removeItem],
+    [isDraftMode, updateItemQuantity, removeItemMutation],
   );
 
+  const handleVoidItem = useCallback(
+    (itemId: Id<"orderItems">) => {
+      const item = activeItems.find((i) => i._id === itemId);
+      if (!item) return;
+      setVoidingItem({ id: itemId, name: item.productName, quantity: item.quantity });
+    },
+    [activeItems],
+  );
+
+  const handleConfirmVoid = useCallback(
+    async (reason: string) => {
+      if (!voidingItem) return;
+      try {
+        await removeItemMutation({ orderItemId: voidingItem.id, voidReason: reason });
+      } catch (error: any) {
+        Alert.alert("Error", error.message || "Failed to void item");
+      }
+      setVoidingItem(null);
+    },
+    [voidingItem, removeItemMutation],
+  );
+
+  const handleSendToKitchen = useCallback(async () => {
+    setIsSending(true);
+    try {
+      let orderNumber: string;
+      let sentItemNames: { name: string; quantity: number; notes?: string }[];
+
+      if (isDraftMode) {
+        // First-time: create order + send
+        const result = await createAndSendMutation({
+          storeId,
+          tableId,
+          items: draftItems.map((d) => ({
+            productId: d.productId,
+            quantity: d.quantity,
+            notes: d.notes,
+          })),
+        });
+        setCurrentOrderId(result.orderId);
+        orderNumber = result.orderNumber;
+        sentItemNames = draftItems.map((d) => ({
+          name: d.productName,
+          quantity: d.quantity,
+          notes: d.notes,
+        }));
+        setDraftItems([]);
+      } else {
+        // Existing order: send unsent items
+        const unsentItems = activeItems.filter((i) => !i.isSentToKitchen);
+        await sendToKitchenMutation({ orderId: currentOrderId! });
+        orderNumber = order!.orderNumber;
+        sentItemNames = unsentItems.map((i) => ({
+          name: i.productName,
+          quantity: i.quantity,
+          notes: i.notes,
+        }));
+      }
+
+      // Print kitchen ticket with only the newly sent items
+      const kitchenData: KitchenTicketData = {
+        orderNumber,
+        tableName: currentTableName,
+        orderType: "dine_in",
+        items: sentItemNames,
+        timestamp: new Date(),
+      };
+      await printKitchenTicket(kitchenData);
+
+      Alert.alert("Sent", "Items sent to kitchen", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+    } catch (error: any) {
+      console.error("Send to kitchen error:", error);
+      Alert.alert("Error", error.message || "Failed to send to kitchen");
+    } finally {
+      setIsSending(false);
+    }
+  }, [
+    isDraftMode,
+    createAndSendMutation,
+    sendToKitchenMutation,
+    storeId,
+    tableId,
+    draftItems,
+    activeItems,
+    currentOrderId,
+    order,
+    currentTableName,
+    printKitchenTicket,
+    navigation,
+  ]);
+
+  const handleCloseTable = useCallback(() => {
+    if (!currentOrderId || activeItems.length === 0) return;
+    navigation.navigate("CheckoutScreen", {
+      orderId: currentOrderId,
+      tableId,
+      tableName: currentTableName,
+    });
+  }, [currentOrderId, activeItems.length, navigation, tableId, currentTableName]);
+
   const handleCancelOrder = useCallback(() => {
+    if (isDraftMode) {
+      if (draftItems.length === 0) {
+        navigation.goBack();
+        return;
+      }
+      Alert.alert("Cancel Order", "Discard all items and go back?", [
+        { text: "No", style: "cancel" },
+        {
+          text: "Yes, Discard",
+          style: "destructive",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+      return;
+    }
+
     Alert.alert(
       "Cancel Order",
       "Are you sure you want to cancel this order? All items will be removed.",
@@ -168,27 +385,24 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           style: "destructive",
           onPress: async () => {
             try {
-              await cancelOrderMutation({ orderId });
+              await cancelOrderMutation({ orderId: currentOrderId! });
               navigation.goBack();
-            } catch (error) {
-              console.error("Cancel order error:", error);
-              Alert.alert("Error", "Failed to cancel order");
+            } catch (error: any) {
+              Alert.alert("Error", error.message || "Failed to cancel order");
             }
           },
         },
       ],
     );
-  }, [cancelOrderMutation, orderId, navigation]);
+  }, [isDraftMode, draftItems.length, cancelOrderMutation, currentOrderId, navigation]);
 
-  const handleCheckout = useCallback(() => {
-    if (activeItems.length === 0) {
-      Alert.alert("Empty Order", "Add items to the order before checkout");
-      return;
-    }
-    navigation.navigate("CheckoutScreen", { orderId, tableId, tableName });
-  }, [activeItems.length, navigation, orderId, tableId, tableName]);
+  const handleTransferred = useCallback((newTableId: Id<"tables">, newTableName: string) => {
+    setCurrentTableName(newTableName);
+    setShowTransferTable(false);
+    Alert.alert("Transferred", `Order moved to ${newTableName}`);
+  }, []);
 
-  if (isLoading || !isAuthenticated || !order) {
+  if (isLoading || !isAuthenticated) {
     return (
       <View className="flex-1 justify-center items-center bg-gray-100">
         <ActivityIndicator size="large" color="#0D87E1" />
@@ -196,14 +410,24 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     );
   }
 
-  const orderTypeLabel = order.orderType === "dine_in" ? "Dine-In" : "Take-out";
+  // In existing order mode, wait for order data
+  if (!isDraftMode && !order) {
+    return (
+      <View className="flex-1 justify-center items-center bg-gray-100">
+        <ActivityIndicator size="large" color="#0D87E1" />
+      </View>
+    );
+  }
+
+  const subtitle = isDraftMode ? "New Order" : "Dine-In";
 
   return (
     <View className="flex-1 bg-gray-100">
       <OrderHeader
-        title={tableName ?? `Order #${order.orderNumber}`}
-        subtitle={orderTypeLabel}
+        title={currentTableName}
+        subtitle={subtitle}
         onBack={handleBack}
+        onTransferTable={!isDraftMode ? () => setShowTransferTable(true) : undefined}
       />
 
       <View className="flex-1 flex-row">
@@ -264,8 +488,10 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
                 quantity={item.quantity}
                 lineTotal={item.lineTotal}
                 notes={item.notes}
+                isSentToKitchen={item.isSentToKitchen}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
+                onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
               />
             )}
             ListEmptyComponent={
@@ -281,7 +507,12 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           <CartFooter
             subtotal={cartTotal}
             itemCount={cartItemCount}
-            onCheckout={handleCheckout}
+            hasUnsentItems={hasUnsentItems}
+            hasSentItems={hasSentItems}
+            isDraftMode={isDraftMode}
+            onSendToKitchen={handleSendToKitchen}
+            onCloseTable={handleCloseTable}
+            onViewBill={() => setShowViewBill(true)}
             onCancelOrder={handleCancelOrder}
           />
         </View>
@@ -292,12 +523,44 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         product={selectedProduct}
         quantity={quantity}
         notes={notes}
-        isLoading={isAddingItem}
+        isLoading={isAddingItem || isSending}
         onClose={handleCloseModal}
         onQuantityChange={setQuantity}
         onNotesChange={setNotes}
         onConfirm={handleConfirmAdd}
       />
+
+      <VoidItemModal
+        visible={!!voidingItem}
+        itemName={voidingItem?.name ?? ""}
+        itemQuantity={voidingItem?.quantity ?? 0}
+        onConfirm={handleConfirmVoid}
+        onClose={() => setVoidingItem(null)}
+      />
+
+      {!isDraftMode && order && (
+        <ViewBillModal
+          visible={showViewBill}
+          orderNumber={order.orderNumber}
+          tableName={currentTableName}
+          items={order.items}
+          grossSales={order.grossSales}
+          vatAmount={order.vatAmount}
+          netSales={order.netSales}
+          onClose={() => setShowViewBill(false)}
+        />
+      )}
+
+      {!isDraftMode && currentOrderId && (
+        <TransferTableModal
+          visible={showTransferTable}
+          storeId={storeId}
+          orderId={currentOrderId}
+          currentTableName={currentTableName}
+          onTransferred={handleTransferred}
+          onClose={() => setShowTransferTable(false)}
+        />
+      )}
     </View>
   );
 };

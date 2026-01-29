@@ -1,5 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { View } from "uniwind/components";
+import { TouchableOpacity, View } from "uniwind/components";
 import { IconButton, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -10,8 +11,10 @@ interface CartItemProps {
   quantity: number;
   lineTotal: number;
   notes?: string;
+  isSentToKitchen: boolean;
   onIncrement: (id: Id<"orderItems">, currentQty: number) => void;
   onDecrement: (id: Id<"orderItems">, currentQty: number) => void;
+  onVoidItem?: (id: Id<"orderItems">) => void;
 }
 
 export const CartItem = ({
@@ -21,8 +24,10 @@ export const CartItem = ({
   quantity,
   lineTotal,
   notes,
+  isSentToKitchen,
   onIncrement,
   onDecrement,
+  onVoidItem,
 }: CartItemProps) => {
   const formatCurrency = useFormatCurrency();
 
@@ -30,9 +35,19 @@ export const CartItem = ({
     <View className="px-3 py-3 border-b border-gray-100">
       <View className="flex-row justify-between items-start mb-2">
         <View className="flex-1 mr-3">
-          <Text className="text-gray-900 font-semibold text-sm" numberOfLines={1}>
-            {productName}
-          </Text>
+          <View className="flex-row items-center">
+            <Text className="text-gray-900 font-semibold text-sm" numberOfLines={1}>
+              {productName}
+            </Text>
+            {isSentToKitchen && (
+              <Ionicons
+                name="checkmark-circle"
+                size={14}
+                color="#22C55E"
+                style={{ marginLeft: 4 }}
+              />
+            )}
+          </View>
           <Text className="text-gray-400 text-xs mt-0.5">{formatCurrency(productPrice)} each</Text>
           {notes && (
             <Text className="text-amber-600 text-xs mt-0.5 italic" numberOfLines={1}>
@@ -43,26 +58,37 @@ export const CartItem = ({
         <Text className="text-gray-900 font-bold text-sm">{formatCurrency(lineTotal)}</Text>
       </View>
 
-      <View className="flex-row items-center">
-        <View className="flex-row items-center bg-gray-50 rounded-xl border border-gray-200">
-          <IconButton
-            icon="remove"
-            size="md"
-            variant="ghost"
-            iconColor="#EF4444"
-            onPress={() => onDecrement(id, quantity)}
-          />
-          <Text className="text-gray-900 font-bold text-base px-4 min-w-[40px] text-center">
-            {quantity}
-          </Text>
-          <IconButton
-            icon="add"
-            size="md"
-            variant="ghost"
-            iconColor="#22C55E"
-            onPress={() => onIncrement(id, quantity)}
-          />
-        </View>
+      <View className="flex-row items-center justify-between">
+        {isSentToKitchen ? (
+          <>
+            <Text className="text-gray-500 text-sm">Qty: {quantity}</Text>
+            {onVoidItem && (
+              <TouchableOpacity onPress={() => onVoidItem(id)} className="px-2 py-1">
+                <Text className="text-red-500 font-medium text-xs">Void</Text>
+              </TouchableOpacity>
+            )}
+          </>
+        ) : (
+          <View className="flex-row items-center bg-gray-50 rounded-xl border border-gray-200">
+            <IconButton
+              icon="remove"
+              size="md"
+              variant="ghost"
+              iconColor="#EF4444"
+              onPress={() => onDecrement(id, quantity)}
+            />
+            <Text className="text-gray-900 font-bold text-base px-4 min-w-[40px] text-center">
+              {quantity}
+            </Text>
+            <IconButton
+              icon="add"
+              size="md"
+              variant="ghost"
+              iconColor="#22C55E"
+              onPress={() => onIncrement(id, quantity)}
+            />
+          </View>
+        )}
       </View>
     </View>
   );

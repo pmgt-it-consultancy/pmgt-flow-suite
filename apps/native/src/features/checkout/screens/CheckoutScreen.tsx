@@ -6,7 +6,6 @@ import { useCallback, useMemo, useState } from "react";
 import { Alert } from "react-native";
 import { ActivityIndicator, ScrollView, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
-import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { type ReceiptData, useFormatCurrency } from "../../shared";
 import { Button, IconButton, Text } from "../../shared/components/ui";
@@ -50,7 +49,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const [completedReceiptData, setCompletedReceiptData] = useState<ReceiptData | null>(null);
 
   // Printer Store
-  const { printReceipt: printToThermal, printKitchenTicket } = usePrinterStore();
+  const { printReceipt: printToThermal } = usePrinterStore();
 
   // Discount State
   const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -365,18 +364,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         onPrint={async () => {
           if (!completedReceiptData) return;
           await printToThermal(completedReceiptData);
-          const kitchenData: KitchenTicketData = {
-            orderNumber: completedReceiptData.orderNumber,
-            tableName: completedReceiptData.tableName,
-            orderType: completedReceiptData.orderType,
-            items: activeItems.map((item) => ({
-              name: item.productName,
-              quantity: item.quantity,
-              notes: item.notes,
-            })),
-            timestamp: new Date(),
-          };
-          await printKitchenTicket(kitchenData);
         }}
         onSkip={() => {
           navigation.reset({ index: 0, routes: [{ name: "TablesScreen" }] });

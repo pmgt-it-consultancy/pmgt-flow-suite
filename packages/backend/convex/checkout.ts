@@ -252,6 +252,19 @@ export const cancelOrder = mutation({
       throw new Error("Can only cancel open orders");
     }
 
+    // Check if any items have been sent to kitchen
+    const allItems = await ctx.db
+      .query("orderItems")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .collect();
+
+    const hasSentItems = allItems.some((i) => i.isSentToKitchen);
+    if (hasSentItems) {
+      throw new Error(
+        "Cannot cancel order with items already sent to kitchen. Void individual items instead.",
+      );
+    }
+
     // Get items and delete them
     const items = await ctx.db
       .query("orderItems")
