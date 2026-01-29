@@ -79,6 +79,9 @@ export const AddItemModal = ({
           value={notes}
           onChangeText={onNotesChange}
           multiline
+          returnKeyType="done"
+          blurOnSubmit
+          onSubmitEditing={onConfirm}
         />
       </View>
 

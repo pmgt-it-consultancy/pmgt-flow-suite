@@ -1,5 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useRef } from "react";
+import type { TextInput as RNTextInput } from "react-native";
 import { ScrollView, TextInput, TouchableOpacity, View } from "uniwind/components";
 import { Button, Chip, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -45,6 +47,7 @@ export const DiscountModal = ({
   onApply,
 }: DiscountModalProps) => {
   const formatCurrency = useFormatCurrency();
+  const customerNameRef = useRef<RNTextInput>(null);
 
   const availableItems = items.filter((item) => !appliedDiscountItemIds.includes(item._id));
 
@@ -112,16 +115,24 @@ export const DiscountModal = ({
         placeholderTextColor="#9CA3AF"
         value={idNumber}
         onChangeText={onIdNumberChange}
+        returnKeyType="next"
+        onSubmitEditing={() => customerNameRef.current?.focus()}
+        blurOnSubmit={false}
       />
 
       {/* Customer Name */}
       <Text className="text-gray-700 font-medium mb-2 mt-4">Customer Name</Text>
       <TextInput
+        ref={customerNameRef}
         className="border border-gray-200 rounded-lg p-3 text-base"
         placeholder="Enter customer name"
         placeholderTextColor="#9CA3AF"
         value={customerName}
         onChangeText={onCustomerNameChange}
+        returnKeyType="done"
+        onSubmitEditing={() => {
+          if (isValid) onApply();
+        }}
       />
 
       <Text variant="muted" size="xs" className="mt-3">

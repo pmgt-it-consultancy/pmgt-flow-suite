@@ -1,7 +1,8 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAction, useQuery } from "convex/react";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import type { TextInput as RNTextInput } from "react-native";
 import { Alert } from "react-native";
 import { ActivityIndicator, TextInput, TouchableOpacity, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
@@ -26,6 +27,7 @@ export const ManagerPinModal = ({
   const [selectedManagerId, setSelectedManagerId] = useState<Id<"users"> | null>(null);
   const [pin, setPin] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+  const pinInputRef = useRef<RNTextInput>(null);
 
   // Query managers for this store - auth handled by Convex Auth provider
   const managers = useQuery(
@@ -66,6 +68,12 @@ export const ManagerPinModal = ({
     onClose();
   }, [onClose]);
 
+  const handleSelectManager = useCallback((managerId: Id<"users">) => {
+    setSelectedManagerId(managerId);
+    // Auto-focus PIN input after selecting a manager
+    setTimeout(() => pinInputRef.current?.focus(), 100);
+  }, []);
+
   return (
     <Modal
       visible={visible}
@@ -94,7 +102,7 @@ export const ManagerPinModal = ({
               className={`flex-row items-center p-3 border rounded-lg mb-2 ${
                 selectedManagerId === manager._id ? "border-blue-500 bg-blue-50" : "border-gray-200"
               }`}
-              onPress={() => setSelectedManagerId(manager._id)}
+              onPress={() => handleSelectManager(manager._id)}
               activeOpacity={0.7}
             >
               <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center mr-3">
@@ -116,6 +124,7 @@ export const ManagerPinModal = ({
       {/* PIN Input */}
       <Text className="text-gray-700 font-medium mb-2">Enter PIN</Text>
       <TextInput
+        ref={pinInputRef}
         className="border border-gray-200 rounded-lg p-3 text-xl text-center tracking-widest"
         placeholder="••••"
         placeholderTextColor="#9CA3AF"
@@ -124,6 +133,10 @@ export const ManagerPinModal = ({
         keyboardType="number-pad"
         secureTextEntry
         maxLength={6}
+        returnKeyType="go"
+        onSubmitEditing={() => {
+          if (selectedManagerId && pin) handleVerify();
+        }}
       />
 
       <Button
