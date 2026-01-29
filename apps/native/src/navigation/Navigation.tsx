@@ -6,15 +6,18 @@ import { Alert } from "react-native";
 // Import screens from features
 import { LoginScreen } from "../features/auth";
 import { CheckoutScreen } from "../features/checkout";
+import { HomeScreen } from "../features/home";
 import { OrderDetailScreen, OrderHistoryScreen } from "../features/order-history";
 import { OrderScreen } from "../features/orders";
 import { PrinterSettingsScreen, SettingsScreen } from "../features/settings";
 import { usePrinterStore } from "../features/settings/stores/usePrinterStore";
 import { TablesScreen } from "../features/tables";
+import { TakeoutListScreen, TakeoutOrderScreen } from "../features/takeout";
 
 // Define navigation parameter types
 export type RootStackParamList = {
   LoginScreen: undefined;
+  HomeScreen: undefined;
   TablesScreen: undefined;
   OrderScreen: {
     orderId?: Id<"orders">;
@@ -33,6 +36,10 @@ export type RootStackParamList = {
   };
   SettingsScreen: undefined;
   PrinterSettingsScreen: { printerId?: string } | undefined;
+  TakeoutListScreen: undefined;
+  TakeoutOrderScreen: {
+    storeId: Id<"stores">;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -66,6 +73,7 @@ const Navigation = () => {
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="TablesScreen" component={TablesScreen} />
         <Stack.Screen name="OrderScreen" component={OrderScreen} />
         <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
@@ -73,6 +81,8 @@ const Navigation = () => {
         <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} />
         <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         <Stack.Screen name="PrinterSettingsScreen" component={PrinterSettingsScreen} />
+        <Stack.Screen name="TakeoutListScreen" component={TakeoutListScreen} />
+        <Stack.Screen name="TakeoutOrderScreen" component={TakeoutOrderScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

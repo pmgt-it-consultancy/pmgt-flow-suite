@@ -10,8 +10,8 @@ interface CartFooterProps {
   hasSentItems: boolean;
   isDraftMode: boolean;
   onSendToKitchen: () => void;
-  onCloseTable: () => void;
-  onViewBill: () => void;
+  onCloseTable?: () => void;
+  onViewBill?: () => void;
   onCancelOrder: () => void;
 }
 
@@ -29,8 +29,8 @@ export const CartFooter = ({
   const formatCurrency = useFormatCurrency();
 
   const canSendToKitchen = hasUnsentItems;
-  const canCloseTable = !isDraftMode && itemCount > 0;
-  const canViewBill = !isDraftMode && itemCount > 0;
+  const canCloseTable = !isDraftMode && itemCount > 0 && !!onCloseTable;
+  const canViewBill = !isDraftMode && itemCount > 0 && !!onViewBill;
   const canCancel = !hasSentItems;
 
   return (

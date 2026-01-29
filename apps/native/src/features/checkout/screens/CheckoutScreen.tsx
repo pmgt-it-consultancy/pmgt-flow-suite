@@ -366,7 +366,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           await printToThermal(completedReceiptData);
         }}
         onSkip={() => {
-          navigation.reset({ index: 0, routes: [{ name: "TablesScreen" }] });
+          navigation.reset({ index: 0, routes: [{ name: "HomeScreen" }] });
         }}
       />
     </View>

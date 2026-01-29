@@ -16,7 +16,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     if (isAuthenticated) {
       navigation.reset({
         index: 0,
-        routes: [{ name: "TablesScreen" }],
+        routes: [{ name: "HomeScreen" }],
       });
     }
   }, [isAuthenticated, navigation]);

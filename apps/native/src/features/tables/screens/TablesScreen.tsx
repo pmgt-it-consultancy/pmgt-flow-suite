@@ -4,7 +4,7 @@ import { useQuery } from "convex/react";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
-import { EmptyState, Header, QuickActions, TableCard } from "../components";
+import { EmptyState, Header, TableCard } from "../components";
 
 interface TablesScreenProps {
   navigation: any;
@@ -104,6 +104,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     <View className="flex-1 bg-gray-100">
       <Header
         userName={user?.name ?? "User"}
+        onBack={() => navigation.goBack()}
         onLogout={handleLogout}
         onSettings={() => navigation.navigate("SettingsScreen")}
         onOrderHistory={() => navigation.navigate("OrderHistoryScreen")}
@@ -126,8 +127,6 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         />
       )}
-
-      <QuickActions />
     </View>
   );
 };
