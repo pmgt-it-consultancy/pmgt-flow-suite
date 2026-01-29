@@ -111,6 +111,42 @@ export const verifyPin = action({
   },
 });
 
+// Action to clear a user's PIN
+export const clearPin = action({
+  args: {
+    userId: v.id("users"),
+  },
+  returns: v.union(
+    v.object({ success: v.literal(true) }),
+    v.object({ success: v.literal(false), error: v.string() }),
+  ),
+  handler: async (ctx, args) => {
+    // Validate authentication
+    const currentUserId = await ctx.runQuery(
+      internal.helpers.usersHelpers.getAuthenticatedUserId,
+      {},
+    );
+
+    if (!currentUserId) {
+      return { success: false as const, error: "Authentication required" };
+    }
+
+    try {
+      await ctx.runMutation(internal.helpers.usersHelpers.clearUserPinInternal, {
+        userId: args.userId,
+        updaterId: currentUserId,
+      });
+
+      return { success: true as const };
+    } catch (error) {
+      return {
+        success: false as const,
+        error: error instanceof Error ? error.message : "Failed to clear PIN",
+      };
+    }
+  },
+});
+
 /**
  * Create a new user (admin only)
  * Uses Convex Auth to properly hash passwords and create auth account
