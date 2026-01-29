@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Platform } from "react-native";
+import { Platform, ScrollView } from "react-native";
 import { KeyboardAvoidingView, View } from "uniwind/components";
 import { LoginForm } from "../components";
 import { useAuth } from "../context";
@@ -26,9 +26,15 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       className="flex-1 bg-white justify-center"
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View className="items-center">
-        <LoginForm />
-      </View>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="items-center">
+          <LoginForm />
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

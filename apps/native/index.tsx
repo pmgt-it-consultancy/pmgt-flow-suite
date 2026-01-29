@@ -1,3 +1,7 @@
+import { installWindowShim } from "./src/shims/window";
+
+installWindowShim();
+
 import { registerRootComponent } from "expo";
 
 import App from "./App";
