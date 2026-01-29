@@ -38,6 +38,7 @@ export const list = query({
       storeId: v.optional(v.id("stores")),
       storeName: v.optional(v.string()),
       isActive: v.boolean(),
+      hasPin: v.boolean(),
     }),
   ),
   handler: async (ctx, args) => {
@@ -112,6 +113,7 @@ export const list = query({
           storeId: user.storeId,
           storeName,
           isActive: user.isActive ?? true,
+          hasPin: !!user.pin,
         };
       }),
     );
