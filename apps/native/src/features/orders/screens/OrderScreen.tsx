@@ -184,7 +184,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
       <View className="flex-1 flex-row">
         {/* Menu Section */}
-        <View className="flex-2 bg-white border-r border-gray-200">
+        <View className="flex-2 border-r border-gray-200">
           <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
 
           <CategoryFilter
@@ -195,7 +195,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
           <FlatList
             data={filteredProducts}
-            numColumns={2}
+            numColumns={3}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <ProductCard
@@ -205,11 +205,14 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
                 onPress={handleAddProduct}
               />
             )}
-            contentContainerStyle={{ padding: 8 }}
-            columnWrapperStyle={{ justifyContent: "space-between" }}
+            contentContainerStyle={{ padding: 6 }}
+            columnWrapperStyle={{ justifyContent: "flex-start" }}
             ListEmptyComponent={
-              <View className="flex-1 items-center justify-center py-10">
-                <Text variant="muted">No products found</Text>
+              <View className="flex-1 items-center justify-center py-16">
+                <Ionicons name="search-outline" size={40} color="#D1D5DB" />
+                <Text variant="muted" className="mt-3">
+                  No products found
+                </Text>
               </View>
             }
           />
@@ -217,11 +220,13 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
         {/* Cart Section */}
         <View className="flex-1 bg-white">
-          <View className="flex-row justify-between items-center px-3 py-3 border-b border-gray-200">
-            <Text variant="heading">Order Items</Text>
-            <Text variant="muted" size="sm">
-              {cartItemCount} items
+          <View className="flex-row justify-between items-center px-3 py-2.5 border-b border-gray-200 bg-gray-50">
+            <Text variant="heading" size="sm">
+              Order Items
             </Text>
+            <View className="bg-blue-500 rounded-full px-2.5 py-0.5">
+              <Text className="text-white font-bold text-xs">{cartItemCount}</Text>
+            </View>
           </View>
 
           <FlatList

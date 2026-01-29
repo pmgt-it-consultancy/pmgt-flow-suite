@@ -1,5 +1,5 @@
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TouchableOpacity } from "uniwind/components";
+import { TouchableOpacity, View } from "uniwind/components";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -15,14 +15,16 @@ export const ProductCard = ({ id, name, price, onPress }: ProductCardProps) => {
 
   return (
     <TouchableOpacity
-      className="flex-1 bg-white rounded-lg p-3 m-1 max-w-[48%] border border-gray-200"
+      className="flex-1 bg-white rounded-xl p-4 m-1.5 max-w-[31.5%] min-h-[100px] border border-gray-200 shadow-sm justify-between"
       onPress={() => onPress({ id, name, price })}
       activeOpacity={0.7}
     >
-      <Text className="text-gray-900 font-medium text-sm mb-1 min-h-[40px]" numberOfLines={2}>
+      <Text className="text-gray-900 font-semibold text-base mb-3" numberOfLines={2}>
         {name}
       </Text>
-      <Text className="text-blue-500 font-semibold">{formatCurrency(price)}</Text>
+      <View className="bg-blue-50 self-start px-3 py-1.5 rounded-lg">
+        <Text className="text-blue-600 font-bold text-sm">{formatCurrency(price)}</Text>
+      </View>
     </TouchableOpacity>
   );
 };

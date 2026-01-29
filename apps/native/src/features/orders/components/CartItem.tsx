@@ -28,39 +28,41 @@ export const CartItem = ({
 
   return (
     <View className="px-3 py-3 border-b border-gray-100">
-      <View className="mb-2">
-        <Text className="text-gray-900 font-medium" numberOfLines={1}>
-          {productName}
-        </Text>
-        <Text variant="muted" size="xs">
-          {formatCurrency(productPrice)} each
-        </Text>
-        {notes && (
-          <Text variant="muted" size="xs" className="italic" numberOfLines={1}>
-            Note: {notes}
+      <View className="flex-row justify-between items-start mb-2">
+        <View className="flex-1 mr-3">
+          <Text className="text-gray-900 font-semibold text-sm" numberOfLines={1}>
+            {productName}
           </Text>
-        )}
+          <Text className="text-gray-400 text-xs mt-0.5">{formatCurrency(productPrice)} each</Text>
+          {notes && (
+            <Text className="text-amber-600 text-xs mt-0.5 italic" numberOfLines={1}>
+              {notes}
+            </Text>
+          )}
+        </View>
+        <Text className="text-gray-900 font-bold text-sm">{formatCurrency(lineTotal)}</Text>
       </View>
 
-      <View className="flex-row justify-between items-center">
-        <View className="flex-row items-center bg-gray-100 rounded-lg">
+      <View className="flex-row items-center">
+        <View className="flex-row items-center bg-gray-50 rounded-xl border border-gray-200">
           <IconButton
             icon="remove"
-            size="sm"
+            size="md"
             variant="ghost"
             iconColor="#EF4444"
             onPress={() => onDecrement(id, quantity)}
           />
-          <Text className="text-gray-900 font-semibold px-3">{quantity}</Text>
+          <Text className="text-gray-900 font-bold text-base px-4 min-w-[40px] text-center">
+            {quantity}
+          </Text>
           <IconButton
             icon="add"
-            size="sm"
+            size="md"
             variant="ghost"
             iconColor="#22C55E"
             onPress={() => onIncrement(id, quantity)}
           />
         </View>
-        <Text className="text-gray-900 font-semibold">{formatCurrency(lineTotal)}</Text>
       </View>
     </View>
   );

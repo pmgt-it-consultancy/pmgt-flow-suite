@@ -14,10 +14,10 @@ export const CartFooter = ({ subtotal, itemCount, onCheckout }: CartFooterProps)
   const isDisabled = itemCount === 0;
 
   return (
-    <View className="p-3 border-t border-gray-200 bg-gray-50">
-      <View className="flex-row justify-between mb-3">
-        <Text className="text-gray-600 font-medium text-base">Subtotal</Text>
-        <Text className="text-gray-900 font-bold text-lg">{formatCurrency(subtotal)}</Text>
+    <View className="px-3 py-3 border-t border-gray-200 bg-white">
+      <View className="flex-row justify-between items-center mb-3">
+        <Text className="text-gray-500 font-medium text-sm">Subtotal</Text>
+        <Text className="text-gray-900 font-bold text-xl">{formatCurrency(subtotal)}</Text>
       </View>
 
       <Button
@@ -25,11 +25,11 @@ export const CartFooter = ({ subtotal, itemCount, onCheckout }: CartFooterProps)
         size="lg"
         disabled={isDisabled}
         onPress={onCheckout}
-        className={isDisabled ? "opacity-50" : ""}
+        className={isDisabled ? "opacity-40" : ""}
       >
         <View className="flex-row items-center">
           <Ionicons name="card-outline" size={20} color="#FFF" />
-          <Text className="text-white font-semibold ml-2">Proceed to Checkout</Text>
+          <Text className="text-white font-bold ml-2 text-base">Proceed to Checkout</Text>
         </View>
       </Button>
     </View>

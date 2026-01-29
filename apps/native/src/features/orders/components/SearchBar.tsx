@@ -13,15 +13,25 @@ export const SearchBar = ({
   placeholder = "Search products...",
 }: SearchBarProps) => {
   return (
-    <View className="flex-row items-center px-3 py-2 bg-gray-50 border-b border-gray-200">
-      <Ionicons name="search" size={20} color="#9CA3AF" />
-      <TextInput
-        className="flex-1 ml-2 text-base text-gray-900"
-        placeholder={placeholder}
-        placeholderTextColor="#9CA3AF"
-        value={value}
-        onChangeText={onChangeText}
-      />
+    <View className="px-3 pt-3 pb-1">
+      <View className="flex-row items-center bg-gray-100 rounded-xl px-3 py-2.5">
+        <Ionicons name="search" size={18} color="#9CA3AF" />
+        <TextInput
+          className="flex-1 ml-2.5 text-sm text-gray-900"
+          placeholder={placeholder}
+          placeholderTextColor="#9CA3AF"
+          value={value}
+          onChangeText={onChangeText}
+        />
+        {value.length > 0 && (
+          <Ionicons
+            name="close-circle"
+            size={18}
+            color="#9CA3AF"
+            onPress={() => onChangeText("")}
+          />
+        )}
+      </View>
     </View>
   );
 };
