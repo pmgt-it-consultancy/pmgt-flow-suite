@@ -5,9 +5,10 @@ import { IconButton, Text } from "../../shared/components/ui";
 interface HeaderProps {
   userName: string;
   onLogout: () => void;
+  onSettings: () => void;
 }
 
-export const Header = ({ userName, onLogout }: HeaderProps) => {
+export const Header = ({ userName, onLogout, onSettings }: HeaderProps) => {
   const handleLogoutPress = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
@@ -29,7 +30,10 @@ export const Header = ({ userName, onLogout }: HeaderProps) => {
           Select a table to get started
         </Text>
       </View>
-      <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
+      <View className="flex-row gap-2">
+        <IconButton icon="settings-outline" onPress={onSettings} />
+        <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
+      </View>
     </View>
   );
 };

@@ -254,7 +254,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         <div class="store-name">${data.storeName}</div>
         ${data.storeAddress ? `<div class="store-info">${data.storeAddress}</div>` : ""}
         ${data.storeTin ? `<div class="store-info">TIN: ${data.storeTin}</div>` : ""}
-        <div class="store-info">BIR Accredited POS</div>
+        <div class="store-info">POS System</div>
       </div>
 
       <div class="divider"></div>
@@ -338,7 +338,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
 
       <div class="footer">
         <div class="thank-you">Thank you for your patronage!</div>
-        <div>This serves as your Official Receipt</div>
+        <div>This does not serve as an official receipt</div>
         <div>Please keep this receipt for your records</div>
         <div class="divider"></div>
         <div style="margin-top: 10px;">Powered by PMGT Flow Suite</div>

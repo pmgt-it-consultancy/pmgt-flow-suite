@@ -123,7 +123,11 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
 
   return (
     <View className="flex-1 bg-gray-100">
-      <Header userName={user?.name ?? "User"} onLogout={handleLogout} />
+      <Header
+        userName={user?.name ?? "User"}
+        onLogout={handleLogout}
+        onSettings={() => navigation.navigate("SettingsScreen")}
+      />
 
       {tables === undefined ? (
         <View className="flex-1 justify-center items-center">

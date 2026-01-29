@@ -6,7 +6,9 @@ import { useCallback, useMemo, useState } from "react";
 import { Alert } from "react-native";
 import { ActivityIndicator, ScrollView, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
-import { printReceipt, type ReceiptData, shareReceipt, useFormatCurrency } from "../../shared";
+import type { KitchenTicketData } from "../../settings/services/escposFormatter";
+import { usePrinterStore } from "../../settings/stores/usePrinterStore";
+import { type ReceiptData, useFormatCurrency } from "../../shared";
 import { Button, IconButton, Text } from "../../shared/components/ui";
 import {
   CashInput,
@@ -15,6 +17,7 @@ import {
   ManagerPinModal,
   OrderSummary,
   PaymentMethodSelector,
+  ReceiptPreviewModal,
   TotalsSummary,
 } from "../components";
 
@@ -41,6 +44,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
   const [cashReceived, setCashReceived] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Receipt Preview State
+  const [showReceiptPreview, setShowReceiptPreview] = useState(false);
+  const [completedReceiptData, setCompletedReceiptData] = useState<ReceiptData | null>(null);
+
+  // Printer Store
+  const { printReceipt: printToThermal, printKitchenTicket } = usePrinterStore();
 
   // Discount State
   const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -234,41 +244,12 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         await processCardPayment({ orderId });
       }
 
-      Alert.alert(
-        "Payment Successful",
-        paymentMethod === "cash"
-          ? `Change: ${formatCurrency(finalChange)}`
-          : "Payment processed successfully",
-        [
-          {
-            text: "Print Receipt",
-            onPress: async () => {
-              try {
-                await printReceipt(
-                  createReceiptData(finalChange, paymentMethod === "cash" ? cashAmount : undefined),
-                );
-              } catch (_e) {}
-              navigation.reset({ index: 0, routes: [{ name: "TablesScreen" }] });
-            },
-          },
-          {
-            text: "Share Receipt",
-            onPress: async () => {
-              try {
-                await shareReceipt(
-                  createReceiptData(finalChange, paymentMethod === "cash" ? cashAmount : undefined),
-                );
-              } catch (_e) {}
-              navigation.reset({ index: 0, routes: [{ name: "TablesScreen" }] });
-            },
-          },
-          {
-            text: "Skip",
-            style: "cancel",
-            onPress: () => navigation.reset({ index: 0, routes: [{ name: "TablesScreen" }] }),
-          },
-        ],
+      const receiptData = createReceiptData(
+        finalChange,
+        paymentMethod === "cash" ? cashAmount : undefined,
       );
+      setCompletedReceiptData(receiptData);
+      setShowReceiptPreview(true);
     } catch (error: any) {
       Alert.alert("Error", error.message || "Payment failed");
     } finally {
@@ -376,6 +357,30 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           setPendingManagerAction(null);
         }}
         onSuccess={handleManagerPinSuccess}
+      />
+
+      <ReceiptPreviewModal
+        visible={showReceiptPreview}
+        receiptData={completedReceiptData}
+        onPrint={async () => {
+          if (!completedReceiptData) return;
+          await printToThermal(completedReceiptData);
+          const kitchenData: KitchenTicketData = {
+            orderNumber: completedReceiptData.orderNumber,
+            tableName: completedReceiptData.tableName,
+            orderType: completedReceiptData.orderType,
+            items: activeItems.map((item) => ({
+              name: item.productName,
+              quantity: item.quantity,
+              notes: item.notes,
+            })),
+            timestamp: new Date(),
+          };
+          await printKitchenTicket(kitchenData);
+        }}
+        onSkip={() => {
+          navigation.reset({ index: 0, routes: [{ name: "TablesScreen" }] });
+        }}
       />
     </View>
   );

@@ -15,6 +15,7 @@ interface ModalProps extends RNModalProps {
   onClose?: () => void;
   showCloseButton?: boolean;
   position?: "center" | "bottom";
+  wide?: boolean;
   children: React.ReactNode;
 }
 
@@ -24,6 +25,7 @@ export const Modal = ({
   onClose,
   showCloseButton = true,
   position = "bottom",
+  wide = false,
   children,
   ...props
 }: ModalProps) => {
@@ -31,7 +33,9 @@ export const Modal = ({
 
   const contentClasses =
     position === "center"
-      ? "bg-white rounded-2xl p-5 mx-4 max-w-md w-full"
+      ? wide
+        ? "bg-white rounded-2xl p-5 mx-4 w-[90%]"
+        : "bg-white rounded-2xl p-5 mx-4 max-w-md w-full"
       : "bg-white rounded-t-2xl p-5 max-h-[80%]";
 
   return (

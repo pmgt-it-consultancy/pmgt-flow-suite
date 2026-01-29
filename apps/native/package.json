@@ -28,6 +28,7 @@
     "@react-navigation/native-stack": "^7.8.5",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
+    "@vardrz/react-native-bluetooth-escpos-printer": "^0.1.2",
     "convex": "catalog:",
     "expo": "~54.0.31",
     "expo-application": "~7.0.7",
@@ -57,7 +58,8 @@
     "tailwindcss": "catalog:",
     "uniwind": "^1.2.3",
     "use-sync-external-store": "^1.6.0",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@babel/core": "7.28.5",
