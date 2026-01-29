@@ -1,0 +1,6108 @@
+{
+  "version": "1.0.0",
+  "category": "components",
+  "patterns": [
+    {
+      "id": "5488222ff8b8388c",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.16,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 19,
+          "column": 55,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 36,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 48,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 54,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 60,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 66,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 78,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "tsconfig.json",
+          "line": 28,
+          "column": 11,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.785Z",
+        "lastSeen": "2026-01-29T09:05:06.018Z",
+        "source": "auto-detected",
+        "tags": ["components", "component-structure"],
+        "approvedAt": "2026-01-29T09:05:06.018Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c4285b5160378932",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/import"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 17,
+        "score": 0.931111111111111,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 7,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 8,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 10,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 17,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 25,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 6,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 7,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 5,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 6,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 8,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 9,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 10,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 17,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 18,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 19,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 26,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 34,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 18,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 19,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 20,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 22,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 30,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 31,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 22,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 30,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/app/layout.tsx",
+          "line": 5,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 6,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 7,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 8,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 2,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 3,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 1,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 2,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 8,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.9199999999999999
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 16,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.9199999999999999
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 23,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.9199999999999999
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 14,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.035Z",
+        "source": "auto-detected",
+        "tags": ["components", "component-structure"],
+        "approvedAt": "2026-01-29T09:05:06.035Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ef9d8b129d719581",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.18,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 12,
+        "score": 0.931111111111111,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 51,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 99,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 67,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 113,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 77,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 94,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 100,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 89,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 119,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 164,
+          "column": 67,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 20,
+          "column": 87,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 88,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 96,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 104,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 84,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 85,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 86,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.052Z",
+        "source": "auto-detected",
+        "tags": ["components", "component-structure"],
+        "approvedAt": "2026-01-29T09:05:06.052Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1397c1a8a531ed16",
+      "subcategory": "component-structure",
+      "name": "Component Structure Detector",
+      "description": "Learns component structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/component-structure",
+          "patternId": "components/component-structure/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.62,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 43,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 53,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 99,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 131,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 55,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 247,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 273,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 297,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 23,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 38,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 69,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 105,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8131034482758621
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 149,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 107,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 623,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 645,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 138,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 134,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 183,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/ConvexClientProvider.tsx",
+          "line": 11,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 25,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/app/layout.tsx",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 53,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 60,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 7,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/page.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/Header.tsx",
+          "line": 31,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 70,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9199999999999999
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 92,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 107,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/common/Logo.tsx",
+          "line": 9,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/Menu.tsx",
+          "line": 11,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/UserNav.tsx",
+          "line": 22,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 43,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 162,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9593939393939394
+        },
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 27,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 33,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 10,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 30,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 17,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 42,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 165,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9494117647058824
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 34,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 78,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 93,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 110,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 128,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 150,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/input.tsx",
+          "line": 7,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.070Z",
+        "source": "auto-detected",
+        "tags": ["components", "component-structure"],
+        "approvedAt": "2026-01-29T09:05:06.070Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "0b3461097a56b442",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/import"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 21,
+        "score": 0.931111111111111,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 7,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 8,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 10,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 17,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 25,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 6,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 7,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 5,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8613793103448276
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 6,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.8613793103448276
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 8,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 9,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 10,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 17,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 18,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 19,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 26,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 34,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 18,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 19,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 20,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 22,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 30,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 31,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 22,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 30,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 1,
+          "column": 10,
+          "isOutlier": true,
+          "confidence": 0.7533333333333333,
+          "outlierReason": "Value below IQR lower bound"
+        },
+        {
+          "file": "src/app/layout.tsx",
+          "line": 5,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 6,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 7,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 8,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 2,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 3,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 1,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 2,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 8,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.9183606557377049
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 16,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.9183606557377049
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 23,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.9183606557377049
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 2,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/ui/badge.tsx",
+          "line": 1,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7790909090909091
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 2,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 14,
+          "column": 26,
+          "isOutlier": true,
+          "confidence": 0.7673684210526316,
+          "outlierReason": "Value below IQR lower bound"
+        },
+        {
+          "file": "src/components/ui/label.tsx",
+          "line": 4,
+          "column": 41,
+          "isOutlier": true,
+          "confidence": 0.76,
+          "outlierReason": "Value below IQR lower bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.087Z",
+        "source": "auto-detected",
+        "tags": ["components", "duplicate-detection"],
+        "approvedAt": "2026-01-29T09:05:06.087Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ed1caed4b2010c5d",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.36,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 15,
+        "score": 0.9430769230769231,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 51,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 99,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 67,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 113,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 77,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 94,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 100,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 89,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 119,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 164,
+          "column": 67,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 20,
+          "column": 87,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 88,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.9296153846153845
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 15,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.725
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 16,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.725
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 37,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.725
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 63,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 63,
+          "column": 84,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 41,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 41,
+          "column": 75,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 55,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 55,
+          "column": 75,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 96,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 104,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 84,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.9430769230769231
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 85,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.9430769230769231
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 86,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.9430769230769231
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.105Z",
+        "source": "auto-detected",
+        "tags": ["components", "duplicate-detection"],
+        "approvedAt": "2026-01-29T09:05:06.105Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1b2667829844c6f6",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.7,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 43,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 53,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 99,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 131,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 55,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 247,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 273,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 297,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 23,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8613793103448276
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 38,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8613793103448276
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 69,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 105,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8892307692307693
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 149,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 107,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 623,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 645,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 138,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 134,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 183,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8752941176470588
+        },
+        {
+          "file": "src/app/ConvexClientProvider.tsx",
+          "line": 11,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7533333333333333
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7533333333333333
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 25,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7533333333333333
+        },
+        {
+          "file": "src/app/layout.tsx",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 53,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 60,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 7,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/page.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/components/Header.tsx",
+          "line": 31,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9458620689655173
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 70,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9183606557377049
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 92,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9296153846153845
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 107,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.9296153846153845
+        },
+        {
+          "file": "src/components/common/Logo.tsx",
+          "line": 9,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/components/common/Menu.tsx",
+          "line": 11,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9547826086956521
+        },
+        {
+          "file": "src/components/common/UserNav.tsx",
+          "line": 22,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9337931034482758
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 43,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 162,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8437113402061855
+        },
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 27,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9579310344827586
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.725
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 24,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.725
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 24,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.725
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 31,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.725
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 31,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.725
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9587096774193549
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9466666666666667
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.957037037037037
+        },
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 33,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9494117647058824
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 10,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9466666666666667
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 30,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9494117647058824
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9416216216216216
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 17,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9466666666666667
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 42,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 165,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8187654320987654
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 34,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7673684210526316
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 78,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7673684210526316
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 93,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7673684210526316
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 110,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7673684210526316
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 128,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7673684210526316
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 150,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7673684210526316
+        },
+        {
+          "file": "src/components/ui/input.tsx",
+          "line": 7,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.908235294117647
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.122Z",
+        "source": "auto-detected",
+        "tags": ["components", "duplicate-detection"],
+        "approvedAt": "2026-01-29T09:05:06.122Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "aa8412d4289fa8cf",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 52,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 64,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 66,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 68,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 70,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 100,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 102,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 104,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 105,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 111,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 112,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 113,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 114,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 121,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 134,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 135,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 140,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 155,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 156,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 160,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 161,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 164,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 165,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 182,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 183,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 185,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 191,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 195,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 132,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 134,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 136,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 137,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 140,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 153,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 154,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 158,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 159,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 162,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 163,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 176,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 182,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 183,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 185,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 187,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 209,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 211,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 224,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 234,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 235,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 245,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 272,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 285,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 289,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 56,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 59,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 60,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 66,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 71,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 78,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 84,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 90,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 94,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 98,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 103,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 110,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 111,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 112,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 115,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 116,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 119,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 120,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 121,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 126,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 136,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 141,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 143,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 144,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 147,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 148,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 149,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 151,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 152,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 158,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 167,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 169,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 173,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 175,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 176,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 177,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 179,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 180,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 181,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 194,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 196,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 200,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 204,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 210,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 216,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 222,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 249,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 250,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.922158273381295
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.139Z",
+        "source": "auto-detected",
+        "tags": ["components", "duplicate-detection"],
+        "approvedAt": "2026-01-29T09:05:06.139Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "7108e53caf1034bf",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/import"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 17,
+        "score": 0.931111111111111,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 7,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 8,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 10,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 17,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 25,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 6,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 7,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 5,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 6,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 8,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 9,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 10,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 17,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 18,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 19,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 26,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 34,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 18,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 19,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 20,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 22,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 30,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 31,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 22,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 30,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 10,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 11,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 28,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 36,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/app/layout.tsx",
+          "line": 5,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 6,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 7,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 8,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 9,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 2,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 3,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 1,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 2,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 8,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.9199999999999999
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 16,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.9199999999999999
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 23,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.9199999999999999
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 14,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.156Z",
+        "source": "auto-detected",
+        "tags": ["components", "near-duplicate"],
+        "approvedAt": "2026-01-29T09:05:06.156Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "0a62955602576e02",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.18,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 12,
+        "score": 0.931111111111111,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 51,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 99,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 67,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 113,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 77,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 94,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 100,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 89,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 119,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 164,
+          "column": 67,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 20,
+          "column": 87,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 88,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 96,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 104,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 84,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 85,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 86,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.172Z",
+        "source": "auto-detected",
+        "tags": ["components", "near-duplicate"],
+        "approvedAt": "2026-01-29T09:05:06.172Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "bd12a43637154246",
+      "subcategory": "near-duplicate",
+      "name": "Near Duplicate Detector",
+      "description": "Learns near-duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/near-duplicate",
+          "patternId": "components/near-duplicate/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.62,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 43,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 53,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 99,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.788
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 131,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 55,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 247,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 273,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 297,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 23,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 38,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 69,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 105,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.844
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 149,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 107,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 623,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 645,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 138,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 134,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 183,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/app/ConvexClientProvider.tsx",
+          "line": 11,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 25,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/app/layout.tsx",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 53,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 60,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 7,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/app/page.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/Header.tsx",
+          "line": 31,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 70,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9199999999999999
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 92,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 107,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/common/Logo.tsx",
+          "line": 9,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/Menu.tsx",
+          "line": 11,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/UserNav.tsx",
+          "line": 22,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 43,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 162,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9593939393939394
+        },
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 27,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 33,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 10,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 30,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 17,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 42,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 165,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.9494117647058824
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 34,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 78,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 93,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 110,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 128,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 150,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/input.tsx",
+          "line": 7,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.189Z",
+        "source": "auto-detected",
+        "tags": ["components", "near-duplicate"],
+        "approvedAt": "2026-01-29T09:05:06.189Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "aee5bae8efc3522a",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 19,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 42,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 42,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 42,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 50,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 67,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 81,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 90,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 90,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 114,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 114,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 17,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 17,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 31,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 42,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 52,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 42,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 42,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 52,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 73,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 77,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 93,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 101,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 101,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 130,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 130,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 51,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 55,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 59,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 63,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 68,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 82,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 50,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.8832478632478632
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 69,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8832478632478632
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 69,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.8832478632478632
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 84,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8832478632478632
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 84,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.8832478632478632
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 106,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8832478632478632
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 59,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.7276923076923076
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 104,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7276923076923076
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 45,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 45,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 54,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 71,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 71,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 75,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 94,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 106,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 106,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 128,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 128,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 143,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 143,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 376,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 376,
+          "column": 75,
+          "isOutlier": false,
+          "confidence": 0.7979661016949152
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 63,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 27,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 24,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 24,
+          "column": 74,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 24,
+          "column": 106,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 24,
+          "column": 137,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 161,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 190,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 222,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 253,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 281,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 313,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 342,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 384,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 427,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 41,
+          "column": 468,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 47,
+          "column": 249,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 47,
+          "column": 277,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 30,
+          "column": 125,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 49,
+          "column": 115,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 49,
+          "column": 144,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 49,
+          "column": 176,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 49,
+          "column": 207,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 49,
+          "column": 235,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 49,
+          "column": 267,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 66,
+          "column": 195,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 66,
+          "column": 224,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 66,
+          "column": 256,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 66,
+          "column": 287,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 66,
+          "column": 315,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 66,
+          "column": 347,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 71,
+          "column": 188,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 71,
+          "column": 217,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 71,
+          "column": 249,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 71,
+          "column": 280,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 71,
+          "column": 308,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 71,
+          "column": 340,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/switch.tsx",
+          "line": 14,
+          "column": 330,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/switch.tsx",
+          "line": 14,
+          "column": 362,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/switch.tsx",
+          "line": 22,
+          "column": 115,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/switch.tsx",
+          "line": 22,
+          "column": 150,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 47,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 57,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 57,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 61,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 37,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8125
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.786Z",
+        "lastSeen": "2026-01-29T09:05:06.206Z",
+        "source": "auto-detected",
+        "tags": ["components", "state-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.206Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ff97113f9f941a7d",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.19,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 99,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.8232258064516129
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 16,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 16,
+          "column": 51,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 16,
+          "column": 79,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 113,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.8258823529411765
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 20,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 32,
+          "column": 302,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 32,
+          "column": 336,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 32,
+          "column": 372,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 49,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.8125
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:06.224Z",
+        "source": "auto-detected",
+        "tags": ["components", "state-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.224Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f945e39f98cb3a1a",
+      "subcategory": "modal-patterns",
+      "name": "Modal Patterns Detector",
+      "description": "Learns modal/dialog patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/modal-patterns",
+          "patternId": "components/modal-patterns/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 9,
+        "score": 0.9491044776119403,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 19,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 17,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.9458620689655173
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 19,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 19,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 19,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 19,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.9491044776119403
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 2,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 3,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 3,
+          "column": 51,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:06.241Z",
+        "source": "auto-detected",
+        "tags": ["components", "modal-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.241Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c5d4cc022f554773",
+      "subcategory": "modal-patterns",
+      "name": "Modal Patterns Detector",
+      "description": "Learns modal/dialog patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/modal-patterns",
+          "patternId": "components/modal-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.39,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 11,
+        "score": 0.9491044776119403,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 223,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 98,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 224,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.9458620689655173
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 247,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 112,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 221,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 99,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 212,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 88,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.944390243902439
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 295,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.9491044776119403
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 446,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.9491044776119403
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 118,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9491044776119403
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 9,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 37,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 83,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 83,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 70,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 27,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 53,
+          "column": 83,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 24,
+          "column": 83,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 9,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 9,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 11,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 11,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 13,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 13,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 15,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 15,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 17,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 32,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 56,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 61,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 69,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 81,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8569230769230769
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:06.258Z",
+        "source": "auto-detected",
+        "tags": ["components", "modal-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.258Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "aa82d92c0331fdf4",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 39,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 1
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 15,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.9625
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:05:06.277Z",
+        "source": "auto-detected",
+        "tags": ["components", "state-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.277Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2ca286e11bec2776",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 61,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 1
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 33,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.9625
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:05:06.322Z",
+        "source": "auto-detected",
+        "tags": ["components", "state-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.322Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2d3160cb3eb1db41",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.18,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 5,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 22,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 50,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 95,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 95,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/input.tsx",
+          "line": 5,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/ui/input.tsx",
+          "line": 5,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/lib/utils.ts",
+          "line": 4,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:05:06.340Z",
+        "source": "auto-detected",
+        "tags": ["components", "props-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.340Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "545e4d794894c1f5",
+      "subcategory": "state-patterns",
+      "name": "State Patterns Detector",
+      "description": "Learns state management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/state-patterns",
+          "patternId": "components/state-patterns/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 7,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 24,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 28,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:05:06.358Z",
+        "source": "auto-detected",
+        "tags": ["components", "state-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.358Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "8afae7e92fd4a1b1",
+      "subcategory": "composition",
+      "name": "Composition Detector",
+      "description": "Learns component composition patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/composition",
+          "patternId": "components/composition/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 20,
+          "column": 87,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:05:06.376Z",
+        "source": "auto-detected",
+        "tags": ["components", "composition"],
+        "approvedAt": "2026-01-29T09:05:06.376Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "94b4a0f9779d4ef9",
+      "subcategory": "props-patterns",
+      "name": "Props Patterns Detector",
+      "description": "Learns props patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/props-patterns",
+          "patternId": "components/props-patterns/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.945,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/common/Logo.tsx",
+          "line": 4,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.945
+        },
+        {
+          "file": "src/components/common/Menu.tsx",
+          "line": 3,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.945
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 3,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.945
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:05:06.393Z",
+        "source": "auto-detected",
+        "tags": ["components", "props-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.393Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "e806f6cdda8709a5",
+      "subcategory": "duplicate-detection",
+      "name": "Duplicate Detection Detector",
+      "description": "Learns duplicate component patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "components/duplicate-detection",
+          "patternId": "components/duplicate-detection/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/lib/utils.ts",
+          "line": 1,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 1
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:06.412Z",
+        "source": "auto-detected",
+        "tags": ["components", "duplicate-detection"],
+        "approvedAt": "2026-01-29T09:05:06.412Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:05:09.616Z",
+  "checksum": "955ce1805e9c7778"
+}

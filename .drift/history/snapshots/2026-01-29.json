@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-01-29T09:03:11.361Z",
+  "date": "2026-01-29",
+  "patterns": [],
+  "summary": {
+    "totalPatterns": 0,
+    "avgConfidence": 0,
+    "totalLocations": 0,
+    "totalOutliers": 0,
+    "overallComplianceRate": 1,
+    "byCategory": {}
+  }
+}

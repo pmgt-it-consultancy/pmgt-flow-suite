@@ -1,0 +1,636 @@
+{
+  "version": "1.0.0",
+  "category": "security",
+  "patterns": [
+    {
+      "id": "f40f63dce7f4f14c",
+      "subcategory": "secret-management",
+      "name": "Secret Management Detector",
+      "description": "Learns secret management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/secret-management",
+          "patternId": "security/secret-management/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.17,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "metro.config.js",
+          "line": 9,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "metro.config.js",
+          "line": 15,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 14,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 32,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 77,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 60,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 25,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 32,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 7,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 58,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/shared/components/ui/Modal.tsx",
+          "line": 4,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/Modal.tsx",
+          "line": 42,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/Modal.tsx",
+          "line": 72,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/tables/components/EmptyState.tsx",
+          "line": 6,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 19,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 41,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 92,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["security", "secret-management"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "013c0478364d47a9",
+      "subcategory": "input-sanitization",
+      "name": "Input Sanitization Detector",
+      "description": "Learns input sanitization patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/input-sanitization",
+          "patternId": "security/input-sanitization/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.6533333333333333,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 64,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 75,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 197,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 31,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 27,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 49,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.595
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["security", "input-sanitization"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2e4e67342721b870",
+      "subcategory": "secret-management",
+      "name": "Secret Management Detector",
+      "description": "Learns secret management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/secret-management",
+          "patternId": "security/secret-management/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 25,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["security", "secret-management"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9367bef623af09f9",
+      "subcategory": "secret-management",
+      "name": "Secret Management Detector",
+      "description": "Learns secret management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/secret-management",
+          "patternId": "security/secret-management/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["security", "secret-management"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "121ba9d13fb3b84a",
+      "subcategory": "input-sanitization",
+      "name": "Input Sanitization Detector",
+      "description": "Learns input sanitization patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/input-sanitization",
+          "patternId": "security/input-sanitization/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.83,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 65,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 15,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 15,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 17,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 79,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 79,
+          "column": 68,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["security", "input-sanitization"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2144ff1da5c2e8dd",
+      "subcategory": "csp-headers",
+      "name": "CSP Headers Detector",
+      "description": "Learns Content Security Policy header patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/csp-headers",
+          "patternId": "security/csp-headers/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.03,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.595,
+        "level": "low"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/components/ui/Modal.tsx",
+          "line": 44,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 126,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.595
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["security", "csp-headers"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "6f83c2e99ae3e4c9",
+      "subcategory": "xss-prevention",
+      "name": "XSS Prevention Detector",
+      "description": "Learns XSS prevention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/xss-prevention",
+          "patternId": "security/xss-prevention/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.6199999999999999,
+        "level": "low"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 129,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 347,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 353,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 358,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.463Z",
+        "lastSeen": "2026-01-29T09:03:44.463Z",
+        "source": "auto-detected",
+        "tags": ["security", "xss-prevention"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3c226c04ea7bdcc8",
+      "subcategory": "xss-prevention",
+      "name": "XSS Prevention Detector",
+      "description": "Learns XSS prevention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/xss-prevention",
+          "patternId": "security/xss-prevention/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.82,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 352,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 357,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.82
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.463Z",
+        "lastSeen": "2026-01-29T09:03:44.463Z",
+        "source": "auto-detected",
+        "tags": ["security", "xss-prevention"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b1e7e81f23f3bc37",
+      "subcategory": "csp-headers",
+      "name": "CSP Headers Detector",
+      "description": "Learns Content Security Policy header patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/csp-headers",
+          "patternId": "security/csp-headers/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.08,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8745454545454545,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 168,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 199,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 218,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 227,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.463Z",
+        "lastSeen": "2026-01-29T09:03:44.463Z",
+        "source": "auto-detected",
+        "tags": ["security", "csp-headers"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "8fd279a8824df487",
+      "subcategory": "csp-headers",
+      "name": "CSP Headers Detector",
+      "description": "Learns Content Security Policy header patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/csp-headers",
+          "patternId": "security/csp-headers/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8745454545454545,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 146,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.463Z",
+        "lastSeen": "2026-01-29T09:03:44.463Z",
+        "source": "auto-detected",
+        "tags": ["security", "csp-headers"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:04:03.752Z",
+  "checksum": "622c70d66f34bfe4"
+}

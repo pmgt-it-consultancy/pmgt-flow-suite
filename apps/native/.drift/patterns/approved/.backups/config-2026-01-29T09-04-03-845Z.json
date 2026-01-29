@@ -1,0 +1,967 @@
+{
+  "version": "1.0.0",
+  "category": "config",
+  "patterns": [
+    {
+      "id": "885c19182e855320",
+      "subcategory": "feature-flags",
+      "name": "Feature Flags Detector",
+      "description": "Learns feature flag patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/feature-flags",
+          "patternId": "config/feature-flags/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "App.tsx",
+          "line": 5,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 5,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 6,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 7,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 8,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 9,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:04:03.081Z",
+        "source": "auto-detected",
+        "tags": ["config", "feature-flags"],
+        "approvedAt": "2026-01-29T09:04:03.081Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2ed863b31020357e",
+      "subcategory": "environment-detection",
+      "name": "Environment Detection Detector",
+      "description": "Learns environment detection patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/environment-detection",
+          "patternId": "config/environment-detection/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 9,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:04:03.101Z",
+        "source": "auto-detected",
+        "tags": ["config", "environment-detection"],
+        "approvedAt": "2026-01-29T09:04:03.101Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "a72cd0077dc19891",
+      "subcategory": "default-values",
+      "name": "Default Values Detector",
+      "description": "Learns default value patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/default-values",
+          "patternId": "config/default-values/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.2,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "babel.config.js",
+          "line": 4,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "babel.config.js",
+          "line": 4,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Card.tsx",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 27,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 33,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 34,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 34,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:04:03.119Z",
+        "source": "auto-detected",
+        "tags": ["config", "default-values"],
+        "approvedAt": "2026-01-29T09:04:03.119Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "0aae09b57730fa05",
+      "subcategory": "feature-flags",
+      "name": "Feature Flags Detector",
+      "description": "Learns feature flag patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/feature-flags",
+          "patternId": "config/feature-flags/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.73,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 24,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 91,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 55,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 59,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 88,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 99,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/CashInput.tsx",
+          "line": 14,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 134,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 101,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 127,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 132,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/DiscountSection.tsx",
+          "line": 30,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/DiscountSection.tsx",
+          "line": 33,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/DiscountSection.tsx",
+          "line": 50,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 133,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 77,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 87,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 107,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 130,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/OrderSummary.tsx",
+          "line": 21,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/OrderSummary.tsx",
+          "line": 24,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 15,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/TotalsSummary.tsx",
+          "line": 26,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/TotalsSummary.tsx",
+          "line": 28,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/TotalsSummary.tsx",
+          "line": 33,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/TotalsSummary.tsx",
+          "line": 47,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 341,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 301,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 303,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 306,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 338,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/AddItemModal.tsx",
+          "line": 91,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/AddItemModal.tsx",
+          "line": 43,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/AddItemModal.tsx",
+          "line": 57,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/AddItemModal.tsx",
+          "line": 65,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/AddItemModal.tsx",
+          "line": 89,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/CartFooter.tsx",
+          "line": 26,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/CartFooter.tsx",
+          "line": 24,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/CartItem.tsx",
+          "line": 35,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/CartItem.tsx",
+          "line": 39,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/CartItem.tsx",
+          "line": 50,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/CartItem.tsx",
+          "line": 58,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/OrderHeader.tsx",
+          "line": 13,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/OrderHeader.tsx",
+          "line": 15,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/OrderHeader.tsx",
+          "line": 18,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 212,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 221,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 222,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 245,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 38,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 67,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 48,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 74,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 74,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 74,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/shared/components/ui/Card.tsx",
+          "line": 19,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/Card.tsx",
+          "line": 45,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/Card.tsx",
+          "line": 56,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 54,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 54,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 42,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 23,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 38,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Modal.tsx",
+          "line": 50,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Modal.tsx",
+          "line": 55,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 32,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/tables/components/EmptyState.tsx",
+          "line": 19,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/components/EmptyState.tsx",
+          "line": 23,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 25,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 28,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 32,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 39,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 45,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 60,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:04:03.140Z",
+        "source": "auto-detected",
+        "tags": ["config", "feature-flags"],
+        "approvedAt": "2026-01-29T09:04:03.140Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "bc3dac08c90fba71",
+      "subcategory": "config-validation",
+      "name": "Config Validation Detector",
+      "description": "Learns configuration validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/config-validation",
+          "patternId": "config/config-validation/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 21,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:04:03.161Z",
+        "source": "auto-detected",
+        "tags": ["config", "config-validation"],
+        "approvedAt": "2026-01-29T09:04:03.161Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c35c0a6e498fa4ff",
+      "subcategory": "config-validation",
+      "name": "Config Validation Detector",
+      "description": "Learns configuration validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/config-validation",
+          "patternId": "config/config-validation/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/screens/index.ts",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/screens/index.ts",
+          "line": 1,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/index.ts",
+          "line": 4,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/index.ts",
+          "line": 4,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 7,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 7,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:04:03.182Z",
+        "source": "auto-detected",
+        "tags": ["config", "config-validation"],
+        "approvedAt": "2026-01-29T09:04:03.182Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1adf375178e609fc",
+      "subcategory": "required-optional",
+      "name": "Required/Optional Detector",
+      "description": "Learns required/optional configuration patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/required-optional",
+          "patternId": "config/required-optional/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.14,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Card.tsx",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 27,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 33,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 34,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:04:03.202Z",
+        "source": "auto-detected",
+        "tags": ["config", "required-optional"],
+        "approvedAt": "2026-01-29T09:04:03.202Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:04:03.824Z",
+  "checksum": "c5ce4b7a1ef4614d"
+}

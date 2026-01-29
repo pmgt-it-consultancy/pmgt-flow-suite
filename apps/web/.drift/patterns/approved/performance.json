@@ -1,0 +1,506 @@
+{
+  "version": "1.0.0",
+  "category": "performance",
+  "patterns": [
+    {
+      "id": "b534704e257b3ad9",
+      "subcategory": "debounce-throttle",
+      "name": "Debounce Throttle Detector",
+      "description": "Learns debounce and throttle patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "performance/debounce-throttle",
+          "patternId": "performance/debounce-throttle/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 44,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 44,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 54,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:09.077Z",
+        "source": "auto-detected",
+        "tags": ["performance", "debounce-throttle"],
+        "approvedAt": "2026-01-29T09:05:09.077Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "7d7087df9bb6406c",
+      "subcategory": "lazy-loading",
+      "name": "Lazy Loading Detector",
+      "description": "Learns lazy loading patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "performance/lazy-loading",
+          "patternId": "performance/lazy-loading/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.26,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 10,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 98,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 112,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 76,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 93,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 99,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 88,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 118,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 163,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 27,
+          "column": 24,
+          "isOutlier": true,
+          "confidence": 0.7949999999999999,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 52,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 21,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 67,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 85,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:09.098Z",
+        "source": "auto-detected",
+        "tags": ["performance", "lazy-loading"],
+        "approvedAt": "2026-01-29T09:05:09.098Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9333b8951d3e1ab2",
+      "subcategory": "bundle-size",
+      "name": "Bundle Size Detector",
+      "description": "Learns bundle size optimization patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "performance/bundle-size",
+          "patternId": "performance/bundle-size/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.28,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 10,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 210,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 209,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 234,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 195,
+          "column": 51,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 208,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 199,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 271,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 279,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 74,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 125,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 20,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 29,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 19,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 28,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.76
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:09.120Z",
+        "source": "auto-detected",
+        "tags": ["performance", "bundle-size"],
+        "approvedAt": "2026-01-29T09:05:09.120Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "6c8afd6dd43feef7",
+      "subcategory": "code-splitting",
+      "name": "Code Splitting Detector",
+      "description": "Learns code splitting patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "performance/code-splitting",
+          "patternId": "performance/code-splitting/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 315,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.931111111111111
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 52,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 101,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:09.143Z",
+        "source": "auto-detected",
+        "tags": ["performance", "code-splitting"],
+        "approvedAt": "2026-01-29T09:05:09.143Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f9dbcc147b6e7cf9",
+      "subcategory": "caching-patterns",
+      "name": "Caching Patterns Detector",
+      "description": "Learns caching patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "performance/caching-patterns",
+          "patternId": "performance/caching-patterns/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 39,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 1
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 15,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.9625
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:05:09.165Z",
+        "source": "auto-detected",
+        "tags": ["performance", "caching-patterns"],
+        "approvedAt": "2026-01-29T09:05:09.165Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "276c3325f15d9bb8",
+      "subcategory": "caching-patterns",
+      "name": "Caching Patterns Detector",
+      "description": "Learns caching patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "performance/caching-patterns",
+          "patternId": "performance/caching-patterns/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 61,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 1
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 33,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.9625
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:05:09.186Z",
+        "source": "auto-detected",
+        "tags": ["performance", "caching-patterns"],
+        "approvedAt": "2026-01-29T09:05:09.186Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "926f4de067cc2ef8",
+      "subcategory": "lazy-loading",
+      "name": "Lazy Loading Detector",
+      "description": "Learns lazy loading patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "performance/lazy-loading",
+          "patternId": "performance/lazy-loading/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 21,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:09.208Z",
+        "source": "auto-detected",
+        "tags": ["performance", "lazy-loading"],
+        "approvedAt": "2026-01-29T09:05:09.208Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:05:09.673Z",
+  "checksum": "531a43950e99fcb8"
+}

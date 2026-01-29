@@ -1,0 +1,83 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-01-29T09:03:12.068Z",
+  "projectRoot": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite",
+  "stats": {
+    "patterns": {
+      "total": 0,
+      "byCategory": {},
+      "byStatus": {
+        "discovered": 0,
+        "approved": 0,
+        "ignored": 0
+      },
+      "byConfidence": {
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "uncertain": 0
+      },
+      "totalLocations": 0,
+      "totalOutliers": 0
+    },
+    "security": {
+      "totalTables": 0,
+      "totalAccessPoints": 0,
+      "sensitiveFields": 0,
+      "violations": 0,
+      "riskLevel": "low"
+    },
+    "callGraph": {
+      "totalFunctions": 0,
+      "totalCalls": 0,
+      "entryPoints": 0,
+      "dataAccessors": 0,
+      "avgDepth": 0
+    },
+    "contracts": {
+      "verified": 0,
+      "mismatch": 0,
+      "discovered": 0,
+      "ignored": 0
+    },
+    "dna": {
+      "healthScore": 0,
+      "geneticDiversity": 0,
+      "mutations": 0,
+      "dominantGenes": []
+    }
+  },
+  "fileHashes": {},
+  "lastScan": {
+    "timestamp": "2026-01-29T09:03:12.067Z",
+    "duration": 708,
+    "filesScanned": 0,
+    "patternsFound": 0,
+    "errors": 0
+  },
+  "views": {
+    "status": {
+      "generatedAt": "2026-01-29T09:03:12.068Z",
+      "stale": true,
+      "invalidatedBy": ["pattern stats updated", "security stats updated", "contract stats updated"]
+    },
+    "patternIndex": {
+      "generatedAt": "2026-01-29T09:03:12.068Z",
+      "stale": true,
+      "invalidatedBy": ["pattern stats updated"]
+    },
+    "securitySummary": {
+      "generatedAt": "2026-01-29T09:03:12.068Z",
+      "stale": true,
+      "invalidatedBy": ["security stats updated"]
+    },
+    "trends": {
+      "generatedAt": "2026-01-29T09:00:26.016Z",
+      "stale": true
+    },
+    "examples": {
+      "generatedAt": "2026-01-29T09:00:26.016Z",
+      "stale": true
+    }
+  }
+}

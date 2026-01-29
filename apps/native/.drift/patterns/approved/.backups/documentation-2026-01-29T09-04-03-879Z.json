@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "category": "documentation",
+  "patterns": [
+    {
+      "id": "82094a2e36401168",
+      "subcategory": "jsdoc-patterns",
+      "name": "JSDoc Patterns Detector",
+      "description": "Learns JSDoc documentation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/jsdoc-patterns",
+          "patternId": "documentation/jsdoc-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.07,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 24,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 165,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 373,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 23,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 133,
+          "column": 45,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:04:03.827Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "jsdoc-patterns"],
+        "approvedAt": "2026-01-29T09:04:03.827Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:04:03.848Z",
+  "checksum": "2e1b9f9ddd564bc1"
+}

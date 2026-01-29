@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "project": {
+    "id": "90aa3665-fad6-4bae-bae2-8f68c7a721fc",
+    "name": "native",
+    "initializedAt": "2026-01-29T09:03:38.334Z"
+  },
+  "severity": {},
+  "ignore": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    ".git/**",
+    "coverage/**",
+    "*.min.js",
+    "*.bundle.js",
+    "vendor/**",
+    "__pycache__/**",
+    ".venv/**",
+    "target/**",
+    "bin/**",
+    "obj/**"
+  ],
+  "ci": {
+    "failOn": "error",
+    "reportFormat": "text"
+  },
+  "learning": {
+    "autoApproveThreshold": 0.95,
+    "minOccurrences": 3,
+    "semanticLearning": true
+  },
+  "performance": {
+    "maxWorkers": 4,
+    "cacheEnabled": true,
+    "incrementalAnalysis": true,
+    "cacheTTL": 3600
+  },
+  "features": {
+    "callGraph": true,
+    "boundaries": true,
+    "dna": true,
+    "contracts": true
+  },
+  "telemetry": {
+    "enabled": true,
+    "sharePatternSignatures": true,
+    "shareAggregateStats": true,
+    "shareUserActions": false,
+    "installationId": "5f1ec564-b745-4ce9-ad39-f47068f18a9e",
+    "enabledAt": "2026-01-29T09:03:41.921Z"
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "version": "1.0.0",
+  "category": "api",
+  "patterns": [
+    {
+      "id": "4621ee5db042fe05",
+      "subcategory": "response-envelope",
+      "name": "Response Envelope Detector",
+      "description": "Detects response envelope patterns and flags inconsistencies",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "api/response-envelope",
+          "patternId": "api/response-envelope/envelope-structure"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 12,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 1
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 3,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 1
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 58,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 1
+        },
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 16,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 1
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 74,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 1
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["api", "response-envelope"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "d4104af8f419f7a1",
+      "subcategory": "response-envelope",
+      "name": "Response Envelope Detector",
+      "description": "Detects response envelope patterns and flags inconsistencies",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "api/response-envelope",
+          "patternId": "api/response-envelope/format-custom"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 58,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 1
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["api", "response-envelope"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:05:06.715Z",
+  "checksum": "3ca599edacc72df4"
+}

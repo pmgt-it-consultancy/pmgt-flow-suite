@@ -1,0 +1,352 @@
+{
+  "version": "1.0.0",
+  "category": "documentation",
+  "patterns": [
+    {
+      "id": "ac6b88eae63ab366",
+      "subcategory": "jsdoc-patterns",
+      "name": "JSDoc Patterns Detector",
+      "description": "Learns JSDoc documentation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/jsdoc-patterns",
+          "patternId": "documentation/jsdoc-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.18,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 70,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 77,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 83,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 89,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 203,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 209,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 215,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 221,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 243,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 293,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/layout.tsx",
+          "line": 15,
+          "column": 3,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 5,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 5,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 6,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 11,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 16,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 21,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 27,
+          "column": 11,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:09.578Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "jsdoc-patterns"],
+        "approvedAt": "2026-01-29T09:05:09.578Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "e058f43c82a43da6",
+      "subcategory": "todo-patterns",
+      "name": "Todo Patterns Detector",
+      "description": "Learns TODO/FIXME comment patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/todo-patterns",
+          "patternId": "documentation/todo-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.21,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 10,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 10,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 10,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/Header.tsx",
+          "line": 21,
+          "column": 4,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/components/common/UserNav.tsx",
+          "line": 14,
+          "column": 4,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 10,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 10,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 13,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 13,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 13,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 13,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 13,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 13,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 24,
+          "column": 52,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 24,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 10,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 50,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 50,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 50,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/middleware.ts",
+          "line": 7,
+          "column": 4,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:05:09.603Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "todo-patterns"],
+        "approvedAt": "2026-01-29T09:05:09.603Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:05:09.626Z",
+  "checksum": "400a072a46276c73"
+}

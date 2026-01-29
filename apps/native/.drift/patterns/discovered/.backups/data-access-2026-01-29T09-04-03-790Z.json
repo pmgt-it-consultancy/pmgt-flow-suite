@@ -1,0 +1,3017 @@
+{
+  "version": "1.0.0",
+  "category": "data-access",
+  "patterns": [
+    {
+      "id": "4cff06a826d8c944",
+      "subcategory": "query-patterns",
+      "name": "Query Patterns Detector",
+      "description": "Learns query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/query-patterns",
+          "patternId": "data-access/query-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.92,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 33,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 17,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.6387499999999999
+        },
+        {
+          "file": "metro.config.js",
+          "line": 2,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.5366666666666666
+        },
+        {
+          "file": "src/features/auth/components/index.ts",
+          "line": 1,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 41,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": "src/features/auth/context/index.ts",
+          "line": 1,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/auth/index.ts",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/auth/index.ts",
+          "line": 2,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/auth/index.ts",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/auth/screens/index.ts",
+          "line": 1,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 37,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.5546153846153845
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 51,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.5546153846153845
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 80,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.5546153846153845
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 26,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 44,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 49,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 61,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 82,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 133,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 12,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.6427272727272728
+        },
+        {
+          "file": "src/features/checkout/components/index.ts",
+          "line": 1,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/components/index.ts",
+          "line": 2,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/components/index.ts",
+          "line": 3,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/components/index.ts",
+          "line": 4,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/components/index.ts",
+          "line": 5,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/components/index.ts",
+          "line": 6,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/components/index.ts",
+          "line": 7,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/index.ts",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/index.ts",
+          "line": 2,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 48,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 97,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 122,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 147,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 60,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/screens/index.ts",
+          "line": 1,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/index.ts",
+          "line": 2,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/index.ts",
+          "line": 4,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/index.ts",
+          "line": 7,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/index.ts",
+          "line": 9,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/index.ts",
+          "line": 11,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/components/AddItemModal.tsx",
+          "line": 14,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/orders/components/CategoryFilter.tsx",
+          "line": 18,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6144444444444443
+        },
+        {
+          "file": "src/features/orders/components/index.ts",
+          "line": 1,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/components/index.ts",
+          "line": 2,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/components/index.ts",
+          "line": 3,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/components/index.ts",
+          "line": 4,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/components/index.ts",
+          "line": 5,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/components/index.ts",
+          "line": 6,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/components/index.ts",
+          "line": 7,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/index.ts",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/index.ts",
+          "line": 2,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 41,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 44,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 44,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 71,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 86,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 103,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 114,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 257,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 258,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 18,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 125,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 156,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/orders/screens/index.ts",
+          "line": 1,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/Chip.tsx",
+          "line": 6,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/Modal.tsx",
+          "line": 9,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/index.ts",
+          "line": 1,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/index.ts",
+          "line": 2,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/index.ts",
+          "line": 3,
+          "column": 82,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/index.ts",
+          "line": 4,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/index.ts",
+          "line": 5,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/index.ts",
+          "line": 6,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/index.ts",
+          "line": 7,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/index.ts",
+          "line": 8,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/index.ts",
+          "line": 9,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/hooks/index.ts",
+          "line": 1,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/index.ts",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/index.ts",
+          "line": 2,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/index.ts",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/utils/index.ts",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 29,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 29,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/tables/components/index.ts",
+          "line": 1,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/tables/components/index.ts",
+          "line": 2,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/tables/components/index.ts",
+          "line": 3,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/tables/components/index.ts",
+          "line": 4,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/tables/index.ts",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/tables/index.ts",
+          "line": 2,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 97,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.6353846153846154
+        },
+        {
+          "file": "src/features/tables/screens/index.ts",
+          "line": 1,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 53,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 106,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "a53fc0440b345db6",
+      "subcategory": "query-patterns",
+      "name": "Query Patterns Detector",
+      "description": "Learns query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/query-patterns",
+          "patternId": "data-access/query-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.31,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 9,
+        "score": 0.8427272727272728,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 15,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83875
+        },
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 15,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.83875
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 64,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 71,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 86,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 95,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 95,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 8,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8427272727272728
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 21,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.8427272727272728
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 29,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.8427272727272728
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 33,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8427272727272728
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 42,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.8427272727272728
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 50,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.8427272727272728
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 54,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8427272727272728
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 321,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 359,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 359,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/orders/components/CategoryFilter.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/features/orders/components/CategoryFilter.tsx",
+          "line": 28,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/features/orders/components/CategoryFilter.tsx",
+          "line": 28,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/features/orders/components/CategoryFilter.tsx",
+          "line": 34,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/features/orders/components/CategoryFilter.tsx",
+          "line": 34,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 67,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 67,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 192,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 192,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 61,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 61,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/shared/components/ui/Chip.tsx",
+          "line": 11,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 44,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9b39564ee31d649d",
+      "subcategory": "connection-pooling",
+      "name": "Connection Pooling Detector",
+      "description": "Learns connection pooling patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/connection-pooling",
+          "patternId": "data-access/connection-pooling/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7949999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 1,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "connection-pooling"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9a09644fb8f55082",
+      "subcategory": "connection-pooling",
+      "name": "Connection Pooling Detector",
+      "description": "Learns connection pooling patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/connection-pooling",
+          "patternId": "data-access/connection-pooling/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7949999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 23,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "connection-pooling"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "df0d113a077cb574",
+      "subcategory": "query-access",
+      "name": "Query Access Detector",
+      "description": "Detects data access points in code (ORM queries, raw SQL)",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/query-access",
+          "patternId": "data-access/boundaries/query-access/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 14,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 17,
+          "column": 27,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 37,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6258823529411766
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 51,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.6258823529411766
+        },
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 80,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.6258823529411766
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 26,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 44,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 49,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 61,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 82,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 133,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/PaymentMethodSelector.tsx",
+          "line": 12,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 48,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 97,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 122,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 147,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 27,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 183,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 207,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 307,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/orders/components/AddItemModal.tsx",
+          "line": 14,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/orders/components/CategoryFilter.tsx",
+          "line": 18,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 41,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 44,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 44,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 71,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 86,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 103,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 114,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 257,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 258,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 125,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 156,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 26,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 38,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 38,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 164,
+          "column": 54,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 164,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 165,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 165,
+          "column": 57,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 180,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/shared/components/ui/Chip.tsx",
+          "line": 6,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 22,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6066666666666667
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 176,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6066666666666667
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 275,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.6066666666666667
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 287,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6066666666666667
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 29,
+          "column": 11,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 29,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 25,
+          "column": 4,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 61,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 67,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 68,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 80,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 85,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 86,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 108,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 112,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 132,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 136,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 151,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 18,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6109090909090908
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 23,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6109090909090908
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-access"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "08d8ada6c1cf785d",
+      "subcategory": "query-patterns",
+      "name": "Query Patterns Detector",
+      "description": "Learns query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/query-patterns",
+          "patternId": "data-access/query-patterns/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.08,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "metro.config.js",
+          "line": 11,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 169,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 175,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 58,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 59,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 49,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 83,
+          "column": 6,
+          "isOutlier": true,
+          "confidence": 0.8533333333333333,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 46,
+          "column": 29,
+          "isOutlier": true,
+          "confidence": 0.8353846153846154,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "efe6989884e4d93b",
+      "subcategory": "query-patterns",
+      "name": "Query Patterns Detector",
+      "description": "Learns query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/query-patterns",
+          "patternId": "data-access/query-patterns/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8353846153846154,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "metro.config.js",
+          "line": 6,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 119,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 150,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 61,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 109,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "cc99623af1198859",
+      "subcategory": "query-access",
+      "name": "Query Access Detector",
+      "description": "Detects data access points in code (ORM queries, raw SQL)",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/query-access",
+          "patternId": "data-access/boundaries/query-access/string_literal"
+        }
+      },
+      "confidence": {
+        "frequency": 0.5,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 9,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "package.json",
+          "line": 22,
+          "column": 24,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "package.json",
+          "line": 30,
+          "column": 22,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 19,
+          "column": 27,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 135,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 26,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 26,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 251,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 262,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 268,
+          "column": 75,
+          "isOutlier": false,
+          "confidence": 0.5533333333333332
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 121,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 122,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 152,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 153,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 25,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 25,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.6265573770491804
+        },
+        {
+          "file": "src/features/shared/components/ui/Chip.tsx",
+          "line": 13,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/shared/components/ui/Chip.tsx",
+          "line": 14,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 8,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 14,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 72,
+          "column": 59,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 133,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 133,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.5673684210526315
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 17,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6109090909090908
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 17,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6109090909090908
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 22,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6109090909090908
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 22,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6109090909090908
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 38,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.6109090909090908
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 38,
+          "column": 54,
+          "isOutlier": false,
+          "confidence": 0.6109090909090908
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-access"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9f30d9f0a06d3660",
+      "subcategory": "sensitive-field",
+      "name": "Sensitive Field Detector",
+      "description": "Auto-detects potentially sensitive fields/columns in data models",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/sensitive-field",
+          "patternId": "data-access/boundaries/sensitive-field/string_literal"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.595,
+        "level": "low"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 70,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.5700000000000001
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 26,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.5700000000000001
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 76,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.5700000000000001
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 53,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 53,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.595
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "sensitive-field"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2e654d489bf6b581",
+      "subcategory": "sensitive-field",
+      "name": "Sensitive Field Detector",
+      "description": "Auto-detects potentially sensitive fields/columns in data models",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/sensitive-field",
+          "patternId": "data-access/boundaries/sensitive-field/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 14,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.5700000000000001
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 32,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.5700000000000001
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 77,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.5700000000000001
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 175,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 175,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "sensitive-field"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "d4beadbeecf13814",
+      "subcategory": "sensitive-field",
+      "name": "Sensitive Field Detector",
+      "description": "Auto-detects potentially sensitive fields/columns in data models",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/sensitive-field",
+          "patternId": "data-access/boundaries/sensitive-field/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 25,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "sensitive-field"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b516629bfc9737ca",
+      "subcategory": "query-patterns",
+      "name": "Query Patterns Detector",
+      "description": "Learns query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/query-patterns",
+          "patternId": "data-access/query-patterns/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.7949999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 39,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 91,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 118,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 97,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.75125
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b1687454528effef",
+      "subcategory": "validation",
+      "name": "Validation Patterns Detector",
+      "description": "Learns validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/validation",
+          "patternId": "data-access/validation/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.76,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 36,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 36,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.76
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "d055385ea43d4c7e",
+      "subcategory": "validation",
+      "name": "Validation Patterns Detector",
+      "description": "Learns validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/validation",
+          "patternId": "data-access/validation/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.07,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 61,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 137,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 63,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.5755555555555556
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 64,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.5755555555555556
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 304,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.5755555555555556
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 384,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5755555555555556
+        },
+        {
+          "file": "src/features/orders/components/CartFooter.tsx",
+          "line": 32,
+          "column": 70,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b1236bfc6b0bcb9c",
+      "subcategory": "query-access",
+      "name": "Query Access Detector",
+      "description": "Detects data access points in code (ORM queries, raw SQL)",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/query-access",
+          "patternId": "data-access/boundaries/query-access/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.08,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 39,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 91,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.7533333333333333
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 118,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.7533333333333333
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 97,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8265573770491803
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-access"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "93142b61f75f5193",
+      "subcategory": "repository-pattern",
+      "name": "Repository Pattern Detector",
+      "description": "Learns repository patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/repository-pattern",
+          "patternId": "data-access/repository-pattern/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.14,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.7,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 175,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 175,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 180,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 207,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 20,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 97,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.7
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "repository-pattern"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "23d9c8f5124d3b4b",
+      "subcategory": "validation",
+      "name": "Validation Patterns Detector",
+      "description": "Learns validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/validation",
+          "patternId": "data-access/validation/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.03,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 35,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 35,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 20,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "987b57711332568c",
+      "subcategory": "orm-model",
+      "name": "ORM Model Detector",
+      "description": "Detects ORM model/entity definitions to extract table mappings",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/orm-model",
+          "patternId": "data-access/boundaries/orm-model/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.31,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 27,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 183,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 207,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 307,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 26,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6745454545454546
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 38,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6745454545454546
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 38,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.6745454545454546
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 164,
+          "column": 54,
+          "isOutlier": false,
+          "confidence": 0.6745454545454546
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 164,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.6745454545454546
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 165,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.6745454545454546
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 165,
+          "column": 57,
+          "isOutlier": false,
+          "confidence": 0.6745454545454546
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 180,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6745454545454546
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 22,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 176,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 275,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 287,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 29,
+          "column": 20,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "High confidence outlier"
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 25,
+          "column": 4,
+          "isOutlier": false,
+          "confidence": 0.5366666666666666
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 61,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 67,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 68,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 80,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 85,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 86,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 108,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 112,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 132,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 136,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 151,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6074999999999999
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 18,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 23,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.56
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "orm-model"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3cd8931d379d81dd",
+      "subcategory": "repository-pattern",
+      "name": "Repository Pattern Detector",
+      "description": "Learns repository patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/repository-pattern",
+          "patternId": "data-access/repository-pattern/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.76,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 150,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 155,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.76
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.464Z",
+        "lastSeen": "2026-01-29T09:03:44.464Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "repository-pattern"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "5307132d8347ccc6",
+      "subcategory": "transaction",
+      "name": "Transaction Patterns Detector",
+      "description": "Learns transaction patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/transaction",
+          "patternId": "data-access/transaction/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.595,
+        "level": "low"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 264,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.595
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.464Z",
+        "lastSeen": "2026-01-29T09:03:44.464Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "transaction"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c8771df7c2dc3f82",
+      "subcategory": "dto-patterns",
+      "name": "DTO Patterns Detector",
+      "description": "Learns Data Transfer Object patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/dto-patterns",
+          "patternId": "data-access/dto-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.56,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7262500000000001,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 66,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 68,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 72,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 85,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 88,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 89,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 95,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 99,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 103,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 109,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 114,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 114,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 114,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 114,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 254,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 264,
+          "column": 51,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 267,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 294,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 300,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 301,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 308,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 316,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 327,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 331,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 335,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 352,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 357,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 363,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.464Z",
+        "lastSeen": "2026-01-29T09:03:44.464Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "dto-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "7cc1f2a02a814537",
+      "subcategory": "repository-pattern",
+      "name": "Repository Pattern Detector",
+      "description": "Learns repository patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/repository-pattern",
+          "patternId": "data-access/repository-pattern/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8999999999999999,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 59,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.464Z",
+        "lastSeen": "2026-01-29T09:03:44.464Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "repository-pattern"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:04:03.770Z",
+  "checksum": "19715aed0fdc5248"
+}

@@ -1,0 +1,815 @@
+{
+  "version": "1.0.0",
+  "category": "config",
+  "patterns": [
+    {
+      "id": "ea582e19c3ca4cbb",
+      "subcategory": "required-optional",
+      "name": "Required/Optional Detector",
+      "description": "Learns required/optional configuration patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/required-optional",
+          "patternId": "config/required-optional/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.18,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 9,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "App.tsx",
+          "line": 8,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 20,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 36,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 384,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/components/AddItemModal.tsx",
+          "line": 74,
+          "column": 65,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 271,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 48,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 151,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 46,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["config", "required-optional"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "91e0b873df5a603f",
+      "subcategory": "default-values",
+      "name": "Default Values Detector",
+      "description": "Learns default value patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/default-values",
+          "patternId": "config/default-values/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.16,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 8,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "App.tsx",
+          "line": 8,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 20,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 36,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 384,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 271,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 48,
+          "column": 32,
+          "isOutlier": true,
+          "confidence": 0.6824999999999999,
+          "outlierReason": "Value below IQR lower bound"
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 151,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 46,
+          "column": 8,
+          "isOutlier": true,
+          "confidence": 0.595,
+          "outlierReason": "Value below IQR lower bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["config", "default-values"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "019ffea07a59e815",
+      "subcategory": "env-config",
+      "name": "Environment Config Detector",
+      "description": "Learns environment configuration patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/env-config",
+          "patternId": "config/env-config/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 9,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["config", "env-config"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "50d48be34698249b",
+      "subcategory": "env-config",
+      "name": "Environment Config Detector",
+      "description": "Learns environment configuration patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/env-config",
+          "patternId": "config/env-config/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.07,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.6533333333333333,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "ConvexClientProvider.tsx",
+          "line": 9,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "metro.config.js",
+          "line": 9,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "metro.config.js",
+          "line": 15,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 58,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.595
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["config", "env-config"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "92f913cbfad7a723",
+      "subcategory": "env-config",
+      "name": "Environment Config Detector",
+      "description": "Learns environment configuration patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/env-config",
+          "patternId": "config/env-config/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "metro.config.js",
+          "line": 6,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 45,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["config", "env-config"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "e4975f046bd5068f",
+      "subcategory": "config-validation",
+      "name": "Config Validation Detector",
+      "description": "Learns configuration validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/config-validation",
+          "patternId": "config/config-validation/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.76,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 36,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 36,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.76
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["config", "config-validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4b014a09895c86dc",
+      "subcategory": "config-validation",
+      "name": "Config Validation Detector",
+      "description": "Learns configuration validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/config-validation",
+          "patternId": "config/config-validation/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.76,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 43,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.76
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["config", "config-validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3474d63819967c80",
+      "subcategory": "config-validation",
+      "name": "Config Validation Detector",
+      "description": "Learns configuration validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/config-validation",
+          "patternId": "config/config-validation/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.14,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 61,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 137,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 63,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 64,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 304,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 384,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/orders/components/CartFooter.tsx",
+          "line": 32,
+          "column": 70,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["config", "config-validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "321c824d1dd2875f",
+      "subcategory": "config-validation",
+      "name": "Config Validation Detector",
+      "description": "Learns configuration validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/config-validation",
+          "patternId": "config/config-validation/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 35,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 35,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 20,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["config", "config-validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "51cda3aa1d696862",
+      "subcategory": "feature-flags",
+      "name": "Feature Flags Detector",
+      "description": "Learns feature flag patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/feature-flags",
+          "patternId": "config/feature-flags/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.08,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.6299999999999999,
+        "level": "low"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 6,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 51,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.5546153846153845
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 58,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.5546153846153845
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 8,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.5546153846153845
+        },
+        {
+          "file": "src/features/shared/components/ui/Card.tsx",
+          "line": 8,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 48,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 7,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.595
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["config", "feature-flags"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "6f1f3590b99aa419",
+      "subcategory": "feature-flags",
+      "name": "Feature Flags Detector",
+      "description": "Learns feature flag patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/feature-flags",
+          "patternId": "config/feature-flags/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.13,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.83,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 12,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 12,
+          "column": 54,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 22,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 15,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 15,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 24,
+          "column": 59,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/shared/components/ui/Card.tsx",
+          "line": 12,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/Card.tsx",
+          "line": 12,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 26,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 26,
+          "column": 59,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/shared/components/ui/IconButton.tsx",
+          "line": 33,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 12,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 12,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["config", "feature-flags"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "623684e5895a93d3",
+      "subcategory": "feature-flags",
+      "name": "Feature Flags Detector",
+      "description": "Learns feature flag patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/feature-flags",
+          "patternId": "config/feature-flags/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7546153846153846,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 60,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/features/shared/components/ui/Button.tsx",
+          "line": 60,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["config", "feature-flags"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:04:03.793Z",
+  "checksum": "c67d3a1454e6294f"
+}

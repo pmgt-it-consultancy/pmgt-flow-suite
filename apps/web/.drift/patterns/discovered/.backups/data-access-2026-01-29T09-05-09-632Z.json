@@ -1,0 +1,6425 @@
+{
+  "version": "1.0.0",
+  "category": "data-access",
+  "patterns": [
+    {
+      "id": "50b6e784f2ce8088",
+      "subcategory": "query-access",
+      "name": "Query Access Detector",
+      "description": "Detects data access points in code (ORM queries, raw SQL)",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/query-access",
+          "patternId": "data-access/boundaries/query-access/string_literal"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 21,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "package.json",
+          "line": 23,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "package.json",
+          "line": 14,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "package.json",
+          "line": 29,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 257,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 257,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 111,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 229,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 324,
+          "column": 64,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 209,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.7
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 272,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7425130890052356
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 272,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7425130890052356
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 127,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.7425130890052356
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 253,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7425130890052356
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 409,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.7425130890052356
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 255,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7385897435897435
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 255,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7385897435897435
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 115,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.7385897435897435
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 227,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7385897435897435
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 372,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.7385897435897435
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 101,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 218,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 290,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 52,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 101,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 109,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 115,
+          "column": 76,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 215,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 215,
+          "column": 65,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 218,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 219,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 230,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.6895
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 357,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7297701149425286
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 357,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7297701149425286
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 381,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7297701149425286
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 381,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7297701149425286
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 131,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.7297701149425286
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 301,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7297701149425286
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 439,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.7297701149425286
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 90,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6691525423728812
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 90,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.6691525423728812
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 101,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.6691525423728812
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 51,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 52,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 54,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/UserNav.tsx",
+          "line": 43,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/UserNav.tsx",
+          "line": 48,
+          "column": 67,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 27,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 81,
+          "column": 82,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 97,
+          "column": 82,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 120,
+          "column": 82,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 27,
+          "column": 57,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 81,
+          "column": 67,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 97,
+          "column": 67,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 120,
+          "column": 67,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 26,
+          "column": 51,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 16,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 20,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 36,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 30,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 84,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 100,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 123,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 30,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 84,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 100,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 123,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/input.tsx",
+          "line": 11,
+          "column": 345,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/label.tsx",
+          "line": 10,
+          "column": 51,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 71,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.6783333333333335
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 71,
+          "column": 535,
+          "isOutlier": false,
+          "confidence": 0.6783333333333335
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 84,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.6783333333333335
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 84,
+          "column": 79,
+          "isOutlier": false,
+          "confidence": 0.6783333333333335
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 114,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.6783333333333335
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 41,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.6783333333333335
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 55,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.6783333333333335
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 114,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.6783333333333335
+        },
+        {
+          "file": "src/components/ui/switch.tsx",
+          "line": 14,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/switch.tsx",
+          "line": 14,
+          "column": 285,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 47,
+          "column": 67,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 12,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 12,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 20,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 20,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 28,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 28,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 40,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 40,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 54,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 54,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 69,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 69,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 81,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 81,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 89,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 89,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "tsconfig.json",
+          "line": 25,
+          "column": 4,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.785Z",
+        "lastSeen": "2026-01-29T09:04:55.785Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-access"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b93a2df5e12a0602",
+      "subcategory": "query-patterns",
+      "name": "Query Patterns Detector",
+      "description": "Learns query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/query-patterns",
+          "patternId": "data-access/query-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.29,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 8,
+        "score": 0.8879012345679012,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 52,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8314583333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 60,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8314583333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 74,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8314583333333333
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 68,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 76,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8274074074074074
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 121,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 68,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.82125
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 68,
+          "column": 64,
+          "isOutlier": false,
+          "confidence": 0.82125
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 10,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 14,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 14,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 50,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 50,
+          "column": 57,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 9,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 9,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 11,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 11,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 13,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 13,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 15,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 35,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 49,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 63,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 95,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 107,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 130,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8879012345679012
+        },
+        {
+          "file": "src/stores/useAdminStore.ts",
+          "line": 6,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/stores/useAdminStore.ts",
+          "line": 13,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/stores/useAdminStore.ts",
+          "line": 14,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "0ef391c64f1e0f3c",
+      "subcategory": "query-patterns",
+      "name": "Query Patterns Detector",
+      "description": "Learns query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/query-patterns",
+          "patternId": "data-access/query-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 27,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 15,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 16,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 33,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 40,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 42,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 117,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 121,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 122,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 123,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 124,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 125,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 125,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 126,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 126,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 127,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 127,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 128,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 128,
+          "column": 74,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 129,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 129,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 130,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 131,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 154,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 157,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 17,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 25,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6314583333333332
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 25,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 26,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 27,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 58,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 67,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 67,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 81,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 139,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 152,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 155,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 247,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 256,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 258,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 259,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 260,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 260,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 264,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 266,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 268,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 269,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 291,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 300,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 301,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 302,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 303,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 304,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 304,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 305,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 305,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 306,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 307,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 28,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 36,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 14,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6623076923076923
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 24,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.6623076923076923
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 28,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6623076923076923
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 39,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6623076923076923
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 22,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 25,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 42,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 45,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 50,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 52,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 62,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 62,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 123,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 127,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 128,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 129,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 130,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 131,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 131,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 132,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 132,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 133,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 133,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 134,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 134,
+          "column": 54,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 135,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 136,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 159,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 162,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 224,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 17,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 26,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6274074074074074
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "aa3381f864c360c0",
+      "subcategory": "query-patterns",
+      "name": "Query Patterns Detector",
+      "description": "Learns query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/query-patterns",
+          "patternId": "data-access/query-patterns/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.24,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 13,
+        "score": 0.8730769230769231,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 186,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8314583333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 187,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8314583333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 104,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 205,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.8274074074074074
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 247,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.8274074074074074
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 118,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8730769230769231
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 43,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8377777777777777
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 186,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.8377777777777777
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 592,
+          "column": 75,
+          "isOutlier": false,
+          "confidence": 0.8377777777777777
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 105,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8482608695652174
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 94,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 191,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 124,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8656140350877193
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 10,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 78,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 24,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 24,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 24,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 54,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.83875
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 109,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 109,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 109,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 109,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 116,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "a1569347cef8e6d0",
+      "subcategory": "repository-pattern",
+      "name": "Repository Pattern Detector",
+      "description": "Learns repository patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/repository-pattern",
+          "patternId": "data-access/repository-pattern/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.26,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 10,
+        "score": 0.8887499999999999,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 27,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 38,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 5,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 10,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 23,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 36,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 39,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 34,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.8601960784313725
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 6,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 32,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 38,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 4,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 26,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.8825
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "repository-pattern"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "fb2da3a8c45c0c40",
+      "subcategory": "repository-pattern",
+      "name": "Repository Pattern Detector",
+      "description": "Learns repository patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/repository-pattern",
+          "patternId": "data-access/repository-pattern/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 13,
+        "score": 0.8887499999999999,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 42,
+          "column": 11,
+          "isOutlier": true,
+          "confidence": 0.7366666666666666,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 42,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 42,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 50,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 67,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 81,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 90,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 90,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 114,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 114,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 32,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 43,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 17,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 17,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 31,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 42,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 52,
+          "column": 11,
+          "isOutlier": true,
+          "confidence": 0.7366666666666666,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 42,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 42,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 52,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 73,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 77,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 93,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 101,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 101,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 130,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 130,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 97,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 51,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 55,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 59,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 63,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 68,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 82,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8601960784313725
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 50,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 69,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 69,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 84,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 84,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 106,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 59,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 104,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 45,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 45,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 54,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 71,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 71,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 75,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 94,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 106,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 106,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 128,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 128,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 143,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 143,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 376,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 376,
+          "column": 75,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 63,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 57,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 57,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 61,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 37,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8125
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 37,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.8125
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 39,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.8125
+        },
+        {
+          "file": "src/stores/useAdminStore.ts",
+          "line": 7,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/stores/useAdminStore.ts",
+          "line": 7,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "repository-pattern"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b9d0824a624444cf",
+      "subcategory": "repository-pattern",
+      "name": "Repository Pattern Detector",
+      "description": "Learns repository patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/repository-pattern",
+          "patternId": "data-access/repository-pattern/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 15,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 157,
+          "column": 34,
+          "isOutlier": true,
+          "confidence": 0.5366666666666666,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 155,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.6623076923076923
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 322,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.6623076923076923
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 28,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 39,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 166,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 166,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 169,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 170,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 174,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 174,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 175,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 177,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 180,
+          "column": 68,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 181,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 183,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 184,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6095833333333334
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 162,
+          "column": 34,
+          "isOutlier": true,
+          "confidence": 0.5366666666666666,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 188,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.6699999999999999
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 404,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.6699999999999999
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 40,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 50,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 51,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 54,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 55,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 58,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 59,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 62,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 63,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 66,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 73,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 74,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 83,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 112,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 113,
+          "column": 64,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 131,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 143,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 165,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 173,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 173,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 184,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 186,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 344,
+          "column": 65,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 401,
+          "column": 64,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 482,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 591,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 592,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 165,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 351,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 407,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 482,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.6601960784313725
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 65,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 72,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 73,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 76,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 85,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 87,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 88,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 89,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 90,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 91,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 92,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 93,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 94,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 143,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 144,
+          "column": 52,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 148,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 155,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 159,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 163,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 165,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 166,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 166,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 182,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 182,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 183,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 186,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 189,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 191,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 195,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 196,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 199,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 200,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 201,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 203,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 204,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 208,
+          "column": 89,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 234,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 258,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 261,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 262,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 262,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 263,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 269,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.68875
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 158,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 239,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 372,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 385,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 385,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 386,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "repository-pattern"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "dd4c3333452acf14",
+      "subcategory": "validation",
+      "name": "Validation Patterns Detector",
+      "description": "Learns validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/validation",
+          "patternId": "data-access/validation/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.865,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 5,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 2,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 8,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 8,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 4,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 4,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "38135266d96f5363",
+      "subcategory": "validation",
+      "name": "Validation Patterns Detector",
+      "description": "Learns validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/validation",
+          "patternId": "data-access/validation/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.22,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.665,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 68,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 274,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 91,
+          "column": 51,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 92,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 93,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 94,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 105,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 109,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 111,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 3,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 18,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 32,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 51,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 131,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 94,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 95,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 96,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 97,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 108,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 112,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 114,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.665
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 121,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.595
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "eaeaf1e6307e1238",
+      "subcategory": "n-plus-one",
+      "name": "N+1 Query Detector",
+      "description": "Learns N+1 query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/n-plus-one",
+          "patternId": "data-access/n-plus-one/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 52,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 68,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "n-plus-one"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "16590a230fc4b8ec",
+      "subcategory": "n-plus-one",
+      "name": "N+1 Query Detector",
+      "description": "Learns N+1 query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/n-plus-one",
+          "patternId": "data-access/n-plus-one/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 54,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 55,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 56,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 70,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 71,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 72,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "n-plus-one"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c47a572fded357af",
+      "subcategory": "orm-model",
+      "name": "ORM Model Detector",
+      "description": "Detects ORM model/entity definitions to extract table mappings",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/orm-model",
+          "patternId": "data-access/boundaries/orm-model/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 10,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 56,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 192,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 192,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 20,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 22,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 169,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 170,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 171,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 172,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 172,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 173,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 173,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 174,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 174,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 175,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 175,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 176,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 176,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 177,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 178,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 179,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 181,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 182,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 182,
+          "column": 91,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 183,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 183,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 184,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 189,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 190,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 194,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 195,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 197,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 198,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 200,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 201,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.761860465116279
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 30,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 31,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 32,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 33,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 34,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 35,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 167,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 168,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 169,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 170,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 170,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 171,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 171,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 172,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 172,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 173,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 173,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 174,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 174,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 175,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 175,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 176,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 176,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 177,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 178,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 179,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 181,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 182,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 191,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 192,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 196,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 197,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 201,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 202,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 202,
+          "column": 57,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 203,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 203,
+          "column": 54,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 204,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 208,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 209,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 213,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 214,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 216,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 217,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7622222222222221
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 28,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 29,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 30,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 31,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 32,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 33,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 72,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 174,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 175,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 176,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 178,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 178,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 179,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 179,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 180,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 180,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 180,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.750188679245283
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "orm-model"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3d54e596e225705e",
+      "subcategory": "query-access",
+      "name": "Query Access Detector",
+      "description": "Detects data access points in code (ORM queries, raw SQL)",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/query-access",
+          "patternId": "data-access/boundaries/query-access/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 14,
+        "score": 0.761358024691358,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 12,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 15,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 16,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 33,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 40,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 42,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 117,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 121,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 122,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 123,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 124,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 125,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 125,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 126,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 126,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 127,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 127,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 128,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 128,
+          "column": 74,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 129,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 129,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 130,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 131,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 154,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 157,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 20,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 22,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 169,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 170,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 171,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 172,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 172,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 173,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 173,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 174,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 174,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 175,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 175,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 176,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 176,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 177,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 178,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 179,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 181,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 182,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 182,
+          "column": 91,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 183,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 183,
+          "column": 72,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 184,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 189,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 190,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 194,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 195,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 197,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 198,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 200,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 201,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7418978102189782
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 23,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 24,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 25,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 26,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 27,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 58,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 67,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 67,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 81,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 139,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 152,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 155,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 247,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 256,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 258,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 259,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 260,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 260,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 264,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 266,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 268,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 269,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 291,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 300,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 301,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 302,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 303,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 304,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 304,
+          "column": 56,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 305,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 305,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 306,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 307,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 30,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 31,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 32,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 33,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7389349112426036
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.787Z",
+        "lastSeen": "2026-01-29T09:04:55.787Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-access"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "65e42f87aaabed98",
+      "subcategory": "query-patterns",
+      "name": "Query Patterns Detector",
+      "description": "Learns query patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/query-patterns",
+          "patternId": "data-access/query-patterns/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.14,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 8,
+        "score": 0.8730769230769231,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 199,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 72,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 72,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 61,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.8274074074074074
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 82,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8730769230769231
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 82,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.8730769230769231
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 73,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8482608695652174
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 73,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.8482608695652174
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 64,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 64,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.7889655172413793
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 80,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8656140350877193
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 80,
+          "column": 59,
+          "isOutlier": false,
+          "confidence": 0.8656140350877193
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 68,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.82125
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 4,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:04:55.788Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "query-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f81d67b01016a499",
+      "subcategory": "repository-pattern",
+      "name": "Repository Pattern Detector",
+      "description": "Learns repository patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/repository-pattern",
+          "patternId": "data-access/repository-pattern/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.87,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 99,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.8623076923076922
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 16,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 16,
+          "column": 51,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 16,
+          "column": 79,
+          "isOutlier": false,
+          "confidence": 0.8095833333333333
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 113,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 49,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.8125
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:04:55.788Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "repository-pattern"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "34354d815e65daab",
+      "subcategory": "transaction",
+      "name": "Transaction Patterns Detector",
+      "description": "Learns transaction patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/transaction",
+          "patternId": "data-access/transaction/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 51,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 220,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 434,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 586,
+          "column": 59,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 596,
+          "column": 66,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:04:55.788Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "transaction"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "763a908dfa243d6b",
+      "subcategory": "dto-patterns",
+      "name": "DTO Patterns Detector",
+      "description": "Learns Data Transfer Object patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/dto-patterns",
+          "patternId": "data-access/dto-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.26,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 127,
+          "column": 26,
+          "isOutlier": true,
+          "confidence": 0.595,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 329,
+          "column": 78,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 13,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.7350000000000001
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 17,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7350000000000001
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 29,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7350000000000001
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 33,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7350000000000001
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 40,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7350000000000001
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 49,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7350000000000001
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 52,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7350000000000001
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 56,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7350000000000001
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 59,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7350000000000001
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 66,
+          "column": 84,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/lib/format.ts",
+          "line": 98,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:04:55.788Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "dto-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2c856df65d1c40f9",
+      "subcategory": "sensitive-field",
+      "name": "Sensitive Field Detector",
+      "description": "Auto-detects potentially sensitive fields/columns in data models",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/sensitive-field",
+          "patternId": "data-access/boundaries/sensitive-field/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 181,
+          "column": 67,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "High confidence outlier"
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 174,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 199,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 277,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 287,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 367,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 449,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 450,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 16,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 33,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 90,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 100,
+          "column": 91,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:04:55.788Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "sensitive-field"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "028b52dfa25654c1",
+      "subcategory": "repository-pattern",
+      "name": "Repository Pattern Detector",
+      "description": "Learns repository patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/repository-pattern",
+          "patternId": "data-access/repository-pattern/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.16,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8887499999999999,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 75,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 156,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 156,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 244,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.8887499999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 384,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 18,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.8125
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 20,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.8125
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 20,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.8125
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "repository-pattern"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "d3b8711affcaf467",
+      "subcategory": "sensitive-field",
+      "name": "Sensitive Field Detector",
+      "description": "Auto-detects potentially sensitive fields/columns in data models",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/sensitive-field",
+          "patternId": "data-access/boundaries/sensitive-field/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.25,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.83,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 42,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 43,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 53,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 54,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 89,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 89,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 90,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 90,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 108,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 108,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 109,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 109,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 120,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 120,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 121,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 121,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 278,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 288,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 42,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 51,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 103,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 103,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 339,
+          "column": 63,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 30,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 69,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "sensitive-field"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2b3d77610ec701cd",
+      "subcategory": "sensitive-field",
+      "name": "Sensitive Field Detector",
+      "description": "Auto-detects potentially sensitive fields/columns in data models",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/sensitive-field",
+          "patternId": "data-access/boundaries/sensitive-field/string_literal"
+        }
+      },
+      "confidence": {
+        "frequency": 0.29,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.6299999999999999,
+        "level": "low"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 274,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 274,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 276,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 279,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 284,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 284,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 286,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 324,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 134,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 172,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 177,
+          "column": 77,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 273,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 334,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 334,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 336,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 337,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 340,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 455,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 458,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 461,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 475,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.6084615384615384
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 85,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 85,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 87,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 88,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 89,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/login/page.tsx",
+          "line": 93,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 73,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 73,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.595
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "sensitive-field"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ff7be2273fbbd270",
+      "subcategory": "validation",
+      "name": "Validation Patterns Detector",
+      "description": "Learns validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/validation",
+          "patternId": "data-access/validation/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.865,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 272,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 273,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 100,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 100,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 22,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 1,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 7,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 17,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 19,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 134,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 103,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 103,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.865
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "994788290c46993a",
+      "subcategory": "sensitive-field",
+      "name": "Sensitive Field Detector",
+      "description": "Auto-detects potentially sensitive fields/columns in data models",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/boundaries/sensitive-field",
+          "patternId": "data-access/boundaries/sensitive-field/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8084615384615385,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 133,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 140,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 140,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 338,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 436,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.8084615384615385
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "sensitive-field"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "7246058aca499758",
+      "subcategory": "connection-pooling",
+      "name": "Connection Pooling Detector",
+      "description": "Learns connection pooling patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/connection-pooling",
+          "patternId": "data-access/connection-pooling/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7949999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/ConvexClientProvider.tsx",
+          "line": 13,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "connection-pooling"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "60c752e160687553",
+      "subcategory": "validation",
+      "name": "Validation Patterns Detector",
+      "description": "Learns validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/validation",
+          "patternId": "data-access/validation/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7949999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 4,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1484dc3f2c59728a",
+      "subcategory": "connection-pooling",
+      "name": "Connection Pooling Detector",
+      "description": "Learns connection pooling patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "data-access/connection-pooling",
+          "patternId": "data-access/connection-pooling/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/middleware.ts",
+          "line": 7,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/middleware.ts",
+          "line": 9,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["data-access", "connection-pooling"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:05:09.607Z",
+  "checksum": "c3338f39f43aaa2d"
+}

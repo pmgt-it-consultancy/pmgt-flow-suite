@@ -1,0 +1,1279 @@
+{
+  "version": "1.0.0",
+  "category": "documentation",
+  "patterns": [
+    {
+      "id": "11436d7fdd50b09f",
+      "subcategory": "readme-structure",
+      "name": "Readme Structure Detector",
+      "description": "Learns README structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/readme-structure",
+          "patternId": "documentation/readme-structure/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.56,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 14,
+        "score": 0.8922222222222222,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.8922222222222222
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 4,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 4,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 4,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 4,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 3,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:04:55.788Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "readme-structure"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "0e8834ce862acdcd",
+      "subcategory": "readme-structure",
+      "name": "Readme Structure Detector",
+      "description": "Learns README structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/readme-structure",
+          "patternId": "documentation/readme-structure/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.78,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 14,
+        "score": 0.6922222222222223,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 39,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 66,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 71,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 72,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 17,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 28,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 39,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 49,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 61,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 72,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 76,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 81,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 82,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 50,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6922222222222223
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 54,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6922222222222223
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 58,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6922222222222223
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 62,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6922222222222223
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 66,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6922222222222223
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 73,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6922222222222223
+        },
+        {
+          "file": "src/app/(admin)/reports/page.tsx",
+          "line": 74,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.6922222222222223
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 69,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 72,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 73,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 58,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 63,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 64,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 71,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 72,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 74,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 79,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 80,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 81,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 18,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 19,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 15,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 13,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 14,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 45,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 37,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:04:55.788Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "readme-structure"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "bffefa4a462beb6b",
+      "subcategory": "jsdoc-patterns",
+      "name": "JSDoc Patterns Detector",
+      "description": "Learns JSDoc documentation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/jsdoc-patterns",
+          "patternId": "documentation/jsdoc-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.6699999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 237,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6699999999999999
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 255,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.6699999999999999
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 288,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6699999999999999
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 307,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.6699999999999999
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 6,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:04:55.788Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "jsdoc-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f28c95b7420da725",
+      "subcategory": "todo-patterns",
+      "name": "Todo Patterns Detector",
+      "description": "Learns TODO/FIXME comment patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/todo-patterns",
+          "patternId": "documentation/todo-patterns/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.08,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.8825,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 3,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 3,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 3,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 2,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 2,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 2,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 8,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 8,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.82
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:04:55.790Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "todo-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "e058f43c82a43da6",
+      "subcategory": "todo-patterns",
+      "name": "Todo Patterns Detector",
+      "description": "Learns TODO/FIXME comment patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/todo-patterns",
+          "patternId": "documentation/todo-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.21,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 10,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 10,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 10,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/Header.tsx",
+          "line": 21,
+          "column": 4,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/components/common/UserNav.tsx",
+          "line": 14,
+          "column": 4,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 10,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 10,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 13,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 13,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 13,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.8144444444444444
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 13,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 13,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 13,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 24,
+          "column": 52,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 24,
+          "column": 60,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 10,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 50,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 50,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 50,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/middleware.ts",
+          "line": 7,
+          "column": 4,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:04:55.790Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "todo-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4a6f424d8a49bb32",
+      "subcategory": "todo-patterns",
+      "name": "Todo Patterns Detector",
+      "description": "Learns TODO/FIXME comment patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/todo-patterns",
+          "patternId": "documentation/todo-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.31,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 10,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/notes/page.tsx",
+          "line": 8,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 18,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 33,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 37,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 37,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 51,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 54,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 54,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 10,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 13,
+          "column": 65,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 11,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 18,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 47,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 84,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 113,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 62,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 66,
+          "column": 66,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 15,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.6144444444444443
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 15,
+          "column": 57,
+          "isOutlier": false,
+          "confidence": 0.6144444444444443
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 36,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6144444444444443
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 18,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 22,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 29,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 13,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 14,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 18,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 19,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 20,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 27,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 49,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 59,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:04:55.790Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "todo-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b86e9f54dbfa0315",
+      "subcategory": "jsdoc-patterns",
+      "name": "JSDoc Patterns Detector",
+      "description": "Learns JSDoc documentation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/jsdoc-patterns",
+          "patternId": "documentation/jsdoc-patterns/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 73,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 82,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 83,
+          "column": 57,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 85,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 91,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "jsdoc-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "52e149aefe0661b7",
+      "subcategory": "deprecation",
+      "name": "Deprecation Detector",
+      "description": "Learns deprecation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/deprecation",
+          "patternId": "documentation/deprecation/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 67,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "deprecation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "2191bf36e2714e60",
+      "subcategory": "todo-patterns",
+      "name": "Todo Patterns Detector",
+      "description": "Learns TODO/FIXME comment patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "documentation/todo-patterns",
+          "patternId": "documentation/todo-patterns/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 9,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.9644444444444444
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 4,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.98
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["documentation", "todo-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:05:09.590Z",
+  "checksum": "6bb485949b147950"
+}

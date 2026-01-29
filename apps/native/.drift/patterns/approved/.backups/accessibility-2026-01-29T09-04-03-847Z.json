@@ -1,0 +1,540 @@
+{
+  "version": "1.0.0",
+  "category": "accessibility",
+  "patterns": [
+    {
+      "id": "43b78ef04f67f294",
+      "subcategory": "semantic-html",
+      "name": "Semantic HTML Detector",
+      "description": "Learns semantic HTML patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "accessibility/semantic-html",
+          "patternId": "accessibility/semantic-html/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.09,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "App.tsx",
+          "line": 6,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "App.tsx",
+          "line": 6,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "App.tsx",
+          "line": 6,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/tables/components/index.ts",
+          "line": 2,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/components/index.ts",
+          "line": 2,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 8,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7790909090909091
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 2,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 2,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 3,
+          "column": 52,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:04:03.684Z",
+        "source": "auto-detected",
+        "tags": ["accessibility", "semantic-html"],
+        "approvedAt": "2026-01-29T09:04:03.684Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "dd941209a1402bf8",
+      "subcategory": "keyboard-nav",
+      "name": "Keyboard Navigation Detector",
+      "description": "Learns keyboard navigation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "accessibility/keyboard-nav",
+          "patternId": "accessibility/keyboard-nav/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 70,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/CashInput.tsx",
+          "line": 26,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 124,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 71,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 71,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.83
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:04:03.703Z",
+        "source": "auto-detected",
+        "tags": ["accessibility", "keyboard-nav"],
+        "approvedAt": "2026-01-29T09:04:03.703Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "6d407e582528f367",
+      "subcategory": "semantic-html",
+      "name": "Semantic HTML Detector",
+      "description": "Learns semantic HTML patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "accessibility/semantic-html",
+          "patternId": "accessibility/semantic-html/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.09,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.92625,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 8,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 22,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.92625
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 21,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 10,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 10,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 11,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7790909090909091
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 35,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 29,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 75,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:04:03.725Z",
+        "source": "auto-detected",
+        "tags": ["accessibility", "semantic-html"],
+        "approvedAt": "2026-01-29T09:04:03.725Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "01c0e7b80c6a42a4",
+      "subcategory": "alt-text",
+      "name": "Alt Text Detector",
+      "description": "Learns alt text patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "accessibility/alt-text",
+          "patternId": "accessibility/alt-text/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.14,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 9,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/checkout/components/DiscountModal.tsx",
+          "line": 56,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 20,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 72,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 72,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 372,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/AddItemModal.tsx",
+          "line": 42,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/orders/components/OrderHeader.tsx",
+          "line": 5,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 180,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/tables/components/EmptyState.tsx",
+          "line": 7,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 133,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 63,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 63,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 78,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 78,
+          "column": 65,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:04:03.745Z",
+        "source": "auto-detected",
+        "tags": ["accessibility", "alt-text"],
+        "approvedAt": "2026-01-29T09:04:03.745Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "a3b572b64f943d8e",
+      "subcategory": "heading-hierarchy",
+      "name": "Heading Hierarchy Detector",
+      "description": "Learns heading hierarchy patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "accessibility/heading-hierarchy",
+          "patternId": "accessibility/heading-hierarchy/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 14,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.463Z",
+        "lastSeen": "2026-01-29T09:04:03.766Z",
+        "source": "auto-detected",
+        "tags": ["accessibility", "heading-hierarchy"],
+        "approvedAt": "2026-01-29T09:04:03.766Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4ded9da2cca74dbd",
+      "subcategory": "semantic-html",
+      "name": "Semantic HTML Detector",
+      "description": "Learns semantic HTML patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "accessibility/semantic-html",
+          "patternId": "accessibility/semantic-html/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 146,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 230,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 235,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 171,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.464Z",
+        "lastSeen": "2026-01-29T09:04:03.786Z",
+        "source": "auto-detected",
+        "tags": ["accessibility", "semantic-html"],
+        "approvedAt": "2026-01-29T09:04:03.786Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b084ad29343ff139",
+      "subcategory": "semantic-html",
+      "name": "Semantic HTML Detector",
+      "description": "Learns semantic HTML patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "accessibility/semantic-html",
+          "patternId": "accessibility/semantic-html/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/tables/components/Header.tsx",
+          "line": 5,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 1
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.464Z",
+        "lastSeen": "2026-01-29T09:04:03.807Z",
+        "source": "auto-detected",
+        "tags": ["accessibility", "semantic-html"],
+        "approvedAt": "2026-01-29T09:04:03.807Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:04:03.826Z",
+  "checksum": "e695a55b1b106b30"
+}

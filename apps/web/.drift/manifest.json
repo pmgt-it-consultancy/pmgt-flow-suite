@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-01-29T09:04:57.162Z",
+  "projectRoot": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web",
+  "stats": {
+    "patterns": {
+      "total": 384,
+      "byCategory": {
+        "auth": 31,
+        "security": 22,
+        "structural": 26,
+        "components": 47,
+        "data-access": 49,
+        "config": 21,
+        "types": 30,
+        "styling": 33,
+        "errors": 31,
+        "logging": 22,
+        "testing": 18,
+        "accessibility": 21,
+        "documentation": 10,
+        "performance": 20,
+        "api": 3
+      },
+      "byStatus": {
+        "discovered": 384,
+        "approved": 0,
+        "ignored": 0
+      },
+      "byConfidence": {
+        "high": 244,
+        "medium": 135,
+        "low": 5,
+        "uncertain": 0
+      },
+      "totalLocations": 9236,
+      "totalOutliers": 0
+    },
+    "security": {
+      "totalTables": 0,
+      "totalAccessPoints": 0,
+      "sensitiveFields": 0,
+      "violations": 0,
+      "riskLevel": "low"
+    },
+    "callGraph": {
+      "totalFunctions": 0,
+      "totalCalls": 0,
+      "entryPoints": 0,
+      "dataAccessors": 0,
+      "avgDepth": 0
+    },
+    "contracts": {
+      "verified": 0,
+      "mismatch": 0,
+      "discovered": 0,
+      "ignored": 0
+    },
+    "dna": {
+      "healthScore": 0,
+      "geneticDiversity": 0,
+      "mutations": 0,
+      "dominantGenes": []
+    }
+  },
+  "fileHashes": {},
+  "lastScan": {
+    "timestamp": "2026-01-29T09:04:57.150Z",
+    "duration": 2235,
+    "filesScanned": 67,
+    "patternsFound": 384,
+    "errors": 0
+  },
+  "views": {
+    "status": {
+      "generatedAt": "2026-01-29T09:04:57.161Z",
+      "stale": true,
+      "invalidatedBy": ["pattern stats updated", "security stats updated", "contract stats updated"]
+    },
+    "patternIndex": {
+      "generatedAt": "2026-01-29T09:04:57.161Z",
+      "stale": true,
+      "invalidatedBy": ["pattern stats updated"]
+    },
+    "securitySummary": {
+      "generatedAt": "2026-01-29T09:04:57.161Z",
+      "stale": true,
+      "invalidatedBy": ["security stats updated"]
+    },
+    "trends": {
+      "generatedAt": "2026-01-29T09:04:57.150Z",
+      "stale": true
+    },
+    "examples": {
+      "generatedAt": "2026-01-29T09:04:57.150Z",
+      "stale": true
+    }
+  }
+}

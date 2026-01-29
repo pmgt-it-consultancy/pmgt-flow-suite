@@ -1,0 +1,1318 @@
+{
+  "version": "1.0.0",
+  "category": "logging",
+  "patterns": [
+    {
+      "id": "24d47e4d8e72b034",
+      "subcategory": "structured-logging",
+      "name": "Structured Logging Detector",
+      "description": "Learns structured logging patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "logging/structured-logging",
+          "patternId": "logging/structured-logging/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.38,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 11,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "App.tsx",
+          "line": 9,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "App.tsx",
+          "line": 10,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 56,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.5366666666666666
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 95,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.5366666666666666
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 40,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.5366666666666666
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 56,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.5305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 68,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.5305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 29,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.5305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 51,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.5305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 55,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 67,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.5305263157894737
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 30,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.5366666666666666
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 36,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5366666666666666
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 56,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 55,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/features/index.ts",
+          "line": 2,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 109,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 121,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 140,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 152,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 108,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 120,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 139,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 151,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 9,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 16,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 37,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 39,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 244,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 117,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.5833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 155,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 163,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 166,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 221,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.5833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 240,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.5833333333333333
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 89,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 88,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 95,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["logging", "structured-logging"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4ffd0e8dcce8c1ab",
+      "subcategory": "health-checks",
+      "name": "Health Checks Detector",
+      "description": "Learns health check patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "logging/health-checks",
+          "patternId": "logging/health-checks/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.16,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "App.tsx",
+          "line": 28,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "App.tsx",
+          "line": 28,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 35,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 35,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 28,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 29,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 30,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 20,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["logging", "health-checks"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "632bfd93508162af",
+      "subcategory": "health-checks",
+      "name": "Health Checks Detector",
+      "description": "Learns health check patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "logging/health-checks",
+          "patternId": "logging/health-checks/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.22,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "App.tsx",
+          "line": 34,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "App.tsx",
+          "line": 35,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.56
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 63,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 64,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 304,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 384,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/features/orders/components/CartFooter.tsx",
+          "line": 32,
+          "column": 70,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 42,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 42,
+          "column": 61,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/features/tables/components/TableCard.tsx",
+          "line": 61,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/types/uniwind.d.ts",
+          "line": 96,
+          "column": 5,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.460Z",
+        "lastSeen": "2026-01-29T09:03:44.460Z",
+        "source": "auto-detected",
+        "tags": ["logging", "health-checks"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "71ff4882275bfef1",
+      "subcategory": "structured-logging",
+      "name": "Structured Logging Detector",
+      "description": "Learns structured logging patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "logging/structured-logging",
+          "patternId": "logging/structured-logging/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.8866666666666666,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 7,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 7,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8866666666666666
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["logging", "structured-logging"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b610ceb966aa43d2",
+      "subcategory": "structured-logging",
+      "name": "Structured Logging Detector",
+      "description": "Learns structured logging patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "logging/structured-logging",
+          "patternId": "logging/structured-logging/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.28,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.8533333333333333,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 35,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 40,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 40,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 56,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 56,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 56,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 68,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 68,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 68,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 53,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 56,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 56,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 56,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 109,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 109,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 109,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 121,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 121,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 121,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 140,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 140,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 140,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 152,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 152,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 152,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 89,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 89,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 89,
+          "column": 54,
+          "isOutlier": false,
+          "confidence": 0.83
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.461Z",
+        "lastSeen": "2026-01-29T09:03:44.461Z",
+        "source": "auto-detected",
+        "tags": ["logging", "structured-logging"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "596b99d6083788c6",
+      "subcategory": "structured-logging",
+      "name": "Structured Logging Detector",
+      "description": "Learns structured logging patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "logging/structured-logging",
+          "patternId": "logging/structured-logging/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.07,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 3,
+        "score": 0.83,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 95,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 247,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 353,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 353,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 358,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 358,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 370,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["logging", "structured-logging"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1ad4376b4fc16620",
+      "subcategory": "log-levels",
+      "name": "Log Levels Detector",
+      "description": "Learns log level patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "logging/log-levels",
+          "patternId": "logging/log-levels/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.26,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 29,
+          "column": 36,
+          "isOutlier": true,
+          "confidence": 0.5435294117647058,
+          "outlierReason": "Value below IQR lower bound"
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 51,
+          "column": 36,
+          "isOutlier": true,
+          "confidence": 0.5435294117647058,
+          "outlierReason": "Value below IQR lower bound"
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 55,
+          "column": 16,
+          "isOutlier": true,
+          "confidence": 0.5435294117647058,
+          "outlierReason": "Value below IQR lower bound"
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 67,
+          "column": 14,
+          "isOutlier": true,
+          "confidence": 0.5435294117647058,
+          "outlierReason": "Value below IQR lower bound"
+        },
+        {
+          "file": "src/features/checkout/components/ManagerPinModal.tsx",
+          "line": 55,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 108,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 120,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 139,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/orders/screens/OrderScreen.tsx",
+          "line": 151,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 9,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 16,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 37,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/components/ui/Input.tsx",
+          "line": 39,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 117,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.7430769230769232
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 155,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7430769230769232
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 163,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7430769230769232
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 166,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7430769230769232
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 221,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7430769230769232
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 240,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7430769230769232
+        },
+        {
+          "file": "src/features/tables/screens/TablesScreen.tsx",
+          "line": 88,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["logging", "log-levels"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9e1885b7fadc769b",
+      "subcategory": "context-fields",
+      "name": "Context Fields Detector",
+      "description": "Learns logging context field patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "logging/context-fields",
+          "patternId": "logging/context-fields/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7755555555555556,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 40,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 94,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["logging", "context-fields"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1c6323b1e523c308",
+      "subcategory": "context-fields",
+      "name": "Context Fields Detector",
+      "description": "Learns logging context field patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "logging/context-fields",
+          "patternId": "logging/context-fields/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.3,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.7262500000000001,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 97,
+          "column": 10,
+          "isOutlier": true,
+          "confidence": 0.5755555555555556,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 66,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 68,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 72,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 85,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 88,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 89,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 95,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 99,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 103,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 109,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 114,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 114,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 114,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 114,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 254,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 264,
+          "column": 51,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 267,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 294,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 300,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 301,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 308,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 316,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 327,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 331,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 335,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 352,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 357,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 363,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.7262500000000001
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:03:44.462Z",
+        "source": "auto-detected",
+        "tags": ["logging", "context-fields"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:04:03.791Z",
+  "checksum": "0b567e58ee9f0d3d"
+}

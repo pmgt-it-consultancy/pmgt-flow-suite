@@ -1,0 +1,3380 @@
+{
+  "timestamp": "2026-01-29T09:03:44.479Z",
+  "date": "2026-01-29",
+  "patterns": [
+    {
+      "patternId": "2dbeae00f36e406b",
+      "patternName": "Error Codes Detector",
+      "category": "errors",
+      "confidence": 0.76,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "bc31be6dfbce9975",
+      "patternName": "Error Codes Detector",
+      "category": "errors",
+      "confidence": 0.7949999999999999,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "87bffeca141aecf4",
+      "patternName": "Error Codes Detector",
+      "category": "errors",
+      "confidence": 0.77,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "7ba386ebd11fe45d",
+      "patternName": "Error Logging Detector",
+      "category": "errors",
+      "confidence": 0.95,
+      "locationCount": 10,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "0d8cb67ee70db61c",
+      "patternName": "Error Logging Detector",
+      "category": "errors",
+      "confidence": 0.77,
+      "locationCount": 38,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ed25bd90bd8e1c9f",
+      "patternName": "Error Logging Detector",
+      "category": "errors",
+      "confidence": 0.95,
+      "locationCount": 21,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "db1aa740ff4890e2",
+      "patternName": "Directory Structure Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 75,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d2770632c1c9b64b",
+      "patternName": "Co-Location Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 20,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ce89c762a4b3dbac",
+      "patternName": "Co-Location Detector",
+      "category": "structural",
+      "confidence": 0.8533333333333333,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "34d88ee9b9d9aa08",
+      "patternName": "Barrel Exports Detector",
+      "category": "structural",
+      "confidence": 0.77,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "57249c57b0b7d3c8",
+      "patternName": "Import Ordering Detector",
+      "category": "structural",
+      "confidence": 0.77,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e5fddc12d9a8a0a8",
+      "patternName": "Import Ordering Detector",
+      "category": "structural",
+      "confidence": 0.8999999999999999,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6ba268faf54ae9e7",
+      "patternName": "Import Ordering Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b52137d0ec46d0eb",
+      "patternName": "Circular Dependencies Detector",
+      "category": "structural",
+      "confidence": 0.77,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "708501874326cef0",
+      "patternName": "Circular Dependencies Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 14,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "72d2f58360304b0a",
+      "patternName": "Component Structure Detector",
+      "category": "components",
+      "confidence": 0.77,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a722b57b662994c4",
+      "patternName": "Component Structure Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 36,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "19dcf52f331d3b90",
+      "patternName": "Component Structure Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 91,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6ca8fc9d0c69ed41",
+      "patternName": "Duplicate Detection Detector",
+      "category": "components",
+      "confidence": 0.77,
+      "locationCount": 52,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "05fe05517642fc1c",
+      "patternName": "Duplicate Detection Detector",
+      "category": "components",
+      "confidence": 0.931111111111111,
+      "locationCount": 36,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6a3d8460695e3b00",
+      "patternName": "Near Duplicate Detector",
+      "category": "components",
+      "confidence": 0.77,
+      "locationCount": 33,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "60ccd797ddf718d6",
+      "patternName": "Near Duplicate Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 36,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ff957fe425b12e68",
+      "patternName": "Color Usage Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 29,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "575ed1ced9c25f48",
+      "patternName": "Typography Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 45,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9e2174d6104bf4b4",
+      "patternName": "Typography Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "1ed77957707ffc8b",
+      "patternName": "Class Naming Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "bcc89291f089f5bc",
+      "patternName": "Class Naming Detector",
+      "category": "styling",
+      "confidence": 0.8533333333333333,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "7f59b3896d6a5a24",
+      "patternName": "Tailwind Patterns Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 32,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "1d747afb40a04c38",
+      "patternName": "Structured Logging Detector",
+      "category": "logging",
+      "confidence": 0.95,
+      "locationCount": 10,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "24d47e4d8e72b034",
+      "patternName": "Structured Logging Detector",
+      "category": "logging",
+      "confidence": 0.77,
+      "locationCount": 38,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "0ce272916f2eb918",
+      "patternName": "Structured Logging Detector",
+      "category": "logging",
+      "confidence": 0.95,
+      "locationCount": 21,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "66ace064dfecff97",
+      "patternName": "Log Levels Detector",
+      "category": "logging",
+      "confidence": 0.95,
+      "locationCount": 15,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "feba7a3fea478cf8",
+      "patternName": "Health Checks Detector",
+      "category": "logging",
+      "confidence": 0.95,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4ffd0e8dcce8c1ab",
+      "patternName": "Health Checks Detector",
+      "category": "logging",
+      "confidence": 0.8533333333333333,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "632bfd93508162af",
+      "patternName": "Health Checks Detector",
+      "category": "logging",
+      "confidence": 0.77,
+      "locationCount": 11,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6ffa137b07861181",
+      "patternName": "Query Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ea582e19c3ca4cbb",
+      "patternName": "Required/Optional Detector",
+      "category": "config",
+      "confidence": 0.77,
+      "locationCount": 9,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "91e0b873df5a603f",
+      "patternName": "Default Values Detector",
+      "category": "config",
+      "confidence": 0.77,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "885c19182e855320",
+      "patternName": "Feature Flags Detector",
+      "category": "config",
+      "confidence": 0.95,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "029e22635a97a754",
+      "patternName": "Generic Patterns Detector",
+      "category": "types",
+      "confidence": 0.95,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c95e3588439b0dd2",
+      "patternName": "Generic Patterns Detector",
+      "category": "types",
+      "confidence": 0.77,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "43b78ef04f67f294",
+      "patternName": "Semantic HTML Detector",
+      "category": "accessibility",
+      "confidence": 0.95,
+      "locationCount": 9,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "54aec87f360546fe",
+      "patternName": "Semantic HTML Detector",
+      "category": "accessibility",
+      "confidence": 0.7262500000000001,
+      "locationCount": 27,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c55797e46811063e",
+      "patternName": "Code Splitting Detector",
+      "category": "performance",
+      "confidence": 0.77,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6cab9b7770bfff71",
+      "patternName": "Auth Middleware Detector",
+      "category": "auth",
+      "confidence": 0.77,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ad94466e80c054c1",
+      "patternName": "Auth Middleware Detector",
+      "category": "auth",
+      "confidence": 0.8825,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "fa3acf56727833b5",
+      "patternName": "Auth Middleware Detector",
+      "category": "auth",
+      "confidence": 0.77,
+      "locationCount": 11,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "2d15a84af2bbdb36",
+      "patternName": "Secret Management Detector",
+      "category": "security",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "edb845fd42f6306f",
+      "patternName": "State Patterns Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d9ba452cf8d4e2e7",
+      "patternName": "Composition Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 22,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "2711b7b85860c0ad",
+      "patternName": "Composition Detector",
+      "category": "components",
+      "confidence": 0.7,
+      "locationCount": 13,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4cff06a826d8c944",
+      "patternName": "Query Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.77,
+      "locationCount": 92,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a53fc0440b345db6",
+      "patternName": "Query Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.8427272727272728,
+      "locationCount": 31,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a345c3500d49fa19",
+      "patternName": "Repository Pattern Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9b39564ee31d649d",
+      "patternName": "Connection Pooling Detector",
+      "category": "data-access",
+      "confidence": 0.7949999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9a09644fb8f55082",
+      "patternName": "Connection Pooling Detector",
+      "category": "data-access",
+      "confidence": 0.7949999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "df0d113a077cb574",
+      "patternName": "Query Access Detector",
+      "category": "data-access",
+      "confidence": 0.77,
+      "locationCount": 61,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "019ffea07a59e815",
+      "patternName": "Environment Config Detector",
+      "category": "config",
+      "confidence": 0.8533333333333333,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "50d48be34698249b",
+      "patternName": "Environment Config Detector",
+      "category": "config",
+      "confidence": 0.6533333333333333,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "2ed863b31020357e",
+      "patternName": "Environment Detection Detector",
+      "category": "config",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ac7e72a0ca9ed30d",
+      "patternName": "File Location Detector",
+      "category": "types",
+      "confidence": 0.95,
+      "locationCount": 30,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c9f4f2393ba5f3ee",
+      "patternName": "Naming Conventions Detector",
+      "category": "types",
+      "confidence": 0.95,
+      "locationCount": 30,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ea27c451e707fdf8",
+      "patternName": "Interface vs Type Detector",
+      "category": "types",
+      "confidence": 0.95,
+      "locationCount": 30,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c9120adaf6198fa2",
+      "patternName": "Type Assertions Detector",
+      "category": "types",
+      "confidence": 0.95,
+      "locationCount": 12,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "63f6673fdc947e9b",
+      "patternName": "Caching Patterns Detector",
+      "category": "performance",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "31372234d5ef1082",
+      "patternName": "Response Envelope Detector",
+      "category": "api",
+      "confidence": 0.95,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b01895ba573712be",
+      "patternName": "Response Envelope Detector",
+      "category": "api",
+      "confidence": 0.95,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4282bba16422f7ed",
+      "patternName": "Co-Location Detector",
+      "category": "structural",
+      "confidence": 0.77,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "fa381bfda375912e",
+      "patternName": "Barrel Exports Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "88c2e4af5402845d",
+      "patternName": "Module Boundaries Detector",
+      "category": "structural",
+      "confidence": 0.77,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f600d8590122477c",
+      "patternName": "Class Naming Detector",
+      "category": "styling",
+      "confidence": 0.77,
+      "locationCount": 22,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a72cd0077dc19891",
+      "patternName": "Default Values Detector",
+      "category": "config",
+      "confidence": 0.95,
+      "locationCount": 10,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "04c8d365d842a06e",
+      "patternName": "Readme Structure Detector",
+      "category": "documentation",
+      "confidence": 0.77,
+      "locationCount": 20,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "dbce898ef3aff70f",
+      "patternName": "Memoization Detector",
+      "category": "performance",
+      "confidence": 0.95,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d2a227c3495f83af",
+      "patternName": "Caching Patterns Detector",
+      "category": "performance",
+      "confidence": 0.95,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "85551596c50163ea",
+      "patternName": "Secret Management Detector",
+      "category": "security",
+      "confidence": 0.95,
+      "locationCount": 18,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f40f63dce7f4f14c",
+      "patternName": "Secret Management Detector",
+      "category": "security",
+      "confidence": 0.77,
+      "locationCount": 17,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6af802860e0efd59",
+      "patternName": "File Naming Detector",
+      "category": "structural",
+      "confidence": 0.6299999999999999,
+      "locationCount": 10,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b0ab728331cbe2fd",
+      "patternName": "File Naming Detector",
+      "category": "structural",
+      "confidence": 0.7949999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b1a31c20ce7abf5a",
+      "patternName": "Co-Location Detector",
+      "category": "structural",
+      "confidence": 0.8533333333333333,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e0b0f7af6508c602",
+      "patternName": "Class Naming Detector",
+      "category": "styling",
+      "confidence": 0.8533333333333333,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "08d8ada6c1cf785d",
+      "patternName": "Query Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.8533333333333333,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "efe6989884e4d93b",
+      "patternName": "Query Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.8353846153846154,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "0ff51d69d7b4ffed",
+      "patternName": "Validation Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "caa61b276cd74c8f",
+      "patternName": "N+1 Query Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "1f0c7736b0075385",
+      "patternName": "Query Access Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "92f913cbfad7a723",
+      "patternName": "Environment Config Detector",
+      "category": "config",
+      "confidence": 0.8533333333333333,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a5610a4734c0ac3c",
+      "patternName": "File Location Detector",
+      "category": "types",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "739ebf581897370f",
+      "patternName": "Naming Conventions Detector",
+      "category": "types",
+      "confidence": 0.8533333333333333,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "13aa7077028d87bf",
+      "patternName": "Naming Conventions Detector",
+      "category": "types",
+      "confidence": 0.77,
+      "locationCount": 75,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9eebd66e650df4e1",
+      "patternName": "Memoization Detector",
+      "category": "performance",
+      "confidence": 0.7949999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b231d99c374bc37e",
+      "patternName": "Caching Patterns Detector",
+      "category": "performance",
+      "confidence": 0.95,
+      "locationCount": 31,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "73e1943c757e9267",
+      "patternName": "Resource Ownership Detector",
+      "category": "auth",
+      "confidence": 0.95,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "640f863dc5e36bdd",
+      "patternName": "Package Boundaries Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ccf09a1d958370ae",
+      "patternName": "Component Structure Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "cc99623af1198859",
+      "patternName": "Query Access Detector",
+      "category": "data-access",
+      "confidence": 0.77,
+      "locationCount": 28,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "22fe2ee3dbf52dd0",
+      "patternName": "Input Sanitization Detector",
+      "category": "security",
+      "confidence": 0.95,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "013c0478364d47a9",
+      "patternName": "Input Sanitization Detector",
+      "category": "security",
+      "confidence": 0.6533333333333333,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "2e4e67342721b870",
+      "patternName": "Secret Management Detector",
+      "category": "security",
+      "confidence": 0.8533333333333333,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "5f9b7cbefaa027da",
+      "patternName": "Exception Hierarchy Detector",
+      "category": "errors",
+      "confidence": 0.7847058823529411,
+      "locationCount": 28,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a3bbbe96a2d4f198",
+      "patternName": "Exception Hierarchy Detector",
+      "category": "errors",
+      "confidence": 0.8825,
+      "locationCount": 43,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "434d902afc39710b",
+      "patternName": "Exception Hierarchy Detector",
+      "category": "errors",
+      "confidence": 0.77,
+      "locationCount": 35,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "38f8a8490f2e2d27",
+      "patternName": "Try/Catch Detector",
+      "category": "errors",
+      "confidence": 0.77,
+      "locationCount": 34,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "8a880c3ec315a663",
+      "patternName": "Try/Catch Detector",
+      "category": "errors",
+      "confidence": 0.8533333333333333,
+      "locationCount": 16,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "187ffcd4a65c5feb",
+      "patternName": "Try/Catch Detector",
+      "category": "errors",
+      "confidence": 0.8533333333333333,
+      "locationCount": 28,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d45d271cf94c331d",
+      "patternName": "Async Errors Detector",
+      "category": "errors",
+      "confidence": 0.87,
+      "locationCount": 34,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f07e857ee60dee08",
+      "patternName": "Async Errors Detector",
+      "category": "errors",
+      "confidence": 0.6699999999999999,
+      "locationCount": 27,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "67e0508b6c46a2cf",
+      "patternName": "Error Logging Detector",
+      "category": "errors",
+      "confidence": 0.8866666666666666,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "412c446a6cbff23a",
+      "patternName": "Error Logging Detector",
+      "category": "errors",
+      "confidence": 0.8533333333333333,
+      "locationCount": 28,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ab4271677e5a946c",
+      "patternName": "Component Structure Detector",
+      "category": "components",
+      "confidence": 0.931111111111111,
+      "locationCount": 13,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c8b1d63c1b692865",
+      "patternName": "Props Patterns Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c85a3883401a60d9",
+      "patternName": "Props Patterns Detector",
+      "category": "components",
+      "confidence": 0.6533333333333333,
+      "locationCount": 29,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "23c6dd6a3664ccb5",
+      "patternName": "Duplicate Detection Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 61,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a46b599f33440320",
+      "patternName": "Duplicate Detection Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "82fba7e496b6325a",
+      "patternName": "Near Duplicate Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 61,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d3426747c8c2e7c7",
+      "patternName": "Near Duplicate Detector",
+      "category": "components",
+      "confidence": 0.931111111111111,
+      "locationCount": 11,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "22cff38c20f7c1dd",
+      "patternName": "State Patterns Detector",
+      "category": "components",
+      "confidence": 0.8825,
+      "locationCount": 16,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "5ec9b0c44d5ceb54",
+      "patternName": "Modal Patterns Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 23,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "87b140ce261e5a7d",
+      "patternName": "Modal Patterns Detector",
+      "category": "components",
+      "confidence": 0.6824999999999999,
+      "locationCount": 30,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "326d975dd4bd9500",
+      "patternName": "Design Tokens Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 85,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ba81fc960ac01a2d",
+      "patternName": "Typography Detector",
+      "category": "styling",
+      "confidence": 0.6824999999999999,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "469c4af40e763959",
+      "patternName": "Tailwind Patterns Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 44,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "92184fdb54a82255",
+      "patternName": "Tailwind Patterns Detector",
+      "category": "styling",
+      "confidence": 0.77,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "71ff4882275bfef1",
+      "patternName": "Structured Logging Detector",
+      "category": "logging",
+      "confidence": 0.8866666666666666,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b610ceb966aa43d2",
+      "patternName": "Structured Logging Detector",
+      "category": "logging",
+      "confidence": 0.8533333333333333,
+      "locationCount": 28,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9edd387577b7450f",
+      "patternName": "Log Levels Detector",
+      "category": "logging",
+      "confidence": 0.95,
+      "locationCount": 28,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "eecd00da74403328",
+      "patternName": "Context Fields Detector",
+      "category": "logging",
+      "confidence": 0.95,
+      "locationCount": 20,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e1541a86f4dbbb75",
+      "patternName": "Test Structure Detector",
+      "category": "testing",
+      "confidence": 0.77,
+      "locationCount": 79,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9f30d9f0a06d3660",
+      "patternName": "Sensitive Field Detector",
+      "category": "data-access",
+      "confidence": 0.595,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "2e654d489bf6b581",
+      "patternName": "Sensitive Field Detector",
+      "category": "data-access",
+      "confidence": 0.77,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d4beadbeecf13814",
+      "patternName": "Sensitive Field Detector",
+      "category": "data-access",
+      "confidence": 0.77,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "0aae09b57730fa05",
+      "patternName": "Feature Flags Detector",
+      "category": "config",
+      "confidence": 0.95,
+      "locationCount": 73,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "3c543c4df62cbfe7",
+      "patternName": "File Location Detector",
+      "category": "types",
+      "confidence": 0.77,
+      "locationCount": 72,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "bcc40d1d092a87e4",
+      "patternName": "Interface vs Type Detector",
+      "category": "types",
+      "confidence": 0.77,
+      "locationCount": 84,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "59d8cb8dc56a9ee3",
+      "patternName": "Generic Patterns Detector",
+      "category": "types",
+      "confidence": 0.845,
+      "locationCount": 35,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b82def13b5e55370",
+      "patternName": "Generic Patterns Detector",
+      "category": "types",
+      "confidence": 0.95,
+      "locationCount": 100,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e065692cbf4291d1",
+      "patternName": "Type Assertions Detector",
+      "category": "types",
+      "confidence": 0.8766666666666667,
+      "locationCount": 21,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c3b38e39256bfacd",
+      "patternName": "Type Assertions Detector",
+      "category": "types",
+      "confidence": 0.92625,
+      "locationCount": 24,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a9698ba5fa7f4e1b",
+      "patternName": "Type Assertions Detector",
+      "category": "types",
+      "confidence": 0.7395652173913043,
+      "locationCount": 62,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "305dd57c7650aeca",
+      "patternName": "Any Usage Detector",
+      "category": "types",
+      "confidence": 0.77,
+      "locationCount": 38,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "dd941209a1402bf8",
+      "patternName": "Keyboard Navigation Detector",
+      "category": "accessibility",
+      "confidence": 0.95,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4a8e9b079897f4b0",
+      "patternName": "Alt Text Detector",
+      "category": "accessibility",
+      "confidence": 0.7949999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b1e14a79b81d910a",
+      "patternName": "Alt Text Detector",
+      "category": "accessibility",
+      "confidence": 0.77,
+      "locationCount": 16,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d6fed6ee8958048e",
+      "patternName": "Lazy Loading Detector",
+      "category": "performance",
+      "confidence": 0.95,
+      "locationCount": 19,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "3214db7dc69d0145",
+      "patternName": "Lazy Loading Detector",
+      "category": "performance",
+      "confidence": 0.95,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e8229b0e6cf77fb3",
+      "patternName": "Bundle Size Detector",
+      "category": "performance",
+      "confidence": 0.95,
+      "locationCount": 74,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "8b9bd160750f9647",
+      "patternName": "Response Envelope Detector",
+      "category": "api",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "74dce6ac012ab1fa",
+      "patternName": "Auth Middleware Detector",
+      "category": "auth",
+      "confidence": 0.8825,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "841085385c297593",
+      "patternName": "Token Handling Detector",
+      "category": "auth",
+      "confidence": 0.77,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "94e3af6ab52d8739",
+      "patternName": "Permission Checks Detector",
+      "category": "auth",
+      "confidence": 0.8533333333333333,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "17ad6532a9f36d6e",
+      "patternName": "Permission Checks Detector",
+      "category": "auth",
+      "confidence": 0.77,
+      "locationCount": 10,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "519597b5ed286c69",
+      "patternName": "Permission Checks Detector",
+      "category": "auth",
+      "confidence": 0.83,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "dd22dfc9450f35d8",
+      "patternName": "RBAC Patterns Detector",
+      "category": "auth",
+      "confidence": 0.8066666666666666,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "5f4970ba94d2e5ab",
+      "patternName": "RBAC Patterns Detector",
+      "category": "auth",
+      "confidence": 0.6066666666666667,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ec759a6ea57f7cc8",
+      "patternName": "RBAC Patterns Detector",
+      "category": "auth",
+      "confidence": 0.8066666666666666,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9bfe3ab6b2b2514d",
+      "patternName": "Exception Hierarchy Detector",
+      "category": "errors",
+      "confidence": 0.95,
+      "locationCount": 12,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f6c7d2886813a775",
+      "patternName": "Try/Catch Detector",
+      "category": "errors",
+      "confidence": 0.95,
+      "locationCount": 12,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "bca2ee774497ea18",
+      "patternName": "Error Propagation Detector",
+      "category": "errors",
+      "confidence": 0.77,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f29727cea59c0ba7",
+      "patternName": "Error Logging Detector",
+      "category": "errors",
+      "confidence": 0.83,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "7ffe1d29b1f2ec00",
+      "patternName": "File Naming Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 38,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "3f4cd868db7ca57b",
+      "patternName": "Import Ordering Detector",
+      "category": "structural",
+      "confidence": 0.8996296296296297,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "46bb3f26b025994d",
+      "patternName": "Import Ordering Detector",
+      "category": "structural",
+      "confidence": 0.8144444444444444,
+      "locationCount": 9,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6518e62c1c3c0c7d",
+      "patternName": "Import Ordering Detector",
+      "category": "structural",
+      "confidence": 0.8996296296296297,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "20997a2691919ce8",
+      "patternName": "Package Boundaries Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 18,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d00416af5ce6a1b7",
+      "patternName": "Component Structure Detector",
+      "category": "components",
+      "confidence": 0.9116666666666666,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "012bf5d676c29619",
+      "patternName": "Duplicate Detection Detector",
+      "category": "components",
+      "confidence": 0.935,
+      "locationCount": 9,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9e73b7cd58830ec6",
+      "patternName": "Near Duplicate Detector",
+      "category": "components",
+      "confidence": 0.9116666666666666,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "596b99d6083788c6",
+      "patternName": "Structured Logging Detector",
+      "category": "logging",
+      "confidence": 0.83,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "1ad4376b4fc16620",
+      "patternName": "Log Levels Detector",
+      "category": "logging",
+      "confidence": 0.77,
+      "locationCount": 20,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c0c586f4fed51385",
+      "patternName": "Log Levels Detector",
+      "category": "logging",
+      "confidence": 0.9430769230769231,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9e1885b7fadc769b",
+      "patternName": "Context Fields Detector",
+      "category": "logging",
+      "confidence": 0.7755555555555556,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d66813ca8a012bb5",
+      "patternName": "Context Fields Detector",
+      "category": "logging",
+      "confidence": 0.92625,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "1c6323b1e523c308",
+      "patternName": "Context Fields Detector",
+      "category": "logging",
+      "confidence": 0.7262500000000001,
+      "locationCount": 29,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "57292378bd62721b",
+      "patternName": "Fixture Patterns Detector",
+      "category": "testing",
+      "confidence": 0.95,
+      "locationCount": 13,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f7cd9f55a72483d5",
+      "patternName": "DTO Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 13,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e525327d212459b0",
+      "patternName": "N+1 Query Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f5345cf54bdb22e3",
+      "patternName": "Query Access Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c40ad2824204fd70",
+      "patternName": "Sensitive Field Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c4aae2df424f744e",
+      "patternName": "Generic Patterns Detector",
+      "category": "types",
+      "confidence": 0.95,
+      "locationCount": 20,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "7f51c80cf802a598",
+      "patternName": "ARIA Roles Detector",
+      "category": "accessibility",
+      "confidence": 0.8533333333333333,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "348354330c7cce1b",
+      "patternName": "ARIA Roles Detector",
+      "category": "accessibility",
+      "confidence": 0.8533333333333333,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4cf45fc5ffeebaa7",
+      "patternName": "Readme Structure Detector",
+      "category": "documentation",
+      "confidence": 0.8922222222222222,
+      "locationCount": 10,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "04d0a80f5cc8da7c",
+      "patternName": "Memoization Detector",
+      "category": "performance",
+      "confidence": 0.9161538461538461,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a6f29ce8c43de4e8",
+      "patternName": "Memoization Detector",
+      "category": "performance",
+      "confidence": 0.9161538461538461,
+      "locationCount": 31,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "30a354399547ae00",
+      "patternName": "Auth Middleware Detector",
+      "category": "auth",
+      "confidence": 0.83,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9367bef623af09f9",
+      "patternName": "Secret Management Detector",
+      "category": "security",
+      "confidence": 0.8533333333333333,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "7d6d770605dc1ece",
+      "patternName": "Generic Patterns Detector",
+      "category": "types",
+      "confidence": 0.85,
+      "locationCount": 10,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "5a194ca9904b6c15",
+      "patternName": "Type Assertions Detector",
+      "category": "types",
+      "confidence": 0.9395652173913043,
+      "locationCount": 10,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6d407e582528f367",
+      "patternName": "Semantic HTML Detector",
+      "category": "accessibility",
+      "confidence": 0.92625,
+      "locationCount": 9,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c3fd37016d101094",
+      "patternName": "Keyboard Navigation Detector",
+      "category": "accessibility",
+      "confidence": 0.8533333333333333,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "eb96d6e36a06e0a2",
+      "patternName": "Keyboard Navigation Detector",
+      "category": "accessibility",
+      "confidence": 0.77,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ee09223833a32b48",
+      "patternName": "Auth Middleware Detector",
+      "category": "auth",
+      "confidence": 0.95,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "95a1d22ae636e0ce",
+      "patternName": "Input Sanitization Detector",
+      "category": "security",
+      "confidence": 0.95,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "60626cbc84d7b2e7",
+      "patternName": "Modal Patterns Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "befa14f05f6b3479",
+      "patternName": "Design Tokens Detector",
+      "category": "styling",
+      "confidence": 0.7408333333333332,
+      "locationCount": 22,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "36d8bd1b15391f1c",
+      "patternName": "Color Usage Detector",
+      "category": "styling",
+      "confidence": 0.6824999999999999,
+      "locationCount": 10,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "8301d0f5719b65e3",
+      "patternName": "Z-Index Scale Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d035359765ea9065",
+      "patternName": "Z-Index Scale Detector",
+      "category": "styling",
+      "confidence": 0.6824999999999999,
+      "locationCount": 16,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "2d014c8028da92e8",
+      "patternName": "Responsive Detector",
+      "category": "styling",
+      "confidence": 0.77,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "db34974ee2800e90",
+      "patternName": "Test Structure Detector",
+      "category": "testing",
+      "confidence": 0.931111111111111,
+      "locationCount": 21,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c5d6ecd4d8d36de9",
+      "patternName": "Describe Naming Detector",
+      "category": "testing",
+      "confidence": 0.931111111111111,
+      "locationCount": 21,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "7772c986c1c0a20d",
+      "patternName": "Describe Naming Detector",
+      "category": "testing",
+      "confidence": 0.77,
+      "locationCount": 77,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e23b8a086f2efb20",
+      "patternName": "Query Access Detector",
+      "category": "data-access",
+      "confidence": 0.92625,
+      "locationCount": 47,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "71cd247660f0329e",
+      "patternName": "File Location Detector",
+      "category": "types",
+      "confidence": 0.945,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "cfd68016d1ef6ddf",
+      "patternName": "File Location Detector",
+      "category": "types",
+      "confidence": 0.8999999999999999,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ea82347236bbed09",
+      "patternName": "Naming Conventions Detector",
+      "category": "types",
+      "confidence": 0.945,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "5cd66563b41b3902",
+      "patternName": "Interface vs Type Detector",
+      "category": "types",
+      "confidence": 0.945,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "0554bda7a69b09ee",
+      "patternName": "Interface vs Type Detector",
+      "category": "types",
+      "confidence": 0.8533333333333333,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "01c0e7b80c6a42a4",
+      "patternName": "Alt Text Detector",
+      "category": "accessibility",
+      "confidence": 0.95,
+      "locationCount": 14,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "08d1c724c65fa7f1",
+      "patternName": "Color Usage Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 12,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "513f5607ab834c0e",
+      "patternName": "Test Structure Detector",
+      "category": "testing",
+      "confidence": 0.95,
+      "locationCount": 15,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "3e42d9c1eb8261ca",
+      "patternName": "Describe Naming Detector",
+      "category": "testing",
+      "confidence": 0.95,
+      "locationCount": 15,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e8eddc8bfb8cc92d",
+      "patternName": "Permission Checks Detector",
+      "category": "auth",
+      "confidence": 0.76,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "61689d0382a8b9f4",
+      "patternName": "Permission Checks Detector",
+      "category": "auth",
+      "confidence": 0.76,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b5cfb3cf92fdf58b",
+      "patternName": "Audit Logging Detector",
+      "category": "auth",
+      "confidence": 0.8533333333333333,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4c1a1758168fcbe3",
+      "patternName": "Audit Logging Detector",
+      "category": "auth",
+      "confidence": 0.6533333333333333,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "45740736e5671af6",
+      "patternName": "File Naming Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 14,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "99eed6fd3b8086b5",
+      "patternName": "State Patterns Detector",
+      "category": "components",
+      "confidence": 0.6745454545454546,
+      "locationCount": 15,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "dec22321ea193828",
+      "patternName": "State Patterns Detector",
+      "category": "components",
+      "confidence": 0.8745454545454545,
+      "locationCount": 30,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "00c998e27c1b787f",
+      "patternName": "Modal Patterns Detector",
+      "category": "components",
+      "confidence": 0.8109090909090909,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b516629bfc9737ca",
+      "patternName": "Query Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.7949999999999999,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "8f2800b2f2d4791d",
+      "patternName": "Repository Pattern Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 30,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b1687454528effef",
+      "patternName": "Validation Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.76,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d055385ea43d4c7e",
+      "patternName": "Validation Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.77,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b1236bfc6b0bcb9c",
+      "patternName": "Query Access Detector",
+      "category": "data-access",
+      "confidence": 0.8533333333333333,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e4975f046bd5068f",
+      "patternName": "Config Validation Detector",
+      "category": "config",
+      "confidence": 0.76,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4b014a09895c86dc",
+      "patternName": "Config Validation Detector",
+      "category": "config",
+      "confidence": 0.76,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "3474d63819967c80",
+      "patternName": "Config Validation Detector",
+      "category": "config",
+      "confidence": 0.77,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d9713356804dd258",
+      "patternName": "ARIA Roles Detector",
+      "category": "accessibility",
+      "confidence": 0.77,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ecde02843718b0ed",
+      "patternName": "JSDoc Patterns Detector",
+      "category": "documentation",
+      "confidence": 0.77,
+      "locationCount": 12,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "82094a2e36401168",
+      "patternName": "JSDoc Patterns Detector",
+      "category": "documentation",
+      "confidence": 0.95,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "23266ecc5c7e6ea6",
+      "patternName": "Readme Structure Detector",
+      "category": "documentation",
+      "confidence": 0.7949999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "1c3fbda00afb0950",
+      "patternName": "Response Envelope Detector",
+      "category": "api",
+      "confidence": 0.95,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ad2a3c87a0ef3552",
+      "patternName": "Permission Checks Detector",
+      "category": "auth",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "84b98ef908795d94",
+      "patternName": "Tailwind Patterns Detector",
+      "category": "styling",
+      "confidence": 0.8533333333333333,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "710872ccf4a9b5db",
+      "patternName": "Health Checks Detector",
+      "category": "logging",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "93142b61f75f5193",
+      "patternName": "Repository Pattern Detector",
+      "category": "data-access",
+      "confidence": 0.7,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4d83258e8a37dffe",
+      "patternName": "Transaction Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e1364d717ee8a6ca",
+      "patternName": "Validation Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.9255555555555556,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "23d9c8f5124d3b4b",
+      "patternName": "Validation Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.8533333333333333,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "987b57711332568c",
+      "patternName": "ORM Model Detector",
+      "category": "data-access",
+      "confidence": 0.77,
+      "locationCount": 31,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "48fce6e1e6d88135",
+      "patternName": "ORM Model Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 23,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "bc3dac08c90fba71",
+      "patternName": "Config Validation Detector",
+      "category": "config",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "321c824d1dd2875f",
+      "patternName": "Config Validation Detector",
+      "category": "config",
+      "confidence": 0.8533333333333333,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "fbbd3fdaf427d118",
+      "patternName": "Type Assertions Detector",
+      "category": "types",
+      "confidence": 0.9333333333333333,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b224f9ef2ca6bcf9",
+      "patternName": "Deprecation Detector",
+      "category": "documentation",
+      "confidence": 0.7949999999999999,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "dbaa3f3af74cdcdc",
+      "patternName": "Deprecation Detector",
+      "category": "documentation",
+      "confidence": 0.7949999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "821f835588235ee7",
+      "patternName": "Deprecation Detector",
+      "category": "documentation",
+      "confidence": 0.595,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b533ec8ab53c96e7",
+      "patternName": "Caching Patterns Detector",
+      "category": "performance",
+      "confidence": 0.7,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "175152f902e714d1",
+      "patternName": "Permission Checks Detector",
+      "category": "auth",
+      "confidence": 0.95,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f477c778668b0575",
+      "patternName": "Validation Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c35c0a6e498fa4ff",
+      "patternName": "Config Validation Detector",
+      "category": "config",
+      "confidence": 0.95,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "134b92703ceea7c2",
+      "patternName": "ORM Model Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 9,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "fe8370a0a49bfed9",
+      "patternName": "Query Access Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 9,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b373fe247e06709b",
+      "patternName": "Query Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "046ebe1c8ab57d74",
+      "patternName": "Query Access Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "566d279222c29fef",
+      "patternName": "Todo Patterns Detector",
+      "category": "documentation",
+      "confidence": 0.95,
+      "locationCount": 11,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c4c7ccd21b99aaa8",
+      "patternName": "Todo Patterns Detector",
+      "category": "documentation",
+      "confidence": 0.6824999999999999,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d5ec263d0c7385c0",
+      "patternName": "Todo Patterns Detector",
+      "category": "documentation",
+      "confidence": 0.76,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d2ab0780a8dada15",
+      "patternName": "CSP Headers Detector",
+      "category": "security",
+      "confidence": 0.95,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9249ba7c3d70062a",
+      "patternName": "Spacing Scale Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 17,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "121ba9d13fb3b84a",
+      "patternName": "Input Sanitization Detector",
+      "category": "security",
+      "confidence": 0.83,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4ad698d73e3ae6ca",
+      "patternName": "Spacing Scale Detector",
+      "category": "styling",
+      "confidence": 0.7949999999999999,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6f44d419808fe380",
+      "patternName": "Fixture Patterns Detector",
+      "category": "testing",
+      "confidence": 0.92625,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a00a05ecbb9c1cb7",
+      "patternName": "DTO Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.92625,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "01118ce51442ff40",
+      "patternName": "Semantic HTML Detector",
+      "category": "accessibility",
+      "confidence": 0.82,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "454e84975286e2c6",
+      "patternName": "Props Patterns Detector",
+      "category": "components",
+      "confidence": 0.7949999999999999,
+      "locationCount": 24,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9581c344de0c928d",
+      "patternName": "Typography Detector",
+      "category": "styling",
+      "confidence": 0.77,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f835e8246d7f8b7c",
+      "patternName": "Responsive Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 20,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "1adf375178e609fc",
+      "patternName": "Required/Optional Detector",
+      "category": "config",
+      "confidence": 0.95,
+      "locationCount": 7,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "51cda3aa1d696862",
+      "patternName": "Feature Flags Detector",
+      "category": "config",
+      "confidence": 0.6299999999999999,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6f1f3590b99aa419",
+      "patternName": "Feature Flags Detector",
+      "category": "config",
+      "confidence": 0.83,
+      "locationCount": 13,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4d4bfd186b52266a",
+      "patternName": "Naming Conventions Detector",
+      "category": "types",
+      "confidence": 0.7949999999999999,
+      "locationCount": 24,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ccd1b396f2c885ae",
+      "patternName": "Utility Types Detector",
+      "category": "types",
+      "confidence": 0.77,
+      "locationCount": 14,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9d902828ecb95e62",
+      "patternName": "Bundle Size Detector",
+      "category": "performance",
+      "confidence": 0.595,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6c882eb5352bcb78",
+      "patternName": "Bundle Size Detector",
+      "category": "performance",
+      "confidence": 0.7949999999999999,
+      "locationCount": 8,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "3a7b091b2ff0b221",
+      "patternName": "Ref Forwarding Detector",
+      "category": "components",
+      "confidence": 0.7283333333333333,
+      "locationCount": 54,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "3d48cffbeee5504e",
+      "patternName": "Ref Forwarding Detector",
+      "category": "components",
+      "confidence": 0.9283333333333332,
+      "locationCount": 23,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f10fad2d73fa0b8a",
+      "patternName": "Ref Forwarding Detector",
+      "category": "components",
+      "confidence": 0.8533333333333333,
+      "locationCount": 6,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "0e6c36c3b24e20e9",
+      "patternName": "Design Tokens Detector",
+      "category": "styling",
+      "confidence": 0.8533333333333333,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "325b34a780026a80",
+      "patternName": "Typography Detector",
+      "category": "styling",
+      "confidence": 0.7561111111111111,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "92df6957bdffeaa1",
+      "patternName": "Class Naming Detector",
+      "category": "styling",
+      "confidence": 0.83,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "623684e5895a93d3",
+      "patternName": "Feature Flags Detector",
+      "category": "config",
+      "confidence": 0.7546153846153846,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d754bd862a2f1e97",
+      "patternName": "Lazy Loading Detector",
+      "category": "performance",
+      "confidence": 0.6824999999999999,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "0c0f19bf13cdacb2",
+      "patternName": "Bundle Size Detector",
+      "category": "performance",
+      "confidence": 0.75125,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "95e535a69cd709fa",
+      "patternName": "Spacing Scale Detector",
+      "category": "styling",
+      "confidence": 0.8999999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "857a356fc2695c65",
+      "patternName": "Input Sanitization Detector",
+      "category": "security",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "cdbcb48a2ae3fff6",
+      "patternName": "Props Patterns Detector",
+      "category": "components",
+      "confidence": 0.8866666666666666,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "d483b594cb1c56ce",
+      "patternName": "Props Patterns Detector",
+      "category": "components",
+      "confidence": 0.7949999999999999,
+      "locationCount": 5,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "2144ff1da5c2e8dd",
+      "patternName": "CSP Headers Detector",
+      "category": "security",
+      "confidence": 0.595,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "584fc2491ff60df6",
+      "patternName": "Modal Patterns Detector",
+      "category": "components",
+      "confidence": 0.95,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e2587fe671fc1abc",
+      "patternName": "Z-Index Scale Detector",
+      "category": "styling",
+      "confidence": 0.91,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4d7599e39dd94848",
+      "patternName": "Z-Index Scale Detector",
+      "category": "styling",
+      "confidence": 0.8825,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "9c4920af956d362f",
+      "patternName": "Typography Detector",
+      "category": "styling",
+      "confidence": 0.8575,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ce51fd77085da869",
+      "patternName": "Tailwind Patterns Detector",
+      "category": "styling",
+      "confidence": 0.90125,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "a3b572b64f943d8e",
+      "patternName": "Heading Hierarchy Detector",
+      "category": "accessibility",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "45dbf6bb5f12bbf8",
+      "patternName": "XSS Prevention Detector",
+      "category": "security",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "6f83c2e99ae3e4c9",
+      "patternName": "XSS Prevention Detector",
+      "category": "security",
+      "confidence": 0.6199999999999999,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "3c226c04ea7bdcc8",
+      "patternName": "XSS Prevention Detector",
+      "category": "security",
+      "confidence": 0.82,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b1e7e81f23f3bc37",
+      "patternName": "CSP Headers Detector",
+      "category": "security",
+      "confidence": 0.8745454545454545,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "8fd279a8824df487",
+      "patternName": "CSP Headers Detector",
+      "category": "security",
+      "confidence": 0.8745454545454545,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "04b8ba0d08e7d63c",
+      "patternName": "Async Errors Detector",
+      "category": "errors",
+      "confidence": 0.87,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "8c9f1253f38a8b33",
+      "patternName": "State Patterns Detector",
+      "category": "components",
+      "confidence": 0.76,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b97a2df1e538321f",
+      "patternName": "Spacing Scale Detector",
+      "category": "styling",
+      "confidence": 0.5885185185185184,
+      "locationCount": 13,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "cb4c2bdd350b21b3",
+      "patternName": "Fixture Patterns Detector",
+      "category": "testing",
+      "confidence": 0.7262500000000001,
+      "locationCount": 28,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "3cd8931d379d81dd",
+      "patternName": "Repository Pattern Detector",
+      "category": "data-access",
+      "confidence": 0.76,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "5307132d8347ccc6",
+      "patternName": "Transaction Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.595,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c8771df7c2dc3f82",
+      "patternName": "DTO Patterns Detector",
+      "category": "data-access",
+      "confidence": 0.7262500000000001,
+      "locationCount": 28,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4ded9da2cca74dbd",
+      "patternName": "Semantic HTML Detector",
+      "category": "accessibility",
+      "confidence": 0.95,
+      "locationCount": 4,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "038c108dcee2f5e1",
+      "patternName": "JSDoc Patterns Detector",
+      "category": "documentation",
+      "confidence": 0.8533333333333333,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "7fab86503af619f5",
+      "patternName": "CSP Headers Detector",
+      "category": "security",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "b084ad29343ff139",
+      "patternName": "Semantic HTML Detector",
+      "category": "accessibility",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "2aacb50046dba39f",
+      "patternName": "Responsive Detector",
+      "category": "styling",
+      "confidence": 0.95,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "688289fe627e2142",
+      "patternName": "Test Structure Detector",
+      "category": "testing",
+      "confidence": 0.7949999999999999,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "93f18c8ce69810db",
+      "patternName": "Describe Naming Detector",
+      "category": "testing",
+      "confidence": 0.7949999999999999,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "8d298f34e42c86fd",
+      "patternName": "ORM Model Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ba5016961288443c",
+      "patternName": "CSP Headers Detector",
+      "category": "security",
+      "confidence": 0.95,
+      "locationCount": 3,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "e9c81c6ec4f21ee2",
+      "patternName": "Import Ordering Detector",
+      "category": "structural",
+      "confidence": 0.7309756097560975,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "4f6b6f1df516bef6",
+      "patternName": "State Patterns Detector",
+      "category": "components",
+      "confidence": 0.8745454545454545,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "7cc1f2a02a814537",
+      "patternName": "Repository Pattern Detector",
+      "category": "data-access",
+      "confidence": 0.8999999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "cb2263fb1c590752",
+      "patternName": "Caching Patterns Detector",
+      "category": "performance",
+      "confidence": 0.8999999999999999,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "64b88d1645080939",
+      "patternName": "Audit Logging Detector",
+      "category": "auth",
+      "confidence": 0.7949999999999999,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "0b8c34e9efa6fcae",
+      "patternName": "Directory Structure Detector",
+      "category": "structural",
+      "confidence": 0.77,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "ad781bfacdfecae0",
+      "patternName": "Ref Forwarding Detector",
+      "category": "components",
+      "confidence": 0.9283333333333332,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "f341cd551a9e7670",
+      "patternName": "Directory Structure Detector",
+      "category": "structural",
+      "confidence": 0.95,
+      "locationCount": 2,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    },
+    {
+      "patternId": "c22d5a31b8d64cfe",
+      "patternName": "ORM Model Detector",
+      "category": "data-access",
+      "confidence": 0.95,
+      "locationCount": 1,
+      "outlierCount": 0,
+      "complianceRate": 1,
+      "status": "discovered"
+    }
+  ],
+  "summary": {
+    "totalPatterns": 326,
+    "avgConfidence": 0.8558577169760581,
+    "totalLocations": 5807,
+    "totalOutliers": 0,
+    "overallComplianceRate": 1,
+    "byCategory": {
+      "errors": {
+        "patternCount": 21,
+        "avgConfidence": 0.8361367880485526,
+        "totalLocations": 390,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "structural": {
+        "patternCount": 25,
+        "avgConfidence": 0.8598538392050585,
+        "totalLocations": 728,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "components": {
+        "patternCount": 38,
+        "avgConfidence": 0.8694617224880381,
+        "totalLocations": 969,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "styling": {
+        "patternCount": 33,
+        "avgConfidence": 0.8515923120089783,
+        "totalLocations": 817,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "logging": {
+        "patternCount": 18,
+        "avgConfidence": 0.8752481006647672,
+        "totalLocations": 257,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "data-access": {
+        "patternCount": 44,
+        "avgConfidence": 0.8608503964469871,
+        "totalLocations": 610,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "config": {
+        "patternCount": 19,
+        "avgConfidence": 0.837260458839406,
+        "totalLocations": 164,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "types": {
+        "patternCount": 28,
+        "avgConfidence": 0.877394539337474,
+        "totalLocations": 919,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "accessibility": {
+        "patternCount": 16,
+        "avgConfidence": 0.8648437499999998,
+        "totalLocations": 110,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "performance": {
+        "patternCount": 17,
+        "avgConfidence": 0.8512386877828055,
+        "totalLocations": 305,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "auth": {
+        "patternCount": 21,
+        "avgConfidence": 0.8190476190476188,
+        "totalLocations": 87,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "security": {
+        "patternCount": 19,
+        "avgConfidence": 0.8575837320574162,
+        "totalLocations": 86,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "api": {
+        "patternCount": 4,
+        "avgConfidence": 0.95,
+        "totalLocations": 10,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "documentation": {
+        "patternCount": 12,
+        "avgConfidence": 0.8006712962962963,
+        "totalLocations": 75,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      },
+      "testing": {
+        "patternCount": 11,
+        "avgConfidence": 0.8631565656565656,
+        "totalLocations": 280,
+        "totalOutliers": 0,
+        "complianceRate": 1
+      }
+    }
+  }
+}

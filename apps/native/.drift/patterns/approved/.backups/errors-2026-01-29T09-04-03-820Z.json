@@ -1,0 +1,528 @@
+{
+  "version": "1.0.0",
+  "category": "errors",
+  "patterns": [
+    {
+      "id": "7ba386ebd11fe45d",
+      "subcategory": "error-logging",
+      "name": "Error Logging Detector",
+      "description": "Learns error logging patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "errors/error-logging",
+          "patternId": "errors/error-logging/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "App.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/auth/components/index.ts",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/auth/components/index.ts",
+          "line": 1,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 4,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/auth/screens/index.ts",
+          "line": 1,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/auth/screens/index.ts",
+          "line": 1,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 9,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 1,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 1,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 6,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.459Z",
+        "lastSeen": "2026-01-29T09:04:02.144Z",
+        "source": "auto-detected",
+        "tags": ["errors", "error-logging"],
+        "approvedAt": "2026-01-29T09:04:02.144Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ed25bd90bd8e1c9f",
+      "subcategory": "error-logging",
+      "name": "Error Logging Detector",
+      "description": "Learns error logging patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "errors/error-logging",
+          "patternId": "errors/error-logging/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.24,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 9,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "App.tsx",
+          "line": 9,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 11,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/auth/components/LoginForm.tsx",
+          "line": 11,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 58,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 58,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7305263157894737
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 11,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/auth/screens/LoginScreen.tsx",
+          "line": 11,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 130,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 136,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 272,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 18,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 28,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 17,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 27,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 17,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/utils/receipt.ts",
+          "line": 351,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7833333333333333
+        },
+        {
+          "file": "src/navigation/Navigation.tsx",
+          "line": 13,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.459Z",
+        "lastSeen": "2026-01-29T09:04:02.160Z",
+        "source": "auto-detected",
+        "tags": ["errors", "error-logging"],
+        "approvedAt": "2026-01-29T09:04:02.160Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9bfe3ab6b2b2514d",
+      "subcategory": "exception-hierarchy",
+      "name": "Exception Hierarchy Detector",
+      "description": "Learns exception and error handling patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "errors/exception-hierarchy",
+          "patternId": "errors/exception-hierarchy/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.36,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7324999999999999
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.7324999999999999
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.7324999999999999
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.7324999999999999
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 58,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7324999999999999
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 58,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7324999999999999
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 130,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7775
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 136,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7775
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 272,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7775
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 18,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 28,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 17,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:04:02.176Z",
+        "source": "auto-detected",
+        "tags": ["errors", "exception-hierarchy"],
+        "approvedAt": "2026-01-29T09:04:02.176Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "f6c7d2886813a775",
+      "subcategory": "try-catch",
+      "name": "Try/Catch Detector",
+      "description": "Learns try/catch patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "errors/try-catch",
+          "patternId": "errors/try-catch/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.24,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.7276923076923076
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.7276923076923076
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.7276923076923076
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 57,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.7276923076923076
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 58,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.7276923076923076
+        },
+        {
+          "file": "src/features/auth/context/AuthContext.tsx",
+          "line": 58,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7276923076923076
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 130,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7435294117647059
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 136,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.7435294117647059
+        },
+        {
+          "file": "src/features/checkout/screens/CheckoutScreen.tsx",
+          "line": 272,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.7435294117647059
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 18,
+          "column": 3,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/features/shared/components/ui/Badge.tsx",
+          "line": 28,
+          "column": 3,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/features/shared/components/ui/Text.tsx",
+          "line": 17,
+          "column": 3,
+          "isOutlier": true,
+          "confidence": 0.97,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:03:44.462Z",
+        "lastSeen": "2026-01-29T09:04:02.193Z",
+        "source": "auto-detected",
+        "tags": ["errors", "try-catch"],
+        "approvedAt": "2026-01-29T09:04:02.193Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:04:03.801Z",
+  "checksum": "019368c19ebb174b"
+}

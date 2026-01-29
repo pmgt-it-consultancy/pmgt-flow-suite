@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "project": {
+    "id": "0d7d8d5c-69c1-451d-8180-499044ef2c22",
+    "name": "pmgt-flow-suite",
+    "initializedAt": "2026-01-29T08:58:19.808Z"
+  },
+  "severity": {},
+  "ignore": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    ".git/**",
+    "coverage/**",
+    "*.min.js",
+    "*.bundle.js",
+    "vendor/**",
+    "__pycache__/**",
+    ".venv/**",
+    "target/**",
+    "bin/**",
+    "obj/**"
+  ],
+  "ci": {
+    "failOn": "error",
+    "reportFormat": "text"
+  },
+  "learning": {
+    "autoApproveThreshold": 0.95,
+    "minOccurrences": 3,
+    "semanticLearning": true
+  },
+  "performance": {
+    "maxWorkers": 4,
+    "cacheEnabled": true,
+    "incrementalAnalysis": true,
+    "cacheTTL": 3600
+  },
+  "features": {
+    "callGraph": true,
+    "boundaries": true,
+    "dna": true,
+    "contracts": true
+  },
+  "telemetry": {
+    "enabled": true,
+    "sharePatternSignatures": true,
+    "shareAggregateStats": true,
+    "shareUserActions": false,
+    "installationId": "cdbb35e3-cffb-40ff-a24d-0a258cbd6076",
+    "enabledAt": "2026-01-29T08:58:30.342Z"
+  }
+}

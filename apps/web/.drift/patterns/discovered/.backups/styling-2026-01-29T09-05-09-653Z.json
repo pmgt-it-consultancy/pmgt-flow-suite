@@ -1,0 +1,2226 @@
+{
+  "version": "1.0.0",
+  "category": "styling",
+  "patterns": [
+    {
+      "id": "5febd8f53933985d",
+      "subcategory": "class-naming",
+      "name": "Class Naming Detector",
+      "description": "Learns class naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/class-naming",
+          "patternId": "styling/class-naming/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 21,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "postcss.config.js",
+          "line": 1,
+          "column": 1,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "High confidence outlier"
+        },
+        {
+          "file": "src/app/ErrorBoundary.tsx",
+          "line": 4,
+          "column": 8,
+          "isOutlier": true,
+          "confidence": 0.72,
+          "outlierReason": "High confidence outlier"
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 117,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 116,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 118,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.6824999999999999
+        },
+        {
+          "file": "src/components/common/avatar.tsx",
+          "line": 8,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6144444444444443
+        },
+        {
+          "file": "src/components/common/avatar.tsx",
+          "line": 20,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6144444444444443
+        },
+        {
+          "file": "src/components/common/avatar.tsx",
+          "line": 32,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6144444444444443
+        },
+        {
+          "file": "src/components/common/avatar.tsx",
+          "line": 37,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6144444444444443
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 41,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 23,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 29,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 42,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 47,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 57,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 64,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 77,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 83,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 93,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 98,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 116,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 121,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 140,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 152,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 161,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 4,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.5472727272727271
+        },
+        {
+          "file": "src/components/ui/badge.tsx",
+          "line": 29,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 40,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/ui/card.tsx",
+          "line": 6,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/card.tsx",
+          "line": 17,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/card.tsx",
+          "line": 24,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/card.tsx",
+          "line": 35,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/card.tsx",
+          "line": 42,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/card.tsx",
+          "line": 49,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 20,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6033333333333333
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 25,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6033333333333333
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 35,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6033333333333333
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 42,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6033333333333333
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 56,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.6033333333333333
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 61,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.6033333333333333
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 72,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6033333333333333
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 84,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6033333333333333
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 26,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 32,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 45,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 50,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 60,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 67,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 80,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 86,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 96,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 101,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 119,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 124,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 143,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 155,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 164,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.6059375
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 75,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 90,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 125,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 142,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/input.tsx",
+          "line": 6,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/input.tsx",
+          "line": 12,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/label.tsx",
+          "line": 16,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6199999999999999
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 18,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 23,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 38,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 52,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 66,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 74,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 98,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 110,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 115,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 133,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.5885185185185184
+        },
+        {
+          "file": "src/components/ui/separator.tsx",
+          "line": 11,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/separator.tsx",
+          "line": 19,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/switch.tsx",
+          "line": 11,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/switch.tsx",
+          "line": 15,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 6,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 17,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 25,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 33,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 43,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 48,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 59,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 64,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 74,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/table.tsx",
+          "line": 86,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 13,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 18,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 28,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 33,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 43,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 48,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/lib/utils.ts",
+          "line": 4,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.595
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.785Z",
+        "lastSeen": "2026-01-29T09:04:55.785Z",
+        "source": "auto-detected",
+        "tags": ["styling", "class-naming"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "781c774a94e814be",
+      "subcategory": "design-tokens",
+      "name": "Design Tokens Detector",
+      "description": "Learns design token patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/design-tokens",
+          "patternId": "styling/design-tokens/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.25,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 8,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 71,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.6052941176470588
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 180,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.6052941176470588
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 202,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.6052941176470588
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 254,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.6052941176470588
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 59,
+          "column": 2,
+          "isOutlier": true,
+          "confidence": 0.7494117647058824,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 36,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 41,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 44,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 42,
+          "column": 57,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        },
+        {
+          "file": "src/components/ui/badge.tsx",
+          "line": 27,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/ui/badge.tsx",
+          "line": 29,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/ui/badge.tsx",
+          "line": 30,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 35,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 40,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 43,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.55125
+        },
+        {
+          "file": "src/components/ui/label.tsx",
+          "line": 15,
+          "column": 64,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/middleware.ts",
+          "line": 8,
+          "column": 23,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "Value above IQR upper bound"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:04:55.788Z",
+        "source": "auto-detected",
+        "tags": ["styling", "design-tokens"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "36cefbf4f8319170",
+      "subcategory": "typography",
+      "name": "Typography Detector",
+      "description": "Learns typography patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/typography",
+          "patternId": "styling/typography/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.48,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 7,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 275,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 274,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 284,
+          "column": 49,
+          "isOutlier": false,
+          "confidence": 0.595
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 68,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 69,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 70,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 138,
+          "column": 2,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 139,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 150,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 161,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 28,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 28,
+          "column": 68,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 48,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 48,
+          "column": 74,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 55,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 55,
+          "column": 76,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 28,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 48,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 55,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 41,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.5366666666666666
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 44,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.5366666666666666
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 116,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.6299999999999999
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 40,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.5700000000000001
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 43,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.5700000000000001
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["styling", "typography"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "8cfc91dd5da48854",
+      "subcategory": "tailwind-patterns",
+      "name": "Tailwind Patterns Detector",
+      "description": "Learns Tailwind CSS patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/tailwind-patterns",
+          "patternId": "styling/tailwind-patterns/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.19,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 6,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 268,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.6922222222222223
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 157,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5815384615384616
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 166,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.5815384615384616
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 186,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.5815384615384616
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 148,
+          "column": 2,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 6,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 53,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.6533333333333333
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 28,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 48,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 55,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 16,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 16,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 116,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["styling", "tailwind-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3b3b877da30872b1",
+      "subcategory": "tailwind-patterns",
+      "name": "Tailwind Patterns Detector",
+      "description": "Learns Tailwind CSS patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/tailwind-patterns",
+          "patternId": "styling/tailwind-patterns/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7815384615384615,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 6,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.7815384615384615
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["styling", "tailwind-patterns"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "5d26734157ebd48d",
+      "subcategory": "spacing-scale",
+      "name": "Spacing Scale Detector",
+      "description": "Learns spacing scale patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/spacing-scale",
+          "patternId": "styling/spacing-scale/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/globals.css",
+          "line": 112,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 16,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["styling", "spacing-scale"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "33f01fb4ff64d146",
+      "subcategory": "color-usage",
+      "name": "Color Usage Detector",
+      "description": "Learns color usage patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/color-usage",
+          "patternId": "styling/color-usage/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.72,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.6824999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/globals.css",
+          "line": 66,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 79,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 80,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 81,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 82,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 83,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 84,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 85,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 86,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 87,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 88,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 89,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 90,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 91,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 92,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 93,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 94,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 95,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 96,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 99,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 100,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 101,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 102,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 103,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 121,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 72,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 73,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 133,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 133,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 116,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 129,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 129,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 160,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.5680769230769231
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 16,
+          "column": 81,
+          "isOutlier": true,
+          "confidence": 0.6824999999999999,
+          "outlierReason": "High confidence outlier"
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 16,
+          "column": 96,
+          "isOutlier": true,
+          "confidence": 0.6824999999999999,
+          "outlierReason": "High confidence outlier"
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 16,
+          "column": 109,
+          "isOutlier": true,
+          "confidence": 0.6824999999999999,
+          "outlierReason": "High confidence outlier"
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["styling", "color-usage"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c086f163ea6cfdfb",
+      "subcategory": "color-usage",
+      "name": "Color Usage Detector",
+      "description": "Learns color usage patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/color-usage",
+          "patternId": "styling/color-usage/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.32,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7680769230769231,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/globals.css",
+          "line": 129,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 129,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 129,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 133,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 134,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 5,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 33,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 79,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 79,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 139,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 149,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 161,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 21,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 49,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 94,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 94,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.7680769230769231
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["styling", "color-usage"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "092192c2ef35ec1b",
+      "subcategory": "class-naming",
+      "name": "Class Naming Detector",
+      "description": "Learns class naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/class-naming",
+          "patternId": "styling/class-naming/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.38,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.8825,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/globals.css",
+          "line": 120,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 15,
+          "column": 28,
+          "isOutlier": false,
+          "confidence": 0.7472727272727272
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 16,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.7472727272727272
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 37,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.7472727272727272
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 63,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8033333333333333
+        },
+        {
+          "file": "src/components/ui/dialog.tsx",
+          "line": 63,
+          "column": 84,
+          "isOutlier": false,
+          "confidence": 0.8033333333333333
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 41,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7885185185185185
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 41,
+          "column": 75,
+          "isOutlier": false,
+          "confidence": 0.7885185185185185
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 55,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.7885185185185185
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 55,
+          "column": 75,
+          "isOutlier": false,
+          "confidence": 0.7885185185185185
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["styling", "class-naming"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "8753d30ae2c7095b",
+      "subcategory": "z-index-scale",
+      "name": "Z-Index Scale Detector",
+      "description": "Learns z-index scale patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/z-index-scale",
+          "patternId": "styling/z-index-scale/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/globals.css",
+          "line": 123,
+          "column": 2,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["styling", "z-index-scale"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1adcfe345fbf9237",
+      "subcategory": "responsive",
+      "name": "Responsive Detector",
+      "description": "Learns responsive design patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/responsive",
+          "patternId": "styling/responsive/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.12,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/globals.css",
+          "line": 60,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6258823529411766
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 61,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6258823529411766
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 62,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6258823529411766
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 63,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6258823529411766
+        },
+        {
+          "file": "src/app/globals.css",
+          "line": 64,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.6258823529411766
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 28,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 48,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:04:55.789Z",
+        "source": "auto-detected",
+        "tags": ["styling", "responsive"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "43121d98756ec6d7",
+      "subcategory": "typography",
+      "name": "Typography Detector",
+      "description": "Learns typography patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/typography",
+          "patternId": "styling/typography/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7949999999999999,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/layout.tsx",
+          "line": 2,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:04:55.790Z",
+        "source": "auto-detected",
+        "tags": ["styling", "typography"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1d31e68a507d5375",
+      "subcategory": "class-naming",
+      "name": "Class Naming Detector",
+      "description": "Learns class naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/class-naming",
+          "patternId": "styling/class-naming/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.1,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 5,
+        "score": 0.82,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/app/layout.tsx",
+          "line": 4,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7755555555555556
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 2,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/ui/badge.tsx",
+          "line": 1,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 2,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.82
+        },
+        {
+          "file": "src/components/ui/label.tsx",
+          "line": 4,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.82
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:04:55.790Z",
+        "source": "auto-detected",
+        "tags": ["styling", "class-naming"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ea0fb801ea1eb830",
+      "subcategory": "class-naming",
+      "name": "Class Naming Detector",
+      "description": "Learns class naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/class-naming",
+          "patternId": "styling/class-naming/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8972727272727272,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 3,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.8972727272727272
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 3,
+          "column": 24,
+          "isOutlier": false,
+          "confidence": 0.8972727272727272
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["styling", "class-naming"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "33d537a1cb0d23cf",
+      "subcategory": "class-naming",
+      "name": "Class Naming Detector",
+      "description": "Learns class naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/class-naming",
+          "patternId": "styling/class-naming/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.16,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7472727272727272,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 24,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7472727272727272
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 24,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7472727272727272
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 31,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7472727272727272
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 31,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.7472727272727272
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["styling", "class-naming"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "564dd8d031e221e1",
+      "subcategory": "design-tokens",
+      "name": "Design Tokens Detector",
+      "description": "Learns design token patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/design-tokens",
+          "patternId": "styling/design-tokens/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.83,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 4,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.83
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["styling", "design-tokens"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "42e3c34544b9901a",
+      "subcategory": "design-tokens",
+      "name": "Design Tokens Detector",
+      "description": "Learns design token patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/design-tokens",
+          "patternId": "styling/design-tokens/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.83,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 14,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 14,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 14,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.83
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:04:55.791Z",
+        "source": "auto-detected",
+        "tags": ["styling", "design-tokens"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:05:09.630Z",
+  "checksum": "dbe0866b81aa520e"
+}

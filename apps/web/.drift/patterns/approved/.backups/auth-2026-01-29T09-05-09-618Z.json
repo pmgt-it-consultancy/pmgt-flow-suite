@@ -1,0 +1,1037 @@
+{
+  "version": "1.0.0",
+  "category": "auth",
+  "patterns": [
+    {
+      "id": "1e90b8e888774728",
+      "subcategory": "middleware",
+      "name": "Auth Middleware Detector",
+      "description": "Learns auth middleware patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/middleware",
+          "patternId": "auth/middleware/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 34,
+          "column": 127,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 131,
+          "column": 52,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 131,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.7546153846153846
+        },
+        {
+          "file": "src/middleware.ts",
+          "line": 8,
+          "column": 67,
+          "isOutlier": false,
+          "confidence": 0.83
+        },
+        {
+          "file": "src/stores/useAdminStore.ts",
+          "line": 3,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.784Z",
+        "lastSeen": "2026-01-29T09:05:06.768Z",
+        "source": "auto-detected",
+        "tags": ["auth", "middleware"],
+        "approvedAt": "2026-01-29T09:05:06.768Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3f563f1f7bf4229c",
+      "subcategory": "ownership",
+      "name": "Resource Ownership Detector",
+      "description": "Learns resource ownership patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/ownership",
+          "patternId": "auth/ownership/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 1,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "README.md",
+          "line": 21,
+          "column": 48,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "README.md",
+          "line": 27,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "README.md",
+          "line": 28,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "README.md",
+          "line": 36,
+          "column": 65,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.784Z",
+        "lastSeen": "2026-01-29T09:05:06.787Z",
+        "source": "auto-detected",
+        "tags": ["auth", "ownership"],
+        "approvedAt": "2026-01-29T09:05:06.787Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "d68a625c370ffccb",
+      "subcategory": "ownership",
+      "name": "Resource Ownership Detector",
+      "description": "Learns resource ownership patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/ownership",
+          "patternId": "auth/ownership/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "package.json",
+          "line": 18,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 112,
+          "column": 36,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 125,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 169,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8825
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.785Z",
+        "lastSeen": "2026-01-29T09:05:06.805Z",
+        "source": "auto-detected",
+        "tags": ["auth", "ownership"],
+        "approvedAt": "2026-01-29T09:05:06.805Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1b3c640bac4d2430",
+      "subcategory": "middleware",
+      "name": "Auth Middleware Detector",
+      "description": "Learns auth middleware patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/middleware",
+          "patternId": "auth/middleware/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.16,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 9,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 50,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 50,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 75,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 262,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 66,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 66,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.87
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 85,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 85,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 76,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 260,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.76
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 84,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8427272727272728
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 84,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.8427272727272728
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 87,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 87,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.8533333333333333
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 4,
+          "column": 18,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/Notes.tsx",
+          "line": 17,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.785Z",
+        "lastSeen": "2026-01-29T09:05:06.823Z",
+        "source": "auto-detected",
+        "tags": ["auth", "middleware"],
+        "approvedAt": "2026-01-29T09:05:06.823Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "5b3850c72622e4f5",
+      "subcategory": "audit",
+      "name": "Audit Logging Detector",
+      "description": "Learns audit logging patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/audit",
+          "patternId": "auth/audit/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/audit-logs/page.tsx",
+          "line": 31,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 1
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.785Z",
+        "lastSeen": "2026-01-29T09:05:06.842Z",
+        "source": "auto-detected",
+        "tags": ["auth", "audit"],
+        "approvedAt": "2026-01-29T09:05:06.842Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b97bac2218d1d473",
+      "subcategory": "rbac-patterns",
+      "name": "RBAC Patterns Detector",
+      "description": "Learns role-based access control patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/rbac-patterns",
+          "patternId": "auth/rbac-patterns/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 16,
+          "column": 40,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 119,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.7840625
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 88,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.8745454545454545
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 149,
+          "column": 57,
+          "isOutlier": false,
+          "confidence": 0.7628571428571428
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:06.860Z",
+        "source": "auto-detected",
+        "tags": ["auth", "rbac-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.860Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "c47ec7e18eb4c166",
+      "subcategory": "rbac-patterns",
+      "name": "RBAC Patterns Detector",
+      "description": "Learns role-based access control patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/rbac-patterns",
+          "patternId": "auth/rbac-patterns/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.03,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/layout.tsx",
+          "line": 9,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 1
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 145,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.9128571428571428
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:06.886Z",
+        "source": "auto-detected",
+        "tags": ["auth", "rbac-patterns"],
+        "approvedAt": "2026-01-29T09:05:06.886Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "e4fc7c663c3202c7",
+      "subcategory": "permission-checks",
+      "name": "Permission Checks Detector",
+      "description": "Learns permission check patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/permission-checks",
+          "patternId": "auth/permission-checks/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.37,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 11,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 272,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 273,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 36,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 42,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 48,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 54,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 60,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 66,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 72,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 78,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8353846153846154
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 100,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/components/common/dropdown-menu.tsx",
+          "line": 100,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 22,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 1,
+          "column": 7,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 7,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 17,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/Checkbox.tsx",
+          "line": 19,
+          "column": 35,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 16,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 134,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.7366666666666666
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 10,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9116666666666666
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 103,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/components/ui/dropdown-menu.tsx",
+          "line": 103,
+          "column": 14,
+          "isOutlier": false,
+          "confidence": 0.865
+        },
+        {
+          "file": "src/components/ui/sonner.tsx",
+          "line": 29,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 18,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 34,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 35,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 58,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 58,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 95,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 103,
+          "column": 6,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 34,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 94,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.75125
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.83875
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 52,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.83875
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.789Z",
+        "lastSeen": "2026-01-29T09:05:06.906Z",
+        "source": "auto-detected",
+        "tags": ["auth", "permission-checks"],
+        "approvedAt": "2026-01-29T09:05:06.906Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "fe942b739755f67c",
+      "subcategory": "token-handling",
+      "name": "Token Handling Detector",
+      "description": "Learns token handling patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/token-handling",
+          "patternId": "auth/token-handling/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/Header.tsx",
+          "line": 21,
+          "column": 50,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:05:06.924Z",
+        "source": "auto-detected",
+        "tags": ["auth", "token-handling"],
+        "approvedAt": "2026-01-29T09:05:06.924Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "bc093a0296320a1a",
+      "subcategory": "token-handling",
+      "name": "Token Handling Detector",
+      "description": "Learns token handling patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/token-handling",
+          "patternId": "auth/token-handling/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/common/UserNav.tsx",
+          "line": 17,
+          "column": 12,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:06.942Z",
+        "source": "auto-detected",
+        "tags": ["auth", "token-handling"],
+        "approvedAt": "2026-01-29T09:05:06.942Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ee240b010c3fdef1",
+      "subcategory": "audit",
+      "name": "Audit Logging Detector",
+      "description": "Learns audit logging patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/audit",
+          "patternId": "auth/audit/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 4,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 8,
+          "column": 184,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 18,
+          "column": 244,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 8,
+          "column": 257,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 8,
+          "column": 305,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 32,
+          "column": 264,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:06.962Z",
+        "source": "auto-detected",
+        "tags": ["auth", "audit"],
+        "approvedAt": "2026-01-29T09:05:06.962Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "ced1a908e18458c9",
+      "subcategory": "permission-checks",
+      "name": "Permission Checks Detector",
+      "description": "Learns permission check patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/permission-checks",
+          "patternId": "auth/permission-checks/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.90125,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 145,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.90125
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:06.980Z",
+        "source": "auto-detected",
+        "tags": ["auth", "permission-checks"],
+        "approvedAt": "2026-01-29T09:05:06.980Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1dfedeb525ebfd39",
+      "subcategory": "middleware",
+      "name": "Auth Middleware Detector",
+      "description": "Learns auth middleware patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/middleware",
+          "patternId": "auth/middleware/function_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/middleware.ts",
+          "line": 16,
+          "column": 17,
+          "isOutlier": false,
+          "confidence": 0.98
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:07.000Z",
+        "source": "auto-detected",
+        "tags": ["auth", "middleware"],
+        "approvedAt": "2026-01-29T09:05:07.000Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "7d64a968e5493d3f",
+      "subcategory": "rbac-patterns",
+      "name": "RBAC Patterns Detector",
+      "description": "Learns role-based access control patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "auth/rbac-patterns",
+          "patternId": "auth/rbac-patterns/class_definition"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.945,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/stores/useAdminStore.ts",
+          "line": 5,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.945
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:07.019Z",
+        "source": "auto-detected",
+        "tags": ["auth", "rbac-patterns"],
+        "approvedAt": "2026-01-29T09:05:07.019Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:05:09.595Z",
+  "checksum": "56e1550bdd8b54e2"
+}

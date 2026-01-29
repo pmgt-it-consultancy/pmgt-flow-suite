@@ -1,0 +1,851 @@
+{
+  "version": "1.0.0",
+  "category": "testing",
+  "patterns": [
+    {
+      "id": "1ea5b51714e845b8",
+      "subcategory": "fixture-patterns",
+      "name": "Fixture Patterns Detector",
+      "description": "Learns test fixture patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "testing/fixture-patterns",
+          "patternId": "testing/fixture-patterns/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.13,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 13,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/app/(admin)/categories/page.tsx",
+          "line": 4,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/dashboard/page.tsx",
+          "line": 23,
+          "column": 52,
+          "isOutlier": true,
+          "confidence": 0.7949999999999999,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/app/(admin)/orders/page.tsx",
+          "line": 4,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/products/page.tsx",
+          "line": 4,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/stores/page.tsx",
+          "line": 4,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/tables/page.tsx",
+          "line": 4,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/(admin)/users/page.tsx",
+          "line": 4,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/app/notes/[slug]/page.tsx",
+          "line": 1,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 3,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 4,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 5,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/hooks/useStoreAccess.ts",
+          "line": 4,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/stores/useAdminStore.ts",
+          "line": 1,
+          "column": 62,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.788Z",
+        "lastSeen": "2026-01-29T09:05:07.749Z",
+        "source": "auto-detected",
+        "tags": ["testing", "fixture-patterns"],
+        "approvedAt": "2026-01-29T09:05:07.749Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3c10aa435cf958ed",
+      "subcategory": "test-structure",
+      "name": "Test Structure Detector",
+      "description": "Learns test structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "testing/test-structure",
+          "patternId": "testing/test-structure/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.27,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 18,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/Header.tsx",
+          "line": 93,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.9381818181818182
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 71,
+          "column": 52,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 88,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.92625
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 8,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 45,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 15,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 27,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 47,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 18,
+          "column": 83,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 18,
+          "column": 207,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 8,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 28,
+          "column": 73,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 37,
+          "column": 74,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 50,
+          "column": 70,
+          "isOutlier": true,
+          "confidence": 0.8109090909090909,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 32,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 36,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 67,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 67,
+          "column": 89,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 139,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 38,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 38,
+          "column": 89,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 19,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 15,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 8,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 50,
+          "column": 8,
+          "isOutlier": true,
+          "confidence": 0.7949999999999999,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 22,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.935
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 32,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:05:07.767Z",
+        "source": "auto-detected",
+        "tags": ["testing", "test-structure"],
+        "approvedAt": "2026-01-29T09:05:07.767Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "6e8cb252e1966928",
+      "subcategory": "describe-naming",
+      "name": "Describe Naming Detector",
+      "description": "Learns test describe/it naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "testing/describe-naming",
+          "patternId": "testing/describe-naming/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.54,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 18,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/Header.tsx",
+          "line": 93,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.9381818181818182
+        },
+        {
+          "file": "src/components/admin/Header.tsx",
+          "line": 71,
+          "column": 52,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/admin/Sidebar.tsx",
+          "line": 88,
+          "column": 10,
+          "isOutlier": false,
+          "confidence": 0.92625
+        },
+        {
+          "file": "src/components/common/button.tsx",
+          "line": 8,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Benefits.tsx",
+          "line": 45,
+          "column": 58,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/ComplexToggle.tsx",
+          "line": 15,
+          "column": 44,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 27,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Footer.tsx",
+          "line": 47,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 18,
+          "column": 83,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/FooterHero.tsx",
+          "line": 18,
+          "column": 207,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 8,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 28,
+          "column": 73,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Hero.tsx",
+          "line": 37,
+          "column": 74,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 50,
+          "column": 70,
+          "isOutlier": true,
+          "confidence": 0.8109090909090909,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 32,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 36,
+          "column": 70,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 67,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 67,
+          "column": 89,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/CreateNote.tsx",
+          "line": 139,
+          "column": 71,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 38,
+          "column": 45,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/DeleteNote.tsx",
+          "line": 38,
+          "column": 89,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/NoteDetails.tsx",
+          "line": 19,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/notes/NoteItem.tsx",
+          "line": 15,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/button.tsx",
+          "line": 8,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/form.tsx",
+          "line": 50,
+          "column": 8,
+          "isOutlier": true,
+          "confidence": 0.7949999999999999,
+          "outlierReason": "Low confidence outlier"
+        },
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 22,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.935
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 32,
+          "column": 20,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.790Z",
+        "lastSeen": "2026-01-29T09:05:07.788Z",
+        "source": "auto-detected",
+        "tags": ["testing", "describe-naming"],
+        "approvedAt": "2026-01-29T09:05:07.788Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "9c8a5f8113045d3c",
+      "subcategory": "fixture-patterns",
+      "name": "Fixture Patterns Detector",
+      "description": "Learns test fixture patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "testing/fixture-patterns",
+          "patternId": "testing/fixture-patterns/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/common/TestTimonialCard.tsx",
+          "line": 4,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.935
+        },
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 66,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:07.808Z",
+        "source": "auto-detected",
+        "tags": ["testing", "fixture-patterns"],
+        "approvedAt": "2026-01-29T09:05:07.808Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b2411a6386126d84",
+      "subcategory": "test-file-naming",
+      "name": "Test File Naming Detector",
+      "description": "Learns test file naming patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "testing/test-file-naming",
+          "patternId": "testing/test-file-naming/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 2,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 2,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 144,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:07.827Z",
+        "source": "auto-detected",
+        "tags": ["testing", "test-file-naming"],
+        "approvedAt": "2026-01-29T09:05:07.827Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "81d657fe57f48ebe",
+      "subcategory": "test-co-location",
+      "name": "Test Co-Location Detector",
+      "description": "Learns test co-location patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "testing/test-co-location",
+          "patternId": "testing/test-co-location/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 2,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 2,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7949999999999999
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 144,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:07.847Z",
+        "source": "auto-detected",
+        "tags": ["testing", "test-co-location"],
+        "approvedAt": "2026-01-29T09:05:07.847Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b85406c4e3ef12cb",
+      "subcategory": "test-structure",
+      "name": "Test Structure Detector",
+      "description": "Learns test structure patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "testing/test-structure",
+          "patternId": "testing/test-structure/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.03,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 2,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/components/home/Testimonials.tsx",
+          "line": 2,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.8109090909090909
+        },
+        {
+          "file": "src/hooks/useAuth.tsx",
+          "line": 144,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:07.869Z",
+        "source": "auto-detected",
+        "tags": ["testing", "test-structure"],
+        "approvedAt": "2026-01-29T09:05:07.869Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "fcdcda884a8c38cc",
+      "subcategory": "fixture-patterns",
+      "name": "Fixture Patterns Detector",
+      "description": "Learns test fixture patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "testing/fixture-patterns",
+          "patternId": "testing/fixture-patterns/conditional"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": "src/components/ui/select.tsx",
+          "line": 22,
+          "column": 140,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 32,
+          "column": 296,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 32,
+          "column": 330,
+          "isOutlier": false,
+          "confidence": 0.97
+        },
+        {
+          "file": "src/components/ui/tabs.tsx",
+          "line": 32,
+          "column": 366,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-01-29T09:04:55.791Z",
+        "lastSeen": "2026-01-29T09:05:07.890Z",
+        "source": "auto-detected",
+        "tags": ["testing", "fixture-patterns"],
+        "approvedAt": "2026-01-29T09:05:07.890Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-01-29T09:05:09.620Z",
+  "checksum": "e63d0d6ec81cb93a"
+}
