@@ -301,6 +301,24 @@ export const setUserPinInternal = internalMutation({
   },
 });
 
+// Internal mutation to clear a user's PIN
+export const clearUserPinInternal = internalMutation({
+  args: {
+    userId: v.id("users"),
+    updaterId: v.id("users"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    // Verify updater has permission (can clear own PIN or has users.manage)
+    if (args.updaterId !== args.userId) {
+      await requirePermission(ctx, args.updaterId, "users.manage");
+    }
+
+    await ctx.db.patch(args.userId, { pin: undefined });
+    return null;
+  },
+});
+
 // Public mutation to update user PIN (requires auth)
 export const setUserPin = mutation({
   args: {
