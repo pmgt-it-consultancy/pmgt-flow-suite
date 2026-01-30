@@ -15,12 +15,14 @@ interface Product {
   price: number;
   categoryId: Id<"categories">;
   isActive: boolean;
+  hasModifiers: boolean;
 }
 
 interface SelectedProduct {
   id: Id<"products">;
   name: string;
   price: number;
+  hasModifiers: boolean;
 }
 
 interface CategoryGridProps {
@@ -173,6 +175,7 @@ export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGri
           id={item.product._id}
           name={item.product.name}
           price={item.product.price}
+          hasModifiers={item.product.hasModifiers}
           onPress={onSelectProduct}
         />
       );

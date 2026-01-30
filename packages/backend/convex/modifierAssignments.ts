@@ -213,6 +213,115 @@ export const getForProduct = query({
   },
 });
 
+// Bulk-fetch modifier groups for all products in a store (used for POS prefetch)
+export const getForStore = query({
+  args: {
+    storeId: v.id("stores"),
+  },
+  returns: v.array(
+    v.object({
+      productId: v.id("products"),
+      groups: v.array(
+        v.object({
+          groupId: v.id("modifierGroups"),
+          groupName: v.string(),
+          selectionType: v.union(v.literal("single"), v.literal("multi")),
+          minSelections: v.number(),
+          maxSelections: v.optional(v.number()),
+          sortOrder: v.number(),
+          options: v.array(
+            v.object({
+              optionId: v.id("modifierOptions"),
+              name: v.string(),
+              priceAdjustment: v.number(),
+              isDefault: v.boolean(),
+            }),
+          ),
+        }),
+      ),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    // Get all products for the store
+    const products = await ctx.db
+      .query("products")
+      .withIndex("by_store", (q) => q.eq("storeId", args.storeId))
+      .collect();
+
+    const activeProducts = products.filter((p) => p.isActive);
+
+    const results = await Promise.all(
+      activeProducts.map(async (product) => {
+        // Product-level assignments
+        const productAssignments = await ctx.db
+          .query("modifierGroupAssignments")
+          .withIndex("by_product", (q) => q.eq("productId", product._id))
+          .collect();
+
+        // Category-level assignments
+        const categoryAssignments = await ctx.db
+          .query("modifierGroupAssignments")
+          .withIndex("by_category", (q) => q.eq("categoryId", product.categoryId))
+          .collect();
+
+        // Merge: product-level overrides category-level
+        const productGroupIds = new Set(productAssignments.map((a) => a.modifierGroupId));
+        const mergedAssignments = [
+          ...productAssignments,
+          ...categoryAssignments.filter((a) => !productGroupIds.has(a.modifierGroupId)),
+        ];
+
+        if (mergedAssignments.length === 0) return null;
+
+        mergedAssignments.sort((a, b) => a.sortOrder - b.sortOrder);
+
+        const groups = await Promise.all(
+          mergedAssignments.map(async (assignment) => {
+            const group = await ctx.db.get(assignment.modifierGroupId);
+            if (!group || !group.isActive) return null;
+
+            const options = await ctx.db
+              .query("modifierOptions")
+              .withIndex("by_group_available", (q) =>
+                q.eq("modifierGroupId", group._id).eq("isAvailable", true),
+              )
+              .collect();
+
+            options.sort((a, b) => a.sortOrder - b.sortOrder);
+
+            return {
+              groupId: group._id,
+              groupName: group.name,
+              selectionType: group.selectionType,
+              minSelections: assignment.minSelectionsOverride ?? group.minSelections,
+              maxSelections: assignment.maxSelectionsOverride ?? group.maxSelections,
+              sortOrder: assignment.sortOrder,
+              options: options.map((o) => ({
+                optionId: o._id,
+                name: o.name,
+                priceAdjustment: o.priceAdjustment,
+                isDefault: o.isDefault,
+              })),
+            };
+          }),
+        );
+
+        const activeGroups = groups.filter((g): g is NonNullable<typeof g> => g !== null);
+        if (activeGroups.length === 0) return null;
+
+        return {
+          productId: product._id,
+          groups: activeGroups,
+        };
+      }),
+    );
+
+    return results.filter((r): r is NonNullable<typeof r> => r !== null);
+  },
+});
+
 // List assignments for a product
 export const listForProduct = query({
   args: {

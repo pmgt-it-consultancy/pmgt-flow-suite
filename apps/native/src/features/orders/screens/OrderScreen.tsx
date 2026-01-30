@@ -21,7 +21,6 @@ import {
   ViewBillModal,
   VoidItemModal,
 } from "../components";
-import { useProductModifiers } from "../hooks/useProductModifiers";
 
 interface OrderScreenProps {
   navigation: any;
@@ -39,6 +38,7 @@ interface SelectedProduct {
   id: Id<"products">;
   name: string;
   price: number;
+  hasModifiers: boolean;
 }
 
 interface DraftItem {
@@ -81,12 +81,28 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   } | null>(null);
   const [showViewBill, setShowViewBill] = useState(false);
   const [showTransferTable, setShowTransferTable] = useState(false);
-  // Modifier data for the selected product
-  const { modifierGroups, hasModifiers } = useProductModifiers(selectedProduct?.id);
 
   // Queries
   const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
   const products = useQuery(api.products.list, { storeId });
+
+  // Prefetch all modifier data for the store — available instantly on product tap
+  const allModifiers = useQuery(api.modifierAssignments.getForStore, { storeId });
+  const modifiersByProduct = useMemo(() => {
+    const map = new Map<string, typeof modifierGroups>();
+    if (allModifiers) {
+      for (const entry of allModifiers) {
+        map.set(entry.productId, entry.groups);
+      }
+    }
+    return map;
+  }, [allModifiers]);
+
+  // Get modifier groups for the selected product from prefetched data
+  type ModifierGroup = NonNullable<typeof allModifiers>[number]["groups"];
+  const modifierGroups: ModifierGroup = selectedProduct
+    ? (modifiersByProduct.get(selectedProduct.id) ?? [])
+    : [];
 
   // Mutations
   const addItem = useMutation(api.orders.addItem);
@@ -145,7 +161,6 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
   const handleCloseModal = useCallback(() => {
     setSelectedProduct(null);
-    setShowModifierModal(false);
   }, []);
 
   const handleConfirmAdd = useCallback(async () => {
@@ -532,28 +547,25 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         </View>
       </View>
 
-      {hasModifiers ? (
-        <ModifierSelectionModal
-          visible={!!selectedProduct}
-          product={selectedProduct}
-          modifierGroups={modifierGroups}
-          isLoading={isAddingItem || isSending}
-          onClose={handleCloseModal}
-          onConfirm={handleConfirmModifiers}
-        />
-      ) : (
-        <AddItemModal
-          visible={!!selectedProduct}
-          product={selectedProduct}
-          quantity={quantity}
-          notes={notes}
-          isLoading={isAddingItem || isSending}
-          onClose={handleCloseModal}
-          onQuantityChange={setQuantity}
-          onNotesChange={setNotes}
-          onConfirm={handleConfirmAdd}
-        />
-      )}
+      <ModifierSelectionModal
+        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length > 0}
+        product={selectedProduct}
+        modifierGroups={modifierGroups}
+        isLoading={isAddingItem || isSending}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmModifiers}
+      />
+      <AddItemModal
+        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length === 0}
+        product={selectedProduct}
+        quantity={quantity}
+        notes={notes}
+        isLoading={isAddingItem || isSending}
+        onClose={handleCloseModal}
+        onQuantityChange={setQuantity}
+        onNotesChange={setNotes}
+        onConfirm={handleConfirmAdd}
+      />
 
       <VoidItemModal
         visible={!!voidingItem}

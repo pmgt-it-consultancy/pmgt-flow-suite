@@ -24,6 +24,7 @@ export const list = query({
       sortOrder: v.number(),
       createdAt: v.number(),
       updatedAt: v.number(),
+      hasModifiers: v.boolean(),
     }),
   ),
   handler: async (ctx, args) => {
@@ -58,6 +59,10 @@ export const list = query({
     const productsWithCategories = await Promise.all(
       products.map(async (product) => {
         const category = await ctx.db.get(product.categoryId);
+        const modifierAssignments = await ctx.db
+          .query("modifierGroupAssignments")
+          .withIndex("by_product", (q) => q.eq("productId", product._id))
+          .first();
         return {
           _id: product._id,
           storeId: product.storeId,
@@ -70,6 +75,7 @@ export const list = query({
           sortOrder: product.sortOrder,
           createdAt: product.createdAt,
           updatedAt: product.updatedAt,
+          hasModifiers: modifierAssignments !== null,
         };
       }),
     );

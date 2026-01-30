@@ -98,6 +98,10 @@ Required in `apps/web/.env.local` and `apps/native/.env.local`:
 - `NEXT_PUBLIC_CONVEX_URL` / `EXPO_PUBLIC_CONVEX_URL`
 - Clerk publishable and secret keys
 
+## Workflow
+
+After completing a planning or implementation task, always save a summary to Serena memory using `write_memory` (activate the `pmgt-flow-suite` project first if needed). Include: what was done, files changed, key patterns used, and the commit hash.
+
 ## Deployment
 
 Web deploys to Vercel with custom build command that deploys Convex first:

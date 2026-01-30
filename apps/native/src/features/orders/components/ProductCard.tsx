@@ -8,7 +8,12 @@ interface ProductCardProps {
   name: string;
   price: number;
   hasModifiers?: boolean;
-  onPress: (product: { id: Id<"products">; name: string; price: number }) => void;
+  onPress: (product: {
+    id: Id<"products">;
+    name: string;
+    price: number;
+    hasModifiers: boolean;
+  }) => void;
 }
 
 export const ProductCard = ({ id, name, price, hasModifiers, onPress }: ProductCardProps) => {
@@ -17,7 +22,7 @@ export const ProductCard = ({ id, name, price, hasModifiers, onPress }: ProductC
   return (
     <TouchableOpacity
       className="flex-1 bg-white rounded-xl p-4 m-1.5 max-w-[31.5%] min-h-[100px] border border-gray-200 shadow-sm justify-between"
-      onPress={() => onPress({ id, name, price })}
+      onPress={() => onPress({ id, name, price, hasModifiers: !!hasModifiers })}
       activeOpacity={0.7}
     >
       <Text className="text-gray-900 font-semibold text-base mb-3" numberOfLines={2}>

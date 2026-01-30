@@ -21,6 +21,8 @@ import {
 
 const MAX_RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 1000;
+// This is needed as sometimes the Bluetooth stack needs a moment to settle
+const INITIALIZATION_DELAY_MS = 1000;
 
 interface PrinterStore {
   printers: PrinterConfig[];
@@ -62,6 +64,8 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
     });
 
     await enableBluetooth();
+
+    await new Promise((resolve) => setTimeout(resolve, INITIALIZATION_DELAY_MS));
 
     const failedPrinters: string[] = [];
     const connectionStatus: Record<string, boolean> = {};
