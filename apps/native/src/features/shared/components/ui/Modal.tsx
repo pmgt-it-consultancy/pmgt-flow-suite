@@ -1,12 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Platform, type ModalProps as RNModalProps } from "react-native";
-import {
-  KeyboardAvoidingView,
-  Modal as RNModal,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "uniwind/components";
+import { Platform, Pressable, type ModalProps as RNModalProps, StyleSheet } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardAvoidingView, Modal as RNModal, TouchableOpacity, View } from "uniwind/components";
 import { Text } from "./Text";
 
 interface ModalProps extends RNModalProps {
@@ -40,43 +35,44 @@ export const Modal = ({
 
   return (
     <RNModal transparent animationType="slide" {...props}>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View className={`flex-1 bg-black/50 ${positionClasses}`}>
-          <TouchableWithoutFeedback>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : undefined}
-              className={contentClasses}
-            >
-              {(title || showCloseButton) && (
-                <View className="flex-row justify-between items-center mb-4">
-                  <View className="flex-1">
-                    {title && (
-                      <Text variant="heading" size="lg">
-                        {title}
-                      </Text>
-                    )}
-                    {description && (
-                      <Text variant="muted" size="sm" className="mt-1">
-                        {description}
-                      </Text>
-                    )}
-                  </View>
-                  {showCloseButton && onClose && (
-                    <TouchableOpacity
-                      onPress={onClose}
-                      className="p-2 -mr-2"
-                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                    >
-                      <Ionicons name="close" size={24} color="#6B7280" />
-                    </TouchableOpacity>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View className={`flex-1 ${positionClasses}`}>
+          {/* Backdrop — absolute so it doesn't wrap content */}
+          <Pressable onPress={onClose} style={StyleSheet.absoluteFill} className="bg-black/50" />
+          {/* Content — no touchable wrapper, so ScrollViews work freely */}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            className={contentClasses}
+          >
+            {(title || showCloseButton) && (
+              <View className="flex-row justify-between items-center mb-4">
+                <View className="flex-1">
+                  {title && (
+                    <Text variant="heading" size="lg">
+                      {title}
+                    </Text>
+                  )}
+                  {description && (
+                    <Text variant="muted" size="sm" className="mt-1">
+                      {description}
+                    </Text>
                   )}
                 </View>
-              )}
-              {children}
-            </KeyboardAvoidingView>
-          </TouchableWithoutFeedback>
+                {showCloseButton && onClose && (
+                  <TouchableOpacity
+                    onPress={onClose}
+                    className="p-2 -mr-2"
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Ionicons name="close" size={24} color="#6B7280" />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+            {children}
+          </KeyboardAvoidingView>
         </View>
-      </TouchableWithoutFeedback>
+      </GestureHandlerRootView>
     </RNModal>
   );
 };

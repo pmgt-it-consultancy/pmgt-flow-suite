@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { ScrollView } from "react-native-gesture-handler";
-import { ActivityIndicator, View } from "uniwind/components";
+import { ActivityIndicator, ScrollView, View } from "uniwind/components";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Button, Modal, Text } from "../../shared/components/ui";
 import type { ReceiptData } from "../../shared/utils/receipt";
