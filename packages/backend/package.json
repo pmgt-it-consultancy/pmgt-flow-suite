@@ -6,7 +6,9 @@
     "dev": "convex dev",
     "setup": "convex dev --until-success",
     "deploy": "convex deploy",
-    "typecheck": "tsc --noEmit -p convex"
+    "typecheck": "tsc --noEmit -p convex",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +23,10 @@
     "scrypt-kdf": "^4.0.0"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@types/bcryptjs": "^3.0.0",
-    "typescript": "catalog:"
+    "convex-test": "^0.0.41",
+    "typescript": "catalog:",
+    "vitest": "^4.0.18"
   }
 }
