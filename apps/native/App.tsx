@@ -1,6 +1,7 @@
 import "./src/global.css";
 import { useFonts } from "expo-font";
 import { LogBox, Platform, StatusBar, View } from "react-native";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import ConvexClientProvider from "./ConvexClientProvider";
 import { AuthProvider } from "./src/features/auth";
 import Navigation from "./src/navigation/Navigation";
@@ -28,15 +29,17 @@ export default function App() {
   const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 50 : StatusBar.currentHeight;
 
   return (
-    <ConvexClientProvider>
-      <AuthProvider>
-        <View style={{ flex: 1 }}>
-          <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#0D87E1" }}>
-            <StatusBar translucent backgroundColor={"#0D87E1"} barStyle="light-content" />
+    <KeyboardProvider>
+      <ConvexClientProvider>
+        <AuthProvider>
+          <View style={{ flex: 1 }}>
+            <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#0D87E1" }}>
+              <StatusBar translucent backgroundColor={"#0D87E1"} barStyle="light-content" />
+            </View>
+            <Navigation />
           </View>
-          <Navigation />
-        </View>
-      </AuthProvider>
-    </ConvexClientProvider>
+        </AuthProvider>
+      </ConvexClientProvider>
+    </KeyboardProvider>
   );
 }

@@ -4,7 +4,8 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 import { Alert } from "react-native";
-import { ActivityIndicator, ScrollView, View } from "uniwind/components";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { ActivityIndicator, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -335,7 +336,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         <SystemStatusBar />
       </View>
 
-      <ScrollView className="flex-1">
+      <KeyboardAwareScrollView style={{ flex: 1 }}>
         <OrderSummary items={activeItems} />
 
         <DiscountSection
@@ -367,7 +368,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           change={change}
           showChange={paymentMethod === "cash" && !!cashReceived}
         />
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       {/* Footer */}
       <View className="p-4 bg-white border-t border-gray-200">

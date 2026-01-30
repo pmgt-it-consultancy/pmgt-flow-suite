@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { Platform, ScrollView } from "react-native";
-import { KeyboardAvoidingView, View } from "uniwind/components";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { View } from "uniwind/components";
 import { LoginForm } from "../components";
 import { useAuth } from "../context";
 
@@ -22,20 +22,15 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   }, [isAuthenticated, navigation]);
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-white justify-center"
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    <KeyboardAwareScrollView
+      contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+      style={{ flex: 1, backgroundColor: "white" }}
+      showsVerticalScrollIndicator={false}
     >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="items-center">
-          <LoginForm />
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      <View className="items-center">
+        <LoginForm />
+      </View>
+    </KeyboardAwareScrollView>
   );
 };
 
