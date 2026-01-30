@@ -5,6 +5,10 @@ on:
     branches:
       - staging
       - main
+    paths:
+      - 'apps/native/**'
+      - 'packages/backend/**'
+      - 'pnpm-lock.yaml'
 
 concurrency:
   group: build-pos-${{ github.ref }}
