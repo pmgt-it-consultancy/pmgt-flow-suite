@@ -3,7 +3,7 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
-import { Folder, Pencil, Plus, Tag } from "lucide-react";
+import { Folder, Pencil, Plus, SlidersHorizontal, Tag, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +60,9 @@ export default function CategoriesPage() {
   const [editingCategory, setEditingCategory] = useState<Id<"categories"> | null>(null);
   const [formData, setFormData] = useState<CategoryFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedModifierGroupId, setSelectedModifierGroupId] = useState<Id<"modifierGroups"> | "">(
+    "",
+  );
 
   // Queries
   const categories = useQuery(
@@ -67,9 +70,20 @@ export default function CategoriesPage() {
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
 
+  const modifierGroups = useQuery(
+    api.modifierGroups.list,
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
+  );
+  const categoryAssignments = useQuery(
+    api.modifierAssignments.listForCategory,
+    editingCategory ? { categoryId: editingCategory } : "skip",
+  );
+
   // Mutations
   const createCategory = useMutation(api.categories.create);
   const updateCategory = useMutation(api.categories.update);
+  const assignModifier = useMutation(api.modifierAssignments.assign);
+  const unassignModifier = useMutation(api.modifierAssignments.unassign);
 
   // Get parent categories (top-level only)
   const parentCategories = categories?.filter((c) => !c.parentId) ?? [];
@@ -284,6 +298,91 @@ export default function CategoriesPage() {
               />
               <p className="text-xs text-gray-500">Lower numbers appear first.</p>
             </div>
+
+            {/* Modifier Assignments (edit mode only) */}
+            {editingCategory && (
+              <div className="grid gap-2">
+                <Label className="flex items-center gap-1">
+                  <SlidersHorizontal className="h-4 w-4" />
+                  Modifier Groups
+                </Label>
+                {categoryAssignments && categoryAssignments.length > 0 ? (
+                  <div className="space-y-1">
+                    {categoryAssignments.map((a) => (
+                      <div
+                        key={a._id}
+                        className="flex items-center justify-between bg-gray-50 rounded px-3 py-1.5 text-sm"
+                      >
+                        <span>{a.groupName}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={async () => {
+                            try {
+                              await unassignModifier({ assignmentId: a._id });
+                              toast.success("Modifier removed");
+                            } catch {
+                              toast.error("Failed to remove modifier");
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-500">
+                    No modifiers assigned. Products in this category will inherit these.
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <Select
+                    value={selectedModifierGroupId as string}
+                    onValueChange={(v) => setSelectedModifierGroupId(v as Id<"modifierGroups">)}
+                  >
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="Add modifier group..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {modifierGroups
+                        ?.filter(
+                          (g) => !categoryAssignments?.some((a) => a.modifierGroupId === g._id),
+                        )
+                        .map((g) => (
+                          <SelectItem key={g._id} value={g._id}>
+                            {g.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={!selectedModifierGroupId}
+                    onClick={async () => {
+                      if (!selectedModifierGroupId || !selectedStoreId || !editingCategory) return;
+                      try {
+                        await assignModifier({
+                          storeId: selectedStoreId,
+                          modifierGroupId: selectedModifierGroupId as Id<"modifierGroups">,
+                          categoryId: editingCategory,
+                        });
+                        setSelectedModifierGroupId("");
+                        toast.success("Modifier assigned");
+                      } catch (error) {
+                        toast.error(
+                          error instanceof Error ? error.message : "Failed to assign modifier",
+                        );
+                      }
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {editingCategory && (
               <div className="grid gap-2">

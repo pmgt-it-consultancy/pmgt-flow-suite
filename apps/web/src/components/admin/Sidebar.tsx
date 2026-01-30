@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Package,
   Receipt,
+  SlidersHorizontal,
   Store,
   Tag,
   Users,
@@ -53,6 +54,12 @@ const navItems: NavItem[] = [
     href: "/products",
     icon: <Package className="h-5 w-5" />,
     permission: "products.view",
+  },
+  {
+    title: "Modifiers",
+    href: "/modifiers",
+    icon: <SlidersHorizontal className="h-5 w-5" />,
+    permission: "modifiers.manage",
   },
   {
     title: "Tables",

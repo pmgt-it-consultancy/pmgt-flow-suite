@@ -3,7 +3,7 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
-import { Package, Pencil, Plus, Search } from "lucide-react";
+import { Package, Pencil, Plus, Search, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -66,6 +66,9 @@ export default function ProductsPage() {
   const [formData, setFormData] = useState<ProductFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedModifierGroupId, setSelectedModifierGroupId] = useState<Id<"modifierGroups"> | "">(
+    "",
+  );
 
   // Queries
   const categories = useQuery(
@@ -77,9 +80,20 @@ export default function ProductsPage() {
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
 
+  const modifierGroups = useQuery(
+    api.modifierGroups.list,
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
+  );
+  const productAssignments = useQuery(
+    api.modifierAssignments.listForProduct,
+    editingProduct ? { productId: editingProduct } : "skip",
+  );
+
   // Mutations
   const createProduct = useMutation(api.products.create);
   const updateProduct = useMutation(api.products.update);
+  const assignModifier = useMutation(api.modifierAssignments.assign);
+  const unassignModifier = useMutation(api.modifierAssignments.unassign);
 
   // Filter products by search query
   const filteredProducts = products?.filter((p) =>
@@ -371,6 +385,89 @@ export default function ProductsPage() {
                 </div>
               )}
             </div>
+
+            {/* Modifier Assignments (edit mode only) */}
+            {editingProduct && (
+              <div className="grid gap-2">
+                <Label className="flex items-center gap-1">
+                  <SlidersHorizontal className="h-4 w-4" />
+                  Modifier Groups
+                </Label>
+                {productAssignments && productAssignments.length > 0 ? (
+                  <div className="space-y-1">
+                    {productAssignments.map((a) => (
+                      <div
+                        key={a._id}
+                        className="flex items-center justify-between bg-gray-50 rounded px-3 py-1.5 text-sm"
+                      >
+                        <span>{a.groupName}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={async () => {
+                            try {
+                              await unassignModifier({ assignmentId: a._id });
+                              toast.success("Modifier removed");
+                            } catch {
+                              toast.error("Failed to remove modifier");
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-500">No modifiers assigned.</p>
+                )}
+                <div className="flex gap-2">
+                  <Select
+                    value={selectedModifierGroupId as string}
+                    onValueChange={(v) => setSelectedModifierGroupId(v as Id<"modifierGroups">)}
+                  >
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="Add modifier group..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {modifierGroups
+                        ?.filter(
+                          (g) => !productAssignments?.some((a) => a.modifierGroupId === g._id),
+                        )
+                        .map((g) => (
+                          <SelectItem key={g._id} value={g._id}>
+                            {g.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={!selectedModifierGroupId}
+                    onClick={async () => {
+                      if (!selectedModifierGroupId || !selectedStoreId || !editingProduct) return;
+                      try {
+                        await assignModifier({
+                          storeId: selectedStoreId,
+                          modifierGroupId: selectedModifierGroupId as Id<"modifierGroups">,
+                          productId: editingProduct,
+                        });
+                        setSelectedModifierGroupId("");
+                        toast.success("Modifier assigned");
+                      } catch (error) {
+                        toast.error(
+                          error instanceof Error ? error.message : "Failed to assign modifier",
+                        );
+                      }
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {formData.price > 0 && (
               <div className="bg-gray-50 p-3 rounded-md text-sm">
