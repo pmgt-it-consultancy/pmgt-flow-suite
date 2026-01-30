@@ -48,7 +48,7 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     <View className="w-full items-center px-5">
       <Image
         source={require("../../../../assets/logo-full.png")}
-        className="w-64 h-20 mt-5"
+        className="h-56 mt-5"
         resizeMode="contain"
       />
 
