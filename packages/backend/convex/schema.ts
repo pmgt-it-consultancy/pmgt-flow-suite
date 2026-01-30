@@ -185,6 +185,8 @@ export default defineSchema({
     paymentMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
     cashReceived: v.optional(v.number()),
     changeGiven: v.optional(v.number()),
+    cardPaymentType: v.optional(v.string()),
+    cardReferenceNumber: v.optional(v.string()),
     createdBy: v.id("users"),
     createdAt: v.number(),
     paidAt: v.optional(v.number()),

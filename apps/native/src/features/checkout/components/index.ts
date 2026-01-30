@@ -1,3 +1,4 @@
+export { CardPaymentDetails } from "./CardPaymentDetails";
 export { CashInput } from "./CashInput";
 export { DiscountModal } from "./DiscountModal";
 export { DiscountSection } from "./DiscountSection";

@@ -65,6 +65,8 @@ export const processCashPayment = mutation({
 export const processCardPayment = mutation({
   args: {
     orderId: v.id("orders"),
+    paymentType: v.string(),
+    referenceNumber: v.string(),
   },
   returns: v.object({
     success: v.boolean(),
@@ -90,6 +92,8 @@ export const processCardPayment = mutation({
       paymentMethod: "card_ewallet",
       cashReceived: undefined,
       changeGiven: undefined,
+      cardPaymentType: args.paymentType,
+      cardReferenceNumber: args.referenceNumber,
       paidAt: now,
       paidBy: user._id,
     });
@@ -155,6 +159,8 @@ export const getReceipt = query({
       paymentMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
       cashReceived: v.optional(v.number()),
       changeGiven: v.optional(v.number()),
+      cardPaymentType: v.optional(v.string()),
+      cardReferenceNumber: v.optional(v.string()),
     }),
     v.null(),
   ),
@@ -228,6 +234,8 @@ export const getReceipt = query({
       paymentMethod: order.paymentMethod,
       cashReceived: order.cashReceived,
       changeGiven: order.changeGiven,
+      cardPaymentType: order.cardPaymentType,
+      cardReferenceNumber: order.cardReferenceNumber,
     };
   },
 });

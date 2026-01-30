@@ -97,6 +97,8 @@ export const TakeoutOrderDetailModal = ({
       change: order?.changeGiven,
       transactionDate: new Date(order?.paidAt ?? order?.createdAt ?? Date.now()),
       receiptNumber: order?.orderNumber,
+      cardPaymentType: order?.cardPaymentType,
+      cardReferenceNumber: order?.cardReferenceNumber,
       customerName: order?.customerName ?? discounts?.[0]?.customerName,
       customerId: discounts?.[0]?.customerId,
     };

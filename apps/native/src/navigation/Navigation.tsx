@@ -29,6 +29,7 @@ export type RootStackParamList = {
     orderId: Id<"orders">;
     tableId?: Id<"tables">;
     tableName?: string;
+    orderType?: "dine_in" | "takeout";
   };
   OrderHistoryScreen: undefined;
   OrderDetailScreen: {

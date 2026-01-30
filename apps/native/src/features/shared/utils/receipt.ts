@@ -34,6 +34,8 @@ export interface ReceiptData {
   amountTendered?: number;
   change?: number;
   cardLastFour?: string;
+  cardPaymentType?: string;
+  cardReferenceNumber?: string;
   transactionDate: Date;
   receiptNumber?: string;
   customerName?: string;
@@ -115,9 +117,17 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
       `
       : `
         <div class="payment-row">
-          <span>Card Payment:</span>
-          <span>**** ${data.cardLastFour || "0000"}</span>
+          <span>Type:</span>
+          <span>${data.cardPaymentType || "Card/E-Wallet"}</span>
         </div>
+        ${
+          data.cardReferenceNumber
+            ? `<div class="payment-row">
+          <span>Ref #:</span>
+          <span>${data.cardReferenceNumber}</span>
+        </div>`
+            : ""
+        }
       `;
 
   const customerInfoHtml =
@@ -323,7 +333,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         <div class="section-title">PAYMENT</div>
         <div class="payment-row">
           <span>Method:</span>
-          <span>${data.paymentMethod === "cash" ? "Cash" : "Card"}</span>
+          <span>${data.paymentMethod === "cash" ? "Cash" : data.cardPaymentType || "Card/E-Wallet"}</span>
         </div>
         ${paymentDetailsHtml}
       </div>

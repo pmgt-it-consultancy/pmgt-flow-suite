@@ -3,6 +3,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
+
 import { Alert } from "react-native";
 import { ActivityIndicator, FlatList, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
@@ -16,7 +17,6 @@ import {
   OrderHeader,
   VoidItemModal,
 } from "../../orders/components";
-import { useProductModifiers } from "../../orders/hooks/useProductModifiers";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Button, Input, Text } from "../../shared/components/ui";
@@ -74,12 +74,23 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     quantity: number;
   } | null>(null);
 
-  // Modifier data for selected product
-  const { modifierGroups, hasModifiers } = useProductModifiers(selectedProduct?.id);
-
   // Queries
   const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
   const products = useQuery(api.products.list, { storeId });
+
+  // Prefetch all modifier data for the store — available instantly on product tap
+  const allModifiers = useQuery(api.modifierAssignments.getForStore, { storeId });
+  const modifiersByProduct = useMemo(() => {
+    const map = new Map<string, NonNullable<typeof allModifiers>[number]["groups"]>();
+    if (allModifiers) {
+      for (const entry of allModifiers) {
+        map.set(entry.productId, entry.groups);
+      }
+    }
+    return map;
+  }, [allModifiers]);
+
+  const modifierGroups = selectedProduct ? (modifiersByProduct.get(selectedProduct.id) ?? []) : [];
 
   // Mutations
   const createOrder = useMutation(api.orders.create);
@@ -307,17 +318,15 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     [voidingItem, removeItemMutation],
   );
 
-  const handleSendToKitchen = useCallback(async () => {
+  const handleCheckout = useCallback(async () => {
     if (draftItems.length === 0 && isDraftMode) {
-      Alert.alert("No Items", "Add items before sending to kitchen");
+      Alert.alert("No Items", "Add items before checkout");
       return;
     }
 
     setIsSending(true);
     try {
       let orderId: Id<"orders">;
-      let orderNumber: string;
-      let sentItemNames: { name: string; quantity: number; notes?: string }[];
 
       if (isDraftMode) {
         // Create takeout order
@@ -338,50 +347,20 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
           });
         }
 
-        // Send to kitchen
-        await sendToKitchenMutation({ orderId });
-
-        // We need order number for the ticket — fetch it
-        // The order number follows T-XXX pattern, but we don't have it here.
-        // We'll set current order and let the query resolve it.
         setCurrentOrderId(orderId);
-        orderNumber = ""; // Will be resolved from order query
-        sentItemNames = draftItems.map((d) => ({
-          name: d.productName,
-          quantity: d.quantity,
-          notes: d.notes,
-        }));
         setDraftItems([]);
       } else {
         orderId = currentOrderId!;
-        const unsentItems = activeItems.filter((i) => !i.isSentToKitchen);
-        await sendToKitchenMutation({ orderId });
-        orderNumber = order!.orderNumber;
-        sentItemNames = unsentItems.map((i) => ({
-          name: i.productName,
-          quantity: i.quantity,
-          notes: i.notes,
-        }));
       }
 
-      // Print kitchen ticket
-      if (orderNumber) {
-        const kitchenData: KitchenTicketData = {
-          orderNumber,
-          tableName: customerName.trim() || "Takeout",
-          orderType: "take_out",
-          items: sentItemNames,
-          timestamp: new Date(),
-        };
-        await printKitchenTicket(kitchenData);
-      }
-
-      Alert.alert("Sent", "Order sent to kitchen", [
-        { text: "OK", onPress: () => navigation.goBack() },
-      ]);
+      // Navigate to checkout
+      navigation.navigate("CheckoutScreen", {
+        orderId,
+        orderType: "takeout",
+      });
     } catch (error: any) {
-      console.error("Send to kitchen error:", error);
-      Alert.alert("Error", error.message || "Failed to send to kitchen");
+      console.error("Checkout error:", error);
+      Alert.alert("Error", error.message || "Failed to proceed to checkout");
     } finally {
       setIsSending(false);
     }
@@ -390,13 +369,9 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     draftItems,
     createOrder,
     addItemMutation,
-    sendToKitchenMutation,
     storeId,
     customerName,
     currentOrderId,
-    activeItems,
-    order,
-    printKitchenTicket,
     navigation,
   ]);
 
@@ -499,7 +474,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             hasUnsentItems={hasUnsentItems}
             hasSentItems={hasSentItems}
             isDraftMode={isDraftMode}
-            onSendToKitchen={handleSendToKitchen}
+            onSendToKitchen={handleCheckout}
             onCloseTable={undefined}
             onViewBill={undefined}
             onCancelOrder={handleCancelOrder}
@@ -507,28 +482,25 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         </View>
       </View>
 
-      {hasModifiers ? (
-        <ModifierSelectionModal
-          visible={!!selectedProduct}
-          product={selectedProduct}
-          modifierGroups={modifierGroups}
-          isLoading={isAddingItem || isSending}
-          onClose={handleCloseModal}
-          onConfirm={handleConfirmModifiers}
-        />
-      ) : (
-        <AddItemModal
-          visible={!!selectedProduct}
-          product={selectedProduct}
-          quantity={quantity}
-          notes={notes}
-          isLoading={isAddingItem || isSending}
-          onClose={handleCloseModal}
-          onQuantityChange={setQuantity}
-          onNotesChange={setNotes}
-          onConfirm={handleConfirmAdd}
-        />
-      )}
+      <ModifierSelectionModal
+        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length > 0}
+        product={selectedProduct}
+        modifierGroups={modifierGroups}
+        isLoading={isAddingItem || isSending}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmModifiers}
+      />
+      <AddItemModal
+        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length === 0}
+        product={selectedProduct}
+        quantity={quantity}
+        notes={notes}
+        isLoading={isAddingItem || isSending}
+        onClose={handleCloseModal}
+        onQuantityChange={setQuantity}
+        onNotesChange={setNotes}
+        onConfirm={handleConfirmAdd}
+      />
 
       <VoidItemModal
         visible={!!voidingItem}

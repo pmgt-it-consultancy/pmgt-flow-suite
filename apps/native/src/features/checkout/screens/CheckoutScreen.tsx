@@ -6,10 +6,12 @@ import { useCallback, useMemo, useState } from "react";
 import { Alert } from "react-native";
 import { ActivityIndicator, ScrollView, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
+import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { type ReceiptData, useFormatCurrency } from "../../shared";
 import { Button, IconButton, Text } from "../../shared/components/ui";
 import {
+  CardPaymentDetails,
   CashInput,
   DiscountModal,
   DiscountSection,
@@ -27,6 +29,7 @@ interface CheckoutScreenProps {
       orderId: Id<"orders">;
       tableId?: Id<"tables">;
       tableName?: string;
+      orderType?: "dine_in" | "takeout";
     };
   };
 }
@@ -35,13 +38,17 @@ type PaymentMethod = "cash" | "card_ewallet";
 type DiscountType = "senior_citizen" | "pwd" | null;
 
 export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
-  const { orderId, tableId: _tableId, tableName } = route.params;
+  const { orderId, tableId: _tableId, tableName, orderType } = route.params;
+  const isTakeout = orderType === "takeout";
   const { user, isLoading, isAuthenticated } = useAuth();
   const formatCurrency = useFormatCurrency();
 
   // UI State
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
   const [cashReceived, setCashReceived] = useState("");
+  const [cardPaymentType, setCardPaymentType] = useState("");
+  const [cardReferenceNumber, setCardReferenceNumber] = useState("");
+  const [customPaymentType, setCustomPaymentType] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Receipt Preview State
@@ -71,8 +78,12 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   // Mutations
   const processCashPayment = useMutation(api.checkout.processCashPayment);
   const processCardPayment = useMutation(api.checkout.processCardPayment);
+  const sendToKitchenMutation = useMutation(api.orders.sendToKitchen);
   const applyScPwdDiscount = useMutation(api.discounts.applyScPwdDiscount);
   const removeDiscount = useMutation(api.discounts.removeDiscount);
+
+  // Printer Store - kitchen ticket
+  const { printKitchenTicket } = usePrinterStore();
 
   // Computed values
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
@@ -207,13 +218,25 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         paymentMethod: paymentMethod === "cash" ? "cash" : "card",
         amountTendered: cashAmount,
         change: changeAmount,
+        cardPaymentType: paymentMethod === "card_ewallet" ? cardPaymentType : undefined,
+        cardReferenceNumber: paymentMethod === "card_ewallet" ? cardReferenceNumber : undefined,
         transactionDate: new Date(),
         receiptNumber: order?.orderNumber,
         customerName: discounts?.[0]?.customerName,
         customerId: discounts?.[0]?.customerId,
       };
     },
-    [discounts, store, order, tableName, user?.name, activeItems, paymentMethod],
+    [
+      discounts,
+      store,
+      order,
+      tableName,
+      user?.name,
+      activeItems,
+      paymentMethod,
+      cardPaymentType,
+      cardReferenceNumber,
+    ],
   );
 
   const handleProcessPayment = useCallback(async () => {
@@ -232,6 +255,17 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       }
     }
 
+    if (paymentMethod === "card_ewallet") {
+      if (!cardPaymentType || cardPaymentType === "Other") {
+        Alert.alert("Error", "Please select a payment type");
+        return;
+      }
+      if (!cardReferenceNumber.trim()) {
+        Alert.alert("Error", "Please enter a reference number");
+        return;
+      }
+    }
+
     setIsProcessing(true);
     try {
       let finalChange = 0;
@@ -240,7 +274,11 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         const result = await processCashPayment({ orderId, cashReceived: cashAmount });
         finalChange = result.changeGiven;
       } else {
-        await processCardPayment({ orderId });
+        await processCardPayment({
+          orderId,
+          paymentType: cardPaymentType,
+          referenceNumber: cardReferenceNumber.trim(),
+        });
       }
 
       const receiptData = createReceiptData(
@@ -258,12 +296,12 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     order,
     cashReceived,
     paymentMethod,
+    cardPaymentType,
+    cardReferenceNumber,
     processCashPayment,
     processCardPayment,
     orderId,
-    formatCurrency,
     createReceiptData,
-    navigation,
   ]);
 
   if (isLoading || !isAuthenticated || !order) {
@@ -301,6 +339,17 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         <PaymentMethodSelector selected={paymentMethod} onSelect={setPaymentMethod} />
 
         {paymentMethod === "cash" && <CashInput value={cashReceived} onChange={setCashReceived} />}
+
+        {paymentMethod === "card_ewallet" && (
+          <CardPaymentDetails
+            paymentType={cardPaymentType}
+            referenceNumber={cardReferenceNumber}
+            customPaymentType={customPaymentType}
+            onPaymentTypeChange={setCardPaymentType}
+            onReferenceNumberChange={setCardReferenceNumber}
+            onCustomPaymentTypeChange={setCustomPaymentType}
+          />
+        )}
 
         <TotalsSummary
           grossSales={order.grossSales}
@@ -366,7 +415,42 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           await printToThermal(completedReceiptData);
         }}
         onSkip={() => {
-          navigation.reset({ index: 0, routes: [{ name: "HomeScreen" }] });
+          if (isTakeout) {
+            Alert.alert("Order Paid", "What would you like to do?", [
+              {
+                text: "Send to Kitchen",
+                onPress: async () => {
+                  try {
+                    await sendToKitchenMutation({ orderId });
+                    // Print kitchen ticket
+                    if (order?.orderNumber) {
+                      const kitchenData: KitchenTicketData = {
+                        orderNumber: order.orderNumber,
+                        tableName: order.customerName || "Takeout",
+                        orderType: "take_out",
+                        items: activeItems.map((i) => ({
+                          name: i.productName,
+                          quantity: i.quantity,
+                          notes: i.notes,
+                        })),
+                        timestamp: new Date(),
+                      };
+                      await printKitchenTicket(kitchenData);
+                    }
+                  } catch (error: any) {
+                    Alert.alert("Error", error.message || "Failed to send to kitchen");
+                  }
+                  navigation.goBack();
+                },
+              },
+              {
+                text: "Done",
+                onPress: () => navigation.goBack(),
+              },
+            ]);
+          } else {
+            navigation.reset({ index: 0, routes: [{ name: "HomeScreen" }] });
+          }
         }}
       />
     </View>
