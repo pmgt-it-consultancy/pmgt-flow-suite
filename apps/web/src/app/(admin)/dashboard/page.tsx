@@ -23,9 +23,9 @@ export default function DashboardPage() {
   // Use the globally selected store for dashboard data
   const primaryStoreId = selectedStoreId;
 
-  // Get daily report for the primary store
-  const dailyReport = useQuery(
-    api.reports.getDailyReport,
+  // Get live dashboard summary (computed directly from orders)
+  const dashboardSummary = useQuery(
+    api.reports.getDashboardSummary,
     primaryStoreId
       ? {
           storeId: primaryStoreId,
@@ -34,9 +34,9 @@ export default function DashboardPage() {
       : "skip",
   );
 
-  // Get top selling products for the primary store
+  // Get live top selling products (computed directly from order items)
   const topProducts = useQuery(
-    api.reports.getTopSellingProducts,
+    api.reports.getTopSellingProductsLive,
     primaryStoreId
       ? {
           storeId: primaryStoreId,
@@ -47,10 +47,10 @@ export default function DashboardPage() {
   );
 
   // Calculate summary values
-  const todaySales = dailyReport?.netSales ?? 0;
-  const todayOrders = dailyReport?.transactionCount ?? 0;
+  const todaySales = dashboardSummary?.netSales ?? 0;
+  const todayOrders = dashboardSummary?.transactionCount ?? 0;
   const avgOrderValue = todayOrders > 0 ? todaySales / todayOrders : 0;
-  const totalDiscounts = dailyReport?.totalDiscounts ?? 0;
+  const totalDiscounts = dashboardSummary?.totalDiscounts ?? 0;
 
   return (
     <div className="space-y-6">
@@ -69,7 +69,7 @@ export default function DashboardPage() {
           value={formatCurrency(todaySales)}
           description="Total net sales for today"
           icon={<DollarSign className="h-5 w-5" />}
-          trend={dailyReport ? "+12% from yesterday" : undefined}
+          trend={dashboardSummary ? "+12% from yesterday" : undefined}
         />
         <SummaryCard
           title="Orders"
@@ -99,26 +99,32 @@ export default function DashboardPage() {
             <CardDescription>Today's sales by payment method</CardDescription>
           </CardHeader>
           <CardContent>
-            {dailyReport ? (
+            {dashboardSummary ? (
               <div className="space-y-4">
-                <SalesBreakdownItem label="Cash" value={dailyReport.cashTotal} total={todaySales} />
+                <SalesBreakdownItem
+                  label="Cash"
+                  value={dashboardSummary.cashTotal}
+                  total={todaySales}
+                />
                 <SalesBreakdownItem
                   label="Card/E-Wallet"
-                  value={dailyReport.cardEwalletTotal}
+                  value={dashboardSummary.cardEwalletTotal}
                   total={todaySales}
                 />
                 <div className="pt-4 border-t">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Gross Sales</span>
-                    <span>{formatCurrency(dailyReport.grossSales)}</span>
+                    <span>{formatCurrency(dashboardSummary.grossSales)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">VAT Amount (12%)</span>
-                    <span>{formatCurrency(dailyReport.vatAmount)}</span>
+                    <span>{formatCurrency(dashboardSummary.vatAmount)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Net Sales</span>
-                    <span className="font-semibold">{formatCurrency(dailyReport.netSales)}</span>
+                    <span className="font-semibold">
+                      {formatCurrency(dashboardSummary.netSales)}
+                    </span>
                   </div>
                 </div>
               </div>

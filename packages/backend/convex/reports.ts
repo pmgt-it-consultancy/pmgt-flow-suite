@@ -876,3 +876,146 @@ export const getCategorySales = query({
     }));
   },
 });
+
+// Live dashboard summary - computes directly from orders (no pre-generated report needed)
+export const getDashboardSummary = query({
+  args: {
+    storeId: v.id("stores"),
+    reportDate: v.string(), // YYYY-MM-DD format
+  },
+  returns: v.object({
+    grossSales: v.number(),
+    vatAmount: v.number(),
+    netSales: v.number(),
+    cashTotal: v.number(),
+    cardEwalletTotal: v.number(),
+    totalDiscounts: v.number(),
+    transactionCount: v.number(),
+  }),
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
+    }
+
+    const startOfDay = new Date(args.reportDate).setHours(0, 0, 0, 0);
+    const endOfDay = new Date(args.reportDate).setHours(23, 59, 59, 999);
+
+    const orders = await ctx.db
+      .query("orders")
+      .withIndex("by_store_createdAt", (q) =>
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
+      )
+      .collect();
+
+    const paidOrders = orders.filter((o) => o.status === "paid");
+
+    let grossSales = 0;
+    let vatAmount = 0;
+    let netSales = 0;
+    let cashTotal = 0;
+    let cardEwalletTotal = 0;
+
+    for (const order of paidOrders) {
+      grossSales += order.grossSales;
+      vatAmount += order.vatAmount;
+      netSales += order.netSales;
+
+      if (order.paymentMethod === "cash") {
+        cashTotal += order.netSales;
+      } else if (order.paymentMethod === "card_ewallet") {
+        cardEwalletTotal += order.netSales;
+      }
+    }
+
+    // Calculate discounts
+    let totalDiscounts = 0;
+    for (const order of paidOrders) {
+      totalDiscounts += order.discountAmount;
+    }
+
+    const transactionCount = paidOrders.length;
+
+    return {
+      grossSales: roundToTwo(grossSales),
+      vatAmount: roundToTwo(vatAmount),
+      netSales: roundToTwo(netSales),
+      cashTotal: roundToTwo(cashTotal),
+      cardEwalletTotal: roundToTwo(cardEwalletTotal),
+      totalDiscounts: roundToTwo(totalDiscounts),
+      transactionCount,
+    };
+  },
+});
+
+// Live top selling products - computes directly from order items
+export const getTopSellingProductsLive = query({
+  args: {
+    storeId: v.id("stores"),
+    reportDate: v.string(),
+    limit: v.optional(v.number()),
+  },
+  returns: v.array(
+    v.object({
+      productId: v.id("products"),
+      productName: v.string(),
+      quantitySold: v.number(),
+      grossAmount: v.number(),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
+    }
+
+    const startOfDay = new Date(args.reportDate).setHours(0, 0, 0, 0);
+    const endOfDay = new Date(args.reportDate).setHours(23, 59, 59, 999);
+
+    const orders = await ctx.db
+      .query("orders")
+      .withIndex("by_store_createdAt", (q) =>
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
+      )
+      .collect();
+
+    const paidOrders = orders.filter((o) => o.status === "paid");
+
+    const productMap = new Map<
+      string,
+      { productId: Id<"products">; productName: string; quantitySold: number; grossAmount: number }
+    >();
+
+    for (const order of paidOrders) {
+      const items = await ctx.db
+        .query("orderItems")
+        .withIndex("by_order", (q) => q.eq("orderId", order._id))
+        .collect();
+
+      for (const item of items) {
+        if (item.isVoided) continue;
+        const existing = productMap.get(item.productId);
+        if (existing) {
+          existing.quantitySold += item.quantity;
+          existing.grossAmount += item.productPrice * item.quantity;
+        } else {
+          productMap.set(item.productId, {
+            productId: item.productId,
+            productName: item.productName,
+            quantitySold: item.quantity,
+            grossAmount: item.productPrice * item.quantity,
+          });
+        }
+      }
+    }
+
+    const results = Array.from(productMap.values());
+    results.sort((a, b) => b.quantitySold - a.quantitySold);
+
+    const limited = args.limit ? results.slice(0, args.limit) : results;
+    return limited.map((r) => ({
+      ...r,
+      grossAmount: roundToTwo(r.grossAmount),
+    }));
+  },
+});
