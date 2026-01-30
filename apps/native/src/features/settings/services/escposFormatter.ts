@@ -120,11 +120,17 @@ export async function printReceiptToThermal(
   );
 
   if (data.discounts.length > 0) {
+    await p.printText("\n", normal());
+    await p.printText(`${line("-", w)}\n`, normal());
+    await p.printerAlign(ALIGN.CENTER);
+    await p.printText("DISCOUNTS\n", bold());
+    await p.printerAlign(ALIGN.LEFT);
     for (const d of data.discounts) {
       const label = `${d.type === "sc" ? "SC" : d.type === "pwd" ? "PWD" : "Discount"}: ${d.customerName}`;
       await p.printText(`${label}\n`, normal());
       await p.printText(`ID: ${d.customerId}\n`, normal());
       await p.printText(`${formatRow(d.itemName, `-${formatCurrency(d.amount)}`, w)}\n`, normal());
+      await p.printText("\n", normal());
     }
     const totalDiscount = data.discounts.reduce((s, d) => s + d.amount, 0);
     await p.printText(
@@ -138,10 +144,9 @@ export async function printReceiptToThermal(
   await p.printText(`${line("-", w)}\n`, normal());
 
   // Payment
-  await p.printText(
-    `${formatRow("Payment Method", data.paymentMethod === "cash" ? "Cash" : "Card", w)}\n`,
-    normal(),
-  );
+  const paymentLabel =
+    data.paymentMethod === "cash" ? "Cash" : data.cardPaymentType || "Card/E-Wallet";
+  await p.printText(`${formatRow("Payment Method", paymentLabel, w)}\n`, normal());
 
   if (data.paymentMethod === "cash") {
     await p.printText(
@@ -150,10 +155,9 @@ export async function printReceiptToThermal(
     );
     await p.printText(`${formatRow("Change", formatCurrency(data.change ?? 0), w)}\n`, normal());
   } else {
-    await p.printText(
-      `${formatRow("Card Payment", `****${data.cardLastFour ?? "0000"}`, w)}\n`,
-      normal(),
-    );
+    if (data.cardReferenceNumber) {
+      await p.printText(`${formatRow("Ref #", data.cardReferenceNumber, w)}\n`, normal());
+    }
   }
 
   await p.printText(`${line("-", w)}\n`, normal());

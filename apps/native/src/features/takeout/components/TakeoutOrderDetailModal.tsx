@@ -91,7 +91,7 @@ export const TakeoutOrderDetailModal = ({
       vatAmount: order?.vatAmount ?? 0,
       vatExemptSales: order?.vatExemptSales ?? 0,
       total: order?.netSales ?? 0,
-      paymentMethod: order?.paymentMethod === "cash" ? "cash" : "card",
+      paymentMethod: order?.paymentMethod === "cash" ? "cash" : "card_ewallet",
       amountTendered: order?.cashReceived,
       change: order?.changeGiven,
       transactionDate: new Date(order?.paidAt ?? order?.createdAt ?? Date.now()),

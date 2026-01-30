@@ -32,7 +32,7 @@ export interface ReceiptData {
   vatAmount: number;
   vatExemptSales: number;
   total: number;
-  paymentMethod: "cash" | "card";
+  paymentMethod: "cash" | "card" | "card_ewallet";
   amountTendered?: number;
   change?: number;
   cardLastFour?: string;
@@ -98,25 +98,30 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
 
   const discountsHtml =
     data.discounts.length > 0
-      ? data.discounts
+      ? `<tr><td colspan="4" style="padding-top:8px;border-top:1px dashed #ccc;"></td></tr>
+         <tr><td colspan="4" style="font-weight:bold;padding-bottom:4px;">DISCOUNTS</td></tr>` +
+        data.discounts
           .map(
             (d) => `
       <tr class="discount">
-        <td colspan="4" style="padding-top:4px;">
+        <td colspan="4" style="padding-top:6px;">
           ${d.type === "sc" ? "SC" : d.type === "pwd" ? "PWD" : "Discount"}: ${d.customerName}
         </td>
       </tr>
       <tr class="discount">
-        <td colspan="4" style="font-size:10px;">ID: ${d.customerId}</td>
+        <td colspan="4" style="font-size:10px;padding-top:2px;">ID: ${d.customerId}</td>
       </tr>
       <tr class="discount">
-        <td colspan="3" style="font-size:10px;">${d.itemName}</td>
+        <td colspan="3" style="font-size:10px;padding-top:2px;">${d.itemName}</td>
         <td class="right">-${formatCurrency(d.amount)}</td>
       </tr>
     `,
           )
           .join("")
       : "";
+
+  const paymentMethodLabel =
+    data.paymentMethod === "cash" ? "Cash" : data.cardPaymentType || "Card/E-Wallet";
 
   const paymentDetailsHtml =
     data.paymentMethod === "cash"
@@ -131,10 +136,6 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         </div>
       `
       : `
-        <div class="payment-row">
-          <span>Type:</span>
-          <span>${data.cardPaymentType || "Card/E-Wallet"}</span>
-        </div>
         ${
           data.cardReferenceNumber
             ? `<div class="payment-row">
@@ -349,7 +350,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         <div class="section-title">PAYMENT</div>
         <div class="payment-row">
           <span>Method:</span>
-          <span>${data.paymentMethod === "cash" ? "Cash" : data.cardPaymentType || "Card/E-Wallet"}</span>
+          <span>${paymentMethodLabel}</span>
         </div>
         ${paymentDetailsHtml}
       </div>

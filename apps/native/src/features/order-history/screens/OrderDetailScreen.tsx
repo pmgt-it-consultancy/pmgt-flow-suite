@@ -87,9 +87,11 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
         vatAmount: receipt.vatAmount,
         vatExemptSales: receipt.vatExemptSales,
         total: receipt.netSales,
-        paymentMethod: receipt.paymentMethod === "cash" ? "cash" : "card",
+        paymentMethod: receipt.paymentMethod === "cash" ? "cash" : "card_ewallet",
         amountTendered: receipt.cashReceived,
         change: receipt.changeGiven ?? 0,
+        cardPaymentType: receipt.cardPaymentType,
+        cardReferenceNumber: receipt.cardReferenceNumber,
         transactionDate: new Date(receipt.paidAt ?? receipt.createdAt),
         receiptNumber: receipt.orderNumber,
       };

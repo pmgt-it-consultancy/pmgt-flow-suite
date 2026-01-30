@@ -223,7 +223,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         vatAmount: order?.vatAmount ?? 0,
         vatExemptSales: order?.vatExemptSales ?? 0,
         total: order?.netSales ?? 0,
-        paymentMethod: paymentMethod === "cash" ? "cash" : "card",
+        paymentMethod: paymentMethod === "cash" ? "cash" : "card_ewallet",
         amountTendered: cashAmount,
         change: changeAmount,
         cardPaymentType: paymentMethod === "card_ewallet" ? cardPaymentType : undefined,
