@@ -2,8 +2,13 @@ name: Release POS Android
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - staging
+      - main
+    paths:
+      - 'apps/native/**'
+      - 'packages/backend/**'
+      - 'pnpm-lock.yaml'
 
 concurrency:
   group: release-pos-${{ github.ref }}
@@ -11,21 +16,31 @@ concurrency:
 
 jobs:
   build:
-    name: Build ${{ matrix.flavor }} APK
+    name: Build ${{ github.ref_name == 'main' && 'Production' || 'Staging' }} APK
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - flavor: staging
-            task: assembleStagingRelease
-            convex_url_secret: CONVEX_URL_STAGING
-          - flavor: production
-            task: assembleProductionRelease
-            convex_url_secret: CONVEX_URL_PRODUCTION
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set build flavor
+        id: flavor
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "name=production" >> $GITHUB_OUTPUT
+            echo "task=assembleProductionRelease" >> $GITHUB_OUTPUT
+            echo "convex_url=${{ secrets.CONVEX_URL_PRODUCTION }}" >> $GITHUB_OUTPUT
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          else
+            echo "name=staging" >> $GITHUB_OUTPUT
+            echo "task=assembleStagingRelease" >> $GITHUB_OUTPUT
+            echo "convex_url=${{ secrets.CONVEX_URL_STAGING }}" >> $GITHUB_OUTPUT
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get version from package.json
+        id: version
+        run: echo "version=$(node -p "require('./apps/native/package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -68,7 +83,7 @@ jobs:
 
       - name: Write .env file
         working-directory: apps/native
-        run: echo "EXPO_PUBLIC_CONVEX_URL=${{ secrets[matrix.convex_url_secret] }}" > .env
+        run: echo "EXPO_PUBLIC_CONVEX_URL=${{ steps.flavor.outputs.convex_url }}" > .env
 
       - name: Decode keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ${{ runner.temp }}/release.keystore
@@ -80,47 +95,12 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew ${{ matrix.task }} --no-daemon
-
-      - name: Get version from tag
-        id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+        run: ./gradlew ${{ steps.flavor.outputs.task }} --no-daemon
 
       - name: Rename APK
         run: |
-          APK_PATH=$(find apps/native/android/app/build/outputs/apk/${{ matrix.flavor }}/release -name '*.apk' | head -1)
-          cp "$APK_PATH" "pmgt-flow-${{ matrix.flavor }}-${{ steps.version.outputs.version }}.apk"
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk-${{ matrix.flavor }}
-          path: pmgt-flow-${{ matrix.flavor }}-${{ steps.version.outputs.version }}.apk
-
-  release:
-    name: Create GitHub Release
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Get version from tag
-        id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-
-      - name: Download staging APK
-        uses: actions/download-artifact@v4
-        with:
-          name: apk-staging
-
-      - name: Download production APK
-        uses: actions/download-artifact@v4
-        with:
-          name: apk-production
+          APK_PATH=$(find apps/native/android/app/build/outputs/apk/${{ steps.flavor.outputs.name }}/release -name '*.apk' | head -1)
+          cp "$APK_PATH" "pmgt-flow-${{ steps.flavor.outputs.name }}-${{ steps.version.outputs.version }}.apk"
 
       - name: Read release notes
         id: notes
@@ -139,10 +119,16 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: v${{ steps.version.outputs.version }}
+          tag_name: v${{ steps.version.outputs.version }}-${{ steps.flavor.outputs.name }}
+          name: v${{ steps.version.outputs.version }} (${{ steps.flavor.outputs.name }})
           body: ${{ steps.notes.outputs.body }}
           draft: false
-          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') }}
-          files: |
-            pmgt-flow-staging-${{ steps.version.outputs.version }}.apk
-            pmgt-flow-production-${{ steps.version.outputs.version }}.apk
+          prerelease: ${{ steps.flavor.outputs.prerelease }}
+          files: pmgt-flow-${{ steps.flavor.outputs.name }}-${{ steps.version.outputs.version }}.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pos-${{ steps.flavor.outputs.name }}-${{ github.sha }}
+          path: pmgt-flow-${{ steps.flavor.outputs.name }}-${{ steps.version.outputs.version }}.apk
+          retention-days: 30
