@@ -14,6 +14,7 @@ interface TakeoutOrderCardProps {
   itemCount: number;
   createdAt: number;
   onAdvanceStatus: (orderId: Id<"orders">, currentStatus: TakeoutStatus) => void;
+  onPress?: (orderId: Id<"orders">) => void;
 }
 
 const statusConfig: Record<
@@ -40,13 +41,18 @@ export const TakeoutOrderCard = ({
   itemCount,
   createdAt,
   onAdvanceStatus,
+  onPress,
 }: TakeoutOrderCardProps) => {
   const formatCurrency = useFormatCurrency();
   const config = statusConfig[takeoutStatus];
   const time = new Date(createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <View className="bg-white rounded-xl p-4 border border-gray-100 mb-3">
+    <TouchableOpacity
+      className="bg-white rounded-xl p-4 border border-gray-100 mb-3"
+      activeOpacity={0.7}
+      onPress={() => onPress?.(id)}
+    >
       <View className="flex-row justify-between items-start mb-2">
         <View>
           <Text className="font-bold text-gray-900 text-base">{orderNumber}</Text>
@@ -82,6 +88,6 @@ export const TakeoutOrderCard = ({
           </Button>
         ) : null}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };

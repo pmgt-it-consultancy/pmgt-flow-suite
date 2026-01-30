@@ -3,10 +3,11 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
+
 import { ActivityIndicator, FlatList, RefreshControl, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
 import { Button, IconButton, Text } from "../../shared/components/ui";
-import { TakeoutOrderCard } from "../components";
+import { TakeoutOrderCard, TakeoutOrderDetailModal } from "../components";
 
 type TakeoutStatus = "pending" | "preparing" | "ready_for_pickup" | "completed" | "cancelled";
 
@@ -23,6 +24,7 @@ interface TakeoutListScreenProps {
 export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   const { user } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<Id<"orders"> | null>(null);
 
   const takeoutOrders = useQuery(
     api.orders.getTakeoutOrders,
@@ -121,6 +123,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
                   itemCount={item.itemCount}
                   createdAt={item.createdAt}
                   onAdvanceStatus={handleAdvanceStatus}
+                  onPress={setSelectedOrderId}
                 />
               </View>
             </View>
@@ -139,6 +142,12 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
           }
         />
       )}
+
+      <TakeoutOrderDetailModal
+        visible={selectedOrderId !== null}
+        orderId={selectedOrderId}
+        onClose={() => setSelectedOrderId(null)}
+      />
     </View>
   );
 };
