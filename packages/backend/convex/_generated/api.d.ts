@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as appConfig from "../appConfig.js";
+import type * as appUpdate from "../appUpdate.js";
 import type * as auditLogs from "../auditLogs.js";
 import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
@@ -46,6 +48,8 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  appConfig: typeof appConfig;
+  appUpdate: typeof appUpdate;
   auditLogs: typeof auditLogs;
   auth: typeof auth;
   categories: typeof categories;

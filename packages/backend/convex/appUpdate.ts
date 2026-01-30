@@ -2,7 +2,7 @@
 
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import { action, internalQuery, mutation } from "./_generated/server";
+import { action } from "./_generated/server";
 
 function compareSemver(a: string, b: string): number {
   const pa = a.split(".").map(Number);
@@ -28,7 +28,19 @@ export const checkForUpdate = action({
       updateAvailable: v.literal(false),
     }),
   ),
-  handler: async (ctx, args) => {
+  handler: async (
+    ctx,
+    args,
+  ): Promise<
+    | {
+        updateAvailable: true;
+        latestVersion: string;
+        downloadUrl: string;
+        releaseNotes: string;
+        isForced: boolean;
+      }
+    | { updateAvailable: false }
+  > => {
     const token = process.env.GITHUB_TOKEN;
     const repo = process.env.GITHUB_REPO;
 
@@ -60,8 +72,11 @@ export const checkForUpdate = action({
       throw new Error("No APK asset found in the latest release");
     }
 
-    const minRequired = await ctx.runQuery(internal.appUpdate.getMinRequiredVersion, {});
-    const isForced = minRequired
+    const minRequired: { value: string } | null = await ctx.runQuery(
+      internal.appConfig.getMinRequiredVersion,
+      {},
+    );
+    const isForced: boolean = minRequired
       ? compareSemver(minRequired.value, args.currentVersion) > 0
       : false;
 
@@ -99,41 +114,5 @@ export const getApkDownloadUrl = action({
     }
 
     return location;
-  },
-});
-
-export const getMinRequiredVersion = internalQuery({
-  args: {},
-  returns: v.union(v.object({ value: v.string() }), v.null()),
-  handler: async (ctx) => {
-    const config = await ctx.db
-      .query("appConfig")
-      .withIndex("by_key", (q) => q.eq("key", "minRequiredVersion"))
-      .first();
-
-    if (!config) return null;
-    return { value: config.value };
-  },
-});
-
-export const setMinRequiredVersion = mutation({
-  args: { version: v.string() },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const existing = await ctx.db
-      .query("appConfig")
-      .withIndex("by_key", (q) => q.eq("key", "minRequiredVersion"))
-      .first();
-
-    if (existing) {
-      await ctx.db.patch(existing._id, { value: args.version });
-    } else {
-      await ctx.db.insert("appConfig", {
-        key: "minRequiredVersion",
-        value: args.version,
-      });
-    }
-
-    return null;
   },
 });

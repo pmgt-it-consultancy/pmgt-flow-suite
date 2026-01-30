@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend";
+import { api } from "@packages/backend/convex/_generated/api";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAction } from "convex/react";
 import Constants from "expo-constants";
