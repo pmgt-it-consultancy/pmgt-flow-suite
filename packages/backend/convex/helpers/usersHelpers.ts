@@ -157,8 +157,8 @@ export const listManagers = query({
       const role = await ctx.db.get(user.roleId);
       if (!role) continue;
 
-      // Include managers, admins, and super admins (not just branch-level cashiers)
-      if (role.scopeLevel === "system" || role.scopeLevel === "parent") {
+      // Include users who have the discounts.approve permission
+      if (role.permissions.includes("discounts.approve")) {
         managers.push({
           _id: user._id,
           name: user.name ?? "Unknown",
