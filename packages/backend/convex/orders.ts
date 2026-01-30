@@ -160,6 +160,13 @@ export const get = query({
           isVoided: v.boolean(),
           isSentToKitchen: v.optional(v.boolean()),
           lineTotal: v.number(),
+          modifiers: v.array(
+            v.object({
+              groupName: v.string(),
+              optionName: v.string(),
+              priceAdjustment: v.number(),
+            }),
+          ),
         }),
       ),
     }),
@@ -189,17 +196,34 @@ export const get = query({
       .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
       .collect();
 
-    const itemsWithTotals = items.map((item) => ({
-      _id: item._id,
-      productId: item.productId,
-      productName: item.productName,
-      productPrice: item.productPrice,
-      quantity: item.quantity,
-      notes: item.notes,
-      isVoided: item.isVoided,
-      isSentToKitchen: item.isSentToKitchen,
-      lineTotal: item.isVoided ? 0 : item.productPrice * item.quantity,
-    }));
+    const itemsWithTotals = await Promise.all(
+      items.map(async (item) => {
+        // Fetch modifier snapshots
+        const modifiers = await ctx.db
+          .query("orderItemModifiers")
+          .withIndex("by_orderItem", (q) => q.eq("orderItemId", item._id))
+          .collect();
+
+        const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceAdjustment, 0);
+
+        return {
+          _id: item._id,
+          productId: item.productId,
+          productName: item.productName,
+          productPrice: item.productPrice,
+          quantity: item.quantity,
+          notes: item.notes,
+          isVoided: item.isVoided,
+          isSentToKitchen: item.isSentToKitchen,
+          lineTotal: item.isVoided ? 0 : (item.productPrice + modifierTotal) * item.quantity,
+          modifiers: modifiers.map((m) => ({
+            groupName: m.modifierGroupName,
+            optionName: m.modifierOptionName,
+            priceAdjustment: m.priceAdjustment,
+          })),
+        };
+      }),
+    );
 
     return {
       _id: order._id,
@@ -427,6 +451,15 @@ export const addItem = mutation({
     productId: v.id("products"),
     quantity: v.number(),
     notes: v.optional(v.string()),
+    modifiers: v.optional(
+      v.array(
+        v.object({
+          modifierGroupName: v.string(),
+          modifierOptionName: v.string(),
+          priceAdjustment: v.number(),
+        }),
+      ),
+    ),
   },
   returns: v.id("orderItems"),
   handler: async (ctx, args) => {
@@ -459,6 +492,18 @@ export const addItem = mutation({
       voidedAt: undefined,
       voidReason: undefined,
     });
+
+    // Insert modifier snapshots
+    if (args.modifiers) {
+      for (const mod of args.modifiers) {
+        await ctx.db.insert("orderItemModifiers", {
+          orderItemId: itemId,
+          modifierGroupName: mod.modifierGroupName,
+          modifierOptionName: mod.modifierOptionName,
+          priceAdjustment: mod.priceAdjustment,
+        });
+      }
+    }
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, args.orderId);
@@ -601,15 +646,23 @@ async function recalculateOrderTotals(ctx: { db: any }, orderId: Id<"orders">): 
 
   const activeItems: Doc<"orderItems">[] = items.filter((i: Doc<"orderItems">) => !i.isVoided);
 
-  // Get product info for VAT status
+  // Get product info for VAT status and modifier adjustments
   const itemCalculations: ItemCalculation[] = await Promise.all(
     activeItems.map(async (item: Doc<"orderItems">) => {
       const product = await ctx.db.get(item.productId);
       const isVatable = product?.isVatable ?? true;
 
+      // Sum modifier price adjustments
+      const modifiers = await ctx.db
+        .query("orderItemModifiers")
+        .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", item._id))
+        .collect();
+      const modifierTotal = modifiers.reduce((sum: number, m: any) => sum + m.priceAdjustment, 0);
+      const effectivePrice = item.productPrice + modifierTotal;
+
       // For now, no SC/PWD discounts in basic calculation
       // Those are handled separately in the discounts module
-      return calculateItemTotals(item.productPrice, item.quantity, isVatable, 0);
+      return calculateItemTotals(effectivePrice, item.quantity, isVatable, 0);
     }),
   );
 
@@ -999,6 +1052,15 @@ export const createAndSendToKitchen = mutation({
         productId: v.id("products"),
         quantity: v.number(),
         notes: v.optional(v.string()),
+        modifiers: v.optional(
+          v.array(
+            v.object({
+              modifierGroupName: v.string(),
+              modifierOptionName: v.string(),
+              priceAdjustment: v.number(),
+            }),
+          ),
+        ),
       }),
     ),
   },
@@ -1073,6 +1135,19 @@ export const createAndSendToKitchen = mutation({
         voidedAt: undefined,
         voidReason: undefined,
       });
+
+      // Insert modifier snapshots
+      if (item.modifiers) {
+        for (const mod of item.modifiers) {
+          await ctx.db.insert("orderItemModifiers", {
+            orderItemId: itemId,
+            modifierGroupName: mod.modifierGroupName,
+            modifierOptionName: mod.modifierOptionName,
+            priceAdjustment: mod.priceAdjustment,
+          });
+        }
+      }
+
       sentItemIds.push(itemId);
     }
 

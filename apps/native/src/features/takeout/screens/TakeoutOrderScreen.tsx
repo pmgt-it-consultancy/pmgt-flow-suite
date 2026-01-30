@@ -6,16 +6,19 @@ import { useCallback, useMemo, useState } from "react";
 import { Alert } from "react-native";
 import { ActivityIndicator, FlatList, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
+import type { SelectedModifier } from "../../orders/components";
 import {
   AddItemModal,
   CartFooter,
   CartItem,
   CategoryFilter,
+  ModifierSelectionModal,
   OrderHeader,
   ProductCard,
   SearchBar,
   VoidItemModal,
 } from "../../orders/components";
+import { useProductModifiers } from "../../orders/hooks/useProductModifiers";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Button, Input, Text } from "../../shared/components/ui";
@@ -42,6 +45,7 @@ interface DraftItem {
   productPrice: number;
   quantity: number;
   notes?: string;
+  modifiers?: SelectedModifier[];
 }
 
 let draftIdCounter = 0;
@@ -73,6 +77,9 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     name: string;
     quantity: number;
   } | null>(null);
+
+  // Modifier data for selected product
+  const { modifierGroups, hasModifiers } = useProductModifiers(selectedProduct?.id);
 
   // Queries
   const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
@@ -111,6 +118,11 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         isVoided: false,
         isSentToKitchen: false,
         lineTotal: d.productPrice * d.quantity,
+        modifiers: d.modifiers?.map((m) => ({
+          groupName: m.modifierGroupName,
+          optionName: m.modifierOptionName,
+          priceAdjustment: m.priceAdjustment,
+        })),
       }));
     }
     return order?.items.filter((i) => !i.isVoided) ?? [];
@@ -174,6 +186,48 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
       setIsAddingItem(false);
     }
   }, [selectedProduct, isDraftMode, currentOrderId, quantity, notes, addItemMutation]);
+
+  const handleConfirmModifiers = useCallback(
+    async (qty: number, itemNotes: string, modifiers: SelectedModifier[]) => {
+      if (!selectedProduct) return;
+
+      if (isDraftMode) {
+        const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceAdjustment, 0);
+        setDraftItems((prev) => [
+          ...prev,
+          {
+            localId: `draft-${++draftIdCounter}`,
+            productId: selectedProduct.id,
+            productName: selectedProduct.name,
+            productPrice: selectedProduct.price + modifierTotal,
+            quantity: qty,
+            notes: itemNotes || undefined,
+            modifiers,
+          },
+        ]);
+        setSelectedProduct(null);
+        return;
+      }
+
+      setIsAddingItem(true);
+      try {
+        await addItemMutation({
+          orderId: currentOrderId!,
+          productId: selectedProduct.id,
+          quantity: qty,
+          notes: itemNotes || undefined,
+          modifiers,
+        });
+        setSelectedProduct(null);
+      } catch (error) {
+        console.error("Add item error:", error);
+        Alert.alert("Error", "Failed to add item to order");
+      } finally {
+        setIsAddingItem(false);
+      }
+    },
+    [selectedProduct, isDraftMode, currentOrderId, addItemMutation],
+  );
 
   const handleIncrement = useCallback(
     async (itemId: Id<"orderItems">, currentQty: number) => {
@@ -294,6 +348,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             productId: item.productId,
             quantity: item.quantity,
             notes: item.notes,
+            modifiers: item.modifiers,
           });
         }
 
@@ -465,6 +520,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 quantity={item.quantity}
                 lineTotal={item.lineTotal}
                 notes={item.notes}
+                modifiers={item.modifiers}
                 isSentToKitchen={item.isSentToKitchen}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
@@ -495,17 +551,28 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         </View>
       </View>
 
-      <AddItemModal
-        visible={!!selectedProduct}
-        product={selectedProduct}
-        quantity={quantity}
-        notes={notes}
-        isLoading={isAddingItem || isSending}
-        onClose={handleCloseModal}
-        onQuantityChange={setQuantity}
-        onNotesChange={setNotes}
-        onConfirm={handleConfirmAdd}
-      />
+      {hasModifiers ? (
+        <ModifierSelectionModal
+          visible={!!selectedProduct}
+          product={selectedProduct}
+          modifierGroups={modifierGroups}
+          isLoading={isAddingItem || isSending}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmModifiers}
+        />
+      ) : (
+        <AddItemModal
+          visible={!!selectedProduct}
+          product={selectedProduct}
+          quantity={quantity}
+          notes={notes}
+          isLoading={isAddingItem || isSending}
+          onClose={handleCloseModal}
+          onQuantityChange={setQuantity}
+          onNotesChange={setNotes}
+          onConfirm={handleConfirmAdd}
+        />
+      )}
 
       <VoidItemModal
         visible={!!voidingItem}

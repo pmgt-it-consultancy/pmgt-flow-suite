@@ -9,11 +9,13 @@ import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Text } from "../../shared/components/ui";
+import type { SelectedModifier } from "../components";
 import {
   AddItemModal,
   CartFooter,
   CartItem,
   CategoryFilter,
+  ModifierSelectionModal,
   OrderHeader,
   ProductCard,
   SearchBar,
@@ -21,6 +23,7 @@ import {
   ViewBillModal,
   VoidItemModal,
 } from "../components";
+import { useProductModifiers } from "../hooks/useProductModifiers";
 
 interface OrderScreenProps {
   navigation: any;
@@ -47,6 +50,7 @@ interface DraftItem {
   productPrice: number;
   quantity: number;
   notes?: string;
+  modifiers?: SelectedModifier[];
 }
 
 let draftIdCounter = 0;
@@ -81,6 +85,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   } | null>(null);
   const [showViewBill, setShowViewBill] = useState(false);
   const [showTransferTable, setShowTransferTable] = useState(false);
+  // Modifier data for the selected product
+  const { modifierGroups, hasModifiers } = useProductModifiers(selectedProduct?.id);
 
   // Queries
   const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
@@ -120,6 +126,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         isVoided: false,
         isSentToKitchen: false,
         lineTotal: d.productPrice * d.quantity,
+        modifiers: d.modifiers?.map((m) => ({
+          groupName: m.modifierGroupName,
+          optionName: m.modifierOptionName,
+          priceAdjustment: m.priceAdjustment,
+        })),
       }));
     }
     return order?.items.filter((i) => !i.isVoided) ?? [];
@@ -142,10 +153,13 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     setSelectedProduct(product);
     setQuantity(1);
     setNotes("");
+    // The modal shown (AddItem vs Modifier) is determined by hasModifiers
+    // which updates reactively when selectedProduct changes
   }, []);
 
   const handleCloseModal = useCallback(() => {
     setSelectedProduct(null);
+    setShowModifierModal(false);
   }, []);
 
   const handleConfirmAdd = useCallback(async () => {
@@ -185,6 +199,48 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       setIsAddingItem(false);
     }
   }, [selectedProduct, isDraftMode, currentOrderId, quantity, notes, addItem]);
+
+  const handleConfirmModifiers = useCallback(
+    async (qty: number, itemNotes: string, modifiers: SelectedModifier[]) => {
+      if (!selectedProduct) return;
+
+      if (isDraftMode) {
+        const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceAdjustment, 0);
+        setDraftItems((prev) => [
+          ...prev,
+          {
+            localId: `draft-${++draftIdCounter}`,
+            productId: selectedProduct.id,
+            productName: selectedProduct.name,
+            productPrice: selectedProduct.price + modifierTotal,
+            quantity: qty,
+            notes: itemNotes || undefined,
+            modifiers,
+          },
+        ]);
+        setSelectedProduct(null);
+        return;
+      }
+
+      setIsAddingItem(true);
+      try {
+        await addItem({
+          orderId: currentOrderId!,
+          productId: selectedProduct.id,
+          quantity: qty,
+          notes: itemNotes || undefined,
+          modifiers,
+        });
+        setSelectedProduct(null);
+      } catch (error) {
+        console.error("Add item error:", error);
+        Alert.alert("Error", "Failed to add item to order");
+      } finally {
+        setIsAddingItem(false);
+      }
+    },
+    [selectedProduct, isDraftMode, currentOrderId, addItem],
+  );
 
   const handleIncrement = useCallback(
     async (itemId: Id<"orderItems">, currentQty: number) => {
@@ -293,6 +349,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             productId: d.productId,
             quantity: d.quantity,
             notes: d.notes,
+            modifiers: d.modifiers,
           })),
         });
         setCurrentOrderId(result.orderId);
@@ -488,6 +545,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
                 quantity={item.quantity}
                 lineTotal={item.lineTotal}
                 notes={item.notes}
+                modifiers={item.modifiers}
                 isSentToKitchen={item.isSentToKitchen}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
@@ -518,17 +576,28 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         </View>
       </View>
 
-      <AddItemModal
-        visible={!!selectedProduct}
-        product={selectedProduct}
-        quantity={quantity}
-        notes={notes}
-        isLoading={isAddingItem || isSending}
-        onClose={handleCloseModal}
-        onQuantityChange={setQuantity}
-        onNotesChange={setNotes}
-        onConfirm={handleConfirmAdd}
-      />
+      {hasModifiers ? (
+        <ModifierSelectionModal
+          visible={!!selectedProduct}
+          product={selectedProduct}
+          modifierGroups={modifierGroups}
+          isLoading={isAddingItem || isSending}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmModifiers}
+        />
+      ) : (
+        <AddItemModal
+          visible={!!selectedProduct}
+          product={selectedProduct}
+          quantity={quantity}
+          notes={notes}
+          isLoading={isAddingItem || isSending}
+          onClose={handleCloseModal}
+          onQuantityChange={setQuantity}
+          onNotesChange={setNotes}
+          onConfirm={handleConfirmAdd}
+        />
+      )}
 
       <VoidItemModal
         visible={!!voidingItem}

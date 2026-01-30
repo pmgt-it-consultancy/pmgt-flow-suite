@@ -26,6 +26,7 @@ export const PERMISSIONS = {
   "products.view": "View products",
   "products.manage": "Add/edit/disable products",
   "categories.manage": "Add/edit/disable categories",
+  "modifiers.manage": "Add/edit/disable modifier groups and options",
 
   // Reports
   "reports.daily": "View daily sales report",
@@ -67,6 +68,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, Permission[]> = {
     "products.view",
     "products.manage",
     "categories.manage",
+    "modifiers.manage",
     "reports.daily",
     "reports.print_eod",
     "reports.all_dates",

@@ -90,6 +90,50 @@ export default defineSchema({
     .index("by_category", ["categoryId"])
     .index("by_store_active", ["storeId", "isActive"]),
 
+  // ===== MODIFIERS =====
+  modifierGroups: defineTable({
+    storeId: v.id("stores"),
+    name: v.string(),
+    selectionType: v.union(v.literal("single"), v.literal("multi")),
+    minSelections: v.number(), // 0 = optional, 1+ = required
+    maxSelections: v.optional(v.number()), // null/undefined = unlimited
+    sortOrder: v.number(),
+    isActive: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("by_store", ["storeId"])
+    .index("by_store_active", ["storeId", "isActive"]),
+
+  modifierOptions: defineTable({
+    modifierGroupId: v.id("modifierGroups"),
+    name: v.string(),
+    priceAdjustment: v.number(), // can be 0
+    isDefault: v.boolean(),
+    isAvailable: v.boolean(),
+    sortOrder: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_group", ["modifierGroupId"])
+    .index("by_group_available", ["modifierGroupId", "isAvailable"]),
+
+  // Join table: assigns modifier groups to products or categories
+  modifierGroupAssignments: defineTable({
+    storeId: v.id("stores"),
+    modifierGroupId: v.id("modifierGroups"),
+    // Exactly one of these should be set
+    productId: v.optional(v.id("products")),
+    categoryId: v.optional(v.id("categories")),
+    sortOrder: v.number(), // display order of this group on the product/category
+    // Optional overrides (if not set, use group defaults)
+    minSelectionsOverride: v.optional(v.number()),
+    maxSelectionsOverride: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("by_product", ["productId"])
+    .index("by_category", ["categoryId"])
+    .index("by_modifierGroup", ["modifierGroupId"])
+    .index("by_store", ["storeId"]),
+
   // ===== TABLES =====
   tables: defineTable({
     storeId: v.id("stores"),
@@ -166,6 +210,13 @@ export default defineSchema({
     voidedAt: v.optional(v.number()),
     voidReason: v.optional(v.string()),
   }).index("by_order", ["orderId"]),
+
+  orderItemModifiers: defineTable({
+    orderItemId: v.id("orderItems"),
+    modifierGroupName: v.string(), // snapshot
+    modifierOptionName: v.string(), // snapshot
+    priceAdjustment: v.number(), // snapshot at order time
+  }).index("by_orderItem", ["orderItemId"]),
 
   orderDiscounts: defineTable({
     orderId: v.id("orders"),

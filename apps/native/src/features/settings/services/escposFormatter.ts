@@ -5,6 +5,7 @@ export interface KitchenTicketItem {
   name: string;
   quantity: number;
   notes?: string;
+  modifiers?: { optionName: string; priceAdjustment: number }[];
 }
 
 export interface KitchenTicketData {
@@ -90,6 +91,15 @@ export async function printReceiptToThermal(
 
   for (const item of data.items) {
     await p.printText(`${item.name}\n`, normal());
+    if (item.modifiers && item.modifiers.length > 0) {
+      for (const mod of item.modifiers) {
+        const modText =
+          mod.priceAdjustment > 0
+            ? `  + ${mod.optionName} (${formatCurrency(mod.priceAdjustment)})`
+            : `  + ${mod.optionName}`;
+        await p.printText(`${modText}\n`, normal());
+      }
+    }
     const detail = `  ${item.quantity}x ${formatCurrency(item.price)}`;
     const total = formatCurrency(item.total);
     await p.printText(`${formatRow(detail, total, w)}\n`, normal());
@@ -178,8 +188,13 @@ export async function printKitchenTicketToThermal(
   // Items
   for (const item of data.items) {
     await p.printText(`  ${item.quantity}x ${item.name}\n`, bold());
+    if (item.modifiers && item.modifiers.length > 0) {
+      for (const mod of item.modifiers) {
+        await p.printText(`     > ${mod.optionName}\n`, normal());
+      }
+    }
     if (item.notes) {
-      await p.printText(`     > ${item.notes}\n`, normal());
+      await p.printText(`     * ${item.notes}\n`, normal());
     }
   }
 

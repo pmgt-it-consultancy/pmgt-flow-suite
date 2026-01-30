@@ -6,6 +6,7 @@ export interface ReceiptItem {
   quantity: number;
   price: number;
   total: number;
+  modifiers?: { optionName: string; priceAdjustment: number }[];
 }
 
 export interface ReceiptDiscount {
@@ -70,16 +71,25 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         : "Delivery";
 
   const itemsHtml = data.items
-    .map(
-      (item) => `
+    .map((item) => {
+      const modifiersHtml = item.modifiers?.length
+        ? item.modifiers
+            .map(
+              (mod) =>
+                `<tr><td colspan="3" style="padding-left:15px;font-size:10px;color:#666;">+ ${mod.optionName}${mod.priceAdjustment > 0 ? ` (${formatCurrency(mod.priceAdjustment)})` : ""}</td><td></td></tr>`,
+            )
+            .join("")
+        : "";
+      return `
       <tr>
         <td>${item.name}</td>
         <td class="center">${item.quantity}</td>
         <td class="right">${formatCurrency(item.price)}</td>
         <td class="right">${formatCurrency(item.total)}</td>
       </tr>
-    `,
-    )
+      ${modifiersHtml}
+    `;
+    })
     .join("");
 
   const discountHtml = data.discount

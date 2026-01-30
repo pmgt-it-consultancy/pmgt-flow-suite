@@ -4,6 +4,12 @@ import { TouchableOpacity, View } from "uniwind/components";
 import { IconButton, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
+interface CartItemModifier {
+  groupName: string;
+  optionName: string;
+  priceAdjustment: number;
+}
+
 interface CartItemProps {
   id: Id<"orderItems">;
   productName: string;
@@ -11,6 +17,7 @@ interface CartItemProps {
   quantity: number;
   lineTotal: number;
   notes?: string;
+  modifiers?: CartItemModifier[];
   isSentToKitchen: boolean;
   onIncrement: (id: Id<"orderItems">, currentQty: number) => void;
   onDecrement: (id: Id<"orderItems">, currentQty: number) => void;
@@ -24,6 +31,7 @@ export const CartItem = ({
   quantity,
   lineTotal,
   notes,
+  modifiers,
   isSentToKitchen,
   onIncrement,
   onDecrement,
@@ -49,6 +57,16 @@ export const CartItem = ({
             )}
           </View>
           <Text className="text-gray-400 text-xs mt-0.5">{formatCurrency(productPrice)} each</Text>
+          {modifiers && modifiers.length > 0 && (
+            <View className="mt-0.5">
+              {modifiers.map((mod, idx) => (
+                <Text key={idx} className="text-gray-500 text-xs">
+                  {mod.optionName}
+                  {mod.priceAdjustment > 0 ? ` (+${formatCurrency(mod.priceAdjustment)})` : ""}
+                </Text>
+              ))}
+            </View>
+          )}
           {notes && (
             <Text className="text-amber-600 text-xs mt-0.5 italic" numberOfLines={1}>
               {notes}
