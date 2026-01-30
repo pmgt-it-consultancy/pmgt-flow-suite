@@ -216,11 +216,15 @@ export default function OrdersPage() {
 
       {/* Order Details Dialog */}
       <Dialog open={!!selectedOrderId} onOpenChange={(open) => !open && setSelectedOrderId(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Order {orderDetails?.orderNumber}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              Order {orderDetails?.orderNumber}
+              {orderDetails && getStatusBadge(orderDetails.status)}
+            </DialogTitle>
             <DialogDescription>
               {orderDetails && formatDate(orderDetails.createdAt)}
+              {orderDetails?.createdByName && ` · Cashier: ${orderDetails.createdByName}`}
             </DialogDescription>
           </DialogHeader>
 
@@ -236,10 +240,6 @@ export default function OrdersPage() {
                   <span className="text-gray-500">Type:</span>{" "}
                   {orderDetails.orderType === "dine_in" ? "Dine-in" : "Takeout"}
                 </div>
-                <div>
-                  <span className="text-gray-500">Status:</span>{" "}
-                  {getStatusBadge(orderDetails.status)}
-                </div>
                 {orderDetails.tableName && (
                   <div>
                     <span className="text-gray-500">Table:</span> {orderDetails.tableName}
@@ -250,23 +250,49 @@ export default function OrdersPage() {
                     <span className="text-gray-500">Customer:</span> {orderDetails.customerName}
                   </div>
                 )}
+                {orderDetails.paidAt && (
+                  <div>
+                    <span className="text-gray-500">Paid:</span> {formatDate(orderDetails.paidAt)}
+                  </div>
+                )}
               </div>
 
               {/* Order Items */}
               <div className="border rounded-lg">
                 <div className="bg-gray-50 px-3 py-2 border-b font-medium text-sm">Items</div>
-                <div className="divide-y max-h-[200px] overflow-y-auto">
+                <div className="divide-y max-h-[250px] overflow-y-auto">
                   {orderDetails.items.map((item, index) => (
                     <div
                       key={index}
-                      className={`px-3 py-2 flex justify-between text-sm ${
+                      className={`px-3 py-2 text-sm ${
                         item.isVoided ? "line-through text-gray-400" : ""
                       }`}
                     >
-                      <span>
-                        {item.quantity}x {item.productName}
-                      </span>
-                      <span>{formatCurrency(item.lineTotal)}</span>
+                      <div className="flex justify-between">
+                        <span>
+                          {item.quantity}x {item.productName}
+                        </span>
+                        <span>{formatCurrency(item.lineTotal)}</span>
+                      </div>
+                      {item.modifiers.length > 0 && (
+                        <div className="mt-0.5 space-y-0.5">
+                          {item.modifiers.map((mod, modIdx) => (
+                            <div key={modIdx} className="text-xs text-gray-500 pl-4">
+                              + {mod.optionName}
+                              {mod.priceAdjustment > 0 && (
+                                <span className="ml-1">
+                                  ({formatCurrency(mod.priceAdjustment)})
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {item.notes && (
+                        <div className="text-xs text-gray-500 pl-4 italic mt-0.5">
+                          Note: {item.notes}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -280,10 +306,26 @@ export default function OrdersPage() {
                     <span>Gross Sales</span>
                     <span>{formatCurrency(orderDetails.grossSales)}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>VAT</span>
+                  <div className="flex justify-between text-gray-500">
+                    <span>Vatable Sales</span>
+                    <span>{formatCurrency(orderDetails.vatableSales)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-500">
+                    <span>VAT (12%)</span>
                     <span>{formatCurrency(orderDetails.vatAmount)}</span>
                   </div>
+                  {orderDetails.vatExemptSales > 0 && (
+                    <div className="flex justify-between text-gray-500">
+                      <span>VAT-Exempt Sales</span>
+                      <span>{formatCurrency(orderDetails.vatExemptSales)}</span>
+                    </div>
+                  )}
+                  {orderDetails.discountAmount > 0 && (
+                    <div className="flex justify-between text-gray-500">
+                      <span>Discount</span>
+                      <span>-{formatCurrency(orderDetails.discountAmount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between font-bold pt-1 border-t">
                     <span>Total</span>
                     <span>{formatCurrency(orderDetails.netSales)}</span>
@@ -293,7 +335,38 @@ export default function OrdersPage() {
 
               {/* Payment Info */}
               {orderDetails.paymentMethod && (
-                <div className="text-sm text-gray-500">Paid via {orderDetails.paymentMethod}</div>
+                <div className="border rounded-lg">
+                  <div className="bg-gray-50 px-3 py-2 border-b font-medium text-sm">Payment</div>
+                  <div className="px-3 py-2 space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Method</span>
+                      <span>
+                        {orderDetails.paymentMethod === "cash"
+                          ? "Cash"
+                          : orderDetails.cardPaymentType || "Card/E-Wallet"}
+                      </span>
+                    </div>
+                    {orderDetails.paymentMethod === "cash" && orderDetails.cashReceived != null && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Cash Received</span>
+                          <span>{formatCurrency(orderDetails.cashReceived)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Change</span>
+                          <span>{formatCurrency(orderDetails.changeGiven ?? 0)}</span>
+                        </div>
+                      </>
+                    )}
+                    {orderDetails.paymentMethod === "card_ewallet" &&
+                      orderDetails.cardReferenceNumber && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Reference #</span>
+                          <span className="font-mono">{orderDetails.cardReferenceNumber}</span>
+                        </div>
+                      )}
+                  </div>
+                </div>
               )}
             </div>
           )}
