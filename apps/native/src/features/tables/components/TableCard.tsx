@@ -11,7 +11,9 @@ interface TableCardProps {
   isOccupied: boolean;
   itemCount?: number;
   total?: number;
+  pax?: number;
   onPress: (id: Id<"tables">, name: string) => void;
+  onUpdatePax?: (id: Id<"tables">) => void;
 }
 
 export const TableCard = ({
@@ -21,7 +23,9 @@ export const TableCard = ({
   isOccupied,
   itemCount,
   total,
+  pax,
   onPress,
+  onUpdatePax,
 }: TableCardProps) => {
   const formatCurrency = useFormatCurrency();
 
@@ -49,7 +53,7 @@ export const TableCard = ({
       {isOccupied && itemCount !== undefined && (
         <View className="flex-row justify-between mb-2">
           <Text size="sm" className="text-gray-600">
-            {itemCount} item(s)
+            {itemCount} item(s){pax ? ` · ${pax} pax` : ""}
           </Text>
           <Text size="sm" className="text-blue-500 font-semibold">
             {formatCurrency(total ?? 0)}

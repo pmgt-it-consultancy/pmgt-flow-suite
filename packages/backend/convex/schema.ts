@@ -191,6 +191,7 @@ export default defineSchema({
     createdAt: v.number(),
     paidAt: v.optional(v.number()),
     paidBy: v.optional(v.id("users")),
+    pax: v.optional(v.number()),
   })
     .index("by_store", ["storeId"])
     .index("by_status", ["status"])

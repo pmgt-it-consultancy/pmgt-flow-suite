@@ -71,6 +71,7 @@ export async function printReceiptToThermal(
   await p.printText(`Date: ${formatDate(data.transactionDate)}\n`, normal());
   await p.printText(`Order Type: ${orderTypeLabel(data.orderType)}\n`, normal());
   if (data.tableName) await p.printText(`Table: ${data.tableName}\n`, normal());
+  if (data.pax) await p.printText(`Pax: ${data.pax}\n`, normal());
   await p.printText(`Cashier: ${data.cashierName}\n`, normal());
 
   // Customer info (from root-level fields or discount details)

@@ -74,6 +74,7 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
         storeTin: receipt.tin,
         orderNumber: receipt.orderNumber,
         tableName: receipt.tableName,
+        pax: receipt.pax,
         orderType: receipt.orderType as "dine_in" | "take_out" | "delivery",
         cashierName: receipt.cashierName,
         items: receipt.items.map((i) => ({

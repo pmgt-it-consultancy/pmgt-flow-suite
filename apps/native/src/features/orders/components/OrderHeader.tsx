@@ -7,9 +7,16 @@ interface OrderHeaderProps {
   subtitle: string;
   onBack: () => void;
   onTransferTable?: () => void;
+  onUpdatePax?: () => void;
 }
 
-export const OrderHeader = ({ title, subtitle, onBack, onTransferTable }: OrderHeaderProps) => {
+export const OrderHeader = ({
+  title,
+  subtitle,
+  onBack,
+  onTransferTable,
+  onUpdatePax,
+}: OrderHeaderProps) => {
   return (
     <View className="bg-white flex-row items-center px-4 py-2.5 border-b border-gray-200">
       <IconButton icon="arrow-back" variant="ghost" onPress={onBack} className="mr-1" />
@@ -23,6 +30,9 @@ export const OrderHeader = ({ title, subtitle, onBack, onTransferTable }: OrderH
         </Text>
       </View>
       <SystemStatusBar />
+      {onUpdatePax && (
+        <IconButton icon="people" variant="ghost" onPress={onUpdatePax} iconColor="#6B7280" />
+      )}
       {onTransferTable && (
         <IconButton
           icon="swap-horizontal"

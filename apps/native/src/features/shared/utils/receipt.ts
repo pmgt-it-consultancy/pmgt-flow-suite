@@ -23,6 +23,7 @@ export interface ReceiptData {
   storeTin?: string;
   orderNumber: string;
   tableName?: string;
+  pax?: number;
   orderType: "dine_in" | "take_out" | "delivery";
   cashierName: string;
   items: ReceiptItem[];
@@ -300,6 +301,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         <div><span>Date:</span><span>${formatDate(data.transactionDate)}</span></div>
         <div><span>Order Type:</span><span>${orderTypeLabel}</span></div>
         ${data.tableName ? `<div><span>Table:</span><span>${data.tableName}</span></div>` : ""}
+        ${data.pax ? `<div><span>PAX:</span><span>${data.pax}</span></div>` : ""}
         <div><span>Cashier:</span><span>${data.cashierName}</span></div>
       </div>
 

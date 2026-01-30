@@ -44,6 +44,7 @@ export const create = mutation({
     orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
     tableId: v.optional(v.id("tables")),
     customerName: v.optional(v.string()),
+    pax: v.optional(v.number()),
   },
   returns: v.id("orders"),
   handler: async (ctx, args) => {
@@ -53,6 +54,11 @@ export const create = mutation({
     // Validate dine-in orders have a table
     if (args.orderType === "dine_in" && !args.tableId) {
       throw new Error("Dine-in orders require a table");
+    }
+
+    // Validate dine-in orders have pax
+    if (args.orderType === "dine_in" && !args.pax) {
+      throw new Error("Dine-in orders require a guest count (pax)");
     }
 
     // Check table availability if dine-in
@@ -96,6 +102,7 @@ export const create = mutation({
       createdAt: now,
       paidAt: undefined,
       paidBy: undefined,
+      pax: args.pax,
     });
 
     // Update table status if dine-in
@@ -123,6 +130,7 @@ export const get = query({
       orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
       tableId: v.optional(v.id("tables")),
       tableName: v.optional(v.string()),
+      pax: v.optional(v.number()),
       customerName: v.optional(v.string()),
       status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
       takeoutStatus: v.optional(
@@ -234,6 +242,7 @@ export const get = query({
       orderType: order.orderType,
       tableId: order.tableId,
       tableName,
+      pax: order.pax,
       customerName: order.customerName,
       status: order.status,
       takeoutStatus: order.takeoutStatus,
@@ -707,6 +716,33 @@ export const updateCustomerName = mutation({
   },
 });
 
+// Update guest count (pax) for a dine-in order
+export const updatePax = mutation({
+  args: {
+    orderId: v.id("orders"),
+    pax: v.number(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open") {
+      throw new Error("Cannot modify a closed order");
+    }
+    if (order.orderType !== "dine_in") {
+      throw new Error("PAX is only applicable to dine-in orders");
+    }
+    if (args.pax < 1) {
+      throw new Error("PAX must be at least 1");
+    }
+
+    await ctx.db.patch(args.orderId, { pax: args.pax });
+    return null;
+  },
+});
+
 // Update takeout order status (advance workflow)
 export const updateTakeoutStatus = mutation({
   args: {
@@ -874,6 +910,7 @@ export const listActive = query({
       orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
       tableId: v.optional(v.id("tables")),
       tableName: v.optional(v.string()),
+      pax: v.optional(v.number()),
       customerName: v.optional(v.string()),
       takeoutStatus: v.optional(
         v.union(
@@ -924,6 +961,7 @@ export const listActive = query({
           orderType: order.orderType,
           tableId: order.tableId,
           tableName,
+          pax: order.pax,
           customerName: order.customerName,
           takeoutStatus: order.takeoutStatus,
           subtotal: order.netSales,
@@ -1051,6 +1089,7 @@ export const createAndSendToKitchen = mutation({
   args: {
     storeId: v.id("stores"),
     tableId: v.id("tables"),
+    pax: v.number(),
     items: v.array(
       v.object({
         productId: v.id("products"),
@@ -1111,6 +1150,7 @@ export const createAndSendToKitchen = mutation({
       createdAt: now,
       paidAt: undefined,
       paidBy: undefined,
+      pax: args.pax,
     });
 
     // Mark table as occupied

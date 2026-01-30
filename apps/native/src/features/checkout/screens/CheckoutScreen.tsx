@@ -206,6 +206,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         storeTin: store?.tin,
         orderNumber: order?.orderNumber ?? "",
         tableName,
+        pax: order?.pax,
         orderType: (order?.orderType as "dine_in" | "take_out" | "delivery") ?? "dine_in",
         cashierName: user?.name ?? "Cashier",
         items: activeItems.map((item) => ({

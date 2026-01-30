@@ -3,8 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
-import { Alert } from "react-native";
-import { ActivityIndicator, FlatList, View } from "uniwind/components";
+import { Alert, TextInput } from "react-native";
+import { ActivityIndicator, FlatList, Modal, TouchableOpacity, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -73,6 +73,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const [notes, setNotes] = useState("");
   const [isSending, setIsSending] = useState(false);
 
+  // PAX state
+  const [showPaxModal, setShowPaxModal] = useState(false);
+  const [paxInput, setPaxInput] = useState("");
+  const [pendingPaxAction, setPendingPaxAction] = useState<"send" | "update" | null>(null);
+
   // Modal state
   const [voidingItem, setVoidingItem] = useState<{
     id: Id<"orderItems">;
@@ -111,6 +116,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const cancelOrderMutation = useMutation(api.checkout.cancelOrder);
   const sendToKitchenMutation = useMutation(api.orders.sendToKitchen);
   const createAndSendMutation = useMutation(api.orders.createAndSendToKitchen);
+  const updatePaxMutation = useMutation(api.orders.updatePax);
 
   // Printer
   const { printKitchenTicket } = usePrinterStore();
@@ -336,84 +342,126 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   );
 
   const handleSendToKitchen = useCallback(async () => {
-    setIsSending(true);
-    try {
-      let orderNumber: string;
-      let sentItemNames: { name: string; quantity: number; notes?: string }[];
+    // In draft mode, prompt for PAX before first send
+    if (isDraftMode) {
+      setPaxInput("");
+      setPendingPaxAction("send");
+      setShowPaxModal(true);
+      return;
+    }
 
-      if (isDraftMode) {
-        // First-time: create order + send
-        const result = await createAndSendMutation({
-          storeId,
-          tableId,
-          items: draftItems.map((d) => ({
-            productId: d.productId,
+    await executeSendToKitchen();
+  }, [isDraftMode]);
+
+  const executeSendToKitchen = useCallback(
+    async (paxValue?: number) => {
+      setIsSending(true);
+      try {
+        let orderNumber: string;
+        let sentItemNames: { name: string; quantity: number; notes?: string }[];
+
+        if (isDraftMode) {
+          // First-time: create order + send
+          const result = await createAndSendMutation({
+            storeId,
+            tableId,
+            pax: paxValue!,
+            items: draftItems.map((d) => ({
+              productId: d.productId,
+              quantity: d.quantity,
+              notes: d.notes,
+              modifiers: d.modifiers,
+            })),
+          });
+          setCurrentOrderId(result.orderId);
+          orderNumber = result.orderNumber;
+          sentItemNames = draftItems.map((d) => ({
+            name: d.productName,
             quantity: d.quantity,
             notes: d.notes,
-            modifiers: d.modifiers,
-          })),
-        });
-        setCurrentOrderId(result.orderId);
-        orderNumber = result.orderNumber;
-        sentItemNames = draftItems.map((d) => ({
-          name: d.productName,
-          quantity: d.quantity,
-          notes: d.notes,
-          modifiers: d.modifiers?.map((m) => ({
-            optionName: m.modifierOptionName,
-            priceAdjustment: m.priceAdjustment,
-          })),
-        }));
-        setDraftItems([]);
-      } else {
-        // Existing order: send unsent items
-        const unsentItems = activeItems.filter((i) => !i.isSentToKitchen);
-        await sendToKitchenMutation({ orderId: currentOrderId! });
-        orderNumber = order!.orderNumber;
-        sentItemNames = unsentItems.map((i) => ({
-          name: i.productName,
-          quantity: i.quantity,
-          notes: i.notes,
-          modifiers: i.modifiers?.map((m) => ({
-            optionName: m.optionName,
-            priceAdjustment: m.priceAdjustment,
-          })),
-        }));
+            modifiers: d.modifiers?.map((m) => ({
+              optionName: m.modifierOptionName,
+              priceAdjustment: m.priceAdjustment,
+            })),
+          }));
+          setDraftItems([]);
+        } else {
+          // Existing order: send unsent items
+          const unsentItems = activeItems.filter((i) => !i.isSentToKitchen);
+          await sendToKitchenMutation({ orderId: currentOrderId! });
+          orderNumber = order!.orderNumber;
+          sentItemNames = unsentItems.map((i) => ({
+            name: i.productName,
+            quantity: i.quantity,
+            notes: i.notes,
+            modifiers: i.modifiers?.map((m) => ({
+              optionName: m.optionName,
+              priceAdjustment: m.priceAdjustment,
+            })),
+          }));
+        }
+
+        // Print kitchen ticket with only the newly sent items
+        const kitchenData: KitchenTicketData = {
+          orderNumber,
+          tableName: currentTableName,
+          orderType: "dine_in",
+          items: sentItemNames,
+          timestamp: new Date(),
+        };
+        await printKitchenTicket(kitchenData);
+
+        Alert.alert("Sent", "Items sent to kitchen", [
+          { text: "OK", onPress: () => navigation.goBack() },
+        ]);
+      } catch (error: any) {
+        console.error("Send to kitchen error:", error);
+        Alert.alert("Error", error.message || "Failed to send to kitchen");
+      } finally {
+        setIsSending(false);
       }
+    },
+    [
+      isDraftMode,
+      createAndSendMutation,
+      sendToKitchenMutation,
+      storeId,
+      tableId,
+      draftItems,
+      activeItems,
+      currentOrderId,
+      order,
+      currentTableName,
+      printKitchenTicket,
+      navigation,
+    ],
+  );
 
-      // Print kitchen ticket with only the newly sent items
-      const kitchenData: KitchenTicketData = {
-        orderNumber,
-        tableName: currentTableName,
-        orderType: "dine_in",
-        items: sentItemNames,
-        timestamp: new Date(),
-      };
-      await printKitchenTicket(kitchenData);
-
-      Alert.alert("Sent", "Items sent to kitchen", [
-        { text: "OK", onPress: () => navigation.goBack() },
-      ]);
-    } catch (error: any) {
-      console.error("Send to kitchen error:", error);
-      Alert.alert("Error", error.message || "Failed to send to kitchen");
-    } finally {
-      setIsSending(false);
+  const handlePaxConfirm = useCallback(async () => {
+    const pax = parseInt(paxInput, 10);
+    if (!pax || pax < 1) {
+      Alert.alert("Invalid", "Please enter a valid number of guests");
+      return;
     }
-  }, [
-    isDraftMode,
-    createAndSendMutation,
-    sendToKitchenMutation,
-    storeId,
-    tableId,
-    draftItems,
-    activeItems,
-    currentOrderId,
-    order,
-    currentTableName,
-    printKitchenTicket,
-    navigation,
-  ]);
+    setShowPaxModal(false);
+
+    if (pendingPaxAction === "send") {
+      await executeSendToKitchen(pax);
+    } else if (pendingPaxAction === "update" && currentOrderId) {
+      try {
+        await updatePaxMutation({ orderId: currentOrderId, pax });
+      } catch (error: any) {
+        Alert.alert("Error", error.message || "Failed to update PAX");
+      }
+    }
+    setPendingPaxAction(null);
+  }, [paxInput, pendingPaxAction, executeSendToKitchen, currentOrderId, updatePaxMutation]);
+
+  const handleUpdatePax = useCallback(() => {
+    setPaxInput(order?.pax?.toString() ?? "");
+    setPendingPaxAction("update");
+    setShowPaxModal(true);
+  }, [order?.pax]);
 
   const handleCloseTable = useCallback(() => {
     if (!currentOrderId || activeItems.length === 0) return;
@@ -485,7 +533,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     );
   }
 
-  const subtitle = isDraftMode ? "New Order" : "Dine-In";
+  const subtitle = isDraftMode
+    ? "New Order"
+    : order?.pax
+      ? `Dine-In · ${order.pax} pax`
+      : "Dine-In";
 
   return (
     <View className="flex-1 bg-gray-100">
@@ -494,6 +546,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         subtitle={subtitle}
         onBack={handleBack}
         onTransferTable={!isDraftMode ? () => setShowTransferTable(true) : undefined}
+        onUpdatePax={!isDraftMode && order?.orderType === "dine_in" ? handleUpdatePax : undefined}
       />
 
       <View className="flex-1 flex-row">
@@ -606,6 +659,50 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           onClose={() => setShowTransferTable(false)}
         />
       )}
+
+      {/* PAX Input Modal */}
+      <Modal
+        visible={showPaxModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          setShowPaxModal(false);
+          setPendingPaxAction(null);
+        }}
+      >
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white rounded-2xl p-6 w-72">
+            <Text variant="heading" size="lg" className="text-center mb-4">
+              {pendingPaxAction === "update" ? "Update Guest Count" : "Guest Count (PAX)"}
+            </Text>
+            <TextInput
+              className="border border-gray-300 rounded-lg px-4 py-3 text-center text-lg mb-4"
+              keyboardType="number-pad"
+              placeholder="Number of guests"
+              value={paxInput}
+              onChangeText={setPaxInput}
+              autoFocus
+            />
+            <View className="flex-row gap-3">
+              <TouchableOpacity
+                className="flex-1 bg-gray-200 rounded-lg py-3"
+                onPress={() => {
+                  setShowPaxModal(false);
+                  setPendingPaxAction(null);
+                }}
+              >
+                <Text className="text-center font-semibold text-gray-700">Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-1 bg-blue-500 rounded-lg py-3"
+                onPress={handlePaxConfirm}
+              >
+                <Text className="text-center font-semibold text-white">Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
