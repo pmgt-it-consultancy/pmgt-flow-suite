@@ -9,6 +9,7 @@ import { useAuth } from "../../auth/context";
 import { ManagerPinModal } from "../../checkout/components";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import type { ReceiptData } from "../../shared";
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Badge, Button, IconButton, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -189,6 +190,7 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
             {orderTypeLabel}
           </Text>
         </View>
+        <SystemStatusBar />
       </View>
 
       <ScrollView className="flex-1">

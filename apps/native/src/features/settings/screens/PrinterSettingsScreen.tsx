@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Alert, Switch } from "react-native";
 import { ScrollView, TouchableOpacity, View } from "uniwind/components";
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Button } from "../../shared/components/ui/Button";
 import { Text } from "../../shared/components/ui/Text";
 import { EditPrinterModal } from "../components/EditPrinterModal";
@@ -40,9 +41,10 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3">
           <Ionicons name="arrow-back" size={24} color="#111827" />
         </TouchableOpacity>
-        <Text variant="heading" size="lg">
+        <Text variant="heading" size="lg" className="flex-1">
           Printers
         </Text>
+        <SystemStatusBar />
       </View>
 
       <ScrollView className="flex-1">

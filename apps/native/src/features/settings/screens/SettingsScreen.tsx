@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { ScrollView, TouchableOpacity, View } from "uniwind/components";
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { IconButton, Text } from "../../shared/components/ui";
 import { usePrinterStore } from "../stores/usePrinterStore";
 
@@ -16,7 +17,8 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
       {/* Header */}
       <View className="bg-white px-4 py-4 border-b border-gray-200 flex-row items-center">
         <IconButton icon="arrow-back" variant="ghost" onPress={() => navigation.goBack()} />
-        <Text className="text-xl font-bold ml-3">Settings</Text>
+        <Text className="text-xl font-bold ml-3 flex-1">Settings</Text>
+        <SystemStatusBar />
       </View>
 
       {/* Settings List */}

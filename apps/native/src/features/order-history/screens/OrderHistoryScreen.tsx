@@ -13,6 +13,7 @@ import {
   View,
 } from "uniwind/components";
 import { useAuth } from "../../auth/context";
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Badge, Chip, IconButton, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -186,6 +187,7 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
             Order History
           </Text>
         </View>
+        <SystemStatusBar />
       </View>
 
       {/* Date Presets */}

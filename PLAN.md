@@ -1,469 +1,429 @@
-# Implementation Plan: POS Drill-Down Category Grid Navigation
+# Implementation Plan: Discount & Receipt Enhancements
 
 ## Overview
-
-Replace the current horizontal category pill bar + flat product grid with a full-screen drill-down grid navigation:
-- **Level 0**: Category Grid (landing view, always shown first)
-- **Level 1**: Tap category → subcategory tiles + direct product tiles in same grid
-- **Level 2**: Tap subcategory → only products in that subcategory
-
-Search bar present at every level. Max 2 levels deep. Back button navigation.
-
-## Files to Modify
-
-| File | Action |
-|------|--------|
-| `apps/native/src/features/orders/components/CategoryFilter.tsx` | **Delete** (replaced by new component) |
-| `apps/native/src/features/orders/components/CategoryGrid.tsx` | **Create** — new drill-down grid component |
-| `apps/native/src/features/orders/components/CategoryTile.tsx` | **Create** — tile for categories/subcategories |
-| `apps/native/src/features/orders/components/ProductCard.tsx` | **Modify** — no functional change, just ensure visual distinction from CategoryTile |
-| `apps/native/src/features/orders/components/index.ts` | **Modify** — swap exports |
-| `apps/native/src/features/orders/screens/OrderScreen.tsx` | **Modify** — replace CategoryFilter + product FlatList with CategoryGrid |
-
-## Architecture Decision
-
-The backend already has everything we need:
-- `categories.list` supports `parentId` filter → can fetch root categories and subcategories
-- `categories.getTree` returns hierarchical data with children and product counts
-- `products.list` returns all products with `categoryId`
-- Schema has `parentId` on categories and `by_parent` / `by_store_parent` indexes
-
-**We will use `categories.getTree`** for the category grid since it gives us the full hierarchy in one query. Products will continue using `products.list` filtered client-side.
+Enhance receipts to show product modifiers, per-discount detail lines with discountee info, and support multiple SC/PWD discounts on the same item (shared by quantity across seniors).
 
 ---
 
-## Tasks
+## Task 1: Backend — Allow multiple SC/PWD discounts on same item
 
-### Task 1: Create `CategoryTile` component
+**File:** `packages/backend/convex/discounts.ts`
 
-**File**: `apps/native/src/features/orders/components/CategoryTile.tsx`
+### 1a. Change `applyScPwdDiscount` validation (lines 62-70)
 
-**Purpose**: A grid tile representing a category or subcategory. Visually distinct from ProductCard — uses a folder icon and different background to signal "this drills deeper."
+Replace the "item already has a discount" check with a quantity-based check:
 
-```tsx
-import { Ionicons } from "@expo/vector-icons";
-import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TouchableOpacity, View } from "uniwind/components";
-import { Text } from "../../shared/components/ui";
-
-interface CategoryTileProps {
-  id: Id<"categories">;
-  name: string;
-  itemCount: number; // product count + subcategory count
-  onPress: (categoryId: Id<"categories">) => void;
+```typescript
+// OLD (lines 62-70):
+const existingDiscount = await ctx.db
+  .query("orderDiscounts")
+  .withIndex("by_orderItem", (q) => q.eq("orderItemId", args.orderItemId))
+  .first();
+if (existingDiscount) {
+  throw new Error("Item already has a discount applied");
 }
 
-export const CategoryTile = ({ id, name, itemCount, onPress }: CategoryTileProps) => {
-  return (
-    <TouchableOpacity
-      className="flex-1 bg-blue-50 rounded-xl p-4 m-1.5 max-w-[31.5%] min-h-[100px] border border-blue-200 shadow-sm justify-between"
-      onPress={() => onPress(id)}
-      activeOpacity={0.7}
-    >
-      <View className="flex-row items-center justify-between">
-        <Text className="text-blue-900 font-bold text-base flex-1 mr-2" numberOfLines={2}>
-          {name}
-        </Text>
-        <Ionicons name="folder-open-outline" size={20} color="#1E40AF" />
-      </View>
-      <Text className="text-blue-500 text-xs mt-2">
-        {itemCount} {itemCount === 1 ? "item" : "items"}
-      </Text>
-    </TouchableOpacity>
+// NEW:
+const existingDiscounts = await ctx.db
+  .query("orderDiscounts")
+  .withIndex("by_orderItem", (q) => q.eq("orderItemId", args.orderItemId))
+  .collect();
+const totalDiscountedQty = existingDiscounts.reduce((sum, d) => sum + d.quantityApplied, 0);
+if (totalDiscountedQty + args.quantityApplied > orderItem.quantity) {
+  throw new Error(
+    `Cannot apply discount: only ${orderItem.quantity - totalDiscountedQty} undiscounted quantity remaining`
   );
-};
+}
 ```
 
-**Visual distinction from ProductCard**:
-- `bg-blue-50` + `border-blue-200` (vs ProductCard's `bg-white` + `border-gray-200`)
-- Folder icon in top-right corner
-- Item count instead of price badge
-- Blue-toned text
+### 1b. Change `recalculateOrderTotalsWithDiscounts` to sum multiple discounts per item (lines 264-274)
 
-**Verification**: Component renders, accepts props, no TypeScript errors.
+Replace the single-discount map with a quantity-summing map:
+
+```typescript
+// OLD (lines 264-274):
+const itemDiscounts = new Map<string, Doc<"orderDiscounts">>();
+...
+for (const discount of discounts) {
+  if (discount.orderItemId) {
+    itemDiscounts.set(discount.orderItemId, discount);
+  } else {
+    orderLevelDiscountAmount += discount.discountAmount;
+  }
+}
+
+// NEW:
+const itemDiscountQty = new Map<string, number>();
+let orderLevelDiscountAmount = 0;
+for (const discount of discounts) {
+  if (discount.orderItemId) {
+    const current = itemDiscountQty.get(discount.orderItemId) ?? 0;
+    itemDiscountQty.set(discount.orderItemId, current + discount.quantityApplied);
+  } else {
+    orderLevelDiscountAmount += discount.discountAmount;
+  }
+}
+```
+
+Then update the item calculation loop (lines 282-290):
+
+```typescript
+// OLD:
+const discount = itemDiscounts.get(item._id);
+const scPwdQuantity =
+  discount && (discount.discountType === "senior_citizen" || discount.discountType === "pwd")
+    ? discount.quantityApplied
+    : 0;
+
+// NEW:
+const scPwdQuantity = itemDiscountQty.get(item._id) ?? 0;
+```
+
+### Verification
+- Apply 2 SC discounts to a 3-qty item (each qty=1). Should succeed.
+- Apply a 3rd discount with qty=1 to the same item. Should succeed (total=3).
+- Apply a 4th discount with qty=1. Should fail with "only 0 undiscounted quantity remaining".
 
 ---
 
-### Task 2: Create `CategoryGrid` component
+## Task 2: Frontend — Update DiscountModal to not fully block items with partial discounts
 
-**File**: `apps/native/src/features/orders/components/CategoryGrid.tsx`
+**File:** `apps/native/src/features/checkout/screens/CheckoutScreen.tsx`
 
-**Purpose**: The main drill-down navigation component. Manages navigation state internally and renders the appropriate level (categories, subcategories+items, or items only).
+### 2a. Change `appliedDiscountItemIds` computation (lines 90-93)
+
+Currently builds a flat list of item IDs that have ANY discount, fully blocking them. Change to track remaining quantity per item:
+
+```typescript
+// OLD (lines 90-93):
+const appliedDiscountItemIds = useMemo(
+  () => (discounts?.map((d) => d.orderItemId).filter(Boolean) as Id<"orderItems">[]) ?? [],
+  [discounts],
+);
+
+// NEW:
+const discountedQtyByItem = useMemo(() => {
+  const map = new Map<string, number>();
+  for (const d of discounts ?? []) {
+    if (d.orderItemId) {
+      map.set(d.orderItemId, (map.get(d.orderItemId) ?? 0) + d.quantityApplied);
+    }
+  }
+  return map;
+}, [discounts]);
+```
+
+### 2b. Update DiscountModal props
+
+**File:** `apps/native/src/features/checkout/components/DiscountModal.tsx`
+
+Change the `appliedDiscountItemIds` prop to `discountedQtyByItem: Map<string, number>`:
+
+```typescript
+// In interface DiscountModalProps, replace:
+appliedDiscountItemIds: Id<"orderItems">[];
+// With:
+discountedQtyByItem: Map<string, number>;
+```
+
+Update `availableItems` filter (line 52):
+
+```typescript
+// OLD:
+const availableItems = items.filter((item) => !appliedDiscountItemIds.includes(item._id));
+
+// NEW:
+const availableItems = items.filter((item) => {
+  const discountedQty = discountedQtyByItem.get(item._id) ?? 0;
+  return discountedQty < item.quantity;
+});
+```
+
+### 2c. Update CheckoutScreen to pass new prop
+
+In `CheckoutScreen.tsx`, change the `DiscountModal` usage (line 386):
+
+```typescript
+// OLD:
+appliedDiscountItemIds={appliedDiscountItemIds}
+
+// NEW:
+discountedQtyByItem={discountedQtyByItem}
+```
+
+### Verification
+- Item with qty=3 and 1 discount applied should still appear in the item list.
+- Item with qty=1 and 1 discount applied should NOT appear.
+
+---
+
+## Task 3: Receipt data model — Support multiple discounts
+
+**File:** `apps/native/src/features/shared/utils/receipt.ts`
+
+### 3a. Extend `ReceiptDiscount` interface (lines 12-16)
+
+```typescript
+// OLD:
+export interface ReceiptDiscount {
+  type: "sc" | "pwd" | "custom";
+  description: string;
+  amount: number;
+}
+
+// NEW:
+export interface ReceiptDiscount {
+  type: "sc" | "pwd" | "custom";
+  customerName: string;
+  customerId: string;
+  itemName: string;
+  amount: number;
+}
+```
+
+### 3b. Change `ReceiptData.discount` to `discounts` array (line 28)
+
+```typescript
+// OLD:
+discount?: ReceiptDiscount;
+
+// NEW:
+discounts: ReceiptDiscount[];
+```
+
+### Verification
+- TypeScript compilation should flag all usages of `data.discount` that need updating.
+
+---
+
+## Task 4: Receipt HTML generation — Show modifiers and per-discount lines
+
+**File:** `apps/native/src/features/shared/utils/receipt.ts`
+
+### 4a. Modifiers already render in HTML (lines 77-84) — No change needed
+
+The `generateReceiptHtml` already renders modifiers as indented rows with prices. This is done.
+
+### 4b. Update discount section in HTML (lines 97-104 and 316-325)
+
+Replace single discount line with per-discount breakdown in the items table:
+
+```typescript
+// OLD (lines 97-104):
+const discountHtml = data.discount
+  ? `<tr class="discount">...</tr>`
+  : "";
+
+// NEW:
+const discountsHtml = data.discounts.length > 0
+  ? data.discounts.map((d) => `
+    <tr class="discount">
+      <td colspan="4" style="padding-top:4px;">
+        ${d.type === "sc" ? "SC" : d.type === "pwd" ? "PWD" : "Discount"}: ${d.customerName}
+      </td>
+    </tr>
+    <tr class="discount">
+      <td colspan="4" style="font-size:10px;">ID: ${d.customerId}</td>
+    </tr>
+    <tr class="discount">
+      <td colspan="3" style="font-size:10px;">${d.itemName}</td>
+      <td class="right">-${formatCurrency(d.amount)}</td>
+    </tr>
+  `).join("")
+  : "";
+```
+
+Update the totals section (lines 316-325) to use total discount amount:
+
+```typescript
+// Replace the old single discount div with:
+${data.discounts.length > 0 ? `
+  <div class="total-row discount">
+    <span>Less: Discount</span>
+    <span>-${formatCurrency(data.discounts.reduce((sum, d) => sum + d.amount, 0))}</span>
+  </div>
+` : ""}
+```
+
+Insert the per-discount detail rows into the items table after `${itemsHtml}`, before closing `</tbody>`:
+
+```
+${discountsHtml}
+```
+
+### Verification
+- Print receipt with 2 SC discounts. Each should show name, ID, item, and amount on separate lines.
+
+---
+
+## Task 5: Receipt preview modal — Show modifiers and per-discount lines
+
+**File:** `apps/native/src/features/checkout/components/ReceiptPreviewModal.tsx`
+
+### 5a. Add modifier sub-lines under each item (lines 183-198)
+
+Wrap each item in a container View and add modifier rows:
 
 ```tsx
-import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend/convex/_generated/api";
-import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { useCallback, useMemo, useState } from "react";
-import { FlatList, TouchableOpacity, View } from "uniwind/components";
-import { Text } from "../../shared/components/ui";
-import { CategoryTile } from "./CategoryTile";
-import { ProductCard } from "./ProductCard";
-import { SearchBar } from "./SearchBar";
-
-interface Product {
-  _id: Id<"products">;
-  name: string;
-  price: number;
-  categoryId: Id<"categories">;
-  isActive: boolean;
-}
-
-interface SelectedProduct {
-  id: Id<"products">;
-  name: string;
-  price: number;
-}
-
-interface CategoryGridProps {
-  storeId: Id<"stores">;
-  products: Product[] | undefined;
-  onSelectProduct: (product: SelectedProduct) => void;
-}
-
-// Navigation state: which category/subcategory we're viewing
-interface NavState {
-  level: 0 | 1 | 2;
-  categoryId?: Id<"categories">;
-  categoryName?: string;
-  subcategoryId?: Id<"categories">;
-  subcategoryName?: string;
-}
-
-export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGridProps) => {
-  const [nav, setNav] = useState<NavState>({ level: 0 });
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Fetch category tree (root categories with children)
-  const categoryTree = useQuery(api.categories.getTree, { storeId });
-
-  // --- Search mode: when searching, show flat product results across all categories ---
-  const searchResults = useMemo(() => {
-    if (!searchQuery || !products) return null;
-    return products.filter(
-      (p) => p.isActive && p.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
-  }, [searchQuery, products]);
-
-  // --- Navigation handlers ---
-  const handleSelectCategory = useCallback(
-    (categoryId: Id<"categories">) => {
-      const cat = categoryTree?.find((c) => c._id === categoryId);
-      if (!cat) return;
-      setNav({
-        level: 1,
-        categoryId,
-        categoryName: cat.name,
-      });
-    },
-    [categoryTree],
-  );
-
-  const handleSelectSubcategory = useCallback(
-    (subcategoryId: Id<"categories">) => {
-      // Find subcategory name from current category's children
-      const parentCat = categoryTree?.find((c) => c._id === nav.categoryId);
-      const subcat = parentCat?.children.find((c) => c._id === subcategoryId);
-      if (!subcat) return;
-      setNav((prev) => ({
-        ...prev,
-        level: 2,
-        subcategoryId,
-        subcategoryName: subcat.name,
-      }));
-    },
-    [categoryTree, nav.categoryId],
-  );
-
-  const handleBack = useCallback(() => {
-    if (nav.level === 2) {
-      // Go back to category level (level 1)
-      setNav((prev) => ({
-        level: 1,
-        categoryId: prev.categoryId,
-        categoryName: prev.categoryName,
-      }));
-    } else {
-      // Go back to root (level 0)
-      setNav({ level: 0 });
-    }
-  }, [nav.level]);
-
-  // --- Build grid items for current level ---
-  const gridItems = useMemo(() => {
-    // Search mode overrides navigation
-    if (searchResults) {
-      return searchResults.map((p) => ({
-        key: p._id,
-        type: "product" as const,
-        product: p,
-      }));
-    }
-
-    if (!categoryTree || !products) return [];
-
-    // Level 0: Root categories
-    if (nav.level === 0) {
-      return categoryTree.map((cat) => ({
-        key: cat._id,
-        type: "category" as const,
-        category: {
-          _id: cat._id,
-          name: cat.name,
-          itemCount: cat.productCount + cat.children.length,
-        },
-      }));
-    }
-
-    // Level 1: Subcategories + direct products of selected category
-    if (nav.level === 1 && nav.categoryId) {
-      const parentCat = categoryTree.find((c) => c._id === nav.categoryId);
-      if (!parentCat) return [];
-
-      const subcategoryItems = parentCat.children.map((child) => ({
-        key: child._id,
-        type: "subcategory" as const,
-        category: {
-          _id: child._id,
-          name: child.name,
-          itemCount: child.productCount,
-        },
-      }));
-
-      const productItems = products
-        .filter((p) => p.categoryId === nav.categoryId && p.isActive)
-        .map((p) => ({
-          key: p._id,
-          type: "product" as const,
-          product: p,
-        }));
-
-      // Subcategories first, then products
-      return [...subcategoryItems, ...productItems];
-    }
-
-    // Level 2: Products in subcategory only
-    if (nav.level === 2 && nav.subcategoryId) {
-      return products
-        .filter((p) => p.categoryId === nav.subcategoryId && p.isActive)
-        .map((p) => ({
-          key: p._id,
-          type: "product" as const,
-          product: p,
-        }));
-    }
-
-    return [];
-  }, [searchResults, categoryTree, products, nav]);
-
-  // --- Breadcrumb text ---
-  const breadcrumb = useMemo(() => {
-    if (nav.level === 1) return nav.categoryName ?? "";
-    if (nav.level === 2) return `${nav.categoryName} > ${nav.subcategoryName}`;
-    return "";
-  }, [nav]);
-
-  // --- Render ---
-  const renderItem = useCallback(
-    ({ item }: { item: (typeof gridItems)[0] }) => {
-      if (item.type === "category" || item.type === "subcategory") {
-        const handler =
-          item.type === "category" ? handleSelectCategory : handleSelectSubcategory;
-        return (
-          <CategoryTile
-            id={item.category._id}
-            name={item.category.name}
-            itemCount={item.category.itemCount}
-            onPress={handler}
-          />
-        );
-      }
-      // Product
-      return (
-        <ProductCard
-          id={item.product._id}
-          name={item.product.name}
-          price={item.product.price}
-          onPress={onSelectProduct}
-        />
-      );
-    },
-    [handleSelectCategory, handleSelectSubcategory, onSelectProduct],
-  );
-
-  return (
-    <View className="flex-1">
-      <SearchBar
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
-
-      {/* Back button + breadcrumb (only when drilled in) */}
-      {nav.level > 0 && !searchQuery && (
-        <TouchableOpacity
-          className="flex-row items-center px-3 py-2"
-          onPress={handleBack}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="arrow-back" size={20} color="#3B82F6" />
-          <Text className="text-blue-500 font-semibold text-sm ml-1.5">
-            {nav.level === 1 ? "Categories" : nav.categoryName}
-          </Text>
-        </TouchableOpacity>
-      )}
-
-      <FlatList
-        data={gridItems}
-        numColumns={3}
-        keyExtractor={(item) => item.key}
-        renderItem={renderItem}
-        contentContainerStyle={{ padding: 6 }}
-        columnWrapperStyle={{ justifyContent: "flex-start" }}
-        ListEmptyComponent={
-          <View className="flex-1 items-center justify-center py-16">
-            <Ionicons
-              name={searchQuery ? "search-outline" : "grid-outline"}
-              size={40}
-              color="#D1D5DB"
-            />
-            <Text variant="muted" className="mt-3">
-              {searchQuery ? "No products found" : "No categories available"}
-            </Text>
-          </View>
-        }
-      />
+{receiptData.items.map((item, index) => (
+  <View key={index}>
+    <View className="flex-row mb-1">
+      <Text size="xs" className="flex-1" numberOfLines={1}>{item.name}</Text>
+      <Text size="xs" className="w-6 text-center">{item.quantity}</Text>
+      <Text size="xs" className="w-14 text-right">{formatCurrency(item.price)}</Text>
+      <Text size="xs" className="w-14 text-right">{formatCurrency(item.total)}</Text>
     </View>
-  );
-};
-```
-
-**Key design decisions**:
-- Navigation state is local to this component (`nav` state with level 0/1/2)
-- Uses `categories.getTree` (already exists!) for hierarchy — no new backend work needed
-- Products are still passed in from parent (reuses existing `products.list` query)
-- Search overrides navigation: when typing, shows flat product results globally
-- Clearing search returns to current nav position
-
-**Verification**: Component compiles, renders category grid at level 0, drill-down works.
-
----
-
-### Task 3: Update `index.ts` exports
-
-**File**: `apps/native/src/features/orders/components/index.ts`
-
-**Change**: Replace `CategoryFilter` export with `CategoryGrid` and `CategoryTile`.
-
-```diff
-- export { CategoryFilter } from "./CategoryFilter";
-+ export { CategoryGrid } from "./CategoryGrid";
-+ export { CategoryTile } from "./CategoryTile";
-```
-
-Keep all other exports unchanged.
-
-**Verification**: No TypeScript import errors in OrderScreen.
-
----
-
-### Task 4: Update `OrderScreen.tsx` to use `CategoryGrid`
-
-**File**: `apps/native/src/features/orders/screens/OrderScreen.tsx`
-
-**Changes**:
-
-1. **Remove** imports: `CategoryFilter`, `SearchBar` (SearchBar is now inside CategoryGrid)
-2. **Add** import: `CategoryGrid`
-3. **Remove** state: `selectedCategory`, `searchQuery`
-4. **Remove** the `filteredProducts` memo (filtering now handled inside CategoryGrid)
-5. **Replace** the menu section JSX
-
-**Before** (lines 492-524):
-```tsx
-<View className="flex-2 border-r border-gray-200">
-  <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
-  <CategoryFilter
-    categories={categories ?? []}
-    selectedCategory={selectedCategory}
-    onSelectCategory={setSelectedCategory}
-  />
-  <FlatList
-    data={filteredProducts}
-    numColumns={3}
-    keyExtractor={(item) => item._id}
-    renderItem={({ item }) => (
-      <ProductCard
-        id={item._id}
-        name={item.name}
-        price={item.price}
-        onPress={handleAddProduct}
-      />
-    )}
-    contentContainerStyle={{ padding: 6 }}
-    columnWrapperStyle={{ justifyContent: "flex-start" }}
-    ListEmptyComponent={
-      <View className="flex-1 items-center justify-center py-16">
-        <Ionicons name="search-outline" size={40} color="#D1D5DB" />
-        <Text variant="muted" className="mt-3">
-          No products found
+    {item.modifiers?.map((mod, modIndex) => (
+      <View key={modIndex} className="flex-row mb-0.5 pl-3">
+        <Text size="xs" variant="muted" className="flex-1">
+          + {mod.optionName}
         </Text>
+        {mod.priceAdjustment > 0 && (
+          <Text size="xs" variant="muted" className="w-14 text-right">
+            +{formatCurrency(mod.priceAdjustment)}
+          </Text>
+        )}
       </View>
-    }
-  />
-</View>
+    ))}
+  </View>
+))}
 ```
 
-**After**:
+### 5b. Update discount display (lines 207-216)
+
+Replace single discount with per-discount breakdown:
+
 ```tsx
-<View className="flex-2 border-r border-gray-200">
-  <CategoryGrid
-    storeId={storeId}
-    products={products}
-    onSelectProduct={handleAddProduct}
-  />
-</View>
+// OLD:
+{receiptData.discount && (
+  <View className="flex-row justify-between mb-1">
+    <Text size="xs" className="text-red-500">{receiptData.discount.description}</Text>
+    <Text size="xs" className="text-red-500">-{formatCurrency(receiptData.discount.amount)}</Text>
+  </View>
+)}
+
+// NEW:
+{receiptData.discounts.length > 0 && (
+  <>
+    {receiptData.discounts.map((d, i) => (
+      <View key={i} className="mb-2">
+        <Text size="xs" className="text-red-500 font-medium">
+          {d.type === "sc" ? "SC" : "PWD"}: {d.customerName}
+        </Text>
+        <Text size="xs" className="text-red-500">
+          ID: {d.customerId}
+        </Text>
+        <View className="flex-row justify-between">
+          <Text size="xs" className="text-red-500">{d.itemName}</Text>
+          <Text size="xs" className="text-red-500">-{formatCurrency(d.amount)}</Text>
+        </View>
+      </View>
+    ))}
+    <View className="flex-row justify-between mb-1">
+      <Text size="xs" className="text-red-500 font-medium">Total Discount</Text>
+      <Text size="xs" className="text-red-500 font-medium">
+        -{formatCurrency(receiptData.discounts.reduce((s, d) => s + d.amount, 0))}
+      </Text>
+    </View>
+  </>
+)}
 ```
 
-6. **Remove** the `categories` query since `CategoryGrid` uses `getTree` internally:
-```diff
-- const categories = useQuery(api.categories.list, { storeId });
-```
-
-7. **Remove** unused imports (`FlatList` from the menu section is no longer needed at this level — but keep it if CartSection still uses it; it does, so keep the import).
-
-**Verification**: OrderScreen compiles. Menu section shows category grid. Tapping category drills down. Back button works. Search works across all levels. Adding products still works (modal flow unchanged).
+### Verification
+- Preview receipt with modifiers — should show indented "+ Extra Cheese  +P25.00" lines.
+- Preview receipt with 2 discounts — each discount block should show name, ID, item, amount.
 
 ---
 
-### Task 5: Delete `CategoryFilter.tsx`
+## Task 6: Wire up receipt data building in CheckoutScreen
 
-**File**: `apps/native/src/features/orders/components/CategoryFilter.tsx`
+**File:** `apps/native/src/features/checkout/screens/CheckoutScreen.tsx`
 
-**Action**: Delete the file entirely. It's fully replaced by `CategoryGrid` + `CategoryTile`.
+### 6a. Update `createReceiptData` discount building (lines 180-192)
 
-**Verification**: No remaining imports of `CategoryFilter` anywhere. Run `grep -r "CategoryFilter" apps/native/` to confirm.
+```typescript
+// OLD:
+const discountInfo = discounts && discounts.length > 0
+  ? { type: ..., description: ..., amount: ... }
+  : undefined;
+
+// NEW:
+const discountsList: ReceiptDiscount[] = (discounts ?? []).map((d) => ({
+  type: d.discountType === "senior_citizen" ? ("sc" as const) : d.discountType === "pwd" ? ("pwd" as const) : ("custom" as const),
+  customerName: d.customerName,
+  customerId: d.customerId,
+  itemName: d.itemName ?? "Order",
+  amount: d.discountAmount,
+}));
+```
+
+Update the return object:
+
+```typescript
+// OLD:
+discount: discountInfo,
+
+// NEW:
+discounts: discountsList,
+```
+
+### 6b. Update items mapping to include modifiers (lines 206-211)
+
+```typescript
+// OLD:
+items: activeItems.map((item) => ({
+  name: item.productName,
+  quantity: item.quantity,
+  price: item.productPrice,
+  total: item.lineTotal,
+})),
+
+// NEW:
+items: activeItems.map((item) => ({
+  name: item.productName,
+  quantity: item.quantity,
+  price: item.productPrice,
+  total: item.lineTotal,
+  modifiers: item.modifiers?.map((m) => ({
+    optionName: m.optionName,
+    priceAdjustment: m.priceAdjustment,
+  })),
+})),
+```
+
+### 6c. Remove old `customerName`/`customerId` from receipt root (lines 225-226)
+
+These were pulling from `discounts?.[0]` only. Now the per-discount info is in the `discounts` array, so remove:
+
+```typescript
+// REMOVE these lines:
+customerName: discounts?.[0]?.customerName,
+customerId: discounts?.[0]?.customerId,
+```
+
+### Verification
+- Build the app. No TypeScript errors.
+- Complete a checkout with SC discount applied. Receipt preview and print should show the full discount detail.
 
 ---
 
-## What Does NOT Change
+## Task 7: Check thermal printer formatter for `discount` field usage
 
-- **Backend**: No schema changes, no new queries. `getTree` already exists.
-- **ProductCard**: Same component, same styling. No changes needed.
-- **AddItemModal / ModifierSelectionModal**: Untouched. Product selection flow after tapping a product is identical.
-- **Cart section**: Completely untouched.
-- **SearchBar**: Same component, just moved inside CategoryGrid.
+Search for `data.discount` or `.discount` in the thermal printer/ESC-POS formatter files. If the thermal printer store accesses `data.discount`, update it to `data.discounts`.
+
+### Verification
+- Full end-to-end: apply 2 SC discounts on different items, complete payment, preview receipt, print receipt. All should show correct per-discount details with modifiers.
+
+---
 
 ## Execution Order
 
-```
-Task 1 (CategoryTile) → Task 2 (CategoryGrid) → Task 3 (index.ts) → Task 4 (OrderScreen) → Task 5 (delete CategoryFilter)
-```
+1. **Task 1** (Backend) — No dependencies
+2. **Task 3** (Receipt types) — No dependencies
+3. **Task 2** (DiscountModal) — Depends on Task 1 conceptually
+4. **Task 4** (Receipt HTML) — Depends on Task 3
+5. **Task 5** (Receipt preview) — Depends on Task 3
+6. **Task 6** (Wire up) — Depends on Tasks 3, 4, 5
+7. **Task 7** (Other consumers) — Depends on Task 3
 
-Tasks 1-2 are new files (safe to create independently), Tasks 3-5 depend on 1-2 being done.
-
-## Risk Assessment
-
-- **Low risk**: Backend already supports hierarchy via `getTree` — no migration needed.
-- **Medium risk**: The `FlatList` with mixed item types (category tiles + product cards) needs `flex` handling so tiles fill the 3-column layout correctly. Both `CategoryTile` and `ProductCard` use `max-w-[31.5%]` and `flex-1` which should work, but should be visually tested on the iPad/tablet layout.
-- **No data migration**: Categories already have `parentId` in the schema.
+Tasks 1 and 3 can run in parallel. Tasks 4 and 5 can run in parallel after Task 3.

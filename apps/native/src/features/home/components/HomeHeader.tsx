@@ -1,5 +1,6 @@
 import { Alert } from "react-native";
 import { View } from "uniwind/components";
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { IconButton, Text } from "../../shared/components/ui";
 
 interface HomeHeaderProps {
@@ -31,7 +32,8 @@ export const HomeHeader = ({ userName, onLogout, onSettings, onOrderHistory }: H
           What would you like to do?
         </Text>
       </View>
-      <View className="flex-row gap-2">
+      <View className="flex-row gap-2 items-center">
+        <SystemStatusBar />
         <IconButton icon="receipt-outline" onPress={onOrderHistory} />
         <IconButton icon="settings-outline" onPress={onSettings} />
         <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />

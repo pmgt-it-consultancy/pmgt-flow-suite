@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { ActivityIndicator, FlatList, RefreshControl, View } from "uniwind/components";
 import { useAuth } from "../../auth/context";
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Button, IconButton, Text } from "../../shared/components/ui";
 import { TakeoutOrderCard, TakeoutOrderDetailModal } from "../components";
 
@@ -84,12 +85,15 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
             </Text>
           </View>
         </View>
-        <Button size="md" onPress={handleNewOrder}>
-          <View className="flex-row items-center gap-1.5">
-            <Ionicons name="add" size={20} color="#fff" />
-            <Text className="text-white font-semibold">New Order</Text>
-          </View>
-        </Button>
+        <View className="flex-row items-center gap-2">
+          <SystemStatusBar />
+          <Button size="md" onPress={handleNewOrder}>
+            <View className="flex-row items-center gap-1.5">
+              <Ionicons name="add" size={20} color="#fff" />
+              <Text className="text-white font-semibold">New Order</Text>
+            </View>
+          </Button>
+        </View>
       </View>
 
       {takeoutOrders === undefined ? (

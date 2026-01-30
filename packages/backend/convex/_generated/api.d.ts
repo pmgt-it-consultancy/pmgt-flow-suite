@@ -27,6 +27,7 @@ import type * as modifierOptions from "../modifierOptions.js";
 import type * as notes from "../notes.js";
 import type * as openai from "../openai.js";
 import type * as orders from "../orders.js";
+import type * as ping from "../ping.js";
 import type * as products from "../products.js";
 import type * as reports from "../reports.js";
 import type * as roles from "../roles.js";
@@ -64,6 +65,7 @@ declare const fullApi: ApiFromModules<{
   notes: typeof notes;
   openai: typeof openai;
   orders: typeof orders;
+  ping: typeof ping;
   products: typeof products;
   reports: typeof reports;
   roles: typeof roles;

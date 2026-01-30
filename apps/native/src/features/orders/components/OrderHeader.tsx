@@ -1,4 +1,5 @@
 import { View } from "uniwind/components";
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { IconButton, Text } from "../../shared/components/ui";
 
 interface OrderHeaderProps {
@@ -21,6 +22,7 @@ export const OrderHeader = ({ title, subtitle, onBack, onTransferTable }: OrderH
           {subtitle}
         </Text>
       </View>
+      <SystemStatusBar />
       {onTransferTable && (
         <IconButton
           icon="swap-horizontal"

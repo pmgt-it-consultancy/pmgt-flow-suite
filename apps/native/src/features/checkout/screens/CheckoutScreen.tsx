@@ -9,6 +9,7 @@ import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { type ReceiptData, useFormatCurrency } from "../../shared";
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Button, IconButton, Text } from "../../shared/components/ui";
 import {
   CardPaymentDetails,
@@ -331,6 +332,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
             {tableName ?? `Order #${order.orderNumber}`}
           </Text>
         </View>
+        <SystemStatusBar />
       </View>
 
       <ScrollView className="flex-1">
