@@ -54,19 +54,18 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
         .filter(Boolean)
         .join(", ");
 
-      const discountInfo =
-        discounts && discounts.length > 0
-          ? {
-              type:
-                discounts[0].discountType === "senior_citizen" ? ("sc" as const) : ("pwd" as const),
-              description: discounts
-                .map(
-                  (d) => `${d.discountType === "senior_citizen" ? "SC" : "PWD"}: ${d.customerName}`,
-                )
-                .join(", "),
-              amount: discounts.reduce((sum, d) => sum + d.discountAmount, 0),
-            }
-          : undefined;
+      const discountsList = (discounts ?? []).map((d) => ({
+        type:
+          d.discountType === "senior_citizen"
+            ? ("sc" as const)
+            : d.discountType === "pwd"
+              ? ("pwd" as const)
+              : ("custom" as const),
+        customerName: d.customerName,
+        customerId: d.customerId,
+        itemName: d.itemName ?? "Order",
+        amount: d.discountAmount,
+      }));
 
       const receiptData: ReceiptData = {
         storeName: receipt.storeName,
@@ -83,7 +82,7 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
           total: i.lineTotal,
         })),
         subtotal: receipt.grossSales,
-        discount: discountInfo,
+        discounts: discountsList,
         vatableSales: receipt.vatableSales,
         vatAmount: receipt.vatAmount,
         vatExemptSales: receipt.vatExemptSales,
@@ -93,8 +92,6 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
         change: receipt.changeGiven ?? 0,
         transactionDate: new Date(receipt.paidAt ?? receipt.createdAt),
         receiptNumber: receipt.orderNumber,
-        customerName: discounts?.[0]?.customerName,
-        customerId: discounts?.[0]?.customerId,
       };
 
       await printToThermal(receiptData);

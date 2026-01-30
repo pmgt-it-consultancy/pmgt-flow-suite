@@ -73,8 +73,8 @@ export async function printReceiptToThermal(
   if (data.tableName) await p.printText(`Table: ${data.tableName}\n`, normal());
   await p.printText(`Cashier: ${data.cashierName}\n`, normal());
 
-  // Customer info
-  if (data.discount && (data.customerName || data.customerId || data.customerTin)) {
+  // Customer info (from root-level fields or discount details)
+  if (data.customerName || data.customerId || data.customerTin) {
     await p.printText("\n", normal());
     if (data.customerName) await p.printText(`Customer: ${data.customerName}\n`, normal());
     if (data.customerId) await p.printText(`ID No.: ${data.customerId}\n`, normal());
@@ -119,9 +119,16 @@ export async function printReceiptToThermal(
     normal(),
   );
 
-  if (data.discount) {
+  if (data.discounts.length > 0) {
+    for (const d of data.discounts) {
+      const label = `${d.type === "sc" ? "SC" : d.type === "pwd" ? "PWD" : "Discount"}: ${d.customerName}`;
+      await p.printText(`${label}\n`, normal());
+      await p.printText(`ID: ${d.customerId}\n`, normal());
+      await p.printText(`${formatRow(d.itemName, `-${formatCurrency(d.amount)}`, w)}\n`, normal());
+    }
+    const totalDiscount = data.discounts.reduce((s, d) => s + d.amount, 0);
     await p.printText(
-      `${formatRow(data.discount.description, `-${formatCurrency(data.discount.amount)}`, w)}\n`,
+      `${formatRow("Total Discount", `-${formatCurrency(totalDiscount)}`, w)}\n`,
       normal(),
     );
   }
@@ -156,8 +163,6 @@ export async function printReceiptToThermal(
   await p.printText("Thank you for your patronage!\n", normal());
   await p.printText("This does not serve as an official receipt\n", normal());
   await p.printText("Powered by PMGT Flow Suite\n\n\n\n", normal());
-
-  await p.cutPaper();
 }
 
 export async function printKitchenTicketToThermal(
@@ -199,6 +204,4 @@ export async function printKitchenTicketToThermal(
   }
 
   await p.printText(`${line("-", w)}\n\n\n`, normal());
-
-  await p.cutPaper();
 }

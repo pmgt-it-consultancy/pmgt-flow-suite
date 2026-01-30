@@ -18,7 +18,7 @@ interface OrderItem {
 interface DiscountModalProps {
   visible: boolean;
   items: OrderItem[];
-  appliedDiscountItemIds: Id<"orderItems">[];
+  discountedQtyByItem: Map<string, number>;
   discountType: DiscountType;
   selectedItemId: Id<"orderItems"> | null;
   idNumber: string;
@@ -34,7 +34,7 @@ interface DiscountModalProps {
 export const DiscountModal = ({
   visible,
   items,
-  appliedDiscountItemIds,
+  discountedQtyByItem,
   discountType,
   selectedItemId,
   idNumber,
@@ -49,7 +49,10 @@ export const DiscountModal = ({
   const formatCurrency = useFormatCurrency();
   const customerNameRef = useRef<RNTextInput>(null);
 
-  const availableItems = items.filter((item) => !appliedDiscountItemIds.includes(item._id));
+  const availableItems = items.filter((item) => {
+    const discountedQty = discountedQtyByItem.get(item._id) ?? 0;
+    return discountedQty < item.quantity;
+  });
 
   const isValid = discountType && selectedItemId && idNumber.trim() && customerName.trim();
 

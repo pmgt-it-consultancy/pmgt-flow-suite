@@ -51,19 +51,18 @@ export const TakeoutOrderDetailModal = ({
   const isPaid = order?.status === "paid";
 
   const buildReceiptData = useCallback((): ReceiptData => {
-    const discountInfo =
-      discounts && discounts.length > 0
-        ? {
-            type:
-              discounts[0].discountType === "senior_citizen" ? ("sc" as const) : ("pwd" as const),
-            description: discounts
-              .map(
-                (d) => `${d.discountType === "senior_citizen" ? "SC" : "PWD"}: ${d.customerName}`,
-              )
-              .join(", "),
-            amount: discounts.reduce((sum, d) => sum + d.discountAmount, 0),
-          }
-        : undefined;
+    const discountsList = (discounts ?? []).map((d) => ({
+      type:
+        d.discountType === "senior_citizen"
+          ? ("sc" as const)
+          : d.discountType === "pwd"
+            ? ("pwd" as const)
+            : ("custom" as const),
+      customerName: d.customerName,
+      customerId: d.customerId,
+      itemName: d.itemName ?? "Order",
+      amount: d.discountAmount,
+    }));
 
     const storeAddress = store
       ? [store.address1, store.address2].filter(Boolean).join(", ")
@@ -87,7 +86,7 @@ export const TakeoutOrderDetailModal = ({
         })),
       })),
       subtotal: order?.grossSales ?? 0,
-      discount: discountInfo,
+      discounts: discountsList,
       vatableSales: order?.vatableSales ?? 0,
       vatAmount: order?.vatAmount ?? 0,
       vatExemptSales: order?.vatExemptSales ?? 0,
@@ -99,8 +98,7 @@ export const TakeoutOrderDetailModal = ({
       receiptNumber: order?.orderNumber,
       cardPaymentType: order?.cardPaymentType,
       cardReferenceNumber: order?.cardReferenceNumber,
-      customerName: order?.customerName ?? discounts?.[0]?.customerName,
-      customerId: discounts?.[0]?.customerId,
+      customerName: order?.customerName,
     };
   }, [order, store, discounts, activeItems, user?.name]);
 

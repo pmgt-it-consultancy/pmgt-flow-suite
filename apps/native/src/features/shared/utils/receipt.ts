@@ -11,7 +11,9 @@ export interface ReceiptItem {
 
 export interface ReceiptDiscount {
   type: "sc" | "pwd" | "custom";
-  description: string;
+  customerName: string;
+  customerId: string;
+  itemName: string;
   amount: number;
 }
 
@@ -25,7 +27,7 @@ export interface ReceiptData {
   cashierName: string;
   items: ReceiptItem[];
   subtotal: number;
-  discount?: ReceiptDiscount;
+  discounts: ReceiptDiscount[];
   vatableSales: number;
   vatAmount: number;
   vatExemptSales: number;
@@ -94,14 +96,27 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
     })
     .join("");
 
-  const discountHtml = data.discount
-    ? `
+  const discountsHtml =
+    data.discounts.length > 0
+      ? data.discounts
+          .map(
+            (d) => `
       <tr class="discount">
-        <td colspan="3">${data.discount.description}</td>
-        <td class="right">-${formatCurrency(data.discount.amount)}</td>
+        <td colspan="4" style="padding-top:4px;">
+          ${d.type === "sc" ? "SC" : d.type === "pwd" ? "PWD" : "Discount"}: ${d.customerName}
+        </td>
       </tr>
-    `
-    : "";
+      <tr class="discount">
+        <td colspan="4" style="font-size:10px;">ID: ${d.customerId}</td>
+      </tr>
+      <tr class="discount">
+        <td colspan="3" style="font-size:10px;">${d.itemName}</td>
+        <td class="right">-${formatCurrency(d.amount)}</td>
+      </tr>
+    `,
+          )
+          .join("")
+      : "";
 
   const paymentDetailsHtml =
     data.paymentMethod === "cash"
@@ -303,6 +318,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         </thead>
         <tbody>
           ${itemsHtml}
+          ${discountsHtml}
         </tbody>
       </table>
 
@@ -314,11 +330,11 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
           <span>${formatCurrency(data.subtotal)}</span>
         </div>
         ${
-          discountHtml
+          data.discounts.length > 0
             ? `
         <div class="total-row discount">
-          <span>${data.discount?.description}:</span>
-          <span>-${formatCurrency(data.discount?.amount || 0)}</span>
+          <span>Less: Discount</span>
+          <span>-${formatCurrency(data.discounts.reduce((sum, d) => sum + d.amount, 0))}</span>
         </div>
         `
             : ""

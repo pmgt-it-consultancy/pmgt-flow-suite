@@ -87,10 +87,15 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   // Computed values
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
-  const appliedDiscountItemIds = useMemo(
-    () => (discounts?.map((d) => d.orderItemId).filter(Boolean) as Id<"orderItems">[]) ?? [],
-    [discounts],
-  );
+  const discountedQtyByItem = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const d of discounts ?? []) {
+      if (d.orderItemId) {
+        map.set(d.orderItemId, (map.get(d.orderItemId) ?? 0) + d.quantityApplied);
+      }
+    }
+    return map;
+  }, [discounts]);
   const change = useMemo(() => {
     if (paymentMethod !== "cash" || !cashReceived) return 0;
     return Math.max(0, parseFloat(cashReceived) - (order?.netSales ?? 0));
@@ -177,19 +182,18 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   // Receipt helpers
   const createReceiptData = useCallback(
     (changeAmount: number, cashAmount?: number): ReceiptData => {
-      const discountInfo =
-        discounts && discounts.length > 0
-          ? {
-              type:
-                discounts[0].discountType === "senior_citizen" ? ("sc" as const) : ("pwd" as const),
-              description: discounts
-                .map(
-                  (d) => `${d.discountType === "senior_citizen" ? "SC" : "PWD"}: ${d.customerName}`,
-                )
-                .join(", "),
-              amount: discounts.reduce((sum, d) => sum + d.discountAmount, 0),
-            }
-          : undefined;
+      const discountsList = (discounts ?? []).map((d) => ({
+        type:
+          d.discountType === "senior_citizen"
+            ? ("sc" as const)
+            : d.discountType === "pwd"
+              ? ("pwd" as const)
+              : ("custom" as const),
+        customerName: d.customerName,
+        customerId: d.customerId,
+        itemName: d.itemName ?? "Order",
+        amount: d.discountAmount,
+      }));
 
       const storeAddress = store
         ? [store.address1, store.address2].filter(Boolean).join(", ")
@@ -208,9 +212,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           quantity: item.quantity,
           price: item.productPrice,
           total: item.lineTotal,
+          modifiers: item.modifiers?.map((m) => ({
+            optionName: m.optionName,
+            priceAdjustment: m.priceAdjustment,
+          })),
         })),
         subtotal: order?.grossSales ?? 0,
-        discount: discountInfo,
+        discounts: discountsList,
         vatableSales: order?.vatableSales ?? 0,
         vatAmount: order?.vatAmount ?? 0,
         vatExemptSales: order?.vatExemptSales ?? 0,
@@ -222,8 +230,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         cardReferenceNumber: paymentMethod === "card_ewallet" ? cardReferenceNumber : undefined,
         transactionDate: new Date(),
         receiptNumber: order?.orderNumber,
-        customerName: discounts?.[0]?.customerName,
-        customerId: discounts?.[0]?.customerId,
       };
     },
     [
@@ -383,7 +389,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       <DiscountModal
         visible={showDiscountModal}
         items={activeItems}
-        appliedDiscountItemIds={appliedDiscountItemIds}
+        discountedQtyByItem={discountedQtyByItem}
         discountType={discountType}
         selectedItemId={selectedItemId}
         idNumber={discountIdNumber}

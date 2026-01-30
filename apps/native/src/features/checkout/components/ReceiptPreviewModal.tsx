@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, View } from "uniwind/components";
+import { ScrollView } from "react-native-gesture-handler";
+import { ActivityIndicator, View } from "uniwind/components";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Button, Modal, Text } from "../../shared/components/ui";
 import type { ReceiptData } from "../../shared/utils/receipt";
@@ -83,7 +84,8 @@ export const ReceiptPreviewModal = ({
     try {
       await onPrint();
       setPrintResult("success");
-    } catch {
+    } catch (err) {
+      console.log("Print error:", err);
       setPrintResult("error");
     } finally {
       setIsPrinting(false);
@@ -103,147 +105,208 @@ export const ReceiptPreviewModal = ({
       <View className="flex-row gap-4" style={{ maxHeight: 600 }}>
         {/* Left Panel — Receipt Preview */}
         <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{ width: previewWidth }}
+          showsVerticalScrollIndicator={true}
           className="bg-white rounded-xl border border-gray-200"
+          contentContainerClassName="items-center"
           contentContainerStyle={{ padding: 16 }}
+          nestedScrollEnabled={true}
+          style={{
+            maxHeight: 600,
+          }}
+          onScrollBeginDrag={() => console.log("[ScrollView] onScrollBeginDrag")}
+          onScrollEndDrag={() => console.log("[ScrollView] onScrollEndDrag")}
+          onMomentumScrollBegin={() => console.log("[ScrollView] onMomentumScrollBegin")}
+          onMomentumScrollEnd={() => console.log("[ScrollView] onMomentumScrollEnd")}
+          onScroll={(e) =>
+            console.log("[ScrollView] onScroll offset:", e.nativeEvent.contentOffset.y)
+          }
+          scrollEventThrottle={16}
+          onTouchStart={() => console.log("[ScrollView] onTouchStart")}
+          onTouchMove={() => console.log("[ScrollView] onTouchMove")}
+          onTouchEnd={() => console.log("[ScrollView] onTouchEnd")}
+          onResponderGrant={() => console.log("[ScrollView] onResponderGrant")}
+          onResponderReject={() => console.log("[ScrollView] onResponderReject")}
         >
-          {/* Store Header */}
-          <Text variant="heading" size="base" className="text-center mb-1">
-            {receiptData.storeName}
-          </Text>
-          {receiptData.storeAddress && (
-            <Text variant="muted" size="xs" className="text-center">
-              {receiptData.storeAddress}
+          <View style={{ width: previewWidth }}>
+            {/* Store Header */}
+            <Text variant="heading" size="base" className="text-center mb-1">
+              {receiptData.storeName}
             </Text>
-          )}
-          {receiptData.storeTin && (
-            <Text variant="muted" size="xs" className="text-center">
-              TIN: {receiptData.storeTin}
-            </Text>
-          )}
-
-          <DashedSeparator />
-
-          {/* Order Info */}
-          <InfoRow label="Receipt #" value={receiptData.receiptNumber || receiptData.orderNumber} />
-          <InfoRow label="Date" value={formatDate(receiptData.transactionDate)} />
-          <InfoRow label="Order Type" value={orderTypeLabel(receiptData.orderType)} />
-          {receiptData.tableName && <InfoRow label="Table" value={receiptData.tableName} />}
-          <InfoRow label="Cashier" value={receiptData.cashierName} />
-
-          {/* Customer Info */}
-          {hasCustomerInfo && (
-            <>
-              <DashedSeparator />
-              {receiptData.customerName && (
-                <InfoRow label="Customer" value={receiptData.customerName} />
-              )}
-              {receiptData.customerId && <InfoRow label="ID No." value={receiptData.customerId} />}
-              {receiptData.customerAddress && (
-                <InfoRow label="Address" value={receiptData.customerAddress} />
-              )}
-              {receiptData.customerTin && <InfoRow label="TIN" value={receiptData.customerTin} />}
-            </>
-          )}
-
-          <DashedSeparator />
-
-          {/* Order Items Header */}
-          <Text variant="heading" size="xs" className="text-center mb-2">
-            ORDER ITEMS
-          </Text>
-
-          {/* Column Headers */}
-          <View className="flex-row mb-1">
-            <Text size="xs" variant="muted" className="flex-1">
-              Item
-            </Text>
-            <Text size="xs" variant="muted" className="w-6 text-center">
-              Qty
-            </Text>
-            <Text size="xs" variant="muted" className="w-14 text-right">
-              Price
-            </Text>
-            <Text size="xs" variant="muted" className="w-14 text-right">
-              Total
-            </Text>
-          </View>
-
-          {/* Items */}
-          {receiptData.items.map((item, index) => (
-            <View key={index} className="flex-row mb-1">
-              <Text size="xs" className="flex-1" numberOfLines={1}>
-                {item.name}
+            {receiptData.storeAddress && (
+              <Text variant="muted" size="xs" className="text-center">
+                {receiptData.storeAddress}
               </Text>
-              <Text size="xs" className="w-6 text-center">
-                {item.quantity}
+            )}
+            {receiptData.storeTin && (
+              <Text variant="muted" size="xs" className="text-center">
+                TIN: {receiptData.storeTin}
               </Text>
-              <Text size="xs" className="w-14 text-right">
-                {formatCurrency(item.price)}
+            )}
+
+            <DashedSeparator />
+
+            {/* Order Info */}
+            <InfoRow
+              label="Receipt #"
+              value={receiptData.receiptNumber || receiptData.orderNumber}
+            />
+            <InfoRow label="Date" value={formatDate(receiptData.transactionDate)} />
+            <InfoRow label="Order Type" value={orderTypeLabel(receiptData.orderType)} />
+            {receiptData.tableName && <InfoRow label="Table" value={receiptData.tableName} />}
+            <InfoRow label="Cashier" value={receiptData.cashierName} />
+
+            {/* Customer Info */}
+            {hasCustomerInfo && (
+              <>
+                <DashedSeparator />
+                {receiptData.customerName && (
+                  <InfoRow label="Customer" value={receiptData.customerName} />
+                )}
+                {receiptData.customerId && (
+                  <InfoRow label="ID No." value={receiptData.customerId} />
+                )}
+                {receiptData.customerAddress && (
+                  <InfoRow label="Address" value={receiptData.customerAddress} />
+                )}
+                {receiptData.customerTin && <InfoRow label="TIN" value={receiptData.customerTin} />}
+              </>
+            )}
+
+            <DashedSeparator />
+
+            {/* Order Items Header */}
+            <Text variant="heading" size="xs" className="text-center mb-2">
+              ORDER ITEMS
+            </Text>
+
+            {/* Column Headers */}
+            <View className="flex-row mb-1">
+              <Text size="xs" variant="muted" className="flex-1">
+                Item
               </Text>
-              <Text size="xs" className="w-14 text-right">
-                {formatCurrency(item.total)}
+              <Text size="xs" variant="muted" className="w-6 text-center">
+                Qty
+              </Text>
+              <Text size="xs" variant="muted" className="w-14 text-right">
+                Price
+              </Text>
+              <Text size="xs" variant="muted" className="w-14 text-right">
+                Total
               </Text>
             </View>
-          ))}
 
-          <DashedSeparator />
+            {/* Items */}
+            {receiptData.items.map((item, index) => (
+              <View key={index}>
+                <View className="flex-row mb-1">
+                  <Text size="xs" className="flex-1" numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <Text size="xs" className="w-6 text-center">
+                    {item.quantity}
+                  </Text>
+                  <Text size="xs" className="w-14 text-right">
+                    {formatCurrency(item.price)}
+                  </Text>
+                  <Text size="xs" className="w-14 text-right">
+                    {formatCurrency(item.total)}
+                  </Text>
+                </View>
+                {item.modifiers?.map((mod, modIndex) => (
+                  <View key={modIndex} className="flex-row mb-0.5 pl-3">
+                    <Text size="xs" variant="muted" className="flex-1">
+                      + {mod.optionName}
+                    </Text>
+                    {mod.priceAdjustment > 0 && (
+                      <Text size="xs" variant="muted" className="w-14 text-right">
+                        +{formatCurrency(mod.priceAdjustment)}
+                      </Text>
+                    )}
+                  </View>
+                ))}
+              </View>
+            ))}
 
-          {/* Totals & VAT */}
-          <InfoRow label="Subtotal" value={formatCurrency(receiptData.subtotal)} />
-          <InfoRow label="Vatable Sales" value={formatCurrency(receiptData.vatableSales)} />
-          <InfoRow label="VAT (12%)" value={formatCurrency(receiptData.vatAmount)} />
-          <InfoRow label="VAT-Exempt" value={formatCurrency(receiptData.vatExemptSales)} />
-          {receiptData.discount && (
+            <DashedSeparator />
+
+            {/* Totals & VAT */}
+            <InfoRow label="Subtotal" value={formatCurrency(receiptData.subtotal)} />
+            <InfoRow label="Vatable Sales" value={formatCurrency(receiptData.vatableSales)} />
+            <InfoRow label="VAT (12%)" value={formatCurrency(receiptData.vatAmount)} />
+            <InfoRow label="VAT-Exempt" value={formatCurrency(receiptData.vatExemptSales)} />
+            {receiptData.discounts.length > 0 && (
+              <>
+                {receiptData.discounts.map((d, i) => (
+                  <View key={i} className="mb-2">
+                    <Text size="xs" className="text-red-500 font-medium">
+                      {d.type === "sc" ? "SC" : "PWD"}: {d.customerName}
+                    </Text>
+                    <Text size="xs" className="text-red-500">
+                      ID: {d.customerId}
+                    </Text>
+                    <View className="flex-row justify-between">
+                      <Text size="xs" className="text-red-500">
+                        {d.itemName}
+                      </Text>
+                      <Text size="xs" className="text-red-500">
+                        -{formatCurrency(d.amount)}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+                <View className="flex-row justify-between mb-1">
+                  <Text size="xs" className="text-red-500 font-medium">
+                    Total Discount
+                  </Text>
+                  <Text size="xs" className="text-red-500 font-medium">
+                    -{formatCurrency(receiptData.discounts.reduce((s, d) => s + d.amount, 0))}
+                  </Text>
+                </View>
+              </>
+            )}
+
+            <Text size="xs" variant="muted" className="text-center my-1">
+              = = = = = = = = = = = = = = = = = = = =
+            </Text>
             <View className="flex-row justify-between mb-1">
-              <Text size="xs" className="text-red-500">
-                {receiptData.discount.description}
+              <Text variant="heading" size="base">
+                TOTAL
               </Text>
-              <Text size="xs" className="text-red-500">
-                -{formatCurrency(receiptData.discount.amount)}
+              <Text variant="heading" size="base">
+                {formatCurrency(receiptData.total)}
               </Text>
             </View>
-          )}
-
-          <Text size="xs" variant="muted" className="text-center my-1">
-            = = = = = = = = = = = = = = = = = = = =
-          </Text>
-          <View className="flex-row justify-between mb-1">
-            <Text variant="heading" size="base">
-              TOTAL
+            <Text size="xs" variant="muted" className="text-center my-1">
+              = = = = = = = = = = = = = = = = = = = =
             </Text>
-            <Text variant="heading" size="base">
-              {formatCurrency(receiptData.total)}
+
+            {/* Payment */}
+            <InfoRow
+              label="Method"
+              value={receiptData.paymentMethod === "cash" ? "Cash" : "Card"}
+            />
+            {receiptData.paymentMethod === "cash" ? (
+              <>
+                <InfoRow
+                  label="Amount Tendered"
+                  value={formatCurrency(receiptData.amountTendered || 0)}
+                />
+                <InfoRow label="Change" value={formatCurrency(receiptData.change || 0)} />
+              </>
+            ) : (
+              <InfoRow label="Card Payment" value={`**** ${receiptData.cardLastFour || "0000"}`} />
+            )}
+
+            <DashedSeparator />
+
+            {/* Footer */}
+            <Text variant="heading" size="xs" className="text-center mt-2">
+              Thank you for your patronage!
+            </Text>
+            <Text variant="muted" className="text-center mt-1 mb-2" style={{ fontSize: 9 }}>
+              This does not serve as an official receipt
             </Text>
           </View>
-          <Text size="xs" variant="muted" className="text-center my-1">
-            = = = = = = = = = = = = = = = = = = = =
-          </Text>
-
-          {/* Payment */}
-          <InfoRow label="Method" value={receiptData.paymentMethod === "cash" ? "Cash" : "Card"} />
-          {receiptData.paymentMethod === "cash" ? (
-            <>
-              <InfoRow
-                label="Amount Tendered"
-                value={formatCurrency(receiptData.amountTendered || 0)}
-              />
-              <InfoRow label="Change" value={formatCurrency(receiptData.change || 0)} />
-            </>
-          ) : (
-            <InfoRow label="Card Payment" value={`**** ${receiptData.cardLastFour || "0000"}`} />
-          )}
-
-          <DashedSeparator />
-
-          {/* Footer */}
-          <Text variant="heading" size="xs" className="text-center mt-2">
-            Thank you for your patronage!
-          </Text>
-          <Text variant="muted" className="text-center mt-1 mb-2" style={{ fontSize: 9 }}>
-            This does not serve as an official receipt
-          </Text>
         </ScrollView>
 
         {/* Right Panel — Actions */}

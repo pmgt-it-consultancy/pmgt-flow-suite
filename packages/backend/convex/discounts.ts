@@ -59,14 +59,16 @@ export const applyScPwdDiscount = mutation({
       throw new Error("Discount quantity exceeds item quantity");
     }
 
-    // Check for existing SC/PWD discount on this item
-    const existingDiscount = await ctx.db
+    // Check total discounted quantity on this item (multiple seniors can share)
+    const existingDiscounts = await ctx.db
       .query("orderDiscounts")
       .withIndex("by_orderItem", (q) => q.eq("orderItemId", args.orderItemId))
-      .first();
-
-    if (existingDiscount) {
-      throw new Error("Item already has a discount applied");
+      .collect();
+    const totalDiscountedQty = existingDiscounts.reduce((sum, d) => sum + d.quantityApplied, 0);
+    if (totalDiscountedQty + args.quantityApplied > orderItem.quantity) {
+      throw new Error(
+        `Cannot apply discount: only ${orderItem.quantity - totalDiscountedQty} undiscounted quantity remaining`,
+      );
     }
 
     // Calculate SC/PWD discount
@@ -261,13 +263,14 @@ async function recalculateOrderTotalsWithDiscounts(
     .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
     .collect();
 
-  // Group item-level discounts by orderItemId
-  const itemDiscounts = new Map<string, Doc<"orderDiscounts">>();
+  // Sum discounted quantities per item (multiple seniors can share an item)
+  const itemDiscountQty = new Map<string, number>();
   let orderLevelDiscountAmount = 0;
 
   for (const discount of discounts) {
     if (discount.orderItemId) {
-      itemDiscounts.set(discount.orderItemId, discount);
+      const current = itemDiscountQty.get(discount.orderItemId) ?? 0;
+      itemDiscountQty.set(discount.orderItemId, current + discount.quantityApplied);
     } else {
       orderLevelDiscountAmount += discount.discountAmount;
     }
@@ -279,12 +282,8 @@ async function recalculateOrderTotalsWithDiscounts(
       const product = await ctx.db.get(item.productId);
       const isVatable = product?.isVatable ?? true;
 
-      // Check for SC/PWD discount on this item
-      const discount = itemDiscounts.get(item._id);
-      const scPwdQuantity =
-        discount && (discount.discountType === "senior_citizen" || discount.discountType === "pwd")
-          ? discount.quantityApplied
-          : 0;
+      // Get total SC/PWD discounted quantity for this item
+      const scPwdQuantity = itemDiscountQty.get(item._id) ?? 0;
 
       return calculateItemTotals(item.productPrice, item.quantity, isVatable, scPwdQuantity);
     }),
