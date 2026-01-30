@@ -49,6 +49,24 @@ export async function enableBluetooth(): Promise<void> {
   }
 }
 
+export async function getPairedDevices(): Promise<BluetoothDevice[]> {
+  if (Platform.OS === "ios") return [];
+  const granted = await requestBluetoothPermissions();
+  if (!granted) return [];
+  try {
+    const result = await BluetoothManager.enableBluetooth();
+    const list: unknown[] = Array.isArray(result) ? result : [];
+    return list
+      .map((d) => {
+        const device = d as { name?: string; address?: string };
+        return device.address ? { name: device.name || "Unknown", address: device.address } : null;
+      })
+      .filter((d): d is BluetoothDevice => d !== null);
+  } catch {
+    return [];
+  }
+}
+
 export async function scanDevices(): Promise<BluetoothDevice[]> {
   if (Platform.OS === "ios") {
     console.warn("Bluetooth Classic scanning is not supported on iOS");

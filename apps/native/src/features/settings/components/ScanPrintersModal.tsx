@@ -13,12 +13,38 @@ interface ScanPrintersModalProps {
 
 export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) => {
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
-  const { isScanning, printers, scanForDevices, addPrinter } = usePrinterStore();
+  const { isScanning, printers, scanForDevices, fetchPairedDevices, addPrinter } =
+    usePrinterStore();
+
+  const mergeDevices = (
+    existing: BluetoothDevice[],
+    incoming: BluetoothDevice[],
+    savedAddresses: Set<string>,
+  ) => {
+    const map = new Map<string, BluetoothDevice>();
+    for (const d of existing) map.set(d.address, d);
+    for (const d of incoming) {
+      if (!savedAddresses.has(d.address)) {
+        const prev = map.get(d.address);
+        // Prefer a real name over "Unknown"
+        if (!prev || (prev.name === "Unknown" && d.name !== "Unknown")) {
+          map.set(d.address, d);
+        }
+      }
+    }
+    return Array.from(map.values());
+  };
 
   const startScan = async () => {
+    const savedAddresses = new Set(printers.map((p) => p.id));
+
+    // Phase 1: show paired/bonded devices instantly
+    const paired = await fetchPairedDevices();
+    setDevices((prev) => mergeDevices(prev, paired, savedAddresses));
+
+    // Phase 2: full discovery scan (slow, ~12s)
     const found = await scanForDevices();
-    const pairedAddresses = new Set(printers.map((p) => p.id));
-    setDevices(found.filter((d) => !pairedAddresses.has(d.address)));
+    setDevices((prev) => mergeDevices(prev, found, savedAddresses));
   };
 
   useEffect(() => {
@@ -56,17 +82,7 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
       title="Scan for Printers"
       showCloseButton
     >
-      {isScanning ? (
-        <View className="items-center py-8">
-          <ActivityIndicator size="large" />
-          <Text className="mt-3 text-gray-500">Scanning...</Text>
-        </View>
-      ) : devices.length === 0 ? (
-        <View className="items-center py-8">
-          <Ionicons name="bluetooth-outline" size={40} color="#9CA3AF" />
-          <Text className="mt-3 text-gray-500">No devices found</Text>
-        </View>
-      ) : (
+      {devices.length > 0 && (
         <View>
           {devices.map((device) => (
             <View key={device.address} className="bg-gray-50 rounded-lg p-3 mb-2">
@@ -82,6 +98,22 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
               </View>
             </View>
           ))}
+        </View>
+      )}
+
+      {isScanning && (
+        <View className="items-center py-4">
+          <ActivityIndicator size="small" />
+          <Text className="mt-2 text-gray-500 text-sm">
+            {devices.length > 0 ? "Scanning for more devices..." : "Scanning..."}
+          </Text>
+        </View>
+      )}
+
+      {!isScanning && devices.length === 0 && (
+        <View className="items-center py-8">
+          <Ionicons name="bluetooth-outline" size={40} color="#9CA3AF" />
+          <Text className="mt-3 text-gray-500">No devices found</Text>
         </View>
       )}
 

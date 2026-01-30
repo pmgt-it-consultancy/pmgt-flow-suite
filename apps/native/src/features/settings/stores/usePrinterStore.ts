@@ -6,6 +6,7 @@ import {
   connectToDevice,
   disconnectDevice,
   enableBluetooth,
+  getPairedDevices,
   scanDevices,
 } from "../services/bluetoothPrinter";
 import type { KitchenTicketData } from "../services/escposFormatter";
@@ -32,6 +33,7 @@ interface PrinterStore {
   isInitialized: boolean;
 
   initialize: () => Promise<{ failedPrinters: string[] }>;
+  fetchPairedDevices: () => Promise<BluetoothDevice[]>;
   scanForDevices: () => Promise<BluetoothDevice[]>;
   connectPrinter: (address: string) => Promise<boolean>;
   disconnectPrinter: (address: string) => Promise<void>;
@@ -87,6 +89,10 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
 
     set({ connectionStatus, isInitialized: true });
     return { failedPrinters };
+  },
+
+  fetchPairedDevices: async () => {
+    return getPairedDevices();
   },
 
   scanForDevices: async () => {
