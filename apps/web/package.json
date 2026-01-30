@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "cd ../.. && cd packages/backend && npx convex deploy --cmd 'cd ../../apps/web && next build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL",
     "start": "next start",
     "lint": "biome lint .",
     "typecheck": "tsc --noEmit"
