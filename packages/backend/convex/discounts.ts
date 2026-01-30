@@ -71,8 +71,16 @@ export const applyScPwdDiscount = mutation({
       );
     }
 
-    // Calculate SC/PWD discount
-    const scPwd = calculateScPwdDiscount(orderItem.productPrice);
+    // Calculate effective price including modifiers
+    const modifiers = await ctx.db
+      .query("orderItemModifiers")
+      .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", args.orderItemId))
+      .collect();
+    const modifierTotal = modifiers.reduce((sum: number, m: any) => sum + m.priceAdjustment, 0);
+    const effectivePrice = orderItem.productPrice + modifierTotal;
+
+    // Calculate SC/PWD discount on full price (product + modifiers)
+    const scPwd = calculateScPwdDiscount(effectivePrice);
     const discountAmount = scPwd.discountAmount * args.quantityApplied;
     const vatExemptAmount = scPwd.vatExemptAmount * args.quantityApplied;
 
@@ -282,10 +290,18 @@ async function recalculateOrderTotalsWithDiscounts(
       const product = await ctx.db.get(item.productId);
       const isVatable = product?.isVatable ?? true;
 
+      // Sum modifier price adjustments
+      const modifiers = await ctx.db
+        .query("orderItemModifiers")
+        .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", item._id))
+        .collect();
+      const modifierTotal = modifiers.reduce((sum: number, m: any) => sum + m.priceAdjustment, 0);
+      const effectivePrice = item.productPrice + modifierTotal;
+
       // Get total SC/PWD discounted quantity for this item
       const scPwdQuantity = itemDiscountQty.get(item._id) ?? 0;
 
-      return calculateItemTotals(item.productPrice, item.quantity, isVatable, scPwdQuantity);
+      return calculateItemTotals(effectivePrice, item.quantity, isVatable, scPwdQuantity);
     }),
   );
 
