@@ -78,7 +78,9 @@ export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, Butt
             size="small"
           />
         ) : typeof children === "string" ? (
-          <Text className={textClasses}>{children}</Text>
+          <Text className={textClasses} numberOfLines={1}>
+            {children}
+          </Text>
         ) : (
           children
         )}

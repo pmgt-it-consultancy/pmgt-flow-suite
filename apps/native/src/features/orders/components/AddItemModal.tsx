@@ -87,15 +87,17 @@ export const AddItemModal = ({
 
       {/* Footer */}
       <View className="flex-row justify-between items-center pt-4 border-t border-gray-200">
-        <Text className="text-gray-900 font-bold text-lg">Total: {formatCurrency(total)}</Text>
+        <Text className="text-gray-900 font-bold text-lg shrink">
+          Total: {formatCurrency(total)}
+        </Text>
         <Button
           variant="primary"
           loading={isLoading}
           disabled={isLoading}
           onPress={onConfirm}
-          className="min-w-[120px]"
+          className="flex-none"
         >
-          Add to Order
+          Add Item
         </Button>
       </View>
     </Modal>
