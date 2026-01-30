@@ -5,7 +5,7 @@
     "buildCommand": "cd packages/backend && npx convex deploy --cmd 'cd ../../apps/web && pnpm run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL"
   },
   "deploy": {
-    "startCommand": "pnpm run start",
+    "startCommand": "cd apps/web && pnpm run start",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
