@@ -1,0 +1,9 @@
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+cmds = ["corepack enable"]
+
+[phases.install]
+cmds = ["cd ../.. && pnpm install --frozen-lockfile"]
+
+[start]
+cmd = "cd /app/apps/web && pnpm run start"

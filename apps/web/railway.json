@@ -1,0 +1,15 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && cd packages/backend && npx convex deploy --cmd 'cd ../../apps/web && pnpm run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL",
+    "nixpacksConfigPath": "apps/web/nixpacks.toml",
+    "watchPatterns": ["apps/web/**", "packages/backend/**"]
+  },
+  "deploy": {
+    "startCommand": "cd /app/apps/web && pnpm run start",
+    "healthcheckPath": "/",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
