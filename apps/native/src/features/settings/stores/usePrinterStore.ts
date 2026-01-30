@@ -179,30 +179,28 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   },
 
   printReceipt: async (data: ReceiptData) => {
-    const { printers, connectionStatus, connectPrinter } = get();
+    const { printers, connectPrinter } = get();
     const printer = printers.find((p) => p.role === "receipt" && p.isDefault);
     if (!printer) throw new Error("No receipt printer configured");
 
-    if (!connectionStatus[printer.id]) {
-      const reconnected = await connectPrinter(printer.id);
-      if (!reconnected) throw new Error("Failed to connect to receipt printer");
-    }
+    // Always connect before printing — Bluetooth Classic supports only one active connection
+    const connected = await connectPrinter(printer.id);
+    if (!connected) throw new Error("Failed to connect to receipt printer");
 
     const charsPerLine = printer.paperWidth === 58 ? 32 : 48;
     await printReceiptToThermal(data, charsPerLine);
   },
 
   printKitchenTicket: async (data: KitchenTicketData) => {
-    const { kitchenPrintingEnabled, printers, connectionStatus, connectPrinter } = get();
+    const { kitchenPrintingEnabled, printers, connectPrinter } = get();
     if (!kitchenPrintingEnabled) return;
 
     const printer = printers.find((p) => p.role === "kitchen" && p.isDefault);
     if (!printer) return;
 
-    if (!connectionStatus[printer.id]) {
-      const reconnected = await connectPrinter(printer.id);
-      if (!reconnected) return;
-    }
+    // Always connect before printing — Bluetooth Classic supports only one active connection
+    const connected = await connectPrinter(printer.id);
+    if (!connected) return;
 
     const charsPerLine = printer.paperWidth === 58 ? 32 : 48;
     await printKitchenTicketToThermal(data, charsPerLine);

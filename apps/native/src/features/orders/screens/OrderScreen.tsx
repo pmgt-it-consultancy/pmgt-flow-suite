@@ -359,6 +359,10 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           name: d.productName,
           quantity: d.quantity,
           notes: d.notes,
+          modifiers: d.modifiers?.map((m) => ({
+            optionName: m.modifierOptionName,
+            priceAdjustment: m.priceAdjustment,
+          })),
         }));
         setDraftItems([]);
       } else {
@@ -370,6 +374,10 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           name: i.productName,
           quantity: i.quantity,
           notes: i.notes,
+          modifiers: i.modifiers?.map((m) => ({
+            optionName: m.optionName,
+            priceAdjustment: m.priceAdjustment,
+          })),
         }));
       }
 

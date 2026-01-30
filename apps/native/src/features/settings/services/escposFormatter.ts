@@ -166,7 +166,7 @@ export async function printReceiptToThermal(
   await p.printerAlign(ALIGN.CENTER);
   await p.printText("Thank you for your patronage!\n", normal());
   await p.printText("This does not serve as an official receipt\n", normal());
-  const feed = charsPerLine >= 48 ? "\n\n\n\n\n\n" : "\n\n\n\n";
+  const feed = charsPerLine >= 48 ? "\n\n\n\n\n\n" : "\n\n\n";
   await p.printText(`Powered by PMGT Flow Suite${feed}`, {
     ...normal(),
     cut: true,
@@ -211,6 +211,6 @@ export async function printKitchenTicketToThermal(
     }
   }
 
-  const feed = charsPerLine >= 48 ? "\n\n\n\n\n" : "\n\n\n";
+  const feed = charsPerLine >= 48 ? "\n\n\n\n\n" : "\n\n";
   await p.printText(`${line("-", w)}${feed}`, { ...normal(), cut: true });
 }

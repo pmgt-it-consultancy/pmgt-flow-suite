@@ -438,6 +438,10 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
                           name: i.productName,
                           quantity: i.quantity,
                           notes: i.notes,
+                          modifiers: i.modifiers?.map((m) => ({
+                            optionName: m.optionName,
+                            priceAdjustment: m.priceAdjustment,
+                          })),
                         })),
                         timestamp: new Date(),
                       };
