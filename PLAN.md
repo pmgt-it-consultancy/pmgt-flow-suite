@@ -1,429 +1,374 @@
-# Implementation Plan: Discount & Receipt Enhancements
+# Implementation Plan: Online Status Indicator for POS
 
 ## Overview
-Enhance receipts to show product modifiers, per-discount detail lines with discountee info, and support multiple SC/PWD discounts on the same item (shared by quantity across seniors).
+Add a persistent status indicator button (top-right of every screen header) that shows server and printer connectivity. Tapping it opens a diagnostic dropdown panel with retry/reconnect actions. Alerts the cashier via haptics and toast when connectivity changes.
+
+## Dependencies to Install
+- `@react-native-community/netinfo` — device network status detection
+- `expo-haptics` — vibration feedback on status changes
 
 ---
 
-## Task 1: Backend — Allow multiple SC/PWD discounts on same item
+## Task 1: Install dependencies
 
-**File:** `packages/backend/convex/discounts.ts`
-
-### 1a. Change `applyScPwdDiscount` validation (lines 62-70)
-
-Replace the "item already has a discount" check with a quantity-based check:
-
-```typescript
-// OLD (lines 62-70):
-const existingDiscount = await ctx.db
-  .query("orderDiscounts")
-  .withIndex("by_orderItem", (q) => q.eq("orderItemId", args.orderItemId))
-  .first();
-if (existingDiscount) {
-  throw new Error("Item already has a discount applied");
-}
-
-// NEW:
-const existingDiscounts = await ctx.db
-  .query("orderDiscounts")
-  .withIndex("by_orderItem", (q) => q.eq("orderItemId", args.orderItemId))
-  .collect();
-const totalDiscountedQty = existingDiscounts.reduce((sum, d) => sum + d.quantityApplied, 0);
-if (totalDiscountedQty + args.quantityApplied > orderItem.quantity) {
-  throw new Error(
-    `Cannot apply discount: only ${orderItem.quantity - totalDiscountedQty} undiscounted quantity remaining`
-  );
-}
+```bash
+cd apps/native && npx expo install @react-native-community/netinfo expo-haptics
 ```
 
-### 1b. Change `recalculateOrderTotalsWithDiscounts` to sum multiple discounts per item (lines 264-274)
-
-Replace the single-discount map with a quantity-summing map:
-
-```typescript
-// OLD (lines 264-274):
-const itemDiscounts = new Map<string, Doc<"orderDiscounts">>();
-...
-for (const discount of discounts) {
-  if (discount.orderItemId) {
-    itemDiscounts.set(discount.orderItemId, discount);
-  } else {
-    orderLevelDiscountAmount += discount.discountAmount;
-  }
-}
-
-// NEW:
-const itemDiscountQty = new Map<string, number>();
-let orderLevelDiscountAmount = 0;
-for (const discount of discounts) {
-  if (discount.orderItemId) {
-    const current = itemDiscountQty.get(discount.orderItemId) ?? 0;
-    itemDiscountQty.set(discount.orderItemId, current + discount.quantityApplied);
-  } else {
-    orderLevelDiscountAmount += discount.discountAmount;
-  }
-}
-```
-
-Then update the item calculation loop (lines 282-290):
-
-```typescript
-// OLD:
-const discount = itemDiscounts.get(item._id);
-const scPwdQuantity =
-  discount && (discount.discountType === "senior_citizen" || discount.discountType === "pwd")
-    ? discount.quantityApplied
-    : 0;
-
-// NEW:
-const scPwdQuantity = itemDiscountQty.get(item._id) ?? 0;
-```
-
-### Verification
-- Apply 2 SC discounts to a 3-qty item (each qty=1). Should succeed.
-- Apply a 3rd discount with qty=1 to the same item. Should succeed (total=3).
-- Apply a 4th discount with qty=1. Should fail with "only 0 undiscounted quantity remaining".
+**Verification:** `npx expo install` completes without errors.
 
 ---
 
-## Task 2: Frontend — Update DiscountModal to not fully block items with partial discounts
+## Task 2: Create Convex `ping` query
 
-**File:** `apps/native/src/features/checkout/screens/CheckoutScreen.tsx`
+**File to create:** `packages/backend/convex/ping.ts`
 
-### 2a. Change `appliedDiscountItemIds` computation (lines 90-93)
-
-Currently builds a flat list of item IDs that have ANY discount, fully blocking them. Change to track remaining quantity per item:
+This is a lightweight, unauthenticated query used as a heartbeat to detect server reachability.
 
 ```typescript
-// OLD (lines 90-93):
-const appliedDiscountItemIds = useMemo(
-  () => (discounts?.map((d) => d.orderItemId).filter(Boolean) as Id<"orderItems">[]) ?? [],
-  [discounts],
-);
+import { v } from "convex/values";
+import { query } from "./_generated/server";
 
-// NEW:
-const discountedQtyByItem = useMemo(() => {
-  const map = new Map<string, number>();
-  for (const d of discounts ?? []) {
-    if (d.orderItemId) {
-      map.set(d.orderItemId, (map.get(d.orderItemId) ?? 0) + d.quantityApplied);
-    }
-  }
-  return map;
-}, [discounts]);
-```
-
-### 2b. Update DiscountModal props
-
-**File:** `apps/native/src/features/checkout/components/DiscountModal.tsx`
-
-Change the `appliedDiscountItemIds` prop to `discountedQtyByItem: Map<string, number>`:
-
-```typescript
-// In interface DiscountModalProps, replace:
-appliedDiscountItemIds: Id<"orderItems">[];
-// With:
-discountedQtyByItem: Map<string, number>;
-```
-
-Update `availableItems` filter (line 52):
-
-```typescript
-// OLD:
-const availableItems = items.filter((item) => !appliedDiscountItemIds.includes(item._id));
-
-// NEW:
-const availableItems = items.filter((item) => {
-  const discountedQty = discountedQtyByItem.get(item._id) ?? 0;
-  return discountedQty < item.quantity;
+export const ping = query({
+  args: {},
+  returns: v.object({
+    status: v.literal("ok"),
+    timestamp: v.number(),
+  }),
+  handler: async () => {
+    return {
+      status: "ok" as const,
+      timestamp: Date.now(),
+    };
+  },
 });
 ```
 
-### 2c. Update CheckoutScreen to pass new prop
+**Why unauthenticated:** The heartbeat must work regardless of auth state. It only returns a static "ok" and a timestamp — no data exposure.
 
-In `CheckoutScreen.tsx`, change the `DiscountModal` usage (line 386):
-
-```typescript
-// OLD:
-appliedDiscountItemIds={appliedDiscountItemIds}
-
-// NEW:
-discountedQtyByItem={discountedQtyByItem}
-```
-
-### Verification
-- Item with qty=3 and 1 discount applied should still appear in the item list.
-- Item with qty=1 and 1 discount applied should NOT appear.
+**Verification:** `npx convex dev` picks up the new file and generates `api.ping.ping`.
 
 ---
 
-## Task 3: Receipt data model — Support multiple discounts
+## Task 3: Create `useSystemStatus` hook
 
-**File:** `apps/native/src/features/shared/utils/receipt.ts`
+**File to create:** `apps/native/src/features/shared/hooks/useSystemStatus.ts`
 
-### 3a. Extend `ReceiptDiscount` interface (lines 12-16)
+**Also edit:** `apps/native/src/features/shared/hooks/index.ts` — add `export { useSystemStatus } from "./useSystemStatus";`
 
+This hook combines three connectivity sources into a single status object.
+
+### State shape
 ```typescript
-// OLD:
-export interface ReceiptDiscount {
-  type: "sc" | "pwd" | "custom";
-  description: string;
-  amount: number;
-}
+type ConnectionStatus = "connected" | "disconnected" | "checking";
 
-// NEW:
-export interface ReceiptDiscount {
-  type: "sc" | "pwd" | "custom";
-  customerName: string;
-  customerId: string;
-  itemName: string;
-  amount: number;
+interface SystemStatus {
+  server: ConnectionStatus;
+  receiptPrinter: ConnectionStatus;
+  kitchenPrinter: ConnectionStatus;
+  lastSyncTimestamp: number | null;
+  overallStatus: "ok" | "degraded" | "critical";
+  retryServer: () => void;
+  reconnectPrinter: (role: "receipt" | "kitchen") => void;
 }
 ```
 
-### 3b. Change `ReceiptData.discount` to `discounts` array (line 28)
+### Detection logic
 
-```typescript
-// OLD:
-discount?: ReceiptDiscount;
+1. **Device network** — Use `NetInfo.addEventListener` for real-time network state. When `isConnected` is false, immediately set `server` to `"disconnected"`.
 
-// NEW:
-discounts: ReceiptDiscount[];
-```
+2. **Server heartbeat** — Use `useQuery(api.ping.ping)` from Convex. Convex's `useQuery` auto-subscribes and reconnects. Track transitions:
+   - Result is object with `status: "ok"` → `"connected"`, update `lastSyncTimestamp`
+   - Result is `undefined` AND NetInfo says online → `"checking"`
+   - Result is `undefined` AND NetInfo says offline → `"disconnected"`
 
-### Verification
-- TypeScript compilation should flag all usages of `data.discount` that need updating.
+3. **Printers** — Read from existing `usePrinterStore` Zustand store:
+   - Get `printers` array and `connectionStatus` record
+   - Find printer with role `"receipt"` → check `connectionStatus[address]`
+   - Find printer with role `"kitchen"` → check `connectionStatus[address]`
+   - If no printer configured for a role → treat as `"disconnected"` only if `kitchenPrintingEnabled` is true for kitchen, always check for receipt
 
----
+4. **Overall status:**
+   - `"critical"` if `server === "disconnected"`
+   - `"degraded"` if any printer is `"disconnected"` but server is ok
+   - `"ok"` if everything is connected
 
-## Task 4: Receipt HTML generation — Show modifiers and per-discount lines
+5. **Alerts on status change** — Use `useRef` to track previous `overallStatus`. When it changes:
+   - `Haptics.notificationAsync(NotificationFeedbackType.Warning)` for degraded
+   - `Haptics.notificationAsync(NotificationFeedbackType.Error)` for critical
 
-**File:** `apps/native/src/features/shared/utils/receipt.ts`
+6. **Recovery actions:**
+   - `retryServer()` — toggle a state counter to force `useQuery` re-evaluation
+   - `reconnectPrinter(role)` — find printer by role from store, call `usePrinterStore.getState().connectPrinter(address)`
 
-### 4a. Modifiers already render in HTML (lines 77-84) — No change needed
-
-The `generateReceiptHtml` already renders modifiers as indented rows with prices. This is done.
-
-### 4b. Update discount section in HTML (lines 97-104 and 316-325)
-
-Replace single discount line with per-discount breakdown in the items table:
-
-```typescript
-// OLD (lines 97-104):
-const discountHtml = data.discount
-  ? `<tr class="discount">...</tr>`
-  : "";
-
-// NEW:
-const discountsHtml = data.discounts.length > 0
-  ? data.discounts.map((d) => `
-    <tr class="discount">
-      <td colspan="4" style="padding-top:4px;">
-        ${d.type === "sc" ? "SC" : d.type === "pwd" ? "PWD" : "Discount"}: ${d.customerName}
-      </td>
-    </tr>
-    <tr class="discount">
-      <td colspan="4" style="font-size:10px;">ID: ${d.customerId}</td>
-    </tr>
-    <tr class="discount">
-      <td colspan="3" style="font-size:10px;">${d.itemName}</td>
-      <td class="right">-${formatCurrency(d.amount)}</td>
-    </tr>
-  `).join("")
-  : "";
-```
-
-Update the totals section (lines 316-325) to use total discount amount:
-
-```typescript
-// Replace the old single discount div with:
-${data.discounts.length > 0 ? `
-  <div class="total-row discount">
-    <span>Less: Discount</span>
-    <span>-${formatCurrency(data.discounts.reduce((sum, d) => sum + d.amount, 0))}</span>
-  </div>
-` : ""}
-```
-
-Insert the per-discount detail rows into the items table after `${itemsHtml}`, before closing `</tbody>`:
-
-```
-${discountsHtml}
-```
-
-### Verification
-- Print receipt with 2 SC discounts. Each should show name, ID, item, and amount on separate lines.
+**Verification:** Import in HomeScreen temporarily, `console.log(status)`.
 
 ---
 
-## Task 5: Receipt preview modal — Show modifiers and per-discount lines
+## Task 4: Create `StatusIndicatorButton` component
 
-**File:** `apps/native/src/features/checkout/components/ReceiptPreviewModal.tsx`
+**File to create:** `apps/native/src/features/shared/components/StatusIndicatorButton.tsx`
 
-### 5a. Add modifier sub-lines under each item (lines 183-198)
+A small pressable circle (24x24) showing overall status color. Uses `useSystemStatus` internally.
 
-Wrap each item in a container View and add modifier rows:
+### Colors
+- Green (`#22C55E`) — all ok
+- Yellow (`#F59E0B`) — degraded
+- Red (`#EF4444`) — critical, with pulsing animation
+
+### Pulsing animation
+Use `react-native-reanimated` (already installed):
+```typescript
+import { useSharedValue, useAnimatedStyle, withRepeat, withSequence, withTiming } from "react-native-reanimated";
+
+const pulseAnim = useSharedValue(1);
+useEffect(() => {
+  if (overallStatus === "critical") {
+    pulseAnim.value = withRepeat(
+      withSequence(
+        withTiming(1.3, { duration: 500 }),
+        withTiming(1.0, { duration: 500 }),
+      ),
+      -1,
+    );
+  } else {
+    pulseAnim.value = withTiming(1, { duration: 200 });
+  }
+}, [overallStatus]);
+```
+
+### Props
+```typescript
+interface StatusIndicatorButtonProps {
+  onPress: () => void;
+}
+```
+
+**Verification:** Render in isolation, confirm green static dot and red pulsing.
+
+---
+
+## Task 5: Create `StatusDropdown` component
+
+**File to create:** `apps/native/src/features/shared/components/StatusDropdown.tsx`
+
+A dropdown panel shown via React Native `Modal` (transparent) positioned top-right.
+
+### Layout
+```
+┌──────────────────────────────┐
+│  System Status               │
+├──────────────────────────────┤
+│  ● Server        Connected   │
+│  ● Receipt Printer Connected │
+│  ● Kitchen Printer  Offline  │
+│    [Reconnect]               │
+├──────────────────────────────┤
+│  Last sync: just now         │
+└──────────────────────────────┘
+```
+
+### Props
+```typescript
+interface StatusDropdownProps {
+  visible: boolean;
+  onClose: () => void;
+  status: SystemStatus; // from useSystemStatus
+}
+```
+
+### Implementation details
+
+- `Modal` with `transparent: true`, `animationType="fade"`
+- Full-screen `Pressable` backdrop (transparent) that calls `onClose`
+- White card positioned with `position: absolute`, `top: 8`, `right: 16`
+- Card has shadow, rounded-xl, min-width 260
+
+**Status rows:** Each shows:
+- Colored dot (8x8 rounded-full View)
+- Label: "Server", "Receipt Printer", "Kitchen Printer"
+- Status text colored green/red/yellow
+- If disconnected: small "Retry" / "Reconnect" `Button` (size="sm", variant="outline") calling `status.retryServer()` or `status.reconnectPrinter(role)`
+
+**Last sync line:**
+- `< 10s` → "just now"
+- `< 60s` → "Xs ago"
+- `< 300s` → "Xm ago"
+- `>= 300s` → "5+ min ago" (red text)
+- `null` → "Never" (red text)
+
+**Verification:** Toggle visibility, confirm layout and action buttons.
+
+---
+
+## Task 6: Create `SystemStatusBar` wrapper component
+
+**File to create:** `apps/native/src/features/shared/components/SystemStatusBar.tsx`
+
+Combines the button, dropdown, and toast into one component that screens import.
 
 ```tsx
-{receiptData.items.map((item, index) => (
-  <View key={index}>
-    <View className="flex-row mb-1">
-      <Text size="xs" className="flex-1" numberOfLines={1}>{item.name}</Text>
-      <Text size="xs" className="w-6 text-center">{item.quantity}</Text>
-      <Text size="xs" className="w-14 text-right">{formatCurrency(item.price)}</Text>
-      <Text size="xs" className="w-14 text-right">{formatCurrency(item.total)}</Text>
-    </View>
-    {item.modifiers?.map((mod, modIndex) => (
-      <View key={modIndex} className="flex-row mb-0.5 pl-3">
-        <Text size="xs" variant="muted" className="flex-1">
-          + {mod.optionName}
-        </Text>
-        {mod.priceAdjustment > 0 && (
-          <Text size="xs" variant="muted" className="w-14 text-right">
-            +{formatCurrency(mod.priceAdjustment)}
-          </Text>
-        )}
-      </View>
-    ))}
-  </View>
-))}
+export const SystemStatusBar = () => {
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const status = useSystemStatus();
+
+  return (
+    <>
+      <StatusIndicatorButton onPress={() => setDropdownVisible(true)} />
+      <StatusDropdown
+        visible={dropdownVisible}
+        onClose={() => setDropdownVisible(false)}
+        status={status}
+      />
+      <StatusToast status={status} />
+    </>
+  );
+};
 ```
 
-### 5b. Update discount display (lines 207-216)
+### StatusToast (inline in same file)
+- Tracks previous `server` status via `useRef`
+- On transition to `"disconnected"`: show red banner "Server connection lost", auto-dismiss 3s
+- On transition to `"connected"` (from disconnected): show green banner "Server reconnected", auto-dismiss 2s
+- Uses `Animated.View` with opacity fade, positioned absolutely top of screen, full width, high zIndex
+- Text: white, bold, centered
 
-Replace single discount with per-discount breakdown:
+**Export:** Add to `apps/native/src/features/shared/components/ui/index.ts`:
+```typescript
+export { SystemStatusBar } from "../SystemStatusBar";
+```
 
+**Verification:** Simulate offline → toast appears, haptic fires, red pulsing dot.
+
+---
+
+## Task 7: Integrate into all screen headers
+
+Add `<SystemStatusBar />` to the right side of every screen header. Import from shared components.
+
+### Screens to modify (6 header components/inline headers):
+
+**1. `apps/native/src/features/home/components/HomeHeader.tsx`**
+
+Current right side has `flex-row gap-2` with 3 IconButtons. Add `<SystemStatusBar />` as the **first child** in that row:
 ```tsx
-// OLD:
-{receiptData.discount && (
-  <View className="flex-row justify-between mb-1">
-    <Text size="xs" className="text-red-500">{receiptData.discount.description}</Text>
-    <Text size="xs" className="text-red-500">-{formatCurrency(receiptData.discount.amount)}</Text>
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
+
+// In the right-side View:
+<View className="flex-row gap-2 items-center">
+  <SystemStatusBar />
+  <IconButton icon="receipt-outline" onPress={onOrderHistory} />
+  <IconButton icon="settings-outline" onPress={onSettings} />
+  <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
+</View>
+```
+
+**2. `apps/native/src/features/tables/components/Header.tsx`**
+
+Same pattern as HomeHeader — add `<SystemStatusBar />` first in right-side row:
+```tsx
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
+
+<View className="flex-row gap-2 items-center">
+  <SystemStatusBar />
+  <IconButton icon="receipt-outline" onPress={onOrderHistory} />
+  <IconButton icon="settings-outline" onPress={onSettings} />
+  <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
+</View>
+```
+
+**3. `apps/native/src/features/orders/components/OrderHeader.tsx`**
+
+Current right side: optional transfer table IconButton. Add `<SystemStatusBar />` before it:
+```tsx
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
+
+// After the flex-1 title section, before closing </View>:
+<SystemStatusBar />
+{onTransferTable && (
+  <IconButton icon="swap-horizontal" variant="ghost" onPress={onTransferTable} iconColor="#6B7280" />
+)}
+```
+
+**4. `apps/native/src/features/checkout/screens/CheckoutScreen.tsx`** (inline header ~line 324)
+
+Current header: back button + title, no right side. Add SystemStatusBar:
+```tsx
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
+
+// In the header View (line 324):
+<View className="bg-white flex-row items-center px-4 py-3 border-b border-gray-200">
+  <IconButton icon="arrow-back" variant="ghost" onPress={handleBack} className="mr-2" />
+  <View className="flex-1">
+    <Text variant="heading" size="lg">Checkout</Text>
+    ...
   </View>
-)}
-
-// NEW:
-{receiptData.discounts.length > 0 && (
-  <>
-    {receiptData.discounts.map((d, i) => (
-      <View key={i} className="mb-2">
-        <Text size="xs" className="text-red-500 font-medium">
-          {d.type === "sc" ? "SC" : "PWD"}: {d.customerName}
-        </Text>
-        <Text size="xs" className="text-red-500">
-          ID: {d.customerId}
-        </Text>
-        <View className="flex-row justify-between">
-          <Text size="xs" className="text-red-500">{d.itemName}</Text>
-          <Text size="xs" className="text-red-500">-{formatCurrency(d.amount)}</Text>
-        </View>
-      </View>
-    ))}
-    <View className="flex-row justify-between mb-1">
-      <Text size="xs" className="text-red-500 font-medium">Total Discount</Text>
-      <Text size="xs" className="text-red-500 font-medium">
-        -{formatCurrency(receiptData.discounts.reduce((s, d) => s + d.amount, 0))}
-      </Text>
-    </View>
-  </>
-)}
+  <SystemStatusBar />
+</View>
 ```
 
+**5. `apps/native/src/features/takeout/screens/TakeoutListScreen.tsx`** (inline header ~line 75)
+
+Current right side has "New Order" button. Add SystemStatusBar before it:
+```tsx
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
+
+// In the header right section:
+<View className="flex-row gap-2 items-center">
+  <SystemStatusBar />
+  <Button ...>New Order</Button>
+</View>
+```
+
+**6. `apps/native/src/features/takeout/screens/TakeoutOrderScreen.tsx`**
+
+Uses `OrderHeader` component — already modified in step 3. No additional changes needed.
+
+**7. Check remaining screens** — OrderHistoryScreen, OrderDetailScreen, SettingsScreen, PrinterSettingsScreen. Read their headers and add `<SystemStatusBar />` using the same pattern.
+
 ### Verification
-- Preview receipt with modifiers — should show indented "+ Extra Cheese  +P25.00" lines.
-- Preview receipt with 2 discounts — each discount block should show name, ID, item, amount.
+Navigate through all screens. Confirm the green dot appears consistently in every header's top-right area.
 
 ---
 
-## Task 6: Wire up receipt data building in CheckoutScreen
+## Task 8: End-to-end testing
 
-**File:** `apps/native/src/features/checkout/screens/CheckoutScreen.tsx`
-
-### 6a. Update `createReceiptData` discount building (lines 180-192)
-
-```typescript
-// OLD:
-const discountInfo = discounts && discounts.length > 0
-  ? { type: ..., description: ..., amount: ... }
-  : undefined;
-
-// NEW:
-const discountsList: ReceiptDiscount[] = (discounts ?? []).map((d) => ({
-  type: d.discountType === "senior_citizen" ? ("sc" as const) : d.discountType === "pwd" ? ("pwd" as const) : ("custom" as const),
-  customerName: d.customerName,
-  customerId: d.customerId,
-  itemName: d.itemName ?? "Order",
-  amount: d.discountAmount,
-}));
-```
-
-Update the return object:
-
-```typescript
-// OLD:
-discount: discountInfo,
-
-// NEW:
-discounts: discountsList,
-```
-
-### 6b. Update items mapping to include modifiers (lines 206-211)
-
-```typescript
-// OLD:
-items: activeItems.map((item) => ({
-  name: item.productName,
-  quantity: item.quantity,
-  price: item.productPrice,
-  total: item.lineTotal,
-})),
-
-// NEW:
-items: activeItems.map((item) => ({
-  name: item.productName,
-  quantity: item.quantity,
-  price: item.productPrice,
-  total: item.lineTotal,
-  modifiers: item.modifiers?.map((m) => ({
-    optionName: m.optionName,
-    priceAdjustment: m.priceAdjustment,
-  })),
-})),
-```
-
-### 6c. Remove old `customerName`/`customerId` from receipt root (lines 225-226)
-
-These were pulling from `discounts?.[0]` only. Now the per-discount info is in the `discounts` array, so remove:
-
-```typescript
-// REMOVE these lines:
-customerName: discounts?.[0]?.customerName,
-customerId: discounts?.[0]?.customerId,
-```
-
-### Verification
-- Build the app. No TypeScript errors.
-- Complete a checkout with SC discount applied. Receipt preview and print should show the full discount detail.
+1. **Normal state:** Green dot, static. Dropdown shows all "Connected", "Last sync: just now"
+2. **Disable WiFi:** Red pulsing dot, toast "Server connection lost", haptic buzz, dropdown shows server "Disconnected" with Retry
+3. **Re-enable WiFi:** Green dot returns, toast "Server reconnected"
+4. **Disconnect Bluetooth printer:** Yellow dot, dropdown shows printer "Offline" with Reconnect
+5. **Both down:** Red dot (server takes priority over printer status)
 
 ---
 
-## Task 7: Check thermal printer formatter for `discount` field usage
+## File Summary
 
-Search for `data.discount` or `.discount` in the thermal printer/ESC-POS formatter files. If the thermal printer store accesses `data.discount`, update it to `data.discounts`.
-
-### Verification
-- Full end-to-end: apply 2 SC discounts on different items, complete payment, preview receipt, print receipt. All should show correct per-discount details with modifiers.
-
----
+| Action | File |
+|--------|------|
+| INSTALL | `@react-native-community/netinfo`, `expo-haptics` |
+| CREATE | `packages/backend/convex/ping.ts` |
+| CREATE | `apps/native/src/features/shared/hooks/useSystemStatus.ts` |
+| CREATE | `apps/native/src/features/shared/components/StatusIndicatorButton.tsx` |
+| CREATE | `apps/native/src/features/shared/components/StatusDropdown.tsx` |
+| CREATE | `apps/native/src/features/shared/components/SystemStatusBar.tsx` |
+| EDIT | `apps/native/src/features/shared/hooks/index.ts` (add export) |
+| EDIT | `apps/native/src/features/shared/components/ui/index.ts` (add export) |
+| EDIT | `apps/native/src/features/home/components/HomeHeader.tsx` |
+| EDIT | `apps/native/src/features/tables/components/Header.tsx` |
+| EDIT | `apps/native/src/features/orders/components/OrderHeader.tsx` |
+| EDIT | `apps/native/src/features/checkout/screens/CheckoutScreen.tsx` |
+| EDIT | `apps/native/src/features/takeout/screens/TakeoutListScreen.tsx` |
+| EDIT | Other screens with headers (OrderHistory, Settings, etc.) |
 
 ## Execution Order
 
-1. **Task 1** (Backend) — No dependencies
-2. **Task 3** (Receipt types) — No dependencies
-3. **Task 2** (DiscountModal) — Depends on Task 1 conceptually
-4. **Task 4** (Receipt HTML) — Depends on Task 3
-5. **Task 5** (Receipt preview) — Depends on Task 3
-6. **Task 6** (Wire up) — Depends on Tasks 3, 4, 5
-7. **Task 7** (Other consumers) — Depends on Task 3
+1. **Task 1** — Install deps (no dependencies)
+2. **Task 2** — Convex ping query (no dependencies)
+3. **Task 3** — useSystemStatus hook (depends on Task 1 for NetInfo/Haptics, Task 2 for ping query)
+4. **Task 4** — StatusIndicatorButton (depends on Task 3)
+5. **Task 5** — StatusDropdown (depends on Task 3)
+6. **Task 6** — SystemStatusBar wrapper (depends on Tasks 4, 5)
+7. **Task 7** — Integrate into headers (depends on Task 6)
+8. **Task 8** — End-to-end testing (depends on Task 7)
 
-Tasks 1 and 3 can run in parallel. Tasks 4 and 5 can run in parallel after Task 3.
+Tasks 1 and 2 can run in parallel. Tasks 4 and 5 can run in parallel after Task 3.

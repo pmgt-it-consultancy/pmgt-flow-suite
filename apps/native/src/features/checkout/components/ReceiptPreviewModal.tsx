@@ -112,19 +112,6 @@ export const ReceiptPreviewModal = ({
           style={{
             maxHeight: 600,
           }}
-          onScrollBeginDrag={() => console.log("[ScrollView] onScrollBeginDrag")}
-          onScrollEndDrag={() => console.log("[ScrollView] onScrollEndDrag")}
-          onMomentumScrollBegin={() => console.log("[ScrollView] onMomentumScrollBegin")}
-          onMomentumScrollEnd={() => console.log("[ScrollView] onMomentumScrollEnd")}
-          onScroll={(e) =>
-            console.log("[ScrollView] onScroll offset:", e.nativeEvent.contentOffset.y)
-          }
-          scrollEventThrottle={16}
-          onTouchStart={() => console.log("[ScrollView] onTouchStart")}
-          onTouchMove={() => console.log("[ScrollView] onTouchMove")}
-          onTouchEnd={() => console.log("[ScrollView] onTouchEnd")}
-          onResponderGrant={() => console.log("[ScrollView] onResponderGrant")}
-          onResponderReject={() => console.log("[ScrollView] onResponderReject")}
         >
           <View style={{ width: previewWidth }}>
             {/* Store Header */}

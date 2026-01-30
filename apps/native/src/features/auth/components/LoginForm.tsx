@@ -47,16 +47,12 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   return (
     <View className="w-full items-center px-5">
       <Image
-        source={require("../../../assets/icons/logo.png")}
-        className="w-20 h-20 mt-5"
+        source={require("../../../../assets/logo-full.png")}
+        className="w-64 h-20 mt-5"
         resizeMode="contain"
       />
 
-      <Text variant="heading" size="2xl" className="mt-12">
-        POS Login
-      </Text>
-
-      <Text variant="muted" className="mt-2 mb-8 text-center">
+      <Text variant="muted" className="mt-6 mb-8 text-center">
         Enter your credentials to continue
       </Text>
 
