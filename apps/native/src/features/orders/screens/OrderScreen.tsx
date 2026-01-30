@@ -14,11 +14,9 @@ import {
   AddItemModal,
   CartFooter,
   CartItem,
-  CategoryFilter,
+  CategoryGrid,
   ModifierSelectionModal,
   OrderHeader,
-  ProductCard,
-  SearchBar,
   TransferTableModal,
   ViewBillModal,
   VoidItemModal,
@@ -69,8 +67,6 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
 
   // Shared UI state
-  const [selectedCategory, setSelectedCategory] = useState<Id<"categories"> | "all">("all");
-  const [searchQuery, setSearchQuery] = useState("");
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<SelectedProduct | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -91,7 +87,6 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   // Queries
   const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
   const products = useQuery(api.products.list, { storeId });
-  const categories = useQuery(api.categories.list, { storeId });
 
   // Mutations
   const addItem = useMutation(api.orders.addItem);
@@ -103,15 +98,6 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
   // Printer
   const { printKitchenTicket } = usePrinterStore();
-
-  // Filtered products
-  const filteredProducts = useMemo(() => {
-    return products?.filter((p) => {
-      const matchesCategory = selectedCategory === "all" || p.categoryId === selectedCategory;
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch && p.isActive;
-    });
-  }, [products, selectedCategory, searchQuery]);
 
   // Cart data — unified from draft or server
   const activeItems = useMemo(() => {
@@ -490,37 +476,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       <View className="flex-1 flex-row">
         {/* Menu Section */}
         <View className="flex-2 border-r border-gray-200">
-          <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
-
-          <CategoryFilter
-            categories={categories ?? []}
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-          />
-
-          <FlatList
-            data={filteredProducts}
-            numColumns={3}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <ProductCard
-                id={item._id}
-                name={item.name}
-                price={item.price}
-                onPress={handleAddProduct}
-              />
-            )}
-            contentContainerStyle={{ padding: 6 }}
-            columnWrapperStyle={{ justifyContent: "flex-start" }}
-            ListEmptyComponent={
-              <View className="flex-1 items-center justify-center py-16">
-                <Ionicons name="search-outline" size={40} color="#D1D5DB" />
-                <Text variant="muted" className="mt-3">
-                  No products found
-                </Text>
-              </View>
-            }
-          />
+          <CategoryGrid storeId={storeId} products={products} onSelectProduct={handleAddProduct} />
         </View>
 
         {/* Cart Section */}

@@ -1,7 +1,8 @@
 export { AddItemModal } from "./AddItemModal";
 export { CartFooter } from "./CartFooter";
 export { CartItem } from "./CartItem";
-export { CategoryFilter } from "./CategoryFilter";
+export { CategoryGrid } from "./CategoryGrid";
+export { CategoryTile } from "./CategoryTile";
 export type { SelectedModifier } from "./ModifierSelectionModal";
 export { ModifierSelectionModal } from "./ModifierSelectionModal";
 export { OrderHeader } from "./OrderHeader";
