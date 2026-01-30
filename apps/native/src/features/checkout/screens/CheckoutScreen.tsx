@@ -80,7 +80,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   // Mutations
   const processCashPayment = useMutation(api.checkout.processCashPayment);
   const processCardPayment = useMutation(api.checkout.processCardPayment);
-  const sendToKitchenMutation = useMutation(api.orders.sendToKitchen);
   const applyScPwdDiscount = useMutation(api.discounts.applyScPwdDiscount);
   const removeDiscount = useMutation(api.discounts.removeDiscount);
 
@@ -425,13 +424,11 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         }}
         onSkip={() => {
           if (isTakeout) {
-            Alert.alert("Order Paid", "What would you like to do?", [
+            Alert.alert("Print Kitchen Receipt?", "Send this order to the kitchen printer?", [
               {
-                text: "Send to Kitchen",
+                text: "Print",
                 onPress: async () => {
                   try {
-                    await sendToKitchenMutation({ orderId });
-                    // Print kitchen ticket
                     if (order?.orderNumber) {
                       const kitchenData: KitchenTicketData = {
                         orderNumber: order.orderNumber,
@@ -447,13 +444,14 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
                       await printKitchenTicket(kitchenData);
                     }
                   } catch (error: any) {
-                    Alert.alert("Error", error.message || "Failed to send to kitchen");
+                    Alert.alert("Error", error.message || "Failed to print kitchen receipt");
                   }
                   navigation.goBack();
                 },
               },
               {
-                text: "Done",
+                text: "Skip",
+                style: "cancel",
                 onPress: () => navigation.goBack(),
               },
             ]);

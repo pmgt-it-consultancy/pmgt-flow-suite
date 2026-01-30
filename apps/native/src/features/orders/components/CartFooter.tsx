@@ -9,6 +9,7 @@ interface CartFooterProps {
   hasUnsentItems: boolean;
   hasSentItems: boolean;
   isDraftMode: boolean;
+  orderType?: "dine_in" | "takeout";
   onSendToKitchen: () => void;
   onCloseTable?: () => void;
   onViewBill?: () => void;
@@ -21,6 +22,7 @@ export const CartFooter = ({
   hasUnsentItems,
   hasSentItems,
   isDraftMode,
+  orderType,
   onSendToKitchen,
   onCloseTable,
   onViewBill,
@@ -28,6 +30,7 @@ export const CartFooter = ({
 }: CartFooterProps) => {
   const formatCurrency = useFormatCurrency();
 
+  const isTakeout = orderType === "takeout";
   const canSendToKitchen = hasUnsentItems;
   const canCloseTable = !isDraftMode && itemCount > 0 && !!onCloseTable;
   const canViewBill = !isDraftMode && itemCount > 0 && !!onViewBill;
@@ -48,8 +51,14 @@ export const CartFooter = ({
         className={!canSendToKitchen ? "opacity-40" : ""}
       >
         <View className="flex-row items-center">
-          <Ionicons name="restaurant-outline" size={20} color="#FFF" />
-          <Text className="text-white font-bold ml-2 text-base">Send to Kitchen</Text>
+          <Ionicons
+            name={isTakeout ? "card-outline" : "restaurant-outline"}
+            size={20}
+            color="#FFF"
+          />
+          <Text className="text-white font-bold ml-2 text-base">
+            {isTakeout ? "Proceed to Payment" : "Send to Kitchen"}
+          </Text>
         </View>
       </Button>
 

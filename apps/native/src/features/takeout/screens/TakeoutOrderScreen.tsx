@@ -17,8 +17,6 @@ import {
   OrderHeader,
   VoidItemModal,
 } from "../../orders/components";
-import type { KitchenTicketData } from "../../settings/services/escposFormatter";
-import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Button, Input, Text } from "../../shared/components/ui";
 
 interface TakeoutOrderScreenProps {
@@ -97,11 +95,6 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const addItemMutation = useMutation(api.orders.addItem);
   const updateItemQuantity = useMutation(api.orders.updateItemQuantity);
   const removeItemMutation = useMutation(api.orders.removeItem);
-  const sendToKitchenMutation = useMutation(api.orders.sendToKitchen);
-
-  // Printer
-  const { printKitchenTicket } = usePrinterStore();
-
   // Cart data
   const activeItems = useMemo(() => {
     if (isDraftMode) {
@@ -474,6 +467,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             hasUnsentItems={hasUnsentItems}
             hasSentItems={hasSentItems}
             isDraftMode={isDraftMode}
+            orderType="takeout"
             onSendToKitchen={handleCheckout}
             onCloseTable={undefined}
             onViewBill={undefined}
