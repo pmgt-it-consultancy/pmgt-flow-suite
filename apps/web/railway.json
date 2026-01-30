@@ -2,8 +2,7 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "RAILPACK",
-    "buildCommand": "pnpm run build",
-    "watchPatterns": ["apps/web/**", "packages/backend/**"]
+    "buildCommand": "cd packages/backend && npx convex deploy --cmd 'cd ../../apps/web && pnpm run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL"
   },
   "deploy": {
     "startCommand": "pnpm run start",
