@@ -4,7 +4,7 @@
     "newArchEnabled": true,
     "name": "PMGT Flow",
     "slug": "pmgt-flow",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "landscape",
     "icon": "./assets/app-icon.png",
     "userInterfaceStyle": "light",
