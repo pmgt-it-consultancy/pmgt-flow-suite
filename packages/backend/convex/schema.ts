@@ -321,4 +321,13 @@ export default defineSchema({
     updatedAt: v.number(),
     updatedBy: v.id("users"),
   }).index("by_store_key", ["storeId", "key"]),
+
+  // ===== APP CONFIG =====
+  appConfig: defineTable({
+    key: v.string(),
+    value: v.string(),
+    storeId: v.optional(v.id("stores")),
+  })
+    .index("by_key", ["key"])
+    .index("by_store_key", ["storeId", "key"]),
 });

@@ -1,8 +1,11 @@
+import { api } from "@packages/backend";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useEffect } from "react";
-import { Alert } from "react-native";
+import { useAction } from "convex/react";
+import * as Notifications from "expo-notifications";
+import { useEffect, useRef } from "react";
+import { Alert, AppState } from "react-native";
 // Import screens from features
 import { LoginScreen } from "../features/auth";
 import { CheckoutScreen } from "../features/checkout";
@@ -13,6 +16,9 @@ import { PrinterSettingsScreen, SettingsScreen } from "../features/settings";
 import { usePrinterStore } from "../features/settings/stores/usePrinterStore";
 import { TablesScreen } from "../features/tables";
 import { TakeoutListScreen, TakeoutOrderScreen } from "../features/takeout";
+import { ForceUpdateModal } from "../features/updater/components/UpdateDialog";
+import { UpdatesScreen } from "../features/updater/screens/UpdatesScreen";
+import { useUpdateStore } from "../features/updater/stores/useUpdateStore";
 
 // Define navigation parameter types
 export type RootStackParamList = {
@@ -41,6 +47,7 @@ export type RootStackParamList = {
   TakeoutOrderScreen: {
     storeId: Id<"stores">;
   };
+  UpdatesScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -48,6 +55,11 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Navigation = () => {
   const initialize = usePrinterStore((s) => s.initialize);
   const isInitialized = usePrinterStore((s) => s.isInitialized);
+
+  const checkForUpdateAction = useAction(api.appUpdate.checkForUpdate);
+  const updateInfo = useUpdateStore((s) => s.updateInfo);
+  const storeCheck = useUpdateStore((s) => s.checkForUpdate);
+  const navigationRef = useRef<any>(null);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -66,8 +78,36 @@ const Navigation = () => {
     }
   }, []);
 
+  // Check for updates on mount
+  useEffect(() => {
+    storeCheck(checkForUpdateAction);
+  }, [storeCheck, checkForUpdateAction]);
+
+  // Handle notification taps (e.g., "Update ready to install" → trigger APK install)
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
+      if (data?.type === "update-install") {
+        useUpdateStore.getState().installUpdate();
+      } else if (data?.type === "update-failed") {
+        navigationRef.current?.navigate("UpdatesScreen");
+      }
+    });
+    return () => sub.remove();
+  }, []);
+
+  // Check for updates on foreground
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") {
+        storeCheck(checkForUpdateAction);
+      }
+    });
+    return () => sub.remove();
+  }, [storeCheck, checkForUpdateAction]);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         id={undefined}
         initialRouteName="LoginScreen"
@@ -84,7 +124,16 @@ const Navigation = () => {
         <Stack.Screen name="PrinterSettingsScreen" component={PrinterSettingsScreen} />
         <Stack.Screen name="TakeoutListScreen" component={TakeoutListScreen} />
         <Stack.Screen name="TakeoutOrderScreen" component={TakeoutOrderScreen} />
+        <Stack.Screen name="UpdatesScreen" component={UpdatesScreen} />
       </Stack.Navigator>
+      {updateInfo?.isForced && (
+        <ForceUpdateModal
+          updateInfo={updateInfo}
+          onGoToUpdates={() => {
+            navigationRef.current?.navigate("UpdatesScreen");
+          }}
+        />
+      )}
     </NavigationContainer>
   );
 };

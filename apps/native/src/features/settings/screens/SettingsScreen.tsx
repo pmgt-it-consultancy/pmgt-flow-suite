@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import Constants from "expo-constants";
 import React from "react";
 import { ScrollView, TouchableOpacity, View } from "uniwind/components";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
@@ -35,6 +36,23 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
             <Text className="text-base font-semibold">Printers</Text>
             <Text className="text-sm text-gray-500">
               {printers.length} {printers.length === 1 ? "printer" : "printers"} configured
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+        </TouchableOpacity>
+
+        {/* Check for Updates */}
+        <TouchableOpacity
+          className="bg-white px-4 py-4 flex-row items-center border-b border-gray-100"
+          onPress={() => navigation.navigate("UpdatesScreen")}
+        >
+          <View className="w-10 h-10 rounded-full bg-blue-50 items-center justify-center">
+            <Ionicons name="cloud-download-outline" size={20} color="#0D87E1" />
+          </View>
+          <View className="flex-1 ml-3">
+            <Text className="text-base font-semibold">Check for Updates</Text>
+            <Text className="text-sm text-gray-500">
+              Version {Constants.expoConfig?.version ?? "1.0.0"}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />

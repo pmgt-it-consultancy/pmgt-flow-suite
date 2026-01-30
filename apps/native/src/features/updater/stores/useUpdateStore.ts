@@ -1,0 +1,196 @@
+import RNBackgroundDownloader, {
+  type DownloadTask,
+} from "@kesha-antonov/react-native-background-downloader";
+import Constants from "expo-constants";
+import * as FileSystem from "expo-file-system";
+import * as IntentLauncher from "expo-intent-launcher";
+import * as Notifications from "expo-notifications";
+import { create } from "zustand";
+
+export type UpdateInfo = {
+  latestVersion: string;
+  downloadUrl: string;
+  releaseNotes: string;
+  isForced: boolean;
+};
+
+export type DownloadStatus = "idle" | "downloading" | "completed" | "failed";
+
+interface UpdateStore {
+  // State
+  updateInfo: UpdateInfo | null;
+  downloadStatus: DownloadStatus;
+  downloadProgress: number;
+  isChecking: boolean;
+  lastCheckedAt: number | null;
+  error: string | null;
+  apkFileUri: string | null;
+  downloadTask: DownloadTask | null;
+
+  // Actions
+  checkForUpdate: (
+    checkAction: (args: { currentVersion: string }) => Promise<any>,
+  ) => Promise<void>;
+
+  startDownload: (getUrlAction: (args: { assetUrl: string }) => Promise<string>) => Promise<void>;
+
+  installUpdate: () => Promise<void>;
+  dismiss: () => void;
+  reset: () => void;
+}
+
+const getCurrentVersion = () => Constants.expoConfig?.version ?? "0.0.0";
+
+const APK_FILENAME = "update.apk";
+
+function notify(title: string, body: string, data?: Record<string, string>) {
+  Notifications.scheduleNotificationAsync({
+    content: { title, body, data },
+    trigger: null,
+  }).catch((e) => console.warn("Notification failed:", e));
+}
+
+export const useUpdateStore = create<UpdateStore>((set, get) => ({
+  updateInfo: null,
+  downloadStatus: "idle",
+  downloadProgress: 0,
+  isChecking: false,
+  lastCheckedAt: null,
+  error: null,
+  apkFileUri: null,
+  downloadTask: null,
+
+  checkForUpdate: async (checkAction) => {
+    if (get().isChecking) return;
+    set({ isChecking: true, error: null });
+    try {
+      const currentVersion = getCurrentVersion();
+      const result = await checkAction({ currentVersion });
+      if (result.updateAvailable) {
+        set({
+          updateInfo: {
+            latestVersion: result.latestVersion,
+            downloadUrl: result.downloadUrl,
+            releaseNotes: result.releaseNotes,
+            isForced: result.isForced,
+          },
+        });
+      } else {
+        set({ updateInfo: null });
+      }
+      set({ lastCheckedAt: Date.now() });
+    } catch (e: any) {
+      set({ error: e.message ?? "Update check failed" });
+    } finally {
+      set({ isChecking: false });
+    }
+  },
+
+  startDownload: async (getUrlAction) => {
+    const { updateInfo, downloadTask: existingTask } = get();
+    if (!updateInfo) return;
+
+    // Stop any existing download
+    if (existingTask) {
+      existingTask.stop();
+    }
+
+    set({ downloadStatus: "downloading", downloadProgress: 0, error: null });
+
+    try {
+      // Get temporary download URL from Convex proxy
+      const url = await getUrlAction({ assetUrl: updateInfo.downloadUrl });
+
+      const destination = RNBackgroundDownloader.directories.documents + "/" + APK_FILENAME;
+
+      const task = RNBackgroundDownloader.download({
+        id: "app-update",
+        url,
+        destination,
+      });
+
+      set({ downloadTask: task });
+
+      notify("Downloading update", `Downloading v${updateInfo.latestVersion}...`, {
+        type: "update-download",
+      });
+
+      task
+        .begin(({ expectedBytes }) => {
+          console.log(`Download started, expected: ${expectedBytes} bytes`);
+        })
+        .progress(({ bytesDownloaded, bytesTotal }) => {
+          const pct = bytesTotal > 0 ? bytesDownloaded / bytesTotal : 0;
+          set({ downloadProgress: pct });
+        })
+        .done(() => {
+          const fileUri = "file://" + destination;
+          set({
+            downloadStatus: "completed",
+            downloadProgress: 1,
+            apkFileUri: fileUri,
+            downloadTask: null,
+          });
+
+          notify(
+            "Update ready to install",
+            `v${updateInfo.latestVersion} downloaded. Tap to install.`,
+            { type: "update-install" },
+          );
+        })
+        .error(({ error: downloadError }) => {
+          set({
+            downloadStatus: "failed",
+            error: downloadError ?? "Download failed",
+            downloadTask: null,
+          });
+
+          notify("Update download failed", "Tap to retry.", {
+            type: "update-failed",
+          });
+        });
+    } catch (e: any) {
+      set({
+        downloadStatus: "failed",
+        error: e.message ?? "Download failed",
+        downloadTask: null,
+      });
+    }
+  },
+
+  installUpdate: async () => {
+    const { apkFileUri } = get();
+    if (!apkFileUri) return;
+
+    try {
+      const contentUri = await FileSystem.getContentUriAsync(apkFileUri);
+      await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+        data: contentUri,
+        flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+        type: "application/vnd.android.package-archive",
+      });
+    } catch (e: any) {
+      set({ error: e.message ?? "Install failed" });
+    }
+  },
+
+  dismiss: () => {
+    const { updateInfo } = get();
+    if (updateInfo?.isForced) return;
+    set({ updateInfo: null });
+  },
+
+  reset: () => {
+    const { downloadTask } = get();
+    if (downloadTask) downloadTask.stop();
+    set({
+      updateInfo: null,
+      downloadStatus: "idle",
+      downloadProgress: 0,
+      isChecking: false,
+      error: null,
+      apkFileUri: null,
+      downloadTask: null,
+    });
+  },
+}));

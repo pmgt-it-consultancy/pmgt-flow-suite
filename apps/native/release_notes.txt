@@ -1,0 +1,17 @@
+## What's New
+
+- Add in-app update system with background APK download and local notifications
+- Add version bump scripts (`version:patch`, `version:minor`, `version:major`)
+- Add Software Update screen accessible from Settings
+- Add force update support controlled via admin (minRequiredVersion)
+- Add GitHub Actions workflow for automated release builds (staging + production)
+- Add Convex proxy for secure GitHub Releases API access (private repo support)
+
+## Fixes
+
+- None
+
+## Notes
+
+- Requires `GITHUB_TOKEN` and `GITHUB_REPO` environment variables in Convex dashboard
+- APK downloads continue in background using react-native-background-downloader
