@@ -14,7 +14,9 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "start:web": "cd apps/web && pnpm run start",
+    "start:native": "cd apps/native && pnpm run start"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.11",
