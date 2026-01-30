@@ -2,11 +2,11 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "RAILPACK",
-    "buildCommand": "cd /app && pnpm install --frozen-lockfile && cd /app/packages/backend && npx convex deploy --cmd 'cd /app/apps/web && pnpm run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL",
+    "buildCommand": "cd /app && pnpm install --frozen-lockfile && cd /app/packages/backend && npx convex deploy --cmd 'cd /app/apps/web && pnpm run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL && cp -r /app/apps/web/public /app/apps/web/.next/standalone/apps/web/public && cp -r /app/apps/web/.next/static /app/apps/web/.next/standalone/apps/web/.next/static",
     "watchPatterns": ["apps/web/**", "packages/backend/**"]
   },
   "deploy": {
-    "startCommand": "node /app/apps/web/.next/standalone/apps/web/server.js",
+    "startCommand": "PORT=${PORT:-8080} HOSTNAME=0.0.0.0 node /app/apps/web/.next/standalone/server.js",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
