@@ -333,6 +333,38 @@ export default function OrdersPage() {
                 </div>
               </div>
 
+              {/* Discount Details */}
+              {orderDetails.discounts?.length > 0 && (
+                <div className="border rounded-lg">
+                  <div className="bg-gray-50 px-3 py-2 border-b font-medium text-sm">
+                    Discounts Applied
+                  </div>
+                  <div className="divide-y">
+                    {orderDetails.discounts.map((discount, idx) => (
+                      <div key={idx} className="px-3 py-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="font-medium">
+                            {discount.discountType === "senior_citizen"
+                              ? "Senior Citizen"
+                              : discount.discountType === "pwd"
+                                ? "PWD"
+                                : discount.discountType === "promo"
+                                  ? "Promo"
+                                  : "Manual"}
+                          </span>
+                          <span>-{formatCurrency(discount.discountAmount)}</span>
+                        </div>
+                        <div className="text-xs text-gray-500 mt-0.5">
+                          {discount.customerName}
+                          {discount.customerId && ` · ID: ${discount.customerId}`}
+                          {discount.quantityApplied > 1 && ` · Qty: ${discount.quantityApplied}`}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Payment Info */}
               {orderDetails.paymentMethod && (
                 <div className="border rounded-lg">

@@ -179,6 +179,20 @@ export const get = query({
           ),
         }),
       ),
+      discounts: v.array(
+        v.object({
+          discountType: v.union(
+            v.literal("senior_citizen"),
+            v.literal("pwd"),
+            v.literal("promo"),
+            v.literal("manual"),
+          ),
+          customerName: v.string(),
+          customerId: v.string(),
+          quantityApplied: v.number(),
+          discountAmount: v.number(),
+        }),
+      ),
     }),
     v.null(),
   ),
@@ -235,6 +249,12 @@ export const get = query({
       }),
     );
 
+    // Get order discounts
+    const discountRecords = await ctx.db
+      .query("orderDiscounts")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .collect();
+
     return {
       _id: order._id,
       storeId: order.storeId,
@@ -264,6 +284,13 @@ export const get = query({
       paidAt: order.paidAt,
       paidBy: order.paidBy,
       items: itemsWithTotals,
+      discounts: discountRecords.map((d) => ({
+        discountType: d.discountType,
+        customerName: d.customerName,
+        customerId: d.customerId,
+        quantityApplied: d.quantityApplied,
+        discountAmount: d.discountAmount,
+      })),
     };
   },
 });
