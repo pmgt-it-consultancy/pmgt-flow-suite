@@ -6,7 +6,7 @@
     "watchPatterns": ["apps/web/**", "packages/backend/**"]
   },
   "deploy": {
-    "startCommand": "cd /app/apps/web && pnpm run start",
+    "startCommand": "node /app/apps/web/.next/standalone/apps/web/server.js",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
