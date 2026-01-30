@@ -2,7 +2,7 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "RAILPACK",
-    "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && cd packages/backend && npx convex deploy --cmd 'cd ../../apps/web && pnpm run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL",
+    "buildCommand": "cd /app && pnpm install --frozen-lockfile && cd /app/packages/backend && npx convex deploy --cmd 'cd /app/apps/web && pnpm run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL",
     "watchPatterns": ["apps/web/**", "packages/backend/**"]
   },
   "deploy": {
