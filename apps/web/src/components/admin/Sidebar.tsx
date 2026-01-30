@@ -32,12 +32,6 @@ const navItems: NavItem[] = [
     icon: <LayoutDashboard className="h-5 w-5" />,
   },
   {
-    title: "POS Home",
-    href: "/pos",
-    icon: <Home className="h-5 w-5" />,
-    permission: "orders.view",
-  },
-  {
     title: "Stores",
     href: "/stores",
     icon: <Store className="h-5 w-5" />,
