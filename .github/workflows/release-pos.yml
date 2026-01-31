@@ -72,19 +72,14 @@ jobs:
 
       - name: Write credentials.json
         working-directory: apps/native
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          cat <<EOF > credentials.json
-          {
-            "android": {
-              "keystore": {
-                "keystorePath": "${{ runner.temp }}/release.keystore",
-                "keystorePassword": "${{ secrets.KEYSTORE_PASSWORD }}",
-                "keyAlias": "${{ secrets.KEY_ALIAS }}",
-                "keyPassword": "${{ secrets.KEY_PASSWORD }}"
-              }
-            }
-          }
-          EOF
+          printf '{"android":{"keystore":{"keystorePath":"%s","keystorePassword":"%s","keyAlias":"%s","keyPassword":"%s"}}}' \
+            "$KEYSTORE_PATH" "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" > credentials.json
 
       - name: Build with EAS
         working-directory: apps/native
