@@ -80,6 +80,11 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
             isForced: result.isForced,
           },
         });
+        if (!result.isForced) {
+          notify("Update Available", `v${result.latestVersion} is available.`, {
+            type: "update-available",
+          });
+        }
       } else {
         set({ updateInfo: null });
       }

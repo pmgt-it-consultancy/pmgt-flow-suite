@@ -7,6 +7,34 @@ type Props = {
   onGoToUpdates: () => void;
 };
 
+type OptionalProps = Props & {
+  onDismiss: () => void;
+};
+
+export function OptionalUpdateDialog({ updateInfo, onGoToUpdates, onDismiss }: OptionalProps) {
+  return (
+    <Modal visible animationType="fade" transparent>
+      <View style={optionalStyles.overlay}>
+        <View style={optionalStyles.card}>
+          <Text style={styles.title}>Update Available</Text>
+          <Text style={styles.subtitle}>Version {updateInfo.latestVersion} is available.</Text>
+          {updateInfo.releaseNotes ? (
+            <Text style={styles.notes}>{updateInfo.releaseNotes}</Text>
+          ) : null}
+          <View style={optionalStyles.buttons}>
+            <Pressable style={optionalStyles.laterButton} onPress={onDismiss}>
+              <Text style={optionalStyles.laterButtonText}>Later</Text>
+            </Pressable>
+            <Pressable style={styles.button} onPress={onGoToUpdates}>
+              <Text style={styles.buttonText}>Update Now</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
 export function ForceUpdateModal({ updateInfo, onGoToUpdates }: Props) {
   return (
     <Modal visible animationType="fade" transparent={false}>
@@ -25,6 +53,40 @@ export function ForceUpdateModal({ updateInfo, onGoToUpdates }: Props) {
     </Modal>
   );
 }
+
+const optionalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 32,
+    width: "80%",
+    maxWidth: 400,
+    alignItems: "center",
+  },
+  buttons: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 16,
+  },
+  laterButton: {
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderWidth: 1,
+    borderColor: "#CCC",
+  },
+  laterButtonText: {
+    fontSize: 16,
+    fontFamily: "SemiBold",
+    color: "#666",
+  },
+});
 
 const styles = StyleSheet.create({
   container: {

@@ -16,7 +16,10 @@ import { PrinterSettingsScreen, SettingsScreen } from "../features/settings";
 import { usePrinterStore } from "../features/settings/stores/usePrinterStore";
 import { TablesScreen } from "../features/tables";
 import { TakeoutListScreen, TakeoutOrderScreen } from "../features/takeout";
-import { ForceUpdateModal } from "../features/updater/components/UpdateDialog";
+import {
+  ForceUpdateModal,
+  OptionalUpdateDialog,
+} from "../features/updater/components/UpdateDialog";
 import { UpdatesScreen } from "../features/updater/screens/UpdatesScreen";
 import { useUpdateStore } from "../features/updater/stores/useUpdateStore";
 
@@ -89,7 +92,7 @@ const Navigation = () => {
       const data = response.notification.request.content.data;
       if (data?.type === "update-install") {
         useUpdateStore.getState().installUpdate();
-      } else if (data?.type === "update-failed") {
+      } else if (data?.type === "update-failed" || data?.type === "update-available") {
         navigationRef.current?.navigate("UpdatesScreen");
       }
     });
@@ -132,6 +135,15 @@ const Navigation = () => {
           onGoToUpdates={() => {
             navigationRef.current?.navigate("UpdatesScreen");
           }}
+        />
+      )}
+      {updateInfo && !updateInfo.isForced && (
+        <OptionalUpdateDialog
+          updateInfo={updateInfo}
+          onGoToUpdates={() => {
+            navigationRef.current?.navigate("UpdatesScreen");
+          }}
+          onDismiss={() => useUpdateStore.getState().dismiss()}
         />
       )}
     </NavigationContainer>
