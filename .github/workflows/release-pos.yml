@@ -6,6 +6,7 @@ on:
       - staging
       - main
     paths:
+      - '.github/workflows/**'
       - 'apps/native/**'
       - 'packages/backend/**'
       - 'pnpm-lock.yaml'
