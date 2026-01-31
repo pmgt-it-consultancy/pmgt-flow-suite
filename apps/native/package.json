@@ -11,9 +11,9 @@
     "prebuild": "expo prebuild --platform android",
     "prebuild:clean": "expo prebuild --platform android --clean",
     "prebuild:staging": "APP_VARIANT=staging expo prebuild --platform android --clean",
-    "build:dev": "eas build --profile development --platform android",
-    "build:staging": "eas build --profile staging --platform android",
-    "build:production": "eas build --profile production --platform android",
+    "build:dev": "eas build --profile development --platform android --local --non-interactive",
+    "build:staging": "eas build --profile staging --platform android --local --non-interactive",
+    "build:production": "eas build --profile production --platform android --local --non-interactive",
     "clean": "rm -rf node_modules/.cache .expo android/app/build",
     "typecheck": "tsc --noEmit",
     "ios": "expo run:ios",
@@ -36,17 +36,16 @@
     "@tanstack/react-query": "catalog:",
     "@vardrz/react-native-bluetooth-escpos-printer": "^0.1.2",
     "convex": "catalog:",
-    "expo": "~54.0.31",
+    "expo": "~54.0.32",
     "expo-application": "~7.0.7",
     "expo-asset": "~12.0.12",
     "expo-auth-session": "~7.0.9",
     "expo-crypto": "~15.0.4",
     "expo-file-system": "~19.0.21",
-    "expo-font": "~14.0.9",
+    "expo-font": "~14.0.11",
     "expo-haptics": "~15.0.8",
     "expo-intent-launcher": "~13.0.8",
     "expo-linking": "~8.0.4",
-    "expo-modules-core": "~3.0.29",
     "expo-notifications": "~0.32.16",
     "expo-print": "~15.0.8",
     "expo-secure-store": "~15.0.8",
@@ -82,6 +81,13 @@
     "jest-expo": "~54.0.16",
     "react-test-renderer": "19.1.0",
     "typescript": "catalog:"
+  },
+  "expo": {
+    "install": {
+      "exclude": [
+        "react-native-worklets"
+      ]
+    }
   },
   "private": true
 }

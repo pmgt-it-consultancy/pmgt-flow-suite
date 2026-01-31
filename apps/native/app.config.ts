@@ -55,5 +55,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         defaultChannel: "default",
       },
     ],
+    ["./plugins/withReactNativeArchitectures", "arm64-v8a,x86_64"],
   ],
 });
