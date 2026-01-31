@@ -23,6 +23,7 @@
     },
     "staging": {
       "extends": "base",
+      "credentialsSource": "local",
       "distribution": "internal",
       "env": {
         "APP_VARIANT": "staging"
@@ -34,6 +35,7 @@
     },
     "production": {
       "extends": "base",
+      "credentialsSource": "local",
       "autoIncrement": true,
       "android": {
         "buildType": "apk"
