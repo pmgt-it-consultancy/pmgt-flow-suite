@@ -23,11 +23,11 @@ const versionCode = newVersion[0] * 10000 + newVersion[1] * 100 + newVersion[2];
 pkg.version = versionStr;
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
 
-// 2. Update app.json
-const appJsonPath = path.resolve(__dirname, "../app.json");
-const appJson = JSON.parse(fs.readFileSync(appJsonPath, "utf8"));
-appJson.expo.version = versionStr;
-fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2) + "\n");
+// 2. Update app.config.ts
+const appConfigPath = path.resolve(__dirname, "../app.config.ts");
+let appConfig = fs.readFileSync(appConfigPath, "utf8");
+appConfig = appConfig.replace(/version:\s*"[^"]+"/, `version: "${versionStr}"`);
+fs.writeFileSync(appConfigPath, appConfig);
 
 // 3. Update build.gradle
 const gradlePath = path.resolve(__dirname, "../android/app/build.gradle");
