@@ -66,6 +66,25 @@ jobs:
             echo "EXPO_PUBLIC_CONVEX_URL=${{ secrets.CONVEX_URL_STAGING }}" > .env
           fi
 
+      - name: Decode keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ${{ runner.temp }}/release.keystore
+
+      - name: Write credentials.json
+        working-directory: apps/native
+        run: |
+          cat <<EOF > credentials.json
+          {
+            "android": {
+              "keystore": {
+                "keystorePath": "${{ runner.temp }}/release.keystore",
+                "keystorePassword": "${{ secrets.KEYSTORE_PASSWORD }}",
+                "keyAlias": "${{ secrets.KEY_ALIAS }}",
+                "keyPassword": "${{ secrets.KEY_PASSWORD }}"
+              }
+            }
+          }
+          EOF
+
       - name: Build with EAS
         working-directory: apps/native
         run: |
