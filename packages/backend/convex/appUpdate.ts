@@ -55,6 +55,10 @@ export const checkForUpdate = action({
       },
     });
 
+    if (response.status === 404) {
+      return { updateAvailable: false as const };
+    }
+
     if (!response.ok) {
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
     }
