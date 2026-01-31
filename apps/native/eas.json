@@ -29,14 +29,16 @@
       },
       "android": {
         "buildType": "apk"
-      }
+      },
+      "channel": "staging"
     },
     "production": {
       "extends": "base",
       "autoIncrement": true,
       "android": {
         "buildType": "apk"
-      }
+      },
+      "channel": "production"
     }
   }
 }
