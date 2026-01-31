@@ -8,7 +8,7 @@
       "android": {
         "image": "latest",
         "gradleCommand": ":app:assembleRelease -PreactNativeArchitectures=arm64-v8a,x86_64",
-        "applicationArchivePath": "*.apk"
+        "applicationArchivePath": "**/*.apk"
       }
     },
     "development": {
