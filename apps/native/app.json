@@ -27,7 +27,15 @@
     "plugins": [
       "expo-font",
       "expo-secure-store",
-      "@kesha-antonov/react-native-background-downloader"
+      "@kesha-antonov/react-native-background-downloader",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/app-icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default"
+        }
+      ]
     ]
   }
 }

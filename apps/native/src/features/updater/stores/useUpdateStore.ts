@@ -1,5 +1,8 @@
-import RNBackgroundDownloader, {
+import {
+  completeHandler,
+  createDownloadTask,
   type DownloadTask,
+  directories,
 } from "@kesha-antonov/react-native-background-downloader";
 import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system";
@@ -101,9 +104,9 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
       // Get temporary download URL from Convex proxy
       const url = await getUrlAction({ assetUrl: updateInfo.downloadUrl });
 
-      const destination = RNBackgroundDownloader.directories.documents + "/" + APK_FILENAME;
+      const destination = directories.documents + "/" + APK_FILENAME;
 
-      const task = RNBackgroundDownloader.download({
+      const task = createDownloadTask({
         id: "app-update",
         url,
         destination,
@@ -132,6 +135,8 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
             downloadTask: null,
           });
 
+          completeHandler("app-update");
+
           notify(
             "Update ready to install",
             `v${updateInfo.latestVersion} downloaded. Tap to install.`,
@@ -149,6 +154,8 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
             type: "update-failed",
           });
         });
+
+      task.start();
     } catch (e: any) {
       set({
         downloadStatus: "failed",
