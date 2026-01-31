@@ -6,7 +6,8 @@
   "build": {
     "base": {
       "android": {
-        "image": "latest"
+        "image": "latest",
+        "gradleCommand": ":app:assembleRelease -PreactNativeArchitectures=arm64-v8a,x86_64"
       }
     },
     "development": {

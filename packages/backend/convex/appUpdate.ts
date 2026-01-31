@@ -15,7 +15,7 @@ function compareSemver(a: string, b: string): number {
 }
 
 export const checkForUpdate = action({
-  args: { currentVersion: v.string() },
+  args: { currentVersion: v.string(), variant: v.string() },
   returns: v.union(
     v.object({
       updateAvailable: v.literal(true),
@@ -48,7 +48,7 @@ export const checkForUpdate = action({
       throw new Error("GITHUB_TOKEN and GITHUB_REPO environment variables are required");
     }
 
-    const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
+    const response = await fetch(`https://api.github.com/repos/${repo}/releases?per_page=10`, {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/vnd.github+json",
@@ -63,8 +63,22 @@ export const checkForUpdate = action({
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
     }
 
-    const release = await response.json();
-    const latestVersion = release.tag_name.replace(/^v/, "");
+    const releases = await response.json();
+
+    // Find the latest release matching the app's variant (staging or production)
+    const variantSuffix = args.variant === "production" ? "-production" : "-staging";
+    const release = releases.find(
+      (r: { tag_name: string; assets: { name: string }[] }) =>
+        r.tag_name.endsWith(variantSuffix) &&
+        r.assets?.some((a: { name: string }) => a.name.endsWith(".apk")),
+    );
+
+    if (!release) {
+      return { updateAvailable: false as const };
+    }
+
+    // Strip "v" prefix and variant suffix to get the semver
+    const latestVersion = release.tag_name.replace(/^v/, "").replace(/-(staging|production)$/, "");
 
     if (compareSemver(latestVersion, args.currentVersion) <= 0) {
       return { updateAvailable: false as const };

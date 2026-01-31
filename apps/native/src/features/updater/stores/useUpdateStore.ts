@@ -5,7 +5,7 @@ import {
   directories,
 } from "@kesha-antonov/react-native-background-downloader";
 import Constants from "expo-constants";
-import * as FileSystem from "expo-file-system";
+import { getContentUriAsync } from "expo-file-system/legacy";
 import * as IntentLauncher from "expo-intent-launcher";
 import * as Notifications from "expo-notifications";
 import { create } from "zustand";
@@ -32,7 +32,7 @@ interface UpdateStore {
 
   // Actions
   checkForUpdate: (
-    checkAction: (args: { currentVersion: string }) => Promise<any>,
+    checkAction: (args: { currentVersion: string; variant: string }) => Promise<any>,
   ) => Promise<void>;
 
   startDownload: (getUrlAction: (args: { assetUrl: string }) => Promise<string>) => Promise<void>;
@@ -43,6 +43,7 @@ interface UpdateStore {
 }
 
 const getCurrentVersion = () => Constants.expoConfig?.version ?? "0.0.0";
+const getAppVariant = () => (Constants.expoConfig?.extra?.appVariant as string) ?? "production";
 
 const APK_FILENAME = "update.apk";
 
@@ -68,7 +69,8 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
     set({ isChecking: true, error: null });
     try {
       const currentVersion = getCurrentVersion();
-      const result = await checkAction({ currentVersion });
+      const variant = getAppVariant();
+      const result = await checkAction({ currentVersion, variant });
       if (result.updateAvailable) {
         set({
           updateInfo: {
@@ -170,13 +172,14 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
     if (!apkFileUri) return;
 
     try {
-      const contentUri = await FileSystem.getContentUriAsync(apkFileUri);
+      const contentUri = await getContentUriAsync(apkFileUri);
       await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
         data: contentUri,
         flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
         type: "application/vnd.android.package-archive",
       });
     } catch (e: any) {
+      console.error("Install failed:", e);
       set({ error: e.message ?? "Install failed" });
     }
   },

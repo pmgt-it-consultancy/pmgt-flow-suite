@@ -8,16 +8,18 @@ function withReactNativeArchitectures(config, architectures = "arm64-v8a,x86_64"
   return withGradleProperties(config, (config) => {
     const props = config.modResults;
 
-    // Update or add reactNativeArchitectures
-    const archIndex = props.findIndex(
-      (p) => p.type === "property" && p.key === "reactNativeArchitectures",
-    );
-    const archProp = { type: "property", key: "reactNativeArchitectures", value: architectures };
-    if (archIndex >= 0) {
-      props[archIndex] = archProp;
-    } else {
-      props.push(archProp);
-    }
+    const setProperty = (key, value) => {
+      const index = props.findIndex((p) => p.type === "property" && p.key === key);
+      const prop = { type: "property", key, value };
+      if (index >= 0) {
+        props[index] = prop;
+      } else {
+        props.push(prop);
+      }
+    };
+
+    setProperty("reactNativeArchitectures", architectures);
+    setProperty("android.injected.build.abi", architectures);
 
     return config;
   });

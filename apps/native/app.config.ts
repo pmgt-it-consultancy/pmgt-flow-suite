@@ -23,6 +23,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   icon: "./assets/app-icon.png",
   userInterfaceStyle: "light",
   extra: {
+    appVariant: IS_STAGING ? "staging" : "production",
     eas: {
       projectId: "d590d355-68a1-4dcd-8ffa-4d40489c7b0f",
     },
@@ -56,5 +57,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     ["./plugins/withReactNativeArchitectures", "arm64-v8a,x86_64"],
+    "./plugins/withApkInstaller",
   ],
 });
