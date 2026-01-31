@@ -46,12 +46,31 @@ const getCurrentVersion = () => Constants.expoConfig?.version ?? "0.0.0";
 const getAppVariant = () => (Constants.expoConfig?.extra?.appVariant as string) ?? "production";
 
 const APK_FILENAME = "update.apk";
+const PROGRESS_NOTIFICATION_ID = "download-progress";
 
 function notify(title: string, body: string, data?: Record<string, string>) {
   Notifications.scheduleNotificationAsync({
     content: { title, body, data },
     trigger: null,
   }).catch((e) => console.warn("Notification failed:", e));
+}
+
+function notifyProgress(pct: number, version: string) {
+  const percent = Math.round(pct * 100);
+  Notifications.scheduleNotificationAsync({
+    identifier: PROGRESS_NOTIFICATION_ID,
+    content: {
+      title: "Downloading update",
+      body: `v${version} — ${percent}%`,
+      data: { type: "update-download" },
+      sticky: true,
+    },
+    trigger: null,
+  }).catch((e) => console.warn("Progress notification failed:", e));
+}
+
+function dismissProgressNotification() {
+  Notifications.dismissNotificationAsync(PROGRESS_NOTIFICATION_ID).catch(() => {});
 }
 
 export const useUpdateStore = create<UpdateStore>((set, get) => ({
@@ -121,9 +140,9 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
 
       set({ downloadTask: task });
 
-      notify("Downloading update", `Downloading v${updateInfo.latestVersion}...`, {
-        type: "update-download",
-      });
+      let lastNotifiedPct = -1;
+
+      notifyProgress(0, updateInfo.latestVersion);
 
       task
         .begin(({ expectedBytes }) => {
@@ -132,6 +151,13 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
         .progress(({ bytesDownloaded, bytesTotal }) => {
           const pct = bytesTotal > 0 ? bytesDownloaded / bytesTotal : 0;
           set({ downloadProgress: pct });
+
+          // Update notification every 5%
+          const rounded = Math.floor(pct * 20) * 5;
+          if (rounded > lastNotifiedPct) {
+            lastNotifiedPct = rounded;
+            notifyProgress(pct, updateInfo.latestVersion);
+          }
         })
         .done(() => {
           const fileUri = "file://" + destination;
@@ -143,6 +169,7 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
           });
 
           completeHandler("app-update");
+          dismissProgressNotification();
 
           notify(
             "Update ready to install",
@@ -157,6 +184,7 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
             downloadTask: null,
           });
 
+          dismissProgressNotification();
           notify("Update download failed", "Tap to retry.", {
             type: "update-failed",
           });
