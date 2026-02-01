@@ -70,9 +70,11 @@ const optionalStyles = StyleSheet.create({
     alignItems: "center",
   },
   buttons: {
+    display: "flex",
     flexDirection: "row",
     gap: 12,
     marginTop: 16,
+    alignItems: "flex-end",
   },
   laterButton: {
     borderRadius: 12,
@@ -121,7 +123,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 32,
-    marginTop: 16,
   },
   buttonText: {
     color: "#FFFFFF",

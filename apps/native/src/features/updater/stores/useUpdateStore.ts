@@ -22,6 +22,7 @@ export type DownloadStatus = "idle" | "downloading" | "completed" | "failed";
 interface UpdateStore {
   // State
   updateInfo: UpdateInfo | null;
+  dialogDismissed: boolean;
   downloadStatus: DownloadStatus;
   downloadProgress: number;
   isChecking: boolean;
@@ -75,6 +76,7 @@ function dismissProgressNotification() {
 
 export const useUpdateStore = create<UpdateStore>((set, get) => ({
   updateInfo: null,
+  dialogDismissed: false,
   downloadStatus: "idle",
   downloadProgress: 0,
   isChecking: false,
@@ -91,6 +93,8 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
       const variant = getAppVariant();
       const result = await checkAction({ currentVersion, variant });
       if (result.updateAvailable) {
+        const prev = get().updateInfo;
+        const isNewVersion = prev?.latestVersion !== result.latestVersion;
         set({
           updateInfo: {
             latestVersion: result.latestVersion,
@@ -98,6 +102,7 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
             releaseNotes: result.releaseNotes,
             isForced: result.isForced,
           },
+          ...(isNewVersion ? { dialogDismissed: false } : {}),
         });
         if (!result.isForced) {
           notify("Update Available", `v${result.latestVersion} is available.`, {
@@ -220,7 +225,7 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
   dismiss: () => {
     const { updateInfo } = get();
     if (updateInfo?.isForced) return;
-    set({ updateInfo: null });
+    set({ dialogDismissed: true });
   },
 
   reset: () => {
@@ -228,6 +233,7 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
     if (downloadTask) downloadTask.stop();
     set({
       updateInfo: null,
+      dialogDismissed: false,
       downloadStatus: "idle",
       downloadProgress: 0,
       isChecking: false,

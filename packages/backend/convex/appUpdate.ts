@@ -155,6 +155,8 @@ export const getApkDownloadUrl = action({
       throw new Error("GITHUB_TOKEN environment variable is required");
     }
 
+    console.log("[getApkDownloadUrl] fetching:", args.assetUrl);
+
     const response = await fetch(args.assetUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -163,11 +165,28 @@ export const getApkDownloadUrl = action({
       redirect: "manual",
     });
 
+    console.log("[getApkDownloadUrl] status:", response.status);
+
     const location = response.headers.get("Location");
-    if (!location) {
-      throw new Error("No redirect Location header received from GitHub");
+    if (location) {
+      return location;
     }
 
-    return location;
+    // Some GitHub token types (fine-grained) don't redirect — follow automatically instead
+    const followResponse = await fetch(args.assetUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/octet-stream",
+      },
+    });
+
+    if (!followResponse.ok) {
+      throw new Error(
+        `GitHub asset download failed: ${followResponse.status} ${followResponse.statusText}`,
+      );
+    }
+
+    // Return the final URL after redirects
+    return followResponse.url;
   },
 });

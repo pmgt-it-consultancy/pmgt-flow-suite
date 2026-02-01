@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
 import { Alert, AppState } from "react-native";
 // Import screens from features
 import { LoginScreen } from "../features/auth";
+import { useAuth } from "../features/auth/context";
 import { CheckoutScreen } from "../features/checkout";
 import { HomeScreen } from "../features/home";
 import { OrderDetailScreen, OrderHistoryScreen } from "../features/order-history";
@@ -60,7 +61,9 @@ const Navigation = () => {
   const isInitialized = usePrinterStore((s) => s.isInitialized);
 
   const checkForUpdateAction = useAction(api.appUpdate.checkForUpdate);
+  const { isAuthenticated } = useAuth();
   const updateInfo = useUpdateStore((s) => s.updateInfo);
+  const dialogDismissed = useUpdateStore((s) => s.dialogDismissed);
   const storeCheck = useUpdateStore((s) => s.checkForUpdate);
   const navigationRef = useRef<any>(null);
 
@@ -129,18 +132,20 @@ const Navigation = () => {
         <Stack.Screen name="TakeoutOrderScreen" component={TakeoutOrderScreen} />
         <Stack.Screen name="UpdatesScreen" component={UpdatesScreen} />
       </Stack.Navigator>
-      {updateInfo?.isForced && (
+      {isAuthenticated && updateInfo?.isForced && (
         <ForceUpdateModal
           updateInfo={updateInfo}
           onGoToUpdates={() => {
+            useUpdateStore.getState().dismiss();
             navigationRef.current?.navigate("UpdatesScreen");
           }}
         />
       )}
-      {updateInfo && !updateInfo.isForced && (
+      {isAuthenticated && updateInfo && !updateInfo.isForced && !dialogDismissed && (
         <OptionalUpdateDialog
           updateInfo={updateInfo}
           onGoToUpdates={() => {
+            useUpdateStore.getState().dismiss();
             navigationRef.current?.navigate("UpdatesScreen");
           }}
           onDismiss={() => useUpdateStore.getState().dismiss()}
