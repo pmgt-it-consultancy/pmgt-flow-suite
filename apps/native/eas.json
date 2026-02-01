@@ -16,7 +16,8 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "APP_VARIANT": "staging"
+        "APP_VARIANT": "staging",
+        "EXPO_PUBLIC_CONVEX_URL": "https://aromatic-dalmatian-30.convex.cloud"
       },
       "android": {
         "buildType": "apk",
@@ -28,7 +29,8 @@
       "credentialsSource": "local",
       "distribution": "internal",
       "env": {
-        "APP_VARIANT": "staging"
+        "APP_VARIANT": "staging",
+        "EXPO_PUBLIC_CONVEX_URL": "https://aromatic-dalmatian-30.convex.cloud"
       },
       "android": {
         "buildType": "apk"
@@ -39,6 +41,9 @@
       "extends": "base",
       "credentialsSource": "local",
       "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_CONVEX_URL": "https://loyal-shark-813.convex.cloud"
+      },
       "android": {
         "buildType": "apk"
       },

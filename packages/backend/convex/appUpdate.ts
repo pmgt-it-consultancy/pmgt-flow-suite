@@ -65,22 +65,59 @@ export const checkForUpdate = action({
 
     const releases = await response.json();
 
-    // Find the latest release matching the app's variant (staging or production)
-    const variantSuffix = args.variant === "production" ? "-production" : "-staging";
-    const release = releases.find(
-      (r: { tag_name: string; assets: { name: string }[] }) =>
-        r.tag_name.endsWith(variantSuffix) &&
-        r.assets?.some((a: { name: string }) => a.name.endsWith(".apk")),
+    console.log("[checkForUpdate] args:", {
+      currentVersion: args.currentVersion,
+      variant: args.variant,
+    });
+    console.log("[checkForUpdate] fetched releases:", releases.length);
+    console.log(
+      "[checkForUpdate] release tags:",
+      releases.map((r: { tag_name: string }) => r.tag_name),
     );
 
+    // Find the latest release matching the app's variant (staging or production)
+    const variantSuffix = args.variant === "production" ? "-production" : "-staging";
+    const matchingReleases = releases
+      .filter(
+        (r: { tag_name: string; assets: { name: string }[] }) =>
+          r.tag_name.endsWith(variantSuffix) &&
+          r.assets?.some((a: { name: string }) => a.name.endsWith(".apk")),
+      )
+      .sort((a: { tag_name: string }, b: { tag_name: string }) => {
+        const va = a.tag_name.replace(/^v/, "").replace(/-(staging|production)$/, "");
+        const vb = b.tag_name.replace(/^v/, "").replace(/-(staging|production)$/, "");
+        return compareSemver(vb, va); // descending
+      });
+    const release = matchingReleases[0] ?? null;
+
+    console.log("[checkForUpdate] variantSuffix:", variantSuffix);
+    console.log("[checkForUpdate] matched release:", release ? release.tag_name : "NONE");
+    if (release) {
+      console.log(
+        "[checkForUpdate] release assets:",
+        release.assets?.map((a: { name: string }) => a.name),
+      );
+    }
+
     if (!release) {
+      console.log("[checkForUpdate] no matching release found, returning updateAvailable: false");
       return { updateAvailable: false as const };
     }
 
     // Strip "v" prefix and variant suffix to get the semver
     const latestVersion = release.tag_name.replace(/^v/, "").replace(/-(staging|production)$/, "");
 
+    console.log(
+      "[checkForUpdate] latestVersion:",
+      latestVersion,
+      "currentVersion:",
+      args.currentVersion,
+      "compare:",
+      compareSemver(latestVersion, args.currentVersion),
+    );
+
     if (compareSemver(latestVersion, args.currentVersion) <= 0) {
+      console.log("[checkForUpdate] no update needed, returning updateAvailable: false");
       return { updateAvailable: false as const };
     }
 
