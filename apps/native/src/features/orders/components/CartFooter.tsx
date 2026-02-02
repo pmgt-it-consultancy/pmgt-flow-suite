@@ -94,12 +94,14 @@ export const CartFooter = ({
       )}
 
       {canCancel && (
-        <TouchableOpacity
-          onPress={onCancelOrder}
-          style={{ marginTop: 12, alignItems: "center", paddingVertical: 4 }}
-        >
-          <Text style={{ color: "#EF4444", fontWeight: "500", fontSize: 14 }}>Cancel Order</Text>
-        </TouchableOpacity>
+        <Button onPress={onCancelOrder} variant="destructive" size="lg" style={{ marginTop: 8 }}>
+          <Text
+            numberOfLines={1}
+            style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 14, textAlign: "center" }}
+          >
+            Cancel Order
+          </Text>
+        </Button>
       )}
     </YStack>
   );

@@ -822,6 +822,8 @@ export const updateTakeoutStatus = mutation({
 export const getTakeoutOrders = query({
   args: {
     storeId: v.id("stores"),
+    startDate: v.optional(v.number()),
+    endDate: v.optional(v.number()),
   },
   returns: v.array(
     v.object({
@@ -847,13 +849,16 @@ export const getTakeoutOrders = query({
     await requireAuth(ctx);
 
     const today = new Date();
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+    const startOfDay =
+      args.startDate ?? new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+    const endOfDay = args.endDate;
 
-    const orders = await ctx.db
-      .query("orders")
-      .withIndex("by_store_createdAt", (q) =>
-        q.eq("storeId", args.storeId).gte("createdAt", startOfDay),
-      )
+    const indexQuery = ctx.db.query("orders").withIndex("by_store_createdAt", (q) => {
+      const q2 = q.eq("storeId", args.storeId).gte("createdAt", startOfDay);
+      return endOfDay !== undefined ? q2.lte("createdAt", endOfDay) : q2;
+    });
+
+    const orders = await indexQuery
       .filter((q) => q.eq(q.field("orderType"), "takeout"))
       .order("desc")
       .collect();

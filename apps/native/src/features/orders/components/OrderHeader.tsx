@@ -8,6 +8,7 @@ interface OrderHeaderProps {
   onBack: () => void;
   onTransferTable?: () => void;
   onUpdatePax?: () => void;
+  onViewOrders?: () => void;
 }
 
 export const OrderHeader = ({
@@ -16,6 +17,7 @@ export const OrderHeader = ({
   onBack,
   onTransferTable,
   onUpdatePax,
+  onViewOrders,
 }: OrderHeaderProps) => {
   return (
     <XStack
@@ -42,6 +44,9 @@ export const OrderHeader = ({
           {subtitle}
         </Text>
       </XStack>
+      {onViewOrders && (
+        <IconButton icon="list" variant="ghost" onPress={onViewOrders} iconColor="#6B7280" />
+      )}
       <SystemStatusBar />
       {onUpdatePax && (
         <IconButton icon="people" variant="ghost" onPress={onUpdatePax} iconColor="#6B7280" />

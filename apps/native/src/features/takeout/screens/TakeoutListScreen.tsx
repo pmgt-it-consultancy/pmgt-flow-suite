@@ -19,6 +19,28 @@ const NEXT_STATUS: Partial<Record<TakeoutStatus, TakeoutStatus>> = {
   ready_for_pickup: "completed",
 };
 
+function getStartOfDay(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+}
+
+function getEndOfDay(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999).getTime();
+}
+
+function formatDateLabel(date: Date): string {
+  const today = new Date();
+  const todayStart = getStartOfDay(today);
+  const dateStart = getStartOfDay(date);
+
+  if (dateStart === todayStart) return "Today";
+
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (dateStart === getStartOfDay(yesterday)) return "Yesterday";
+
+  return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+
 interface TakeoutListScreenProps {
   navigation: any;
 }
@@ -27,10 +49,19 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   const { user } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<Id<"orders"> | null>(null);
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
+
+  const isToday = getStartOfDay(selectedDate) === getStartOfDay(new Date());
 
   const takeoutOrders = useQuery(
     api.orders.getTakeoutOrders,
-    user?.storeId ? { storeId: user.storeId } : "skip",
+    user?.storeId
+      ? {
+          storeId: user.storeId,
+          startDate: getStartOfDay(selectedDate),
+          endDate: getEndOfDay(selectedDate),
+        }
+      : "skip",
   );
 
   const updateStatus = useMutation(api.orders.updateTakeoutStatus);
@@ -71,6 +102,27 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
     navigation.navigate("TakeoutOrderScreen", { storeId: user.storeId });
   }, [user?.storeId, navigation]);
 
+  const handlePrevDay = useCallback(() => {
+    setSelectedDate((prev) => {
+      const d = new Date(prev);
+      d.setDate(d.getDate() - 1);
+      return d;
+    });
+  }, []);
+
+  const handleNextDay = useCallback(() => {
+    if (isToday) return;
+    setSelectedDate((prev) => {
+      const d = new Date(prev);
+      d.setDate(d.getDate() + 1);
+      return d;
+    });
+  }, [isToday]);
+
+  const handleGoToToday = useCallback(() => {
+    setSelectedDate(new Date());
+  }, []);
+
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">
       {/* Header */}
@@ -90,7 +142,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
               Takeout Orders
             </Text>
             <Text variant="muted" size="sm">
-              Today's takeout orders
+              {formatDateLabel(selectedDate)}'s takeout orders
             </Text>
           </YStack>
         </XStack>
@@ -103,6 +155,35 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
             </XStack>
           </Button>
         </XStack>
+      </XStack>
+
+      {/* Date Navigation */}
+      <XStack
+        backgroundColor="#FFFFFF"
+        paddingHorizontal={16}
+        paddingVertical={8}
+        alignItems="center"
+        justifyContent="center"
+        gap={12}
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+      >
+        <IconButton icon="chevron-back" variant="ghost" onPress={handlePrevDay} />
+        <Text variant="heading" size="sm" style={{ minWidth: 120, textAlign: "center" }}>
+          {formatDateLabel(selectedDate)}
+        </Text>
+        <IconButton
+          icon="chevron-forward"
+          variant="ghost"
+          onPress={handleNextDay}
+          disabled={isToday}
+          iconColor={isToday ? "#D1D5DB" : undefined}
+        />
+        {!isToday && (
+          <Button size="sm" variant="outline" onPress={handleGoToToday}>
+            <Text style={{ fontSize: 12, fontWeight: "600" }}>Today</Text>
+          </Button>
+        )}
       </XStack>
 
       {takeoutOrders === undefined ? (
@@ -154,11 +235,13 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
             <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
               <Ionicons name="bag-handle-outline" size={48} color="#D1D5DB" />
               <Text variant="muted" style={{ marginTop: 12 }}>
-                No takeout orders today
+                No takeout orders {isToday ? "today" : "on this day"}
               </Text>
-              <Button size="md" style={{ marginTop: 16 }} onPress={handleNewOrder}>
-                Create First Order
-              </Button>
+              {isToday && (
+                <Button size="md" style={{ marginTop: 16 }} onPress={handleNewOrder}>
+                  Create First Order
+                </Button>
+              )}
             </YStack>
           }
         />

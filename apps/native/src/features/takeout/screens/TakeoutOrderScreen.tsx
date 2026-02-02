@@ -131,6 +131,10 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
+  const handleViewOrders = useCallback(() => {
+    navigation.navigate("TakeoutListScreen");
+  }, [navigation]);
+
   const handleAddProduct = useCallback((product: SelectedProduct) => {
     setSelectedProduct(product);
     setQuantity(1);
@@ -403,6 +407,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         title={customerName.trim() || "Takeout"}
         subtitle={subtitle}
         onBack={handleBack}
+        onViewOrders={handleViewOrders}
       />
 
       <XStack flex={1}>
