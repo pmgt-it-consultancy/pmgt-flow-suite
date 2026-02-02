@@ -1,5 +1,6 @@
 import { useFonts } from "expo-font";
-import { useCallback, useState } from "react";
+import * as NavigationBar from "expo-navigation-bar";
+import { useCallback, useEffect, useState } from "react";
 import { LogBox, Platform, StatusBar, View } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { TamaguiProvider } from "tamagui";
@@ -29,6 +30,13 @@ export default function App() {
   });
 
   const handleSplashFinish = useCallback(() => setShowSplash(false), []);
+
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      NavigationBar.setVisibilityAsync("hidden");
+      NavigationBar.setBehaviorAsync("overlay-swipe");
+    }
+  }, []);
 
   if (!loaded) {
     return null;
