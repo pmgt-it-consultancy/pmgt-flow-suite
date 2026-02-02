@@ -1,5 +1,4 @@
-import type { TouchableOpacityProps } from "react-native";
-import { TouchableOpacity } from "uniwind/components";
+import { TouchableOpacity, type TouchableOpacityProps } from "react-native";
 import { Text } from "./Text";
 
 interface ChipProps extends TouchableOpacityProps {
@@ -8,14 +7,40 @@ interface ChipProps extends TouchableOpacityProps {
   className?: string;
 }
 
-export const Chip = ({ selected = false, className = "", children, ...props }: ChipProps) => {
-  const containerClasses =
-    `px-4 py-2 rounded-full ${selected ? "bg-blue-500" : "bg-gray-100"} ${className}`.trim();
-  const textClasses = `text-sm font-medium ${selected ? "text-white" : "text-gray-600"}`;
-
+export const Chip = ({
+  selected = false,
+  className: _className,
+  children,
+  style,
+  ...props
+}: ChipProps) => {
   return (
-    <TouchableOpacity className={containerClasses} activeOpacity={0.7} {...props}>
-      {typeof children === "string" ? <Text className={textClasses}>{children}</Text> : children}
+    <TouchableOpacity
+      activeOpacity={0.7}
+      style={[
+        {
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+          borderRadius: 9999,
+          backgroundColor: selected ? "#0D87E1" : "#F3F4F6",
+        },
+        style as any,
+      ]}
+      {...props}
+    >
+      {typeof children === "string" ? (
+        <Text
+          style={{
+            fontSize: 14,
+            fontWeight: "500",
+            color: selected ? "#FFFFFF" : "#4B5563",
+          }}
+        >
+          {children}
+        </Text>
+      ) : (
+        children
+      )}
     </TouchableOpacity>
   );
 };

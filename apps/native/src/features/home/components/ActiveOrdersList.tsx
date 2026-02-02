@@ -1,5 +1,5 @@
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TouchableOpacity, View } from "uniwind/components";
+import { XStack, YStack } from "tamagui";
 import { Badge, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -22,37 +22,46 @@ export const ActiveOrdersList = ({ orders }: ActiveOrdersListProps) => {
 
   if (orders.length === 0) {
     return (
-      <View className="items-center py-6">
+      <YStack alignItems="center" paddingVertical={24}>
         <Text variant="muted" size="sm">
           No active orders
         </Text>
-      </View>
+      </YStack>
     );
   }
 
   return (
-    <View className="gap-2">
+    <YStack gap={8}>
       {orders.slice(0, 5).map((order) => (
-        <View
+        <XStack
           key={order._id}
-          className="flex-row items-center justify-between bg-white rounded-lg px-3 py-2.5 border border-gray-100"
+          alignItems="center"
+          justifyContent="space-between"
+          backgroundColor="$white"
+          borderRadius={8}
+          paddingHorizontal={12}
+          paddingVertical={10}
+          borderWidth={1}
+          borderColor="$gray100"
         >
-          <View className="flex-row items-center gap-2">
+          <XStack alignItems="center" gap={8}>
             <Badge variant={order.orderType === "dine_in" ? "primary" : "warning"} size="sm">
               {order.orderType === "dine_in" ? "Dine-In" : "Takeout"}
             </Badge>
-            <Text className="font-medium text-gray-900 text-sm">{order.orderNumber}</Text>
-          </View>
-          <View className="flex-row items-center gap-3">
+            <Text style={{ fontWeight: "500", color: "#111827", fontSize: 14 }}>
+              {order.orderNumber}
+            </Text>
+          </XStack>
+          <XStack alignItems="center" gap={12}>
             <Text variant="muted" size="sm">
               {order.itemCount} items
             </Text>
-            <Text className="font-semibold text-gray-900 text-sm">
+            <Text style={{ fontWeight: "600", color: "#111827", fontSize: 14 }}>
               {formatCurrency(order.subtotal)}
             </Text>
-          </View>
-        </View>
+          </XStack>
+        </XStack>
       ))}
-    </View>
+    </YStack>
   );
 };

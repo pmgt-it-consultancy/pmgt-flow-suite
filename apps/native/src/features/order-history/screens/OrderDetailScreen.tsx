@@ -3,8 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { useCallback, useState } from "react";
-import { Alert } from "react-native";
-import { ActivityIndicator, ScrollView, TextInput, View } from "uniwind/components";
+import { ActivityIndicator, Alert, ScrollView, TextInput } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { ManagerPinModal } from "../../checkout/components";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -161,9 +161,9 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
 
   if (!order) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-100">
+      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#F3F4F6">
         <ActivityIndicator size="large" color="#0D87E1" />
-      </View>
+      </YStack>
     );
   }
 
@@ -174,30 +174,59 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
   const isPaid = order.status === "paid";
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="#F3F4F6">
       {/* Header */}
-      <View className="bg-white flex-row items-center px-4 py-3 border-b border-gray-200">
-        <IconButton icon="arrow-back" variant="ghost" onPress={handleBack} className="mr-2" />
-        <View className="flex-1">
-          <View className="flex-row items-center gap-2">
+      <XStack
+        backgroundColor="#FFFFFF"
+        alignItems="center"
+        paddingHorizontal={16}
+        paddingVertical={12}
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+      >
+        <IconButton
+          icon="arrow-back"
+          variant="ghost"
+          onPress={handleBack}
+          style={{ marginRight: 8 }}
+        />
+        <YStack flex={1}>
+          <XStack alignItems="center" gap={8}>
             <Text variant="heading" size="lg">
               Order #{order.orderNumber}
             </Text>
             <Badge variant={statusVariant}>
               {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
             </Badge>
-          </View>
+          </XStack>
           <Text variant="muted" size="sm">
             {orderTypeLabel}
           </Text>
-        </View>
+        </YStack>
         <SystemStatusBar />
-      </View>
+      </XStack>
 
-      <ScrollView className="flex-1">
+      <ScrollView style={{ flex: 1 }}>
         {/* Order Info */}
-        <View className="bg-white mx-3 mt-3 p-4 rounded-xl border border-gray-100">
-          <Text className="text-gray-500 font-semibold text-xs mb-3 uppercase tracking-wider">
+        <YStack
+          backgroundColor="#FFFFFF"
+          marginHorizontal={12}
+          marginTop={12}
+          padding={16}
+          borderRadius={12}
+          borderWidth={1}
+          borderColor="#F3F4F6"
+        >
+          <Text
+            style={{
+              color: "#6B7280",
+              fontWeight: "600",
+              fontSize: 12,
+              marginBottom: 12,
+              textTransform: "uppercase",
+              letterSpacing: 1,
+            }}
+          >
             Order Info
           </Text>
           <InfoRow label="Date" value={formatDate(order.createdAt)} />
@@ -217,20 +246,41 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
             <InfoRow label="Change" value={formatCurrency(order.changeGiven)} />
           ) : null}
           {order.paidAt ? <InfoRow label="Paid At" value={formatDate(order.paidAt)} /> : null}
-        </View>
+        </YStack>
 
         {/* Items */}
-        <View className="bg-white mx-3 mt-3 p-4 rounded-xl border border-gray-100">
-          <Text className="text-gray-500 font-semibold text-xs mb-3 uppercase tracking-wider">
+        <YStack
+          backgroundColor="#FFFFFF"
+          marginHorizontal={12}
+          marginTop={12}
+          padding={16}
+          borderRadius={12}
+          borderWidth={1}
+          borderColor="#F3F4F6"
+        >
+          <Text
+            style={{
+              color: "#6B7280",
+              fontWeight: "600",
+              fontSize: 12,
+              marginBottom: 12,
+              textTransform: "uppercase",
+              letterSpacing: 1,
+            }}
+          >
             Items
           </Text>
           {activeItems.map((item) => (
-            <View
+            <XStack
               key={item._id}
-              className="flex-row justify-between items-center py-2 border-b border-gray-50"
+              justifyContent="space-between"
+              alignItems="center"
+              paddingVertical={8}
+              borderBottomWidth={1}
+              borderColor="#F9FAFB"
             >
-              <View className="flex-1">
-                <Text className="text-gray-900 text-sm">
+              <YStack flex={1}>
+                <Text style={{ color: "#111827", fontSize: 14 }}>
                   {item.quantity}x {item.productName}
                 </Text>
                 {item.notes ? (
@@ -238,36 +288,76 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
                     {item.notes}
                   </Text>
                 ) : null}
-              </View>
-              <Text className="text-gray-900 font-medium text-sm">
+              </YStack>
+              <Text style={{ color: "#111827", fontWeight: "500", fontSize: 14 }}>
                 {formatCurrency(item.lineTotal)}
               </Text>
-            </View>
+            </XStack>
           ))}
-        </View>
+        </YStack>
 
         {/* Discounts */}
         {discounts && discounts.length > 0 ? (
-          <View className="bg-white mx-3 mt-3 p-4 rounded-xl border border-gray-100">
-            <Text className="text-gray-500 font-semibold text-xs mb-3 uppercase tracking-wider">
+          <YStack
+            backgroundColor="#FFFFFF"
+            marginHorizontal={12}
+            marginTop={12}
+            padding={16}
+            borderRadius={12}
+            borderWidth={1}
+            borderColor="#F3F4F6"
+          >
+            <Text
+              style={{
+                color: "#6B7280",
+                fontWeight: "600",
+                fontSize: 12,
+                marginBottom: 12,
+                textTransform: "uppercase",
+                letterSpacing: 1,
+              }}
+            >
               Discounts
             </Text>
             {discounts.map((d) => (
-              <View key={d._id} className="flex-row justify-between items-center py-2">
-                <Text className="text-gray-900 text-sm">
+              <XStack
+                key={d._id}
+                justifyContent="space-between"
+                alignItems="center"
+                paddingVertical={8}
+              >
+                <Text style={{ color: "#111827", fontSize: 14 }}>
                   {d.discountType === "senior_citizen" ? "SC" : "PWD"}: {d.customerName}
                 </Text>
-                <Text className="text-red-500 font-medium text-sm">
+                <Text style={{ color: "#EF4444", fontWeight: "500", fontSize: 14 }}>
                   -{formatCurrency(d.discountAmount)}
                 </Text>
-              </View>
+              </XStack>
             ))}
-          </View>
+          </YStack>
         ) : null}
 
         {/* Summary */}
-        <View className="bg-white mx-3 mt-3 mb-3 p-4 rounded-xl border border-gray-100">
-          <Text className="text-gray-500 font-semibold text-xs mb-3 uppercase tracking-wider">
+        <YStack
+          backgroundColor="#FFFFFF"
+          marginHorizontal={12}
+          marginTop={12}
+          marginBottom={12}
+          padding={16}
+          borderRadius={12}
+          borderWidth={1}
+          borderColor="#F3F4F6"
+        >
+          <Text
+            style={{
+              color: "#6B7280",
+              fontWeight: "600",
+              fontSize: 12,
+              marginBottom: 12,
+              textTransform: "uppercase",
+              letterSpacing: 1,
+            }}
+          >
             Summary
           </Text>
           <SummaryRow label="Gross Sales" value={formatCurrency(order.grossSales)} />
@@ -278,42 +368,57 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
             <SummaryRow
               label="Discount"
               value={`-${formatCurrency(order.discountAmount)}`}
-              valueClassName="text-red-500"
+              valueColor="#EF4444"
             />
           ) : null}
-          <View className="flex-row justify-between items-center pt-2 mt-2 border-t border-gray-200">
-            <Text className="text-gray-900 font-bold text-base">Net Sales</Text>
-            <Text className="text-gray-900 font-bold text-base">
+          <XStack
+            justifyContent="space-between"
+            alignItems="center"
+            paddingTop={8}
+            marginTop={8}
+            borderTopWidth={1}
+            borderColor="#E5E7EB"
+          >
+            <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>Net Sales</Text>
+            <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>
               {formatCurrency(order.netSales)}
             </Text>
-          </View>
-        </View>
+          </XStack>
+        </YStack>
       </ScrollView>
 
       {/* Actions */}
       {isPaid ? (
-        <View className="p-4 bg-white border-t border-gray-200 flex-row gap-3">
+        <XStack
+          padding={16}
+          backgroundColor="#FFFFFF"
+          borderTopWidth={1}
+          borderColor="#E5E7EB"
+          gap={12}
+        >
           <Button
             variant="primary"
             size="lg"
-            className="flex-1"
+            style={{ flex: 1 }}
             loading={isReprinting}
             disabled={isReprinting}
             onPress={handleReprint}
           >
-            <View className="flex-row items-center">
+            <XStack alignItems="center">
               <Ionicons name="print-outline" size={20} color="#FFF" />
-              <Text className="text-white font-semibold ml-2">Reprint Receipt</Text>
-            </View>
+              <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
+                Reprint Receipt
+              </Text>
+            </XStack>
           </Button>
 
-          <Button variant="destructive" size="lg" className="flex-1" onPress={handleVoidPress}>
-            <View className="flex-row items-center">
+          <Button variant="destructive" size="lg" style={{ flex: 1 }} onPress={handleVoidPress}>
+            <XStack alignItems="center">
               <Ionicons name="close-circle-outline" size={20} color="#FFF" />
-              <Text className="text-white font-semibold ml-2">Void Order</Text>
-            </View>
+              <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>Void Order</Text>
+            </XStack>
           </Button>
-        </View>
+        </XStack>
       ) : null}
 
       {/* Void Reason Modal */}
@@ -324,11 +429,19 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
         onRequestClose={() => setShowVoidReasonModal(false)}
         position="center"
       >
-        <Text variant="muted" className="mb-3">
+        <Text variant="muted" style={{ marginBottom: 12 }}>
           Please provide a reason for voiding this order.
         </Text>
         <TextInput
-          className="border border-gray-200 rounded-lg p-3 text-base text-gray-900 min-h-[80px]"
+          style={{
+            borderWidth: 1,
+            borderColor: "#E5E7EB",
+            borderRadius: 8,
+            padding: 12,
+            fontSize: 16,
+            color: "#111827",
+            minHeight: 80,
+          }}
           placeholder="Enter reason..."
           placeholderTextColor="#9CA3AF"
           value={voidReason}
@@ -339,7 +452,7 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
         <Button
           variant="destructive"
           size="lg"
-          className="mt-4"
+          style={{ marginTop: 16 }}
           disabled={!voidReason.trim()}
           onPress={handleVoidReasonSubmit}
         >
@@ -357,35 +470,35 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
         }}
         onSuccess={handleManagerPinSuccess}
       />
-    </View>
+    </YStack>
   );
 };
 
 // Helper components
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
-  <View className="flex-row justify-between items-center py-1.5">
+  <XStack justifyContent="space-between" alignItems="center" paddingVertical={6}>
     <Text variant="muted" size="sm">
       {label}
     </Text>
-    <Text className="text-gray-900 text-sm font-medium">{value}</Text>
-  </View>
+    <Text style={{ color: "#111827", fontSize: 14, fontWeight: "500" }}>{value}</Text>
+  </XStack>
 );
 
 const SummaryRow = ({
   label,
   value,
-  valueClassName,
+  valueColor,
 }: {
   label: string;
   value: string;
-  valueClassName?: string;
+  valueColor?: string;
 }) => (
-  <View className="flex-row justify-between items-center py-1">
+  <XStack justifyContent="space-between" alignItems="center" paddingVertical={4}>
     <Text variant="muted" size="sm">
       {label}
     </Text>
-    <Text className={`text-gray-900 text-sm ${valueClassName ?? ""}`}>{value}</Text>
-  </View>
+    <Text style={{ color: valueColor ?? "#111827", fontSize: 14 }}>{value}</Text>
+  </XStack>
 );
 
 export default OrderDetailScreen;

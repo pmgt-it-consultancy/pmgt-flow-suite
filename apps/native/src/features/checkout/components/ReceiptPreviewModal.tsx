@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, View } from "uniwind/components";
+import { ActivityIndicator, ScrollView } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Button, Modal, Text } from "../../shared/components/ui";
 import type { ReceiptData } from "../../shared/utils/receipt";
@@ -41,18 +42,18 @@ const orderTypeLabel = (type: ReceiptData["orderType"]): string => {
 };
 
 const DashedSeparator = () => (
-  <Text size="xs" variant="muted" className="text-center my-2">
+  <Text size="xs" variant="muted" style={{ textAlign: "center", marginVertical: 8 }}>
     - - - - - - - - - - - - - - - - - - - -
   </Text>
 );
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
-  <View className="flex-row justify-between mb-1">
+  <XStack justifyContent="space-between" marginBottom={4}>
     <Text size="xs" variant="muted">
       {label}
     </Text>
     <Text size="xs">{value}</Text>
-  </View>
+  </XStack>
 );
 
 // Paper width to preview width mapping (approximate px per mm)
@@ -101,30 +102,32 @@ export const ReceiptPreviewModal = ({
 
   return (
     <Modal visible={visible} position="center" title="Receipt Preview" showCloseButton={false} wide>
-      <View className="flex-row gap-4" style={{ maxHeight: 600 }}>
+      <XStack gap={16} style={{ maxHeight: 600 }}>
         {/* Left Panel — Receipt Preview */}
         <ScrollView
           showsVerticalScrollIndicator={true}
-          className="bg-white rounded-xl border border-gray-200"
-          contentContainerClassName="items-center"
-          contentContainerStyle={{ padding: 16 }}
-          nestedScrollEnabled={true}
           style={{
+            backgroundColor: "#FFFFFF",
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: "#E5E7EB",
             maxHeight: 600,
           }}
+          contentContainerStyle={{ alignItems: "center", padding: 16 }}
+          nestedScrollEnabled={true}
         >
-          <View style={{ width: previewWidth }}>
+          <YStack style={{ width: previewWidth }}>
             {/* Store Header */}
-            <Text variant="heading" size="base" className="text-center mb-1">
+            <Text variant="heading" size="base" style={{ textAlign: "center", marginBottom: 4 }}>
               {receiptData.storeName}
             </Text>
             {receiptData.storeAddress && (
-              <Text variant="muted" size="xs" className="text-center">
+              <Text variant="muted" size="xs" style={{ textAlign: "center" }}>
                 {receiptData.storeAddress}
               </Text>
             )}
             {receiptData.storeTin && (
-              <Text variant="muted" size="xs" className="text-center">
+              <Text variant="muted" size="xs" style={{ textAlign: "center" }}>
                 TIN: {receiptData.storeTin}
               </Text>
             )}
@@ -161,56 +164,56 @@ export const ReceiptPreviewModal = ({
             <DashedSeparator />
 
             {/* Order Items Header */}
-            <Text variant="heading" size="xs" className="text-center mb-2">
+            <Text variant="heading" size="xs" style={{ textAlign: "center", marginBottom: 8 }}>
               ORDER ITEMS
             </Text>
 
             {/* Column Headers */}
-            <View className="flex-row mb-1">
-              <Text size="xs" variant="muted" className="flex-1">
+            <XStack marginBottom={4}>
+              <Text size="xs" variant="muted" style={{ flex: 1 }}>
                 Item
               </Text>
-              <Text size="xs" variant="muted" className="w-6 text-center">
+              <Text size="xs" variant="muted" style={{ width: 24, textAlign: "center" }}>
                 Qty
               </Text>
-              <Text size="xs" variant="muted" className="w-14 text-right">
+              <Text size="xs" variant="muted" style={{ width: 56, textAlign: "right" }}>
                 Price
               </Text>
-              <Text size="xs" variant="muted" className="w-14 text-right">
+              <Text size="xs" variant="muted" style={{ width: 56, textAlign: "right" }}>
                 Total
               </Text>
-            </View>
+            </XStack>
 
             {/* Items */}
             {receiptData.items.map((item, index) => (
-              <View key={index}>
-                <View className="flex-row mb-1">
-                  <Text size="xs" className="flex-1" numberOfLines={1}>
+              <YStack key={index}>
+                <XStack marginBottom={4}>
+                  <Text size="xs" style={{ flex: 1 }} numberOfLines={1}>
                     {item.name}
                   </Text>
-                  <Text size="xs" className="w-6 text-center">
+                  <Text size="xs" style={{ width: 24, textAlign: "center" }}>
                     {item.quantity}
                   </Text>
-                  <Text size="xs" className="w-14 text-right">
+                  <Text size="xs" style={{ width: 56, textAlign: "right" }}>
                     {formatCurrency(item.price)}
                   </Text>
-                  <Text size="xs" className="w-14 text-right">
+                  <Text size="xs" style={{ width: 56, textAlign: "right" }}>
                     {formatCurrency(item.total)}
                   </Text>
-                </View>
+                </XStack>
                 {item.modifiers?.map((mod, modIndex) => (
-                  <View key={modIndex} className="flex-row mb-0.5 pl-3">
-                    <Text size="xs" variant="muted" className="flex-1">
+                  <XStack key={modIndex} marginBottom={2} paddingLeft={12}>
+                    <Text size="xs" variant="muted" style={{ flex: 1 }}>
                       + {mod.optionName}
                     </Text>
                     {mod.priceAdjustment > 0 && (
-                      <Text size="xs" variant="muted" className="w-14 text-right">
+                      <Text size="xs" variant="muted" style={{ width: 56, textAlign: "right" }}>
                         +{formatCurrency(mod.priceAdjustment)}
                       </Text>
                     )}
-                  </View>
+                  </XStack>
                 ))}
-              </View>
+              </YStack>
             ))}
 
             <DashedSeparator />
@@ -223,46 +226,46 @@ export const ReceiptPreviewModal = ({
             {receiptData.discounts.length > 0 && (
               <>
                 {receiptData.discounts.map((d, i) => (
-                  <View key={i} className="mb-2">
-                    <Text size="xs" className="text-red-500 font-medium">
+                  <YStack key={i} marginBottom={8}>
+                    <Text size="xs" style={{ color: "#EF4444", fontWeight: "500" }}>
                       {d.type === "sc" ? "SC" : "PWD"}: {d.customerName}
                     </Text>
-                    <Text size="xs" className="text-red-500">
+                    <Text size="xs" style={{ color: "#EF4444" }}>
                       ID: {d.customerId}
                     </Text>
-                    <View className="flex-row justify-between">
-                      <Text size="xs" className="text-red-500">
+                    <XStack justifyContent="space-between">
+                      <Text size="xs" style={{ color: "#EF4444" }}>
                         {d.itemName}
                       </Text>
-                      <Text size="xs" className="text-red-500">
+                      <Text size="xs" style={{ color: "#EF4444" }}>
                         -{formatCurrency(d.amount)}
                       </Text>
-                    </View>
-                  </View>
+                    </XStack>
+                  </YStack>
                 ))}
-                <View className="flex-row justify-between mb-1">
-                  <Text size="xs" className="text-red-500 font-medium">
+                <XStack justifyContent="space-between" marginBottom={4}>
+                  <Text size="xs" style={{ color: "#EF4444", fontWeight: "500" }}>
                     Total Discount
                   </Text>
-                  <Text size="xs" className="text-red-500 font-medium">
+                  <Text size="xs" style={{ color: "#EF4444", fontWeight: "500" }}>
                     -{formatCurrency(receiptData.discounts.reduce((s, d) => s + d.amount, 0))}
                   </Text>
-                </View>
+                </XStack>
               </>
             )}
 
-            <Text size="xs" variant="muted" className="text-center my-1">
+            <Text size="xs" variant="muted" style={{ textAlign: "center", marginVertical: 4 }}>
               = = = = = = = = = = = = = = = = = = = =
             </Text>
-            <View className="flex-row justify-between mb-1">
+            <XStack justifyContent="space-between" marginBottom={4}>
               <Text variant="heading" size="base">
                 TOTAL
               </Text>
               <Text variant="heading" size="base">
                 {formatCurrency(receiptData.total)}
               </Text>
-            </View>
-            <Text size="xs" variant="muted" className="text-center my-1">
+            </XStack>
+            <Text size="xs" variant="muted" style={{ textAlign: "center", marginVertical: 4 }}>
               = = = = = = = = = = = = = = = = = = = =
             </Text>
 
@@ -286,21 +289,24 @@ export const ReceiptPreviewModal = ({
             <DashedSeparator />
 
             {/* Footer */}
-            <Text variant="heading" size="xs" className="text-center mt-2">
+            <Text variant="heading" size="xs" style={{ textAlign: "center", marginTop: 8 }}>
               Thank you for your patronage!
             </Text>
-            <Text variant="muted" className="text-center mt-1 mb-2" style={{ fontSize: 9 }}>
+            <Text
+              variant="muted"
+              style={{ textAlign: "center", marginTop: 4, marginBottom: 8, fontSize: 9 }}
+            >
               This does not serve as an official receipt
             </Text>
-          </View>
+          </YStack>
         </ScrollView>
 
         {/* Right Panel — Actions */}
-        <View style={{ flex: 1 }} className="justify-between">
+        <YStack flex={1} justifyContent="space-between">
           {/* Printer Info */}
-          <View>
-            <View className="bg-gray-50 rounded-lg p-3 mb-3">
-              <Text variant="muted" size="xs" className="mb-1">
+          <YStack>
+            <YStack backgroundColor="#F9FAFB" borderRadius={8} padding={12} marginBottom={12}>
+              <Text variant="muted" size="xs" style={{ marginBottom: 4 }}>
                 Print to:
               </Text>
               {receiptPrinter ? (
@@ -308,92 +314,108 @@ export const ReceiptPreviewModal = ({
                   <Text variant="heading" size="sm">
                     {receiptPrinter.name}
                   </Text>
-                  <View className="flex-row items-center mt-1">
-                    <View
-                      className={`w-2 h-2 rounded-full mr-1.5 ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+                  <XStack alignItems="center" marginTop={4}>
+                    <YStack
+                      width={8}
+                      height={8}
+                      borderRadius={4}
+                      backgroundColor={isConnected ? "#22C55E" : "#EF4444"}
+                      marginRight={6}
                     />
                     <Text size="xs" variant="muted">
                       {isConnected ? "Connected" : "Disconnected"}
                     </Text>
-                    <Text size="xs" variant="muted" className="ml-2">
+                    <Text size="xs" variant="muted" style={{ marginLeft: 8 }}>
                       {receiptPrinter.paperWidth}mm
                     </Text>
-                  </View>
+                  </XStack>
                 </>
               ) : (
                 <>
                   <Text variant="muted" size="sm">
                     No printer configured
                   </Text>
-                  <Text size="xs" className="text-blue-500 mt-1">
+                  <Text size="xs" style={{ color: "#0D87E1", marginTop: 4 }}>
                     Go to Settings
                   </Text>
                 </>
               )}
-            </View>
+            </YStack>
 
             {/* Separator */}
-            <View className="h-px bg-gray-200 my-2" />
+            <YStack height={1} backgroundColor="#E5E7EB" marginVertical={8} />
 
             {/* Change Due (cash only) */}
             {receiptData.paymentMethod === "cash" && (
               <>
-                <View className="my-3">
+                <YStack marginVertical={12}>
                   <Text variant="muted" size="xs">
                     Change Due
                   </Text>
-                  <Text size="2xl" className="font-bold text-green-600">
+                  <Text size="2xl" style={{ fontWeight: "700", color: "#16A34A" }}>
                     {formatCurrency(receiptData.change || 0)}
                   </Text>
-                </View>
-                <View className="h-px bg-gray-200 my-2" />
+                </YStack>
+                <YStack height={1} backgroundColor="#E5E7EB" marginVertical={8} />
               </>
             )}
-          </View>
+          </YStack>
 
           {/* Print Feedback */}
           {printResult === "success" && (
-            <View className="flex-row items-center bg-green-50 rounded-lg p-3 mb-2">
+            <XStack
+              alignItems="center"
+              backgroundColor="#F0FDF4"
+              borderRadius={8}
+              padding={12}
+              marginBottom={8}
+            >
               <Ionicons name="checkmark-circle" size={20} color="#16a34a" />
-              <Text size="sm" className="text-green-700 ml-2 font-medium">
+              <Text size="sm" style={{ color: "#15803D", marginLeft: 8, fontWeight: "500" }}>
                 Receipt sent to printer
               </Text>
-            </View>
+            </XStack>
           )}
           {printResult === "error" && (
-            <View className="flex-row items-center bg-red-50 rounded-lg p-3 mb-2">
+            <XStack
+              alignItems="center"
+              backgroundColor="#FEF2F2"
+              borderRadius={8}
+              padding={12}
+              marginBottom={8}
+            >
               <Ionicons name="alert-circle" size={20} color="#dc2626" />
-              <Text size="sm" className="text-red-700 ml-2 font-medium">
+              <Text size="sm" style={{ color: "#B91C1C", marginLeft: 8, fontWeight: "500" }}>
                 Print failed. Check printer connection.
               </Text>
-            </View>
+            </XStack>
           )}
 
           {/* Buttons */}
-          <View className="gap-2">
+          <YStack gap={8}>
             <Button variant="primary" disabled={!canPrint || isPrinting} onPress={handlePrint}>
               {isPrinting ? (
-                <View className="flex-row items-center justify-center">
+                <XStack alignItems="center" justifyContent="center">
                   <ActivityIndicator color="#fff" size="small" />
-                  <Text size="base" className="text-white font-semibold ml-2">
+                  <Text size="base" style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
                     Printing...
                   </Text>
-                </View>
+                </XStack>
               ) : (
-                <View className="flex-row items-center justify-center">
+                <XStack alignItems="center" justifyContent="center">
                   <Ionicons name="print" size={18} color="#fff" />
-                  <Text size="base" className="text-white font-semibold ml-2">
+                  <Text size="base" style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
                     {printResult === "success" ? "Print Again" : "Print Receipt"}
                   </Text>
-                </View>
+                </XStack>
               )}
             </Button>
             <Button variant="outline" onPress={onSkip}>
               {printResult === "success" ? "Done" : "Skip"}
             </Button>
-          </View>
-        </View>
-      </View>
+          </YStack>
+        </YStack>
+      </XStack>
     </Modal>
   );
 };

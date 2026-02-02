@@ -1,8 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type React from "react";
 import { forwardRef } from "react";
-import type { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { TouchableOpacity as UniwindTouchableOpacity } from "uniwind/components";
+import { TouchableOpacity, type TouchableOpacityProps } from "react-native";
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
@@ -16,18 +15,21 @@ interface IconButtonProps extends TouchableOpacityProps {
 
 const sizeConfig: Record<
   NonNullable<IconButtonProps["size"]>,
-  { padding: string; iconSize: number }
+  { padding: number; iconSize: number }
 > = {
-  sm: { padding: "p-1.5", iconSize: 18 },
-  md: { padding: "p-2", iconSize: 22 },
-  lg: { padding: "p-3", iconSize: 26 },
+  sm: { padding: 6, iconSize: 18 },
+  md: { padding: 8, iconSize: 22 },
+  lg: { padding: 12, iconSize: 26 },
 };
 
-const variantClasses: Record<NonNullable<IconButtonProps["variant"]>, string> = {
-  default: "bg-gray-100 rounded-full",
-  primary: "bg-blue-500 rounded-full",
-  ghost: "bg-transparent",
-  destructive: "bg-red-100 rounded-full",
+const variantStyles: Record<
+  NonNullable<IconButtonProps["variant"]>,
+  { bg: string; radius: number }
+> = {
+  default: { bg: "#F3F4F6", radius: 9999 },
+  primary: { bg: "#0D87E1", radius: 9999 },
+  ghost: { bg: "transparent", radius: 0 },
+  destructive: { bg: "#FEE2E2", radius: 9999 },
 };
 
 const defaultIconColors: Record<NonNullable<IconButtonProps["variant"]>, string> = {
@@ -39,24 +41,40 @@ const defaultIconColors: Record<NonNullable<IconButtonProps["variant"]>, string>
 
 export const IconButton = forwardRef<React.ElementRef<typeof TouchableOpacity>, IconButtonProps>(
   (
-    { icon, size = "md", variant = "default", iconColor, disabled, className = "", ...props },
+    {
+      icon,
+      size = "md",
+      variant = "default",
+      iconColor,
+      disabled,
+      className: _className,
+      style,
+      ...props
+    },
     ref,
   ) => {
-    const config = sizeConfig[size];
-    const classes =
-      `${variantClasses[variant]} ${config.padding} ${disabled ? "opacity-50" : ""} ${className}`.trim();
+    const cfg = sizeConfig[size];
+    const v = variantStyles[variant];
     const color = iconColor ?? defaultIconColors[variant];
 
     return (
-      <UniwindTouchableOpacity
+      <TouchableOpacity
         ref={ref}
-        className={classes}
         disabled={disabled}
         activeOpacity={0.7}
+        style={[
+          {
+            backgroundColor: v.bg,
+            borderRadius: v.radius,
+            padding: cfg.padding,
+            opacity: disabled ? 0.5 : 1,
+          },
+          style as any,
+        ]}
         {...props}
       >
-        <Ionicons name={icon} size={config.iconSize} color={color} />
-      </UniwindTouchableOpacity>
+        <Ionicons name={icon} size={cfg.iconSize} color={color} />
+      </TouchableOpacity>
     );
   },
 );

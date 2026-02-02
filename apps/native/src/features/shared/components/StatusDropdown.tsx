@@ -1,5 +1,5 @@
-import { Modal, Pressable } from "react-native";
-import { View } from "uniwind/components";
+import { Modal, Pressable, View } from "react-native";
+import { XStack, YStack } from "tamagui";
 import type { ConnectionStatus, SystemStatus } from "../hooks/useSystemStatus";
 import { Button, Text } from "./ui";
 
@@ -38,9 +38,9 @@ interface StatusRowProps {
 }
 
 const StatusRow = ({ label, connectionStatus, onRetry, retryLabel = "Retry" }: StatusRowProps) => (
-  <View className="py-2">
-    <View className="flex-row items-center justify-between">
-      <View className="flex-row items-center gap-2 flex-1">
+  <YStack paddingVertical={8}>
+    <XStack alignItems="center" justifyContent="space-between">
+      <XStack alignItems="center" gap={8} flex={1}>
         <View
           style={{
             width: 8,
@@ -49,28 +49,24 @@ const StatusRow = ({ label, connectionStatus, onRetry, retryLabel = "Retry" }: S
             backgroundColor: STATUS_DOT_COLORS[connectionStatus],
           }}
         />
-        <Text size="sm" className="text-gray-700">
+        <Text size="sm" style={{ color: "#374151" }}>
           {label}
         </Text>
-      </View>
-      <Text
-        size="xs"
-        style={{ color: STATUS_DOT_COLORS[connectionStatus] }}
-        className="font-medium"
-      >
+      </XStack>
+      <Text size="xs" style={{ color: STATUS_DOT_COLORS[connectionStatus], fontWeight: "500" }}>
         {STATUS_LABELS[connectionStatus]}
       </Text>
-    </View>
+    </XStack>
     {connectionStatus === "disconnected" && onRetry && (
-      <View className="ml-4 mt-1">
+      <YStack marginLeft={16} marginTop={4}>
         <Button size="sm" variant="outline" onPress={onRetry}>
-          <Text size="xs" className="text-blue-600">
+          <Text size="xs" style={{ color: "#0B6FBA" }}>
             {retryLabel}
           </Text>
         </Button>
-      </View>
+      </YStack>
     )}
-  </View>
+  </YStack>
 );
 
 export const StatusDropdown = ({ visible, onClose, status }: StatusDropdownProps) => {
@@ -95,12 +91,12 @@ export const StatusDropdown = ({ visible, onClose, status }: StatusDropdownProps
           }}
         >
           <Pressable onPress={(e) => e.stopPropagation()}>
-            <View className="p-4">
-              <Text variant="heading" size="sm" className="mb-2">
+            <YStack padding={16}>
+              <Text variant="heading" size="sm" style={{ marginBottom: 8 }}>
                 System Status
               </Text>
 
-              <View className="border-t border-gray-100">
+              <YStack borderTopWidth={1} borderColor="#F3F4F6">
                 <StatusRow
                   label="Server"
                   connectionStatus={status.server}
@@ -119,14 +115,14 @@ export const StatusDropdown = ({ visible, onClose, status }: StatusDropdownProps
                   onRetry={() => status.reconnectPrinter("kitchen")}
                   retryLabel="Reconnect"
                 />
-              </View>
+              </YStack>
 
-              <View className="border-t border-gray-100 pt-2 mt-1">
-                <Text size="xs" className={lastSync.isWarning ? "text-red-500" : "text-gray-400"}>
+              <YStack borderTopWidth={1} borderColor="#F3F4F6" paddingTop={8} marginTop={4}>
+                <Text size="xs" style={{ color: lastSync.isWarning ? "#EF4444" : "#9CA3AF" }}>
                   Last sync: {lastSync.text}
                 </Text>
-              </View>
-            </View>
+              </YStack>
+            </YStack>
           </Pressable>
         </View>
       </Pressable>

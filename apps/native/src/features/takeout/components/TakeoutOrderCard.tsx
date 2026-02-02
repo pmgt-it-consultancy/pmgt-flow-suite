@@ -1,5 +1,6 @@
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TouchableOpacity, View } from "uniwind/components";
+import { TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Badge, Button, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -49,34 +50,43 @@ export const TakeoutOrderCard = ({
 
   return (
     <TouchableOpacity
-      className="bg-white rounded-xl p-4 border border-gray-100 mb-3"
+      style={{
+        backgroundColor: "#FFFFFF",
+        borderRadius: 12,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: "#F3F4F6",
+        marginBottom: 12,
+      }}
       activeOpacity={0.7}
       onPress={() => onPress?.(id)}
     >
-      <View className="flex-row justify-between items-start mb-2">
-        <View>
-          <Text className="font-bold text-gray-900 text-base">{orderNumber}</Text>
+      <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={8}>
+        <YStack>
+          <Text style={{ fontWeight: "700", color: "#111827", fontSize: 16 }}>{orderNumber}</Text>
           {customerName ? (
-            <Text variant="muted" size="sm" className="mt-0.5">
+            <Text variant="muted" size="sm" style={{ marginTop: 2 }}>
               {customerName}
             </Text>
           ) : null}
-        </View>
+        </YStack>
         <Badge variant={config.variant} size="md">
           {config.label}
         </Badge>
-      </View>
+      </XStack>
 
-      <View className="flex-row justify-between items-center mt-2">
-        <View className="flex-row items-center gap-3">
+      <XStack justifyContent="space-between" alignItems="center" marginTop={8}>
+        <XStack alignItems="center" gap={12}>
           <Text variant="muted" size="sm">
             {time}
           </Text>
           <Text variant="muted" size="sm">
             {itemCount} items
           </Text>
-          <Text className="font-semibold text-gray-900 text-sm">{formatCurrency(netSales)}</Text>
-        </View>
+          <Text style={{ fontWeight: "600", color: "#111827", fontSize: 14 }}>
+            {formatCurrency(netSales)}
+          </Text>
+        </XStack>
 
         {config.nextLabel ? (
           <Button
@@ -87,7 +97,7 @@ export const TakeoutOrderCard = ({
             {config.nextLabel}
           </Button>
         ) : null}
-      </View>
+      </XStack>
     </TouchableOpacity>
   );
 };

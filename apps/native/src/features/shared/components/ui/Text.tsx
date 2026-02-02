@@ -1,37 +1,53 @@
 import type React from "react";
 import { forwardRef } from "react";
-import type { Text as RNText, TextProps as RNTextProps } from "react-native";
-import { Text as UniwindText } from "uniwind/components";
+import type { StyleProp, TextStyle } from "react-native";
+import { SizableText, styled } from "tamagui";
 
-interface TextProps extends RNTextProps {
-  variant?: "default" | "heading" | "subheading" | "muted" | "error" | "success";
-  size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl";
-  className?: string;
+const StyledText = styled(SizableText, {
+  fontFamily: "$body",
+  color: "$gray900",
+
+  variants: {
+    variant: {
+      default: { color: "$gray900" },
+      heading: { color: "$gray900", fontWeight: "600" },
+      subheading: { color: "$gray600" },
+      muted: { color: "$gray500" },
+      error: { color: "$red500" },
+      success: { color: "$green500" },
+    },
+    textSize: {
+      xs: { fontSize: 12 },
+      sm: { fontSize: 14 },
+      base: { fontSize: 16 },
+      lg: { fontSize: 18 },
+      xl: { fontSize: 20 },
+      "2xl": { fontSize: 24 },
+      "3xl": { fontSize: 30 },
+    },
+  } as const,
+
+  defaultVariants: {
+    variant: "default",
+    textSize: "base",
+  },
+});
+
+type TextVariant = "default" | "heading" | "subheading" | "muted" | "error" | "success";
+type TextSize = "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl";
+
+interface TextProps {
+  variant?: TextVariant;
+  size?: TextSize;
+  style?: StyleProp<TextStyle>;
+  children?: React.ReactNode;
+  numberOfLines?: number;
+  ellipsizeMode?: "head" | "middle" | "tail" | "clip";
 }
 
-const variantClasses: Record<NonNullable<TextProps["variant"]>, string> = {
-  default: "text-gray-900",
-  heading: "text-gray-900 font-semibold",
-  subheading: "text-gray-600",
-  muted: "text-gray-500",
-  error: "text-red-500",
-  success: "text-green-500",
-};
-
-const sizeClasses: Record<NonNullable<TextProps["size"]>, string> = {
-  xs: "text-xs",
-  sm: "text-sm",
-  base: "text-base",
-  lg: "text-lg",
-  xl: "text-xl",
-  "2xl": "text-2xl",
-  "3xl": "text-3xl",
-};
-
-export const Text = forwardRef<React.ElementRef<typeof RNText>, TextProps>(
-  ({ variant = "default", size = "base", className = "", ...props }, ref) => {
-    const classes = `${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim();
-    return <UniwindText ref={ref} className={classes} {...props} />;
+export const Text = forwardRef<React.ElementRef<typeof SizableText>, TextProps>(
+  ({ variant = "default", size = "base", ...props }, ref) => {
+    return <StyledText ref={ref} variant={variant} textSize={size} {...props} />;
   },
 );
 

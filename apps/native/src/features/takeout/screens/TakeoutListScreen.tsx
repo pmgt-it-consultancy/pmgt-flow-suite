@@ -4,7 +4,8 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 
-import { ActivityIndicator, FlatList, RefreshControl, View } from "uniwind/components";
+import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Button, IconButton, Text } from "../../shared/components/ui";
@@ -71,53 +72,69 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   }, [user?.storeId, navigation]);
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="#F3F4F6">
       {/* Header */}
-      <View className="bg-white px-4 py-4 flex-row justify-between items-center border-b border-gray-200">
-        <View className="flex-row items-center gap-3">
+      <XStack
+        backgroundColor="#FFFFFF"
+        paddingHorizontal={16}
+        paddingVertical={16}
+        justifyContent="space-between"
+        alignItems="center"
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+      >
+        <XStack alignItems="center" gap={12}>
           <IconButton icon="arrow-back" onPress={() => navigation.goBack()} />
-          <View>
+          <YStack>
             <Text variant="heading" size="lg">
               Takeout Orders
             </Text>
             <Text variant="muted" size="sm">
               Today's takeout orders
             </Text>
-          </View>
-        </View>
-        <View className="flex-row items-center gap-2">
+          </YStack>
+        </XStack>
+        <XStack alignItems="center" gap={8}>
           <SystemStatusBar />
           <Button size="md" onPress={handleNewOrder}>
-            <View className="flex-row items-center gap-1.5">
+            <XStack alignItems="center" gap={6}>
               <Ionicons name="add" size={20} color="#fff" />
-              <Text className="text-white font-semibold">New Order</Text>
-            </View>
+              <Text style={{ color: "#FFFFFF", fontWeight: "600" }}>New Order</Text>
+            </XStack>
           </Button>
-        </View>
-      </View>
+        </XStack>
+      </XStack>
 
       {takeoutOrders === undefined ? (
-        <View className="flex-1 justify-center items-center">
+        <YStack flex={1} justifyContent="center" alignItems="center">
           <ActivityIndicator size="large" color="#0D87E1" />
-        </View>
+        </YStack>
       ) : (
         <FlatList
           data={[...activeOrders, ...completedOrders]}
           keyExtractor={(item) => item._id}
           renderItem={({ item, index }) => (
-            <View>
+            <YStack>
               {/* Section headers */}
               {index === 0 && activeOrders.length > 0 ? (
-                <Text variant="heading" size="sm" className="px-4 pt-4 pb-2">
+                <Text
+                  variant="heading"
+                  size="sm"
+                  style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}
+                >
                   Active ({activeOrders.length})
                 </Text>
               ) : null}
               {index === activeOrders.length && completedOrders.length > 0 ? (
-                <Text variant="heading" size="sm" className="px-4 pt-4 pb-2">
+                <Text
+                  variant="heading"
+                  size="sm"
+                  style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}
+                >
                   Completed ({completedOrders.length})
                 </Text>
               ) : null}
-              <View className="px-4">
+              <YStack paddingHorizontal={16}>
                 <TakeoutOrderCard
                   id={item._id}
                   orderNumber={item.orderNumber}
@@ -129,20 +146,20 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
                   onAdvanceStatus={handleAdvanceStatus}
                   onPress={setSelectedOrderId}
                 />
-              </View>
-            </View>
+              </YStack>
+            </YStack>
           )}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
           ListEmptyComponent={
-            <View className="flex-1 items-center justify-center py-16">
+            <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
               <Ionicons name="bag-handle-outline" size={48} color="#D1D5DB" />
-              <Text variant="muted" className="mt-3">
+              <Text variant="muted" style={{ marginTop: 12 }}>
                 No takeout orders today
               </Text>
-              <Button size="md" className="mt-4" onPress={handleNewOrder}>
+              <Button size="md" style={{ marginTop: 16 }} onPress={handleNewOrder}>
                 Create First Order
               </Button>
-            </View>
+            </YStack>
           }
         />
       )}
@@ -152,7 +169,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
         orderId={selectedOrderId}
         onClose={() => setSelectedOrderId(null)}
       />
-    </View>
+    </YStack>
   );
 };
 

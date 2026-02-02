@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, View } from "uniwind/components";
+import { TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Button, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -37,54 +38,69 @@ export const CartFooter = ({
   const canCancel = !hasSentItems;
 
   return (
-    <View className="px-3 py-3 border-t border-gray-200 bg-white">
-      <View className="flex-row justify-between items-center mb-3">
-        <Text className="text-gray-500 font-medium text-sm">Subtotal</Text>
-        <Text className="text-gray-900 font-bold text-xl">{formatCurrency(subtotal)}</Text>
-      </View>
+    <YStack
+      paddingHorizontal={12}
+      paddingVertical={12}
+      borderTopWidth={1}
+      borderTopColor="#E5E7EB"
+      backgroundColor="#FFFFFF"
+    >
+      <XStack justifyContent="space-between" alignItems="center" marginBottom={12}>
+        <Text style={{ color: "#6B7280", fontWeight: "500", fontSize: 14 }}>Subtotal</Text>
+        <Text style={{ color: "#111827", fontWeight: "700", fontSize: 20 }}>
+          {formatCurrency(subtotal)}
+        </Text>
+      </XStack>
 
       <Button
         variant="success"
         size="lg"
         disabled={!canSendToKitchen}
         onPress={onSendToKitchen}
-        className={!canSendToKitchen ? "opacity-40" : ""}
+        style={!canSendToKitchen ? { opacity: 0.4 } : undefined}
       >
-        <View className="flex-row items-center">
+        <XStack alignItems="center">
           <Ionicons
             name={isTakeout ? "card-outline" : "restaurant-outline"}
             size={20}
             color="#FFF"
           />
-          <Text className="text-white font-bold ml-2 text-base">
+          <Text style={{ color: "#FFFFFF", fontWeight: "700", marginLeft: 8, fontSize: 16 }}>
             {isTakeout ? "Proceed to Payment" : "Send to Kitchen"}
           </Text>
-        </View>
+        </XStack>
       </Button>
 
       {canCloseTable && (
-        <Button variant="primary" size="lg" onPress={onCloseTable} className="mt-2">
-          <View className="flex-row items-center">
+        <Button variant="primary" size="lg" onPress={onCloseTable} style={{ marginTop: 8 }}>
+          <XStack alignItems="center">
             <Ionicons name="card-outline" size={20} color="#FFF" />
-            <Text className="text-white font-bold ml-2 text-base">Close Table</Text>
-          </View>
+            <Text style={{ color: "#FFFFFF", fontWeight: "700", marginLeft: 8, fontSize: 16 }}>
+              Close Table
+            </Text>
+          </XStack>
         </Button>
       )}
 
       {canViewBill && (
-        <Button variant="outline" size="lg" onPress={onViewBill} className="mt-2">
-          <View className="flex-row items-center">
+        <Button variant="outline" size="lg" onPress={onViewBill} style={{ marginTop: 8 }}>
+          <XStack alignItems="center">
             <Ionicons name="receipt-outline" size={20} color="#374151" />
-            <Text className="text-gray-700 font-bold ml-2 text-base">View Bill</Text>
-          </View>
+            <Text style={{ color: "#374151", fontWeight: "700", marginLeft: 8, fontSize: 16 }}>
+              View Bill
+            </Text>
+          </XStack>
         </Button>
       )}
 
       {canCancel && (
-        <TouchableOpacity onPress={onCancelOrder} className="mt-3 items-center py-1">
-          <Text className="text-red-500 font-medium text-sm">Cancel Order</Text>
+        <TouchableOpacity
+          onPress={onCancelOrder}
+          style={{ marginTop: 12, alignItems: "center", paddingVertical: 4 }}
+        >
+          <Text style={{ color: "#EF4444", fontWeight: "500", fontSize: 14 }}>Cancel Order</Text>
         </TouchableOpacity>
       )}
-    </View>
+    </YStack>
   );
 };

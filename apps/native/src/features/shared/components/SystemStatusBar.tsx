@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { View } from "uniwind/components";
+import { YStack } from "tamagui";
 import type { ConnectionStatus } from "../hooks/useSystemStatus";
 import { useSystemStatus } from "../hooks/useSystemStatus";
 import { StatusDropdown } from "./StatusDropdown";
@@ -48,7 +48,7 @@ const StatusToast = ({ serverStatus }: { serverStatus: ConnectionStatus }) => {
         alignItems: "center",
       }}
     >
-      <Text className="text-white font-bold" size="sm">
+      <Text style={{ color: "#FFFFFF", fontWeight: "700" }} size="sm">
         {toast.message}
       </Text>
     </Animated.View>

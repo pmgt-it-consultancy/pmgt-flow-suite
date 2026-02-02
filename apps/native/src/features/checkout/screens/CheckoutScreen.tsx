@@ -3,9 +3,9 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
-import { Alert } from "react-native";
+import { ActivityIndicator, Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { ActivityIndicator, View } from "uniwind/components";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -314,27 +314,39 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   if (isLoading || !isAuthenticated || !order) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-100">
+      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#F3F4F6">
         <ActivityIndicator size="large" color="#0D87E1" />
-      </View>
+      </YStack>
     );
   }
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="#F3F4F6">
       {/* Header */}
-      <View className="bg-white flex-row items-center px-4 py-3 border-b border-gray-200">
-        <IconButton icon="arrow-back" variant="ghost" onPress={handleBack} className="mr-2" />
-        <View className="flex-1">
+      <XStack
+        backgroundColor="#FFFFFF"
+        alignItems="center"
+        paddingHorizontal={16}
+        paddingVertical={12}
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+      >
+        <IconButton
+          icon="arrow-back"
+          variant="ghost"
+          onPress={handleBack}
+          style={{ marginRight: 8 }}
+        />
+        <YStack flex={1}>
           <Text variant="heading" size="lg">
             Checkout
           </Text>
           <Text variant="muted" size="sm">
             {tableName ?? `Order #${order.orderNumber}`}
           </Text>
-        </View>
+        </YStack>
         <SystemStatusBar />
-      </View>
+      </XStack>
 
       <KeyboardAwareScrollView style={{ flex: 1 }}>
         <OrderSummary items={activeItems} />
@@ -371,7 +383,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       </KeyboardAwareScrollView>
 
       {/* Footer */}
-      <View className="p-4 bg-white border-t border-gray-200">
+      <YStack padding={16} backgroundColor="#FFFFFF" borderTopWidth={1} borderColor="#E5E7EB">
         <Button
           variant="success"
           size="lg"
@@ -379,14 +391,14 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           disabled={isProcessing}
           onPress={handleProcessPayment}
         >
-          <View className="flex-row items-center">
+          <XStack alignItems="center">
             <Ionicons name="checkmark-circle" size={24} color="#FFF" />
-            <Text className="text-white font-semibold ml-2">
+            <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
               Complete Payment - {formatCurrency(order.netSales)}
             </Text>
-          </View>
+          </XStack>
         </Button>
-      </View>
+      </YStack>
 
       {/* Modals */}
       <DiscountModal
@@ -465,7 +477,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           }
         }}
       />
-    </View>
+    </YStack>
   );
 };
 

@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { View } from "uniwind/components";
+import { YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
 interface EmptyStateProps {
@@ -14,16 +14,16 @@ export const EmptyState = ({
   description,
 }: EmptyStateProps) => {
   return (
-    <View className="flex-1 justify-center items-center p-8">
+    <YStack flex={1} justifyContent="center" alignItems="center" padding={32}>
       <Ionicons name={icon} size={64} color="#D1D5DB" />
-      <Text variant="heading" size="lg" className="text-gray-500 mt-4">
+      <Text variant="heading" size="lg" style={{ color: "#6B7280", marginTop: 16 }}>
         {title}
       </Text>
       {description && (
-        <Text variant="muted" size="sm" className="mt-2 text-center">
+        <Text variant="muted" size="sm" style={{ marginTop: 8, textAlign: "center" }}>
           {description}
         </Text>
       )}
-    </View>
+    </YStack>
   );
 };

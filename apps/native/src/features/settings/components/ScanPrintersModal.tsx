@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
-import { ActivityIndicator, TouchableOpacity, View } from "uniwind/components";
+import { ActivityIndicator, Alert, TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Button, Modal, Text } from "../../shared/components/ui";
 import type { BluetoothDevice } from "../services/bluetoothPrinter";
 import { usePrinterStore } from "../stores/usePrinterStore";
@@ -83,41 +83,47 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
       showCloseButton
     >
       {devices.length > 0 && (
-        <View>
+        <YStack>
           {devices.map((device) => (
-            <View key={device.address} className="bg-gray-50 rounded-lg p-3 mb-2">
-              <Text className="font-semibold">{device.name || "Unknown Device"}</Text>
-              <Text className="text-xs text-gray-500">{device.address}</Text>
-              <View className="flex-row mt-2 gap-2">
+            <YStack
+              key={device.address}
+              backgroundColor="#F9FAFB"
+              borderRadius={8}
+              padding={12}
+              marginBottom={8}
+            >
+              <Text style={{ fontWeight: "600" }}>{device.name || "Unknown Device"}</Text>
+              <Text style={{ fontSize: 12, color: "#6B7280" }}>{device.address}</Text>
+              <XStack marginTop={8} gap={8}>
                 <Button variant="outline" size="sm" onPress={() => handleAdd(device, "receipt")}>
                   Add as Receipt
                 </Button>
                 <Button variant="outline" size="sm" onPress={() => handleAdd(device, "kitchen")}>
                   Add as Kitchen
                 </Button>
-              </View>
-            </View>
+              </XStack>
+            </YStack>
           ))}
-        </View>
+        </YStack>
       )}
 
       {isScanning && (
-        <View className="items-center py-4">
+        <YStack alignItems="center" paddingVertical={16}>
           <ActivityIndicator size="small" />
-          <Text className="mt-2 text-gray-500 text-sm">
+          <Text style={{ marginTop: 8, color: "#6B7280", fontSize: 14 }}>
             {devices.length > 0 ? "Scanning for more devices..." : "Scanning..."}
           </Text>
-        </View>
+        </YStack>
       )}
 
       {!isScanning && devices.length === 0 && (
-        <View className="items-center py-8">
+        <YStack alignItems="center" paddingVertical={32}>
           <Ionicons name="bluetooth-outline" size={40} color="#9CA3AF" />
-          <Text className="mt-3 text-gray-500">No devices found</Text>
-        </View>
+          <Text style={{ marginTop: 12, color: "#6B7280" }}>No devices found</Text>
+        </YStack>
       )}
 
-      <Button variant="outline" onPress={startScan} disabled={isScanning} className="mt-4">
+      <Button variant="outline" onPress={startScan} disabled={isScanning} style={{ marginTop: 16 }}>
         Scan Again
       </Button>
     </Modal>

@@ -1,4 +1,4 @@
-import { View } from "uniwind/components";
+import { XStack, YStack } from "tamagui";
 import { Card, Separator, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -22,41 +22,47 @@ export const TotalsSummary = ({
   const formatCurrency = useFormatCurrency();
 
   return (
-    <View className="px-4 py-3">
+    <YStack paddingHorizontal={16} paddingVertical={12}>
       <Card variant="elevated">
-        <View className="flex-row justify-between py-2">
+        <XStack justifyContent="space-between" paddingVertical={8}>
           <Text variant="muted">Gross Sales</Text>
-          <Text className="text-gray-900 font-medium">{formatCurrency(grossSales)}</Text>
-        </View>
+          <Text style={{ color: "#111827", fontWeight: "500" }}>{formatCurrency(grossSales)}</Text>
+        </XStack>
 
-        <View className="flex-row justify-between py-2">
+        <XStack justifyContent="space-between" paddingVertical={8}>
           <Text variant="muted">VAT (12%)</Text>
-          <Text className="text-gray-900 font-medium">{formatCurrency(vatAmount)}</Text>
-        </View>
+          <Text style={{ color: "#111827", fontWeight: "500" }}>{formatCurrency(vatAmount)}</Text>
+        </XStack>
 
         {discountAmount > 0 && (
-          <View className="flex-row justify-between py-2">
-            <Text className="text-green-500">Discount</Text>
-            <Text className="text-green-500 font-medium">-{formatCurrency(discountAmount)}</Text>
-          </View>
+          <XStack justifyContent="space-between" paddingVertical={8}>
+            <Text style={{ color: "#22C55E" }}>Discount</Text>
+            <Text style={{ color: "#22C55E", fontWeight: "500" }}>
+              -{formatCurrency(discountAmount)}
+            </Text>
+          </XStack>
         )}
 
-        <Separator className="my-2" />
+        <Separator style={{ marginVertical: 8 }} />
 
-        <View className="flex-row justify-between py-2">
+        <XStack justifyContent="space-between" paddingVertical={8}>
           <Text variant="heading" size="lg">
             Total Due
           </Text>
-          <Text className="text-blue-500 font-bold text-xl">{formatCurrency(netSales)}</Text>
-        </View>
+          <Text style={{ color: "#0D87E1", fontWeight: "700", fontSize: 20 }}>
+            {formatCurrency(netSales)}
+          </Text>
+        </XStack>
 
         {showChange && (
-          <View className="flex-row justify-between py-2">
-            <Text className="text-green-500 font-medium text-base">Change</Text>
-            <Text className="text-green-500 font-bold text-lg">{formatCurrency(change)}</Text>
-          </View>
+          <XStack justifyContent="space-between" paddingVertical={8}>
+            <Text style={{ color: "#22C55E", fontWeight: "500", fontSize: 16 }}>Change</Text>
+            <Text style={{ color: "#22C55E", fontWeight: "700", fontSize: 18 }}>
+              {formatCurrency(change)}
+            </Text>
+          </XStack>
         )}
       </Card>
-    </View>
+    </YStack>
   );
 };

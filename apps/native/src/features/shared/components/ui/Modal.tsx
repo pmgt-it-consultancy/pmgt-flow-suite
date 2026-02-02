@@ -1,8 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, type ModalProps as RNModalProps, ScrollView, StyleSheet } from "react-native";
+import {
+  Pressable,
+  Modal as RNModal,
+  type ModalProps as RNModalProps,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-import { Modal as RNModal, TouchableOpacity, View } from "uniwind/components";
+import { XStack, YStack } from "tamagui";
 import { Text } from "./Text";
 
 interface ModalProps extends RNModalProps {
@@ -25,23 +32,41 @@ export const Modal = ({
   children,
   ...props
 }: ModalProps) => {
-  const positionClasses = position === "center" ? "justify-center items-center" : "justify-end";
-
-  const contentClasses =
-    position === "center"
-      ? wide
-        ? "bg-white rounded-2xl mx-4 w-[90%]"
-        : "bg-white rounded-2xl mx-4 max-w-md w-full"
-      : "bg-white rounded-t-2xl max-h-[80%]";
+  const isCenter = position === "center";
 
   return (
     <RNModal transparent animationType="slide" {...props}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <View className={`flex-1 ${positionClasses}`}>
-          {/* Backdrop — absolute so it doesn't wrap content */}
-          <Pressable onPress={onClose} style={StyleSheet.absoluteFill} className="bg-black/50" />
-          {/* Content — no touchable wrapper, so ScrollViews work freely */}
-          <KeyboardAvoidingView behavior="padding" className={contentClasses}>
+        <YStack
+          flex={1}
+          {...(isCenter
+            ? { justifyContent: "center", alignItems: "center" }
+            : { justifyContent: "flex-end" })}
+        >
+          {/* Backdrop */}
+          <Pressable
+            onPress={onClose}
+            style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(0,0,0,0.5)" }]}
+          />
+          {/* Content */}
+          <KeyboardAvoidingView
+            behavior="padding"
+            style={
+              isCenter
+                ? {
+                    backgroundColor: "#FFFFFF",
+                    borderRadius: 16,
+                    marginHorizontal: 16,
+                    ...(wide ? { width: "90%" } : { maxWidth: 448, width: "100%" }),
+                  }
+                : {
+                    backgroundColor: "#FFFFFF",
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16,
+                    maxHeight: "80%",
+                  }
+            }
+          >
             <ScrollView
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
@@ -49,34 +74,34 @@ export const Modal = ({
               contentContainerStyle={{ padding: 20 }}
             >
               {(title || showCloseButton) && (
-                <View className="flex-row justify-between items-center mb-4">
-                  <View className="flex-1">
+                <XStack justifyContent="space-between" alignItems="center" marginBottom={16}>
+                  <YStack flex={1}>
                     {title && (
                       <Text variant="heading" size="lg">
                         {title}
                       </Text>
                     )}
                     {description && (
-                      <Text variant="muted" size="sm" className="mt-1">
+                      <Text variant="muted" size="sm" style={{ marginTop: 4 }}>
                         {description}
                       </Text>
                     )}
-                  </View>
+                  </YStack>
                   {showCloseButton && onClose && (
                     <TouchableOpacity
                       onPress={onClose}
-                      className="p-2 -mr-2"
+                      style={{ padding: 8, marginRight: -8 }}
                       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >
                       <Ionicons name="close" size={24} color="#6B7280" />
                     </TouchableOpacity>
                   )}
-                </View>
+                </XStack>
               )}
               {children}
             </ScrollView>
           </KeyboardAvoidingView>
-        </View>
+        </YStack>
       </GestureHandlerRootView>
     </RNModal>
   );

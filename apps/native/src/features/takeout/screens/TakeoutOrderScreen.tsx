@@ -4,8 +4,8 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 
-import { Alert } from "react-native";
-import { ActivityIndicator, FlatList, View } from "uniwind/components";
+import { ActivityIndicator, Alert, FlatList } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import type { SelectedModifier } from "../../orders/components";
 import {
@@ -389,49 +389,70 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
   if (isLoading || !isAuthenticated) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-100">
+      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#F3F4F6">
         <ActivityIndicator size="large" color="#0D87E1" />
-      </View>
+      </YStack>
     );
   }
 
   const subtitle = isDraftMode ? "New Takeout Order" : "Takeout";
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="#F3F4F6">
       <OrderHeader
         title={customerName.trim() || "Takeout"}
         subtitle={subtitle}
         onBack={handleBack}
       />
 
-      <View className="flex-1 flex-row">
+      <XStack flex={1}>
         {/* Menu Section */}
-        <View className="flex-2 border-r border-gray-200">
+        <YStack flex={2} borderRightWidth={1} borderColor="#E5E7EB">
           {/* Customer Name Input */}
           {isDraftMode ? (
-            <View className="px-3 py-2 bg-white border-b border-gray-200">
+            <YStack
+              paddingHorizontal={12}
+              paddingVertical={8}
+              backgroundColor="#FFFFFF"
+              borderBottomWidth={1}
+              borderColor="#E5E7EB"
+            >
               <Input
                 placeholder="Customer name (optional)"
                 value={customerName}
                 onChangeText={setCustomerName}
               />
-            </View>
+            </YStack>
           ) : null}
 
           <CategoryGrid storeId={storeId} products={products} onSelectProduct={handleAddProduct} />
-        </View>
+        </YStack>
 
         {/* Cart Section */}
-        <View className="flex-1 bg-white">
-          <View className="flex-row justify-between items-center px-3 py-2.5 border-b border-gray-200 bg-gray-50">
+        <YStack flex={1} backgroundColor="#FFFFFF">
+          <XStack
+            justifyContent="space-between"
+            alignItems="center"
+            paddingHorizontal={12}
+            paddingVertical={10}
+            borderBottomWidth={1}
+            borderColor="#E5E7EB"
+            backgroundColor="#F9FAFB"
+          >
             <Text variant="heading" size="sm">
               Order Items
             </Text>
-            <View className="bg-orange-500 rounded-full px-2.5 py-0.5">
-              <Text className="text-white font-bold text-xs">{cartItemCount}</Text>
-            </View>
-          </View>
+            <YStack
+              backgroundColor="#F97316"
+              borderRadius={9999}
+              paddingHorizontal={10}
+              paddingVertical={2}
+            >
+              <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 12 }}>
+                {cartItemCount}
+              </Text>
+            </YStack>
+          </XStack>
 
           <FlatList
             data={activeItems}
@@ -452,12 +473,12 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
               />
             )}
             ListEmptyComponent={
-              <View className="flex-1 items-center justify-center py-16">
+              <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
                 <Ionicons name="cart-outline" size={48} color="#D1D5DB" />
-                <Text variant="muted" className="mt-2">
+                <Text variant="muted" style={{ marginTop: 8 }}>
                   No items in order
                 </Text>
-              </View>
+              </YStack>
             }
           />
 
@@ -473,8 +494,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             onViewBill={undefined}
             onCancelOrder={handleCancelOrder}
           />
-        </View>
-      </View>
+        </YStack>
+      </XStack>
 
       <ModifierSelectionModal
         visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length > 0}
@@ -503,7 +524,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         onConfirm={handleConfirmVoid}
         onClose={() => setVoidingItem(null)}
       />
-    </View>
+    </YStack>
   );
 };
 

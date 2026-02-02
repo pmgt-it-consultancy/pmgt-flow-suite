@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { TextInput, View } from "uniwind/components";
+import { TextInput } from "react-native";
+import { XStack, YStack } from "tamagui";
 
 interface SearchBarProps {
   value: string;
@@ -13,11 +14,17 @@ export const SearchBar = ({
   placeholder = "Search products...",
 }: SearchBarProps) => {
   return (
-    <View className="px-3 pt-3 pb-1">
-      <View className="flex-row items-center bg-gray-100 rounded-xl px-3 py-2.5">
+    <YStack paddingHorizontal={12} paddingTop={12} paddingBottom={4}>
+      <XStack
+        alignItems="center"
+        backgroundColor="#F3F4F6"
+        borderRadius={12}
+        paddingHorizontal={12}
+        paddingVertical={10}
+      >
         <Ionicons name="search" size={18} color="#9CA3AF" />
         <TextInput
-          className="flex-1 ml-2.5 text-sm text-gray-900"
+          style={{ flex: 1, marginLeft: 10, fontSize: 14, color: "#111827" }}
           placeholder={placeholder}
           placeholderTextColor="#9CA3AF"
           value={value}
@@ -31,7 +38,7 @@ export const SearchBar = ({
             onPress={() => onChangeText("")}
           />
         )}
-      </View>
-    </View>
+      </XStack>
+    </YStack>
   );
 };

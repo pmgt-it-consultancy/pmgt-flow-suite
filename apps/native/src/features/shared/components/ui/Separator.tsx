@@ -1,18 +1,18 @@
-import type { ViewProps } from "react-native";
-import { View } from "uniwind/components";
+import type { StyleProp, ViewStyle } from "react-native";
+import { YStack } from "tamagui";
 
-interface SeparatorProps extends ViewProps {
+interface SeparatorProps {
   orientation?: "horizontal" | "vertical";
-  className?: string;
+  style?: StyleProp<ViewStyle>;
 }
 
-export const Separator = ({
-  orientation = "horizontal",
-  className = "",
-  ...props
-}: SeparatorProps) => {
-  const orientationClasses =
-    orientation === "horizontal" ? "h-px w-full bg-gray-200" : "w-px h-full bg-gray-200";
-
-  return <View className={`${orientationClasses} ${className}`.trim()} {...props} />;
+export const Separator = ({ orientation = "horizontal", style }: SeparatorProps) => {
+  return (
+    <YStack
+      height={orientation === "horizontal" ? 1 : "100%"}
+      width={orientation === "horizontal" ? "100%" : 1}
+      backgroundColor="#E5E7EB"
+      style={style}
+    />
+  );
 };

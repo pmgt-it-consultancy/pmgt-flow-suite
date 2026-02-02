@@ -1,10 +1,13 @@
 import type React from "react";
 import { forwardRef } from "react";
-import type { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { ActivityIndicator, TouchableOpacity as UniwindTouchableOpacity } from "uniwind/components";
+import {
+  ActivityIndicator,
+  TouchableOpacity as RNTouchableOpacity,
+  type TouchableOpacity,
+} from "react-native";
 import { Text } from "./Text";
 
-interface ButtonProps extends TouchableOpacityProps {
+interface ButtonProps extends React.ComponentProps<typeof RNTouchableOpacity> {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "destructive" | "success";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
@@ -12,34 +15,49 @@ interface ButtonProps extends TouchableOpacityProps {
   className?: string;
 }
 
-const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary: "bg-blue-500 active:bg-blue-600",
-  secondary: "bg-gray-200 active:bg-gray-300",
-  outline: "bg-transparent border border-gray-300 active:bg-gray-100",
-  ghost: "bg-transparent active:bg-gray-100",
-  destructive: "bg-red-500 active:bg-red-600",
-  success: "bg-green-500 active:bg-green-600",
+const variantStyles: Record<
+  NonNullable<ButtonProps["variant"]>,
+  { bg: string; activeBg: string }
+> = {
+  primary: { bg: "#0D87E1", activeBg: "#0B6FBA" },
+  secondary: { bg: "#E5E7EB", activeBg: "#D1D5DB" },
+  outline: { bg: "transparent", activeBg: "#F3F4F6" },
+  ghost: { bg: "transparent", activeBg: "#F3F4F6" },
+  destructive: { bg: "#EF4444", activeBg: "#DC2626" },
+  success: { bg: "#22C55E", activeBg: "#16A34A" },
 };
 
-const textVariantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary: "text-white font-semibold",
-  secondary: "text-gray-900 font-medium",
-  outline: "text-gray-900 font-medium",
-  ghost: "text-gray-900 font-medium",
-  destructive: "text-white font-semibold",
-  success: "text-white font-semibold",
+const textColors: Record<NonNullable<ButtonProps["variant"]>, string> = {
+  primary: "#FFFFFF",
+  secondary: "#111827",
+  outline: "#111827",
+  ghost: "#111827",
+  destructive: "#FFFFFF",
+  success: "#FFFFFF",
 };
 
-const sizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
-  sm: "px-3 py-2 rounded-md",
-  md: "px-4 py-3 rounded-lg",
-  lg: "px-6 py-4 rounded-xl",
+const textWeights: Record<NonNullable<ButtonProps["variant"]>, "600" | "500"> = {
+  primary: "600",
+  secondary: "500",
+  outline: "500",
+  ghost: "500",
+  destructive: "600",
+  success: "600",
 };
 
-const textSizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
-  sm: "text-sm",
-  md: "text-base",
-  lg: "text-lg",
+const sizeStyles: Record<
+  NonNullable<ButtonProps["size"]>,
+  { px: number; py: number; radius: number }
+> = {
+  sm: { px: 12, py: 8, radius: 6 },
+  md: { px: 16, py: 12, radius: 8 },
+  lg: { px: 24, py: 16, radius: 12 },
+};
+
+const textSizes: Record<NonNullable<ButtonProps["size"]>, number> = {
+  sm: 14,
+  md: 16,
+  lg: 18,
 };
 
 export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, ButtonProps>(
@@ -49,23 +67,36 @@ export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, Butt
       size = "md",
       loading = false,
       disabled,
-      className = "",
+      className: _className,
       children,
+      style,
       ...props
     },
     ref,
   ) => {
     const isDisabled = disabled || loading;
-    const containerClasses =
-      `flex-row items-center justify-center ${variantClasses[variant]} ${sizeClasses[size]} ${isDisabled ? "opacity-50" : ""} ${className}`.trim();
-    const textClasses = `${textVariantClasses[variant]} ${textSizeClasses[size]}`.trim();
+    const v = variantStyles[variant];
+    const s = sizeStyles[size];
 
     return (
-      <UniwindTouchableOpacity
+      <RNTouchableOpacity
         ref={ref}
-        className={containerClasses}
         disabled={isDisabled}
         activeOpacity={0.7}
+        style={[
+          {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: v.bg,
+            paddingHorizontal: s.px,
+            paddingVertical: s.py,
+            borderRadius: s.radius,
+            opacity: isDisabled ? 0.5 : 1,
+            ...(variant === "outline" ? { borderWidth: 1, borderColor: "#D1D5DB" } : {}),
+          },
+          style as any,
+        ]}
         {...props}
       >
         {loading ? (
@@ -78,13 +109,20 @@ export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, Butt
             size="small"
           />
         ) : typeof children === "string" ? (
-          <Text className={textClasses} numberOfLines={1}>
+          <Text
+            style={{
+              color: textColors[variant],
+              fontWeight: textWeights[variant],
+              fontSize: textSizes[size],
+            }}
+            numberOfLines={1}
+          >
             {children}
           </Text>
         ) : (
           children
         )}
-      </UniwindTouchableOpacity>
+      </RNTouchableOpacity>
     );
   },
 );

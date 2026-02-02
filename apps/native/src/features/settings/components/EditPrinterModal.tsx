@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { TextInput, View } from "uniwind/components";
+import { TextInput } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Button, Chip, Modal, Text } from "../../shared/components/ui";
 import type { PrinterConfig } from "../services/printerStorage";
 import { usePrinterStore } from "../stores/usePrinterStore";
@@ -39,41 +40,54 @@ export const EditPrinterModal = ({ visible, printer, onClose }: EditPrinterModal
       showCloseButton
       onClose={onClose}
     >
-      <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Name</Text>
+      <YStack marginBottom={16}>
+        <Text style={{ fontSize: 14, fontWeight: "500", color: "#374151", marginBottom: 4 }}>
+          Name
+        </Text>
         <TextInput
-          className="bg-gray-50 rounded-lg px-3 py-3 border border-gray-200"
+          style={{
+            backgroundColor: "#F9FAFB",
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 12,
+            borderWidth: 1,
+            borderColor: "#E5E7EB",
+          }}
           value={name}
           onChangeText={setName}
           placeholder="Printer name"
         />
-      </View>
+      </YStack>
 
-      <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Role</Text>
-        <View className="flex-row gap-2">
+      <YStack marginBottom={16}>
+        <Text style={{ fontSize: 14, fontWeight: "500", color: "#374151", marginBottom: 4 }}>
+          Role
+        </Text>
+        <XStack gap={8}>
           <Chip selected={role === "receipt"} onPress={() => setRole("receipt")}>
             Receipt
           </Chip>
           <Chip selected={role === "kitchen"} onPress={() => setRole("kitchen")}>
             Kitchen
           </Chip>
-        </View>
-      </View>
+        </XStack>
+      </YStack>
 
-      <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Paper Width</Text>
-        <View className="flex-row gap-2">
+      <YStack marginBottom={16}>
+        <Text style={{ fontSize: 14, fontWeight: "500", color: "#374151", marginBottom: 4 }}>
+          Paper Width
+        </Text>
+        <XStack gap={8}>
           <Chip selected={paperWidth === 58} onPress={() => setPaperWidth(58)}>
             58mm
           </Chip>
           <Chip selected={paperWidth === 80} onPress={() => setPaperWidth(80)}>
             80mm
           </Chip>
-        </View>
-      </View>
+        </XStack>
+      </YStack>
 
-      <Button variant="primary" onPress={handleSave} className="w-full">
+      <Button variant="primary" onPress={handleSave} style={{ width: "100%" }}>
         Save Changes
       </Button>
     </Modal>

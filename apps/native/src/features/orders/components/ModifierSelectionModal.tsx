@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useCallback, useMemo, useState } from "react";
-import { ScrollView, TextInput, TouchableOpacity, View } from "uniwind/components";
+import { ScrollView, TextInput, TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Button, IconButton, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -143,33 +144,53 @@ export const ModifierSelectionModal = ({
 
   return (
     <Modal visible={visible} title="Customize Order" onClose={onClose} onRequestClose={onClose}>
-      <ScrollView className="max-h-[400px]">
+      <ScrollView style={{ maxHeight: 400 }}>
         {/* Product Header */}
-        <Text variant="heading" size="xl" className="mb-1">
+        <Text variant="heading" size="xl" style={{ marginBottom: 4 }}>
           {product.name}
         </Text>
-        <Text className="text-blue-500 font-medium text-lg mb-4">
+        <Text style={{ color: "#0D87E1", fontWeight: "500", fontSize: 18, marginBottom: 16 }}>
           {formatCurrency(product.price)}
         </Text>
 
         {/* Modifier Groups */}
         {modifierGroups.map((group) => (
-          <View key={group.groupId} className="mb-4">
-            <View className="flex-row items-center mb-2">
-              <Text className="text-gray-900 font-semibold text-base">{group.groupName}</Text>
+          <YStack key={group.groupId} marginBottom={16}>
+            <XStack alignItems="center" marginBottom={8}>
+              <Text style={{ color: "#111827", fontWeight: "600", fontSize: 16 }}>
+                {group.groupName}
+              </Text>
               {group.minSelections > 0 ? (
-                <View className="bg-red-100 rounded px-2 py-0.5 ml-2">
-                  <Text className="text-red-600 text-xs font-medium">Required</Text>
-                </View>
+                <YStack
+                  backgroundColor="#FEE2E2"
+                  borderRadius={4}
+                  paddingHorizontal={8}
+                  paddingVertical={2}
+                  marginLeft={8}
+                >
+                  <Text style={{ color: "#DC2626", fontSize: 12, fontWeight: "500" }}>
+                    Required
+                  </Text>
+                </YStack>
               ) : (
-                <View className="bg-gray-100 rounded px-2 py-0.5 ml-2">
-                  <Text className="text-gray-500 text-xs font-medium">Optional</Text>
-                </View>
+                <YStack
+                  backgroundColor="#F3F4F6"
+                  borderRadius={4}
+                  paddingHorizontal={8}
+                  paddingVertical={2}
+                  marginLeft={8}
+                >
+                  <Text style={{ color: "#6B7280", fontSize: 12, fontWeight: "500" }}>
+                    Optional
+                  </Text>
+                </YStack>
               )}
               {group.selectionType === "multi" && group.maxSelections && (
-                <Text className="text-gray-400 text-xs ml-2">(max {group.maxSelections})</Text>
+                <Text style={{ color: "#9CA3AF", fontSize: 12, marginLeft: 8 }}>
+                  (max {group.maxSelections})
+                </Text>
               )}
-            </View>
+            </XStack>
 
             {group.options.map((option) => {
               const isSelected = selections[group.groupId]?.has(option.optionId) ?? false;
@@ -178,15 +199,22 @@ export const ModifierSelectionModal = ({
               return (
                 <TouchableOpacity
                   key={option.optionId}
-                  className={`flex-row items-center justify-between py-3 px-3 mb-1 rounded-lg ${
-                    isSelected
-                      ? "bg-blue-50 border border-blue-200"
-                      : "bg-gray-50 border border-gray-100"
-                  }`}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingVertical: 12,
+                    paddingHorizontal: 12,
+                    marginBottom: 4,
+                    borderRadius: 8,
+                    backgroundColor: isSelected ? "#EFF6FF" : "#F9FAFB",
+                    borderWidth: 1,
+                    borderColor: isSelected ? "#BFDBFE" : "#F3F4F6",
+                  }}
                   onPress={() => handleSelectOption(group, option.optionId)}
                   activeOpacity={0.7}
                 >
-                  <View className="flex-row items-center flex-1">
+                  <XStack alignItems="center" flex={1}>
                     <Ionicons
                       name={
                         isSelected
@@ -201,14 +229,23 @@ export const ModifierSelectionModal = ({
                       color={isSelected ? "#3B82F6" : "#9CA3AF"}
                     />
                     <Text
-                      className={`ml-3 text-sm ${isSelected ? "text-gray-900 font-medium" : "text-gray-700"}`}
+                      style={{
+                        marginLeft: 12,
+                        fontSize: 14,
+                        color: isSelected ? "#111827" : "#374151",
+                        fontWeight: isSelected ? "500" : "400",
+                      }}
                     >
                       {option.name}
                     </Text>
-                  </View>
+                  </XStack>
                   {option.priceAdjustment !== 0 && (
                     <Text
-                      className={`text-sm ${isSelected ? "text-blue-600 font-medium" : "text-gray-500"}`}
+                      style={{
+                        fontSize: 14,
+                        color: isSelected ? "#2563EB" : "#6B7280",
+                        fontWeight: isSelected ? "500" : "400",
+                      }}
                     >
                       +{formatCurrency(option.priceAdjustment)}
                     </Text>
@@ -216,13 +253,13 @@ export const ModifierSelectionModal = ({
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </YStack>
         ))}
 
         {/* Quantity */}
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-gray-700 font-medium">Quantity</Text>
-          <View className="flex-row items-center bg-gray-100 rounded-lg">
+        <XStack justifyContent="space-between" alignItems="center" marginBottom={16}>
+          <Text style={{ color: "#374151", fontWeight: "500" }}>Quantity</Text>
+          <XStack alignItems="center" backgroundColor="#F3F4F6" borderRadius={8}>
             <IconButton
               icon="remove"
               size="md"
@@ -230,7 +267,11 @@ export const ModifierSelectionModal = ({
               iconColor="#EF4444"
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
             />
-            <Text className="text-gray-900 font-semibold text-lg px-5">{quantity}</Text>
+            <Text
+              style={{ color: "#111827", fontWeight: "600", fontSize: 18, paddingHorizontal: 20 }}
+            >
+              {quantity}
+            </Text>
             <IconButton
               icon="add"
               size="md"
@@ -238,14 +279,24 @@ export const ModifierSelectionModal = ({
               iconColor="#22C55E"
               onPress={() => setQuantity(quantity + 1)}
             />
-          </View>
-        </View>
+          </XStack>
+        </XStack>
 
         {/* Notes */}
-        <View className="mb-4">
-          <Text className="text-gray-700 font-medium mb-2">Notes (optional)</Text>
+        <YStack marginBottom={16}>
+          <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8 }}>
+            Notes (optional)
+          </Text>
           <TextInput
-            className="border border-gray-200 rounded-lg p-3 text-base min-h-[60px] text-top"
+            style={{
+              borderWidth: 1,
+              borderColor: "#E5E7EB",
+              borderRadius: 8,
+              padding: 12,
+              fontSize: 16,
+              minHeight: 60,
+              textAlignVertical: "top",
+            }}
             placeholder="E.g., no ice, extra spicy..."
             placeholderTextColor="#9CA3AF"
             value={notes}
@@ -254,22 +305,30 @@ export const ModifierSelectionModal = ({
             returnKeyType="done"
             blurOnSubmit
           />
-        </View>
+        </YStack>
       </ScrollView>
 
       {/* Footer */}
-      <View className="flex-row justify-between items-center pt-4 border-t border-gray-200">
-        <Text className="text-gray-900 font-bold text-lg">Total: {formatCurrency(lineTotal)}</Text>
+      <XStack
+        justifyContent="space-between"
+        alignItems="center"
+        paddingTop={16}
+        borderTopWidth={1}
+        borderTopColor="#E5E7EB"
+      >
+        <Text style={{ color: "#111827", fontWeight: "700", fontSize: 18 }}>
+          Total: {formatCurrency(lineTotal)}
+        </Text>
         <Button
           variant="primary"
           loading={isLoading}
           disabled={isLoading || !isValid}
           onPress={handleConfirm}
-          className="min-w-[120px]"
+          style={{ minWidth: 120 }}
         >
           Add to Order
         </Button>
-      </View>
+      </XStack>
     </Modal>
   );
 };

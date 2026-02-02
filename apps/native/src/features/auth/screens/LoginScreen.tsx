@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { View } from "uniwind/components";
+import { YStack } from "tamagui";
 import { LoginForm } from "../components";
 import { useAuth } from "../context";
 
@@ -27,9 +27,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       style={{ flex: 1, backgroundColor: "white" }}
       showsVerticalScrollIndicator={false}
     >
-      <View className="items-center">
+      <YStack alignItems="center">
         <LoginForm />
-      </View>
+      </YStack>
     </KeyboardAwareScrollView>
   );
 };

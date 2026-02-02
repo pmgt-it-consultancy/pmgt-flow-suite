@@ -1,12 +1,13 @@
-import "./src/global.css";
 import { useFonts } from "expo-font";
 import { useCallback, useState } from "react";
 import { LogBox, Platform, StatusBar, View } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { TamaguiProvider } from "tamagui";
 import ConvexClientProvider from "./ConvexClientProvider";
 import { AuthProvider } from "./src/features/auth";
 import { SplashScreen } from "./src/features/shared/components/SplashScreen";
 import Navigation from "./src/navigation/Navigation";
+import config from "./tamagui.config";
 
 export default function App() {
   LogBox.ignoreLogs(["Warning: ..."]);
@@ -36,18 +37,20 @@ export default function App() {
   const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 50 : StatusBar.currentHeight;
 
   return (
-    <KeyboardProvider>
-      <ConvexClientProvider>
-        <AuthProvider>
-          <View style={{ flex: 1 }}>
-            <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#0D87E1" }}>
-              <StatusBar translucent backgroundColor={"#0D87E1"} barStyle="light-content" />
+    <TamaguiProvider config={config} defaultTheme="light">
+      <KeyboardProvider>
+        <ConvexClientProvider>
+          <AuthProvider>
+            <View style={{ flex: 1 }}>
+              <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#0D87E1" }}>
+                <StatusBar translucent backgroundColor={"#0D87E1"} barStyle="light-content" />
+              </View>
+              <Navigation />
+              {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
             </View>
-            <Navigation />
-            {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
-          </View>
-        </AuthProvider>
-      </ConvexClientProvider>
-    </KeyboardProvider>
+          </AuthProvider>
+        </ConvexClientProvider>
+      </KeyboardProvider>
+    </TamaguiProvider>
   );
 }

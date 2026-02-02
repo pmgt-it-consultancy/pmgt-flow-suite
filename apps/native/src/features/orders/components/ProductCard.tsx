@@ -1,5 +1,6 @@
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TouchableOpacity, View } from "uniwind/components";
+import { TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -21,23 +22,51 @@ export const ProductCard = ({ id, name, price, hasModifiers, onPress }: ProductC
 
   return (
     <TouchableOpacity
-      className="flex-1 bg-white rounded-xl p-4 m-1.5 max-w-[31.5%] min-h-[100px] border border-gray-200 shadow-sm justify-between"
+      style={{
+        flex: 1,
+        backgroundColor: "#FFFFFF",
+        borderRadius: 12,
+        padding: 16,
+        margin: 6,
+        maxWidth: "31.5%",
+        minHeight: 100,
+        borderWidth: 1,
+        borderColor: "#E5E7EB",
+        justifyContent: "space-between",
+      }}
       onPress={() => onPress({ id, name, price, hasModifiers: !!hasModifiers })}
       activeOpacity={0.7}
     >
-      <Text className="text-gray-900 font-semibold text-base mb-3" numberOfLines={2}>
+      <Text
+        style={{ color: "#111827", fontWeight: "600", fontSize: 16, marginBottom: 12 }}
+        numberOfLines={2}
+      >
         {name}
       </Text>
-      <View className="flex-row items-center">
-        <View className="bg-blue-50 self-start px-3 py-1.5 rounded-lg">
-          <Text className="text-blue-600 font-bold text-sm">{formatCurrency(price)}</Text>
-        </View>
+      <XStack alignItems="center">
+        <YStack
+          alignSelf="flex-start"
+          paddingHorizontal={12}
+          paddingVertical={6}
+          borderRadius={8}
+          backgroundColor="#EFF6FF"
+        >
+          <Text style={{ color: "#2563EB", fontWeight: "700", fontSize: 14 }}>
+            {formatCurrency(price)}
+          </Text>
+        </YStack>
         {hasModifiers && (
-          <View className="bg-amber-50 px-2 py-1 rounded ml-1.5">
-            <Text className="text-amber-600 font-medium text-[10px]">Custom</Text>
-          </View>
+          <YStack
+            backgroundColor="#FFFBEB"
+            paddingHorizontal={8}
+            paddingVertical={4}
+            borderRadius={4}
+            marginLeft={6}
+          >
+            <Text style={{ color: "#D97706", fontWeight: "500", fontSize: 10 }}>Custom</Text>
+          </YStack>
         )}
-      </View>
+      </XStack>
     </TouchableOpacity>
   );
 };

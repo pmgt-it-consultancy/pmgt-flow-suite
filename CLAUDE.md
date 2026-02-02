@@ -40,7 +40,7 @@ cd apps/native && pnpm android
 
 ### Monorepo Structure
 - **apps/web** — Next.js 16 App Router, Tailwind CSS v4, Radix UI components, React Hook Form + Zod
-- **apps/native** — React Native 0.81 + Expo 54, React Navigation (bottom tabs + stack), Zustand for local state, Bluetooth ESC/POS receipt printing
+- **apps/native** — React Native 0.81 + Expo 54, Tamagui (UI/styling), React Navigation (bottom tabs + stack), Zustand for local state, Bluetooth ESC/POS receipt printing
 - **packages/backend** — Convex backend (schema, queries, mutations, actions, tests)
 - **packages/shared** — Shared utilities
 
@@ -85,6 +85,24 @@ Feature-based organization under `src/features/`:
 - `order-history/` — Past orders
 - `settings/` — Printer settings (Bluetooth ESC/POS)
 - `shared/` — Shared components, hooks, UI primitives
+
+### Native App Styling (Tamagui)
+
+The native app uses **Tamagui v2 (RC)** for styling. Config is in `apps/native/tamagui.config.ts`. Brand color: `#0D87E1`.
+
+**Layout:** Use `XStack` (flex-row) and `YStack` (flex-column) from `tamagui` for layout containers. Use React Native primitives (`TouchableOpacity`, `TextInput`, `FlatList`, `ScrollView`, `Modal`, etc.) directly from `react-native`.
+
+**UI primitives** in `src/features/shared/components/ui/`:
+- `Text` — `styled(SizableText)` with `variant` (default/heading/subheading/muted/error/success) and `size` (xs/sm/base/lg/xl/2xl/3xl). Note: size uses `"base"` not `"md"`.
+- `Button` — RN `TouchableOpacity` with `variant` (primary/secondary/outline/ghost/destructive/success) and `size` (sm/md/lg)
+- `Badge` — `XStack` with `variant` and `size` props
+- `Card` — `YStack` with `variant` (default/outlined/elevated)
+- `Input`, `Chip`, `IconButton`, `Modal`, `Separator`
+
+**Styling rules:**
+- Apply styles as Tamagui props (`backgroundColor`, `padding`, `borderRadius`, etc.) on `XStack`/`YStack`, not via `className`
+- For custom UI components, use explicit prop interfaces (don't extend RN `ViewProps` and spread onto Tamagui components — causes type conflicts)
+- Colors use hex values directly (e.g., `"#F3F4F6"`) or Tamagui tokens (e.g., `"$gray100"`)
 
 ### Key Patterns
 - **Auth**: `@convex-dev/auth` with auth tables spread into schema; `getUserId(ctx)` extracts user identity

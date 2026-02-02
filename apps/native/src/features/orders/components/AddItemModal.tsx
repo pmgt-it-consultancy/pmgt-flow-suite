@@ -1,5 +1,6 @@
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TextInput, View } from "uniwind/components";
+import { TextInput } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Button, IconButton, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -40,17 +41,17 @@ export const AddItemModal = ({
 
   return (
     <Modal visible={visible} title="Add to Order" onClose={onClose} onRequestClose={onClose}>
-      <Text variant="heading" size="xl" className="mb-1">
+      <Text variant="heading" size="xl" style={{ marginBottom: 4 }}>
         {product.name}
       </Text>
-      <Text className="text-blue-500 font-medium text-lg mb-5">
+      <Text style={{ color: "#0D87E1", fontWeight: "500", fontSize: 18, marginBottom: 20 }}>
         {formatCurrency(product.price)}
       </Text>
 
       {/* Quantity */}
-      <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-gray-700 font-medium">Quantity</Text>
-        <View className="flex-row items-center bg-gray-100 rounded-lg">
+      <XStack justifyContent="space-between" alignItems="center" marginBottom={16}>
+        <Text style={{ color: "#374151", fontWeight: "500" }}>Quantity</Text>
+        <XStack alignItems="center" backgroundColor="#F3F4F6" borderRadius={8}>
           <IconButton
             icon="remove"
             size="md"
@@ -58,7 +59,11 @@ export const AddItemModal = ({
             iconColor="#EF4444"
             onPress={() => onQuantityChange(Math.max(1, quantity - 1))}
           />
-          <Text className="text-gray-900 font-semibold text-lg px-5">{quantity}</Text>
+          <Text
+            style={{ color: "#111827", fontWeight: "600", fontSize: 18, paddingHorizontal: 20 }}
+          >
+            {quantity}
+          </Text>
           <IconButton
             icon="add"
             size="md"
@@ -66,14 +71,24 @@ export const AddItemModal = ({
             iconColor="#22C55E"
             onPress={() => onQuantityChange(quantity + 1)}
           />
-        </View>
-      </View>
+        </XStack>
+      </XStack>
 
       {/* Notes */}
-      <View className="mb-5">
-        <Text className="text-gray-700 font-medium mb-2">Notes (optional)</Text>
+      <YStack marginBottom={20}>
+        <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8 }}>
+          Notes (optional)
+        </Text>
         <TextInput
-          className="border border-gray-200 rounded-lg p-3 text-base min-h-[60px] text-top"
+          style={{
+            borderWidth: 1,
+            borderColor: "#E5E7EB",
+            borderRadius: 8,
+            padding: 12,
+            fontSize: 16,
+            minHeight: 60,
+            textAlignVertical: "top",
+          }}
           placeholder="E.g., no ice, extra spicy..."
           placeholderTextColor="#9CA3AF"
           value={notes}
@@ -83,11 +98,17 @@ export const AddItemModal = ({
           blurOnSubmit
           onSubmitEditing={onConfirm}
         />
-      </View>
+      </YStack>
 
       {/* Footer */}
-      <View className="flex-row justify-between items-center pt-4 border-t border-gray-200">
-        <Text className="text-gray-900 font-bold text-lg shrink">
+      <XStack
+        justifyContent="space-between"
+        alignItems="center"
+        paddingTop={16}
+        borderTopWidth={1}
+        borderTopColor="#E5E7EB"
+      >
+        <Text style={{ color: "#111827", fontWeight: "700", fontSize: 18, flexShrink: 1 }}>
           Total: {formatCurrency(total)}
         </Text>
         <Button
@@ -95,11 +116,11 @@ export const AddItemModal = ({
           loading={isLoading}
           disabled={isLoading}
           onPress={onConfirm}
-          className="flex-none"
+          style={{ flexShrink: 0 }}
         >
           Add Item
         </Button>
-      </View>
+      </XStack>
     </Modal>
   );
 };

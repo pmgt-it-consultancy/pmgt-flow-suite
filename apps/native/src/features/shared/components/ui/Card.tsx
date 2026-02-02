@@ -1,83 +1,86 @@
 import type React from "react";
-import { forwardRef } from "react";
-import type { View, ViewProps } from "react-native";
-import { View as UniwindView } from "uniwind/components";
+import type { StyleProp, ViewStyle } from "react-native";
+import { YStack } from "tamagui";
 import { Text } from "./Text";
 
-interface CardProps extends ViewProps {
+interface CardProps {
   variant?: "default" | "outlined" | "elevated";
-  className?: string;
+  style?: StyleProp<ViewStyle>;
+  children?: React.ReactNode;
 }
 
-const variantClasses: Record<NonNullable<CardProps["variant"]>, string> = {
-  default: "bg-white rounded-xl p-4",
-  outlined: "bg-white rounded-xl p-4 border border-gray-200",
-  elevated: "bg-white rounded-xl p-4 shadow-md",
+export const Card = ({ variant = "default", style, children }: CardProps) => {
+  return (
+    <YStack
+      backgroundColor="#FFFFFF"
+      borderRadius={12}
+      padding={16}
+      {...(variant === "outlined" && { borderWidth: 1, borderColor: "#E5E7EB" })}
+      {...(variant === "elevated" && {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+      })}
+      style={style}
+    >
+      {children}
+    </YStack>
+  );
 };
 
-export const Card = forwardRef<React.ElementRef<typeof View>, CardProps>(
-  ({ variant = "default", className = "", ...props }, ref) => {
-    const classes = `${variantClasses[variant]} ${className}`.trim();
-    return <UniwindView ref={ref} className={classes} {...props} />;
-  },
-);
-
-Card.displayName = "Card";
-
-interface CardHeaderProps extends ViewProps {
-  className?: string;
+interface CardHeaderProps {
+  style?: StyleProp<ViewStyle>;
+  children?: React.ReactNode;
 }
 
-export const CardHeader = forwardRef<React.ElementRef<typeof View>, CardHeaderProps>(
-  ({ className = "", ...props }, ref) => {
-    return <UniwindView ref={ref} className={`mb-3 ${className}`.trim()} {...props} />;
-  },
-);
-
-CardHeader.displayName = "CardHeader";
+export const CardHeader = ({ style, children }: CardHeaderProps) => {
+  return (
+    <YStack marginBottom={12} style={style}>
+      {children}
+    </YStack>
+  );
+};
 
 interface CardTitleProps {
   children: React.ReactNode;
-  className?: string;
 }
 
-export const CardTitle = ({ children, className = "" }: CardTitleProps) => (
-  <Text variant="heading" size="lg" className={className}>
+export const CardTitle = ({ children }: CardTitleProps) => (
+  <Text variant="heading" size="lg">
     {children}
   </Text>
 );
 
 interface CardDescriptionProps {
   children: React.ReactNode;
-  className?: string;
 }
 
-export const CardDescription = ({ children, className = "" }: CardDescriptionProps) => (
-  <Text variant="muted" size="sm" className={className}>
+export const CardDescription = ({ children }: CardDescriptionProps) => (
+  <Text variant="muted" size="sm">
     {children}
   </Text>
 );
 
-interface CardContentProps extends ViewProps {
-  className?: string;
+interface CardContentProps {
+  style?: StyleProp<ViewStyle>;
+  children?: React.ReactNode;
 }
 
-export const CardContent = forwardRef<React.ElementRef<typeof View>, CardContentProps>(
-  ({ className = "", ...props }, ref) => {
-    return <UniwindView ref={ref} className={className} {...props} />;
-  },
-);
+export const CardContent = ({ style, children }: CardContentProps) => {
+  return <YStack style={style}>{children}</YStack>;
+};
 
-CardContent.displayName = "CardContent";
-
-interface CardFooterProps extends ViewProps {
-  className?: string;
+interface CardFooterProps {
+  style?: StyleProp<ViewStyle>;
+  children?: React.ReactNode;
 }
 
-export const CardFooter = forwardRef<React.ElementRef<typeof View>, CardFooterProps>(
-  ({ className = "", ...props }, ref) => {
-    return <UniwindView ref={ref} className={`mt-4 flex-row ${className}`.trim()} {...props} />;
-  },
-);
-
-CardFooter.displayName = "CardFooter";
+export const CardFooter = ({ style, children }: CardFooterProps) => {
+  return (
+    <YStack marginTop={16} flexDirection="row" style={style}>
+      {children}
+    </YStack>
+  );
+};

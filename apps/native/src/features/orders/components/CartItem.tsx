@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TouchableOpacity, View } from "uniwind/components";
+import { TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { IconButton, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -40,11 +41,16 @@ export const CartItem = ({
   const formatCurrency = useFormatCurrency();
 
   return (
-    <View className="px-3 py-3 border-b border-gray-100">
-      <View className="flex-row justify-between items-start mb-2">
-        <View className="flex-1 mr-3">
-          <View className="flex-row items-center">
-            <Text className="text-gray-900 font-semibold text-sm" numberOfLines={1}>
+    <YStack
+      paddingHorizontal={12}
+      paddingVertical={12}
+      borderBottomWidth={1}
+      borderBottomColor="#F3F4F6"
+    >
+      <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={8}>
+        <YStack flex={1} marginRight={12}>
+          <XStack alignItems="center">
+            <Text style={{ color: "#111827", fontWeight: "600", fontSize: 14 }} numberOfLines={1}>
               {productName}
             </Text>
             {isSentToKitchen && (
@@ -55,39 +61,55 @@ export const CartItem = ({
                 style={{ marginLeft: 4 }}
               />
             )}
-          </View>
-          <Text className="text-gray-400 text-xs mt-0.5">{formatCurrency(productPrice)} each</Text>
+          </XStack>
+          <Text style={{ color: "#9CA3AF", fontSize: 12, marginTop: 2 }}>
+            {formatCurrency(productPrice)} each
+          </Text>
           {modifiers && modifiers.length > 0 && (
-            <View className="mt-0.5">
+            <YStack marginTop={2}>
               {modifiers.map((mod, idx) => (
-                <Text key={idx} className="text-gray-500 text-xs">
+                <Text key={idx} style={{ color: "#6B7280", fontSize: 12 }}>
                   {mod.optionName}
                   {mod.priceAdjustment > 0 ? ` (+${formatCurrency(mod.priceAdjustment)})` : ""}
                 </Text>
               ))}
-            </View>
+            </YStack>
           )}
           {notes && (
-            <Text className="text-amber-600 text-xs mt-0.5 italic" numberOfLines={1}>
+            <Text
+              style={{ color: "#D97706", fontSize: 12, marginTop: 2, fontStyle: "italic" }}
+              numberOfLines={1}
+            >
               {notes}
             </Text>
           )}
-        </View>
-        <Text className="text-gray-900 font-bold text-sm">{formatCurrency(lineTotal)}</Text>
-      </View>
+        </YStack>
+        <Text style={{ color: "#111827", fontWeight: "700", fontSize: 14 }}>
+          {formatCurrency(lineTotal)}
+        </Text>
+      </XStack>
 
-      <View className="flex-row items-center justify-between">
+      <XStack alignItems="center" justifyContent="space-between">
         {isSentToKitchen ? (
           <>
-            <Text className="text-gray-500 text-sm">Qty: {quantity}</Text>
+            <Text style={{ color: "#6B7280", fontSize: 14 }}>Qty: {quantity}</Text>
             {onVoidItem && (
-              <TouchableOpacity onPress={() => onVoidItem(id)} className="px-2 py-1">
-                <Text className="text-red-500 font-medium text-xs">Void</Text>
+              <TouchableOpacity
+                onPress={() => onVoidItem(id)}
+                style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+              >
+                <Text style={{ color: "#EF4444", fontWeight: "500", fontSize: 12 }}>Void</Text>
               </TouchableOpacity>
             )}
           </>
         ) : (
-          <View className="flex-row items-center bg-gray-50 rounded-xl border border-gray-200">
+          <XStack
+            alignItems="center"
+            backgroundColor="#F9FAFB"
+            borderRadius={12}
+            borderWidth={1}
+            borderColor="#E5E7EB"
+          >
             <IconButton
               icon="remove"
               size="md"
@@ -95,7 +117,16 @@ export const CartItem = ({
               iconColor="#EF4444"
               onPress={() => onDecrement(id, quantity)}
             />
-            <Text className="text-gray-900 font-bold text-base px-4 min-w-[40px] text-center">
+            <Text
+              style={{
+                color: "#111827",
+                fontWeight: "700",
+                fontSize: 16,
+                paddingHorizontal: 16,
+                minWidth: 40,
+                textAlign: "center",
+              }}
+            >
               {quantity}
             </Text>
             <IconButton
@@ -105,9 +136,9 @@ export const CartItem = ({
               iconColor="#22C55E"
               onPress={() => onIncrement(id, quantity)}
             />
-          </View>
+          </XStack>
         )}
-      </View>
-    </View>
+      </XStack>
+    </YStack>
   );
 };

@@ -4,7 +4,8 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAction } from "convex/react";
 import Constants from "expo-constants";
 import React, { useEffect } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import type { RootStackParamList } from "../../../navigation/Navigation";
 import { useUpdateStore } from "../stores/useUpdateStore";
 
@@ -37,117 +38,170 @@ export function UpdatesScreen({ navigation }: Props) {
   const handleInstall = () => installUpdate();
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="#F3F4F6">
       {/* Header */}
-      <View className="bg-white px-4 py-4 border-b border-gray-200 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3">
+      <XStack
+        backgroundColor="#FFFFFF"
+        paddingHorizontal={16}
+        paddingVertical={16}
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+        alignItems="center"
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12 }}>
           <Ionicons name="arrow-back" size={24} color="#111" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold flex-1">Software Update</Text>
-      </View>
+        <Text style={{ fontSize: 20, fontWeight: "700", flex: 1 }}>Software Update</Text>
+      </XStack>
 
-      <ScrollView className="flex-1 p-4">
+      <ScrollView style={{ flex: 1, padding: 16 }}>
         {/* Current Version Card */}
-        <View className="bg-white rounded-xl p-4 mb-4">
-          <Text className="text-sm text-gray-500 mb-1">Current Version</Text>
-          <Text className="text-2xl font-bold">{currentVersion}</Text>
-        </View>
+        <YStack backgroundColor="#FFFFFF" borderRadius={12} padding={16} marginBottom={16}>
+          <Text style={{ fontSize: 14, color: "#6B7280", marginBottom: 4 }}>Current Version</Text>
+          <Text style={{ fontSize: 24, fontWeight: "700" }}>{currentVersion}</Text>
+        </YStack>
 
         {/* Update Status */}
         {isChecking ? (
-          <View className="bg-white rounded-xl p-6 mb-4 items-center">
+          <YStack
+            backgroundColor="#FFFFFF"
+            borderRadius={12}
+            padding={24}
+            marginBottom={16}
+            alignItems="center"
+          >
             <ActivityIndicator size="large" color="#0D87E1" />
-            <Text className="text-gray-500 mt-3 font-medium">Checking for updates...</Text>
-          </View>
+            <Text style={{ color: "#6B7280", marginTop: 12, fontWeight: "500" }}>
+              Checking for updates...
+            </Text>
+          </YStack>
         ) : updateInfo ? (
-          <View className="bg-white rounded-xl p-4 mb-4">
-            <View className="flex-row items-center mb-2">
+          <YStack backgroundColor="#FFFFFF" borderRadius={12} padding={16} marginBottom={16}>
+            <XStack alignItems="center" marginBottom={8}>
               <Ionicons name="arrow-up-circle" size={24} color="#0D87E1" />
-              <Text className="text-lg font-bold ml-2">
+              <Text style={{ fontSize: 18, fontWeight: "700", marginLeft: 8 }}>
                 Version {updateInfo.latestVersion} Available
               </Text>
-            </View>
+            </XStack>
 
             {updateInfo.releaseNotes ? (
-              <Text className="text-sm text-gray-600 mb-4">{updateInfo.releaseNotes}</Text>
+              <Text style={{ fontSize: 14, color: "#4B5563", marginBottom: 16 }}>
+                {updateInfo.releaseNotes}
+              </Text>
             ) : null}
 
             {/* Download / Progress / Install */}
             {downloadStatus === "idle" && (
               <TouchableOpacity
                 onPress={handleDownload}
-                className="bg-blue-500 rounded-lg py-3 items-center"
-                style={{ backgroundColor: "#0D87E1" }}
+                style={{
+                  backgroundColor: "#0D87E1",
+                  borderRadius: 8,
+                  paddingVertical: 12,
+                  alignItems: "center",
+                }}
               >
-                <Text className="text-white font-semibold text-base">Download Update</Text>
+                <Text style={{ color: "#FFFFFF", fontWeight: "600", fontSize: 16 }}>
+                  Download Update
+                </Text>
               </TouchableOpacity>
             )}
 
             {downloadStatus === "downloading" && (
-              <View>
-                <View className="flex-row justify-between mb-2">
-                  <Text className="text-sm text-gray-600">Downloading...</Text>
-                  <Text className="text-sm font-semibold" style={{ color: "#0D87E1" }}>
+              <YStack>
+                <XStack justifyContent="space-between" marginBottom={8}>
+                  <Text style={{ fontSize: 14, color: "#4B5563" }}>Downloading...</Text>
+                  <Text style={{ fontSize: 14, fontWeight: "600", color: "#0D87E1" }}>
                     {Math.round(downloadProgress * 100)}%
                   </Text>
-                </View>
-                <View className="bg-gray-200 rounded-full h-3 overflow-hidden">
-                  <View
-                    className="h-3 rounded-full"
-                    style={{
-                      backgroundColor: "#0D87E1",
-                      width: `${Math.round(downloadProgress * 100)}%`,
-                    }}
+                </XStack>
+                <YStack backgroundColor="#E5E7EB" borderRadius={9999} height={12} overflow="hidden">
+                  <YStack
+                    height={12}
+                    borderRadius={9999}
+                    backgroundColor="#0D87E1"
+                    width={`${Math.round(downloadProgress * 100)}%` as any}
                   />
-                </View>
-              </View>
+                </YStack>
+              </YStack>
             )}
 
             {downloadStatus === "completed" && (
               <TouchableOpacity
                 onPress={handleInstall}
-                className="rounded-lg py-3 items-center"
-                style={{ backgroundColor: "#22C55E" }}
+                style={{
+                  backgroundColor: "#22C55E",
+                  borderRadius: 8,
+                  paddingVertical: 12,
+                  alignItems: "center",
+                }}
               >
-                <Text className="text-white font-semibold text-base">Install Update</Text>
+                <Text style={{ color: "#FFFFFF", fontWeight: "600", fontSize: 16 }}>
+                  Install Update
+                </Text>
               </TouchableOpacity>
             )}
 
             {downloadStatus === "failed" && (
-              <View>
-                <Text className="text-red-500 text-sm mb-2">{error ?? "Download failed"}</Text>
+              <YStack>
+                <Text style={{ color: "#EF4444", fontSize: 14, marginBottom: 8 }}>
+                  {error ?? "Download failed"}
+                </Text>
                 <TouchableOpacity
                   onPress={handleDownload}
-                  className="bg-red-500 rounded-lg py-3 items-center"
+                  style={{
+                    backgroundColor: "#EF4444",
+                    borderRadius: 8,
+                    paddingVertical: 12,
+                    alignItems: "center",
+                  }}
                 >
-                  <Text className="text-white font-semibold text-base">Retry Download</Text>
+                  <Text style={{ color: "#FFFFFF", fontWeight: "600", fontSize: 16 }}>
+                    Retry Download
+                  </Text>
                 </TouchableOpacity>
-              </View>
+              </YStack>
             )}
-          </View>
+          </YStack>
         ) : (
-          <View className="bg-white rounded-xl p-6 mb-4 items-center">
+          <YStack
+            backgroundColor="#FFFFFF"
+            borderRadius={12}
+            padding={24}
+            marginBottom={16}
+            alignItems="center"
+          >
             <Ionicons name="checkmark-circle" size={48} color="#22C55E" />
-            <Text className="text-lg font-bold mt-2">Your app is up to date</Text>
-            <Text className="text-sm text-gray-500 mt-1">You're running the latest version</Text>
-          </View>
+            <Text style={{ fontSize: 18, fontWeight: "700", marginTop: 8 }}>
+              Your app is up to date
+            </Text>
+            <Text style={{ fontSize: 14, color: "#6B7280", marginTop: 4 }}>
+              You're running the latest version
+            </Text>
+          </YStack>
         )}
 
         {error && !updateInfo && (
-          <View className="bg-red-50 rounded-xl p-4 mb-4">
-            <Text className="text-red-600 text-sm">{error}</Text>
-          </View>
+          <YStack backgroundColor="#FEF2F2" borderRadius={12} padding={16} marginBottom={16}>
+            <Text style={{ color: "#DC2626", fontSize: 14 }}>{error}</Text>
+          </YStack>
         )}
 
         {/* Check for Updates Button */}
         {!isChecking && (
-          <TouchableOpacity onPress={handleCheck} className="bg-white rounded-xl py-4 items-center">
-            <Text className="font-semibold" style={{ color: "#0D87E1" }}>
-              Check for Updates
-            </Text>
+          <TouchableOpacity
+            onPress={handleCheck}
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderRadius: 12,
+              paddingVertical: 16,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "600", color: "#0D87E1" }}>Check for Updates</Text>
           </TouchableOpacity>
         )}
       </ScrollView>
-    </View>
+    </YStack>
   );
 }

@@ -3,8 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
-import { Alert } from "react-native";
-import { ActivityIndicator, FlatList, TouchableOpacity, View } from "uniwind/components";
+import { ActivityIndicator, Alert, FlatList, TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Modal, Text } from "../../shared/components/ui";
 
 interface TransferTableModalProps {
@@ -49,16 +49,16 @@ export const TransferTableModal = ({
       position="center"
     >
       {availableTables === undefined ? (
-        <View className="items-center py-8">
+        <YStack alignItems="center" paddingVertical={32}>
           <ActivityIndicator size="small" color="#0D87E1" />
-        </View>
+        </YStack>
       ) : availableTables.length === 0 ? (
-        <View className="items-center py-8">
+        <YStack alignItems="center" paddingVertical={32}>
           <Ionicons name="alert-circle-outline" size={32} color="#D1D5DB" />
-          <Text variant="muted" className="mt-2">
+          <Text variant="muted" style={{ marginTop: 8 }}>
             No available tables
           </Text>
-        </View>
+        </YStack>
       ) : (
         <FlatList
           data={availableTables}
@@ -67,14 +67,24 @@ export const TransferTableModal = ({
             <TouchableOpacity
               onPress={() => handleTransfer(item._id, item.name)}
               disabled={isTransferring}
-              className="flex-row items-center justify-between py-3 px-3 border-b border-gray-100"
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingVertical: 12,
+                paddingHorizontal: 12,
+                borderBottomWidth: 1,
+                borderBottomColor: "#F3F4F6",
+              }}
             >
-              <View className="flex-row items-center">
+              <XStack alignItems="center">
                 <Ionicons name="grid-outline" size={20} color="#6B7280" />
-                <Text className="text-gray-900 font-medium ml-3">{item.name}</Text>
-              </View>
+                <Text style={{ color: "#111827", fontWeight: "500", marginLeft: 12 }}>
+                  {item.name}
+                </Text>
+              </XStack>
               {item.capacity && (
-                <Text className="text-gray-400 text-xs">{item.capacity} seats</Text>
+                <Text style={{ color: "#9CA3AF", fontSize: 12 }}>{item.capacity} seats</Text>
               )}
             </TouchableOpacity>
           )}

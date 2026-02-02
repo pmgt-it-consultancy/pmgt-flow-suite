@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TouchableOpacity, View } from "uniwind/components";
+import { TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Badge, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -35,33 +36,46 @@ export const TableCard = ({
 
   return (
     <TouchableOpacity
-      className={`bg-white rounded-xl p-4 flex-1 max-w-[47%] m-2 shadow-sm ${isOccupied ? "border-l-4 border-amber-500" : ""}`}
+      style={{
+        backgroundColor: "#FFFFFF",
+        borderRadius: 12,
+        padding: 16,
+        flex: 1,
+        maxWidth: "47%",
+        margin: 8,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+        ...(isOccupied ? { borderLeftWidth: 4, borderLeftColor: "#F59E0B" } : {}),
+      }}
       onPress={() => onPress(id, name)}
       activeOpacity={0.7}
     >
-      <View className="flex-row justify-between items-center mb-2">
+      <XStack justifyContent="space-between" alignItems="center" marginBottom={8}>
         <Text variant="heading" size="lg">
           {name}
         </Text>
         <Ionicons name={statusIcon as any} size={24} color={statusColor} />
-      </View>
+      </XStack>
 
-      <Text variant="muted" size="sm" className="mb-2">
+      <Text variant="muted" size="sm" style={{ marginBottom: 8 }}>
         Capacity: {capacity} {capacity === 1 ? "person" : "people"}
       </Text>
 
       {isOccupied && itemCount !== undefined && (
-        <View className="flex-row justify-between mb-2">
-          <Text size="sm" className="text-gray-600">
+        <XStack justifyContent="space-between" marginBottom={8}>
+          <Text size="sm" style={{ color: "#4B5563" }}>
             {itemCount} item(s){pax ? ` · ${pax} pax` : ""}
           </Text>
-          <Text size="sm" className="text-blue-500 font-semibold">
+          <Text size="sm" style={{ color: "#0D87E1", fontWeight: "600" }}>
             {formatCurrency(total ?? 0)}
           </Text>
-        </View>
+        </XStack>
       )}
 
-      <Badge variant={isOccupied ? "warning" : "success"} className="self-start">
+      <Badge variant={isOccupied ? "warning" : "success"} style={{ alignSelf: "flex-start" }}>
         {statusLabel}
       </Badge>
     </TouchableOpacity>

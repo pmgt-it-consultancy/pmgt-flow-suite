@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View } from "uniwind/components";
+import { XStack, YStack } from "tamagui";
 import { Button, Input, Modal, Text } from "../../shared/components/ui";
 
 interface VoidItemModalProps {
@@ -32,14 +32,14 @@ export const VoidItemModal = ({
 
   return (
     <Modal visible={visible} onClose={handleClose} title="Void Item" position="center">
-      <View className="mb-4">
-        <Text className="text-gray-700 font-medium text-sm">
+      <YStack marginBottom={16}>
+        <Text style={{ color: "#374151", fontWeight: "500", fontSize: 14 }}>
           {itemQuantity}x {itemName}
         </Text>
-        <Text variant="muted" size="sm" className="mt-1">
+        <Text variant="muted" size="sm" style={{ marginTop: 4 }}>
           This item has been sent to the kitchen. Please provide a reason for voiding.
         </Text>
-      </View>
+      </YStack>
 
       <Input
         placeholder="Reason for voiding..."
@@ -48,24 +48,24 @@ export const VoidItemModal = ({
         autoFocus
       />
 
-      <View className="flex-row mt-4 gap-3">
-        <View className="flex-1">
+      <XStack marginTop={16} gap={12}>
+        <YStack flex={1}>
           <Button variant="outline" size="lg" onPress={handleClose}>
-            <Text className="text-gray-700 font-medium">Cancel</Text>
+            <Text style={{ color: "#374151", fontWeight: "500" }}>Cancel</Text>
           </Button>
-        </View>
-        <View className="flex-1">
+        </YStack>
+        <YStack flex={1}>
           <Button
             variant="destructive"
             size="lg"
             disabled={!reason.trim()}
             onPress={handleConfirm}
-            className={!reason.trim() ? "opacity-40" : ""}
+            style={!reason.trim() ? { opacity: 0.4 } : undefined}
           >
-            <Text className="text-white font-medium">Confirm Void</Text>
+            <Text style={{ color: "#FFFFFF", fontWeight: "500" }}>Confirm Void</Text>
           </Button>
-        </View>
-      </View>
+        </YStack>
+      </XStack>
     </Modal>
   );
 };

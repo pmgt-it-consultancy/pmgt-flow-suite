@@ -2,9 +2,14 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAction, useQuery } from "convex/react";
 import { useCallback, useRef, useState } from "react";
-import type { TextInput as RNTextInput } from "react-native";
-import { Alert } from "react-native";
-import { ActivityIndicator, TextInput, TouchableOpacity, View } from "uniwind/components";
+import {
+  ActivityIndicator,
+  Alert,
+  type TextInput as RNTextInput,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { Button, Modal, Text } from "../../shared/components/ui";
 
@@ -82,50 +87,73 @@ export const ManagerPinModal = ({
       onRequestClose={handleClose}
       position="center"
     >
-      <Text variant="muted" className="mb-4">
+      <Text variant="muted" style={{ marginBottom: 16 }}>
         {description}
       </Text>
 
       {/* Manager Selection */}
-      <Text className="text-gray-700 font-medium mb-2">Select Manager</Text>
-      <View className="mb-4">
+      <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8 }}>Select Manager</Text>
+      <YStack marginBottom={16}>
         {managers === undefined ? (
           <ActivityIndicator size="small" color="#0D87E1" />
         ) : managers.length === 0 ? (
-          <Text variant="muted" className="text-center py-4">
+          <Text variant="muted" style={{ textAlign: "center", paddingVertical: 16 }}>
             No managers found
           </Text>
         ) : (
           managers.map((manager) => (
             <TouchableOpacity
               key={manager._id}
-              className={`flex-row items-center p-3 border rounded-lg mb-2 ${
-                selectedManagerId === manager._id ? "border-blue-500 bg-blue-50" : "border-gray-200"
-              }`}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                padding: 12,
+                borderWidth: 1,
+                borderRadius: 8,
+                marginBottom: 8,
+                borderColor: selectedManagerId === manager._id ? "#0D87E1" : "#E5E7EB",
+                backgroundColor: selectedManagerId === manager._id ? "#EFF6FF" : undefined,
+              }}
               onPress={() => handleSelectManager(manager._id)}
               activeOpacity={0.7}
             >
-              <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center mr-3">
-                <Text className="text-gray-600 font-semibold">
+              <YStack
+                width={40}
+                height={40}
+                borderRadius={20}
+                backgroundColor="#E5E7EB"
+                alignItems="center"
+                justifyContent="center"
+                marginRight={12}
+              >
+                <Text style={{ color: "#4B5563", fontWeight: "600" }}>
                   {manager.name.charAt(0).toUpperCase()}
                 </Text>
-              </View>
-              <View className="flex-1">
-                <Text className="text-gray-900 font-medium">{manager.name}</Text>
+              </YStack>
+              <YStack flex={1}>
+                <Text style={{ color: "#111827", fontWeight: "500" }}>{manager.name}</Text>
                 <Text variant="muted" size="xs">
                   {manager.roleName}
                 </Text>
-              </View>
+              </YStack>
             </TouchableOpacity>
           ))
         )}
-      </View>
+      </YStack>
 
       {/* PIN Input */}
-      <Text className="text-gray-700 font-medium mb-2">Enter PIN</Text>
+      <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8 }}>Enter PIN</Text>
       <TextInput
         ref={pinInputRef}
-        className="border border-gray-200 rounded-lg p-3 text-xl text-center tracking-widest"
+        style={{
+          borderWidth: 1,
+          borderColor: "#E5E7EB",
+          borderRadius: 8,
+          padding: 12,
+          fontSize: 20,
+          textAlign: "center",
+          letterSpacing: 8,
+        }}
         placeholder="••••"
         placeholderTextColor="#9CA3AF"
         value={pin}
@@ -145,7 +173,7 @@ export const ManagerPinModal = ({
         loading={isVerifying}
         disabled={!selectedManagerId || !pin || isVerifying}
         onPress={handleVerify}
-        className={`mt-5 ${!selectedManagerId || !pin ? "opacity-50" : ""}`}
+        style={{ marginTop: 20, opacity: !selectedManagerId || !pin ? 0.5 : 1 }}
       >
         Verify & Approve
       </Button>

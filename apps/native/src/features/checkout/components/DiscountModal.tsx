@@ -1,8 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useRef } from "react";
-import type { TextInput as RNTextInput } from "react-native";
-import { ScrollView, TextInput, TouchableOpacity, View } from "uniwind/components";
+import {
+  type TextInput as RNTextInput,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Button, Chip, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -64,56 +69,77 @@ export const DiscountModal = ({
       onRequestClose={onClose}
     >
       {/* Discount Type */}
-      <Text className="text-gray-700 font-medium mb-2 mt-3">Discount Type</Text>
-      <View className="flex-row gap-3">
+      <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8, marginTop: 12 }}>
+        Discount Type
+      </Text>
+      <XStack gap={12}>
         <Chip
           selected={discountType === "senior_citizen"}
           onPress={() => onDiscountTypeChange("senior_citizen")}
-          className="flex-1 justify-center"
+          style={{ flex: 1, justifyContent: "center" }}
         >
           Senior Citizen
         </Chip>
         <Chip
           selected={discountType === "pwd"}
           onPress={() => onDiscountTypeChange("pwd")}
-          className="flex-1 justify-center"
+          style={{ flex: 1, justifyContent: "center" }}
         >
           PWD
         </Chip>
-      </View>
+      </XStack>
 
       {/* Select Item */}
-      <Text className="text-gray-700 font-medium mb-2 mt-4">Select Item</Text>
-      <ScrollView className="max-h-[120px]">
+      <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8, marginTop: 16 }}>
+        Select Item
+      </Text>
+      <ScrollView style={{ maxHeight: 120 }}>
         {availableItems.map((item) => (
           <TouchableOpacity
             key={item._id}
-            className={`flex-row items-center p-3 border rounded-lg mb-2 ${
-              selectedItemId === item._id ? "border-blue-500 bg-blue-50" : "border-gray-200"
-            }`}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 12,
+              borderWidth: 1,
+              borderRadius: 8,
+              marginBottom: 8,
+              borderColor: selectedItemId === item._id ? "#0D87E1" : "#E5E7EB",
+              backgroundColor: selectedItemId === item._id ? "#EFF6FF" : undefined,
+            }}
             onPress={() => onItemSelect(item._id)}
             activeOpacity={0.7}
           >
-            <Text className="flex-1 text-gray-700">
+            <Text style={{ flex: 1, color: "#374151" }}>
               {item.quantity}x {item.productName}
             </Text>
-            <Text className="text-gray-900 font-medium mr-2">{formatCurrency(item.lineTotal)}</Text>
+            <Text style={{ color: "#111827", fontWeight: "500", marginRight: 8 }}>
+              {formatCurrency(item.lineTotal)}
+            </Text>
             {selectedItemId === item._id && (
               <Ionicons name="checkmark-circle" size={20} color="#0D87E1" />
             )}
           </TouchableOpacity>
         ))}
         {availableItems.length === 0 && (
-          <Text variant="muted" className="text-center py-4">
+          <Text variant="muted" style={{ textAlign: "center", paddingVertical: 16 }}>
             All items already have discounts
           </Text>
         )}
       </ScrollView>
 
       {/* ID Number */}
-      <Text className="text-gray-700 font-medium mb-2 mt-4">ID Number</Text>
+      <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8, marginTop: 16 }}>
+        ID Number
+      </Text>
       <TextInput
-        className="border border-gray-200 rounded-lg p-3 text-base"
+        style={{
+          borderWidth: 1,
+          borderColor: "#E5E7EB",
+          borderRadius: 8,
+          padding: 12,
+          fontSize: 16,
+        }}
         placeholder="Enter SC/PWD ID number"
         placeholderTextColor="#9CA3AF"
         value={idNumber}
@@ -124,10 +150,18 @@ export const DiscountModal = ({
       />
 
       {/* Customer Name */}
-      <Text className="text-gray-700 font-medium mb-2 mt-4">Customer Name</Text>
+      <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8, marginTop: 16 }}>
+        Customer Name
+      </Text>
       <TextInput
         ref={customerNameRef}
-        className="border border-gray-200 rounded-lg p-3 text-base"
+        style={{
+          borderWidth: 1,
+          borderColor: "#E5E7EB",
+          borderRadius: 8,
+          padding: 12,
+          fontSize: 16,
+        }}
         placeholder="Enter customer name"
         placeholderTextColor="#9CA3AF"
         value={customerName}
@@ -138,7 +172,7 @@ export const DiscountModal = ({
         }}
       />
 
-      <Text variant="muted" size="xs" className="mt-3">
+      <Text variant="muted" size="xs" style={{ marginTop: 12 }}>
         BIR rule: 20% discount applies only to items consumed by SC/PWD
       </Text>
 
@@ -147,7 +181,7 @@ export const DiscountModal = ({
         size="lg"
         disabled={!isValid}
         onPress={onApply}
-        className={`mt-5 ${!isValid ? "opacity-50" : ""}`}
+        style={{ marginTop: 20, opacity: !isValid ? 0.5 : 1 }}
       >
         Apply Discount
       </Button>

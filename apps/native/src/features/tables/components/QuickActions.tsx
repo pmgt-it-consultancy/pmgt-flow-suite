@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Alert } from "react-native";
-import { TouchableOpacity, View } from "uniwind/components";
+import { Alert, TouchableOpacity } from "react-native";
+import { XStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
 export const QuickActions = () => {
@@ -13,24 +13,42 @@ export const QuickActions = () => {
   };
 
   return (
-    <View className="flex-row bg-white p-3 border-t border-gray-200">
+    <XStack backgroundColor="#FFFFFF" padding={12} borderTopWidth={1} borderTopColor="#E5E7EB">
       <TouchableOpacity
-        className="flex-1 flex-row items-center justify-center py-3 mx-1 bg-blue-50 rounded-lg"
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          paddingVertical: 12,
+          marginHorizontal: 4,
+          backgroundColor: "#EFF6FF",
+          borderRadius: 8,
+        }}
         onPress={handleTakeout}
         activeOpacity={0.7}
       >
         <Ionicons name="bag-outline" size={20} color="#0D87E1" />
-        <Text className="text-blue-500 font-medium ml-2">Take-out</Text>
+        <Text style={{ color: "#0D87E1", fontWeight: "500", marginLeft: 8 }}>Take-out</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        className="flex-1 flex-row items-center justify-center py-3 mx-1 bg-blue-50 rounded-lg"
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          paddingVertical: 12,
+          marginHorizontal: 4,
+          backgroundColor: "#EFF6FF",
+          borderRadius: 8,
+        }}
         onPress={handleDelivery}
         activeOpacity={0.7}
       >
         <Ionicons name="bicycle-outline" size={20} color="#0D87E1" />
-        <Text className="text-blue-500 font-medium ml-2">Delivery</Text>
+        <Text style={{ color: "#0D87E1", fontWeight: "500", marginLeft: 8 }}>Delivery</Text>
       </TouchableOpacity>
-    </View>
+    </XStack>
   );
 };

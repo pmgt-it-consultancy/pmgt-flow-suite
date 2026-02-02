@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, View } from "uniwind/components";
+import { TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
 type PaymentMethod = "cash" | "card_ewallet";
@@ -11,15 +12,21 @@ interface PaymentMethodSelectorProps {
 
 export const PaymentMethodSelector = ({ selected, onSelect }: PaymentMethodSelectorProps) => {
   return (
-    <View className="px-4 py-3">
-      <Text variant="heading" className="mb-3">
+    <YStack paddingHorizontal={16} paddingVertical={12}>
+      <Text variant="heading" style={{ marginBottom: 12 }}>
         Payment Method
       </Text>
-      <View className="flex-row gap-3">
+      <XStack gap={12}>
         <TouchableOpacity
-          className={`flex-1 bg-white rounded-xl p-4 items-center border-2 ${
-            selected === "cash" ? "border-blue-500 bg-blue-50" : "border-gray-200"
-          }`}
+          style={{
+            flex: 1,
+            backgroundColor: selected === "cash" ? "#EFF6FF" : "#FFFFFF",
+            borderRadius: 12,
+            padding: 16,
+            alignItems: "center",
+            borderWidth: 2,
+            borderColor: selected === "cash" ? "#0D87E1" : "#E5E7EB",
+          }}
           onPress={() => onSelect("cash")}
           activeOpacity={0.7}
         >
@@ -29,18 +36,26 @@ export const PaymentMethodSelector = ({ selected, onSelect }: PaymentMethodSelec
             color={selected === "cash" ? "#0D87E1" : "#6B7280"}
           />
           <Text
-            className={`mt-2 font-medium ${
-              selected === "cash" ? "text-blue-500" : "text-gray-500"
-            }`}
+            style={{
+              marginTop: 8,
+              fontWeight: "500",
+              color: selected === "cash" ? "#0D87E1" : "#6B7280",
+            }}
           >
             Cash
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className={`flex-1 bg-white rounded-xl p-4 items-center border-2 ${
-            selected === "card_ewallet" ? "border-blue-500 bg-blue-50" : "border-gray-200"
-          }`}
+          style={{
+            flex: 1,
+            backgroundColor: selected === "card_ewallet" ? "#EFF6FF" : "#FFFFFF",
+            borderRadius: 12,
+            padding: 16,
+            alignItems: "center",
+            borderWidth: 2,
+            borderColor: selected === "card_ewallet" ? "#0D87E1" : "#E5E7EB",
+          }}
           onPress={() => onSelect("card_ewallet")}
           activeOpacity={0.7}
         >
@@ -50,14 +65,16 @@ export const PaymentMethodSelector = ({ selected, onSelect }: PaymentMethodSelec
             color={selected === "card_ewallet" ? "#0D87E1" : "#6B7280"}
           />
           <Text
-            className={`mt-2 font-medium ${
-              selected === "card_ewallet" ? "text-blue-500" : "text-gray-500"
-            }`}
+            style={{
+              marginTop: 8,
+              fontWeight: "500",
+              color: selected === "card_ewallet" ? "#0D87E1" : "#6B7280",
+            }}
           >
             Card/E-Wallet
           </Text>
         </TouchableOpacity>
-      </View>
-    </View>
+      </XStack>
+    </YStack>
   );
 };

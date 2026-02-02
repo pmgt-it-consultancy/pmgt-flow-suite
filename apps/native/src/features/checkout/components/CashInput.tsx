@@ -1,4 +1,5 @@
-import { TextInput, TouchableOpacity, View } from "uniwind/components";
+import { TextInput, TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
 const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000];
@@ -10,35 +11,55 @@ interface CashInputProps {
 
 export const CashInput = ({ value, onChange }: CashInputProps) => {
   return (
-    <View className="px-4 py-3">
-      <Text variant="heading" className="mb-3">
+    <YStack paddingHorizontal={16} paddingVertical={12}>
+      <Text variant="heading" style={{ marginBottom: 12 }}>
         Cash Received
       </Text>
 
-      <View className="flex-row items-center bg-white rounded-xl px-4 border border-gray-200">
-        <Text className="text-gray-500 font-semibold text-2xl">₱</Text>
+      <XStack
+        alignItems="center"
+        backgroundColor="#FFFFFF"
+        borderRadius={12}
+        paddingHorizontal={16}
+        borderWidth={1}
+        borderColor="#E5E7EB"
+      >
+        <Text style={{ color: "#6B7280", fontWeight: "600", fontSize: 24 }}>₱</Text>
         <TextInput
-          className="flex-1 p-4 font-semibold text-2xl text-gray-900"
+          style={{
+            flex: 1,
+            padding: 16,
+            fontWeight: "600",
+            fontSize: 24,
+            color: "#111827",
+          }}
           placeholder="0.00"
           placeholderTextColor="#9CA3AF"
           value={value}
           onChangeText={onChange}
           keyboardType="numeric"
         />
-      </View>
+      </XStack>
 
-      <View className="flex-row flex-wrap gap-2 mt-3">
+      <XStack flexWrap="wrap" gap={8} marginTop={12}>
         {QUICK_AMOUNTS.map((amount) => (
           <TouchableOpacity
             key={amount}
-            className="bg-white py-2 px-4 rounded-lg border border-gray-200"
+            style={{
+              backgroundColor: "#FFFFFF",
+              paddingVertical: 8,
+              paddingHorizontal: 16,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: "#E5E7EB",
+            }}
             onPress={() => onChange(amount.toString())}
             activeOpacity={0.7}
           >
-            <Text className="text-gray-700 font-medium">{amount}</Text>
+            <Text style={{ color: "#374151", fontWeight: "500" }}>{amount}</Text>
           </TouchableOpacity>
         ))}
-      </View>
-    </View>
+      </XStack>
+    </YStack>
   );
 };

@@ -1,4 +1,4 @@
-import { View } from "uniwind/components";
+import { XStack, YStack } from "tamagui";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { IconButton, Text } from "../../shared/components/ui";
 
@@ -18,17 +18,30 @@ export const OrderHeader = ({
   onUpdatePax,
 }: OrderHeaderProps) => {
   return (
-    <View className="bg-white flex-row items-center px-4 py-2.5 border-b border-gray-200">
-      <IconButton icon="arrow-back" variant="ghost" onPress={onBack} className="mr-1" />
-      <View className="flex-1 flex-row items-center">
+    <XStack
+      backgroundColor="#FFFFFF"
+      alignItems="center"
+      paddingHorizontal={16}
+      paddingVertical={10}
+      borderBottomWidth={1}
+      borderBottomColor="#E5E7EB"
+    >
+      <IconButton icon="arrow-back" variant="ghost" onPress={onBack} style={{ marginRight: 4 }} />
+      <XStack flex={1} alignItems="center">
         <Text variant="heading" size="lg">
           {title}
         </Text>
-        <View className="mx-2 w-1 h-1 rounded-full bg-gray-400" />
+        <YStack
+          marginHorizontal={8}
+          width={4}
+          height={4}
+          borderRadius={2}
+          backgroundColor="#9CA3AF"
+        />
         <Text variant="muted" size="sm">
           {subtitle}
         </Text>
-      </View>
+      </XStack>
       <SystemStatusBar />
       {onUpdatePax && (
         <IconButton icon="people" variant="ghost" onPress={onUpdatePax} iconColor="#6B7280" />
@@ -41,6 +54,6 @@ export const OrderHeader = ({
           iconColor="#6B7280"
         />
       )}
-    </View>
+    </XStack>
   );
 };

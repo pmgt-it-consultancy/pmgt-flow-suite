@@ -2,15 +2,16 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useState } from "react";
-import { Alert, TextInput } from "react-native";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Modal,
   RefreshControl,
+  TextInput,
   TouchableOpacity,
-  View,
-} from "uniwind/components";
+} from "react-native";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { Text } from "../../shared/components/ui";
 import { EmptyState, Header, TableCard } from "../components";
@@ -119,9 +120,9 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-100">
+      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#F3F4F6">
         <ActivityIndicator size="large" color="#0D87E1" />
-      </View>
+      </YStack>
     );
   }
 
@@ -144,7 +145,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
   };
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="#F3F4F6">
       <Header
         userName={user?.name ?? "User"}
         onBack={() => navigation.goBack()}
@@ -154,9 +155,9 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
       />
 
       {tables === undefined ? (
-        <View className="flex-1 justify-center items-center">
+        <YStack flex={1} justifyContent="center" alignItems="center">
           <ActivityIndicator size="large" color="#0D87E1" />
-        </View>
+        </YStack>
       ) : tables.length === 0 ? (
         <EmptyState title="No tables found" description="Add tables in the admin panel first" />
       ) : (
@@ -181,40 +182,68 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
           setPaxOrderId(null);
         }}
       >
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-2xl p-6 w-72">
-            <Text variant="heading" size="lg" className="text-center mb-4">
+        <YStack
+          flex={1}
+          justifyContent="center"
+          alignItems="center"
+          backgroundColor="rgba(0,0,0,0.5)"
+        >
+          <YStack backgroundColor="#FFFFFF" borderRadius={16} padding={24} width={288}>
+            <Text variant="heading" size="lg" style={{ textAlign: "center", marginBottom: 16 }}>
               Update Guest Count
             </Text>
             <TextInput
-              className="border border-gray-300 rounded-lg px-4 py-3 text-center text-lg mb-4"
+              style={{
+                borderWidth: 1,
+                borderColor: "#D1D5DB",
+                borderRadius: 8,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                textAlign: "center",
+                fontSize: 18,
+                marginBottom: 16,
+              }}
               keyboardType="number-pad"
               placeholder="Number of guests"
               value={paxInput}
               onChangeText={setPaxInput}
               autoFocus
             />
-            <View className="flex-row gap-3">
+            <XStack gap={12}>
               <TouchableOpacity
-                className="flex-1 bg-gray-200 rounded-lg py-3"
+                style={{
+                  flex: 1,
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: 8,
+                  paddingVertical: 12,
+                }}
                 onPress={() => {
                   setShowPaxModal(false);
                   setPaxOrderId(null);
                 }}
               >
-                <Text className="text-center font-semibold text-gray-700">Cancel</Text>
+                <Text style={{ textAlign: "center", fontWeight: "600", color: "#374151" }}>
+                  Cancel
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="flex-1 bg-blue-500 rounded-lg py-3"
+                style={{
+                  flex: 1,
+                  backgroundColor: "#0D87E1",
+                  borderRadius: 8,
+                  paddingVertical: 12,
+                }}
                 onPress={handlePaxConfirm}
               >
-                <Text className="text-center font-semibold text-white">Confirm</Text>
+                <Text style={{ textAlign: "center", fontWeight: "600", color: "#FFFFFF" }}>
+                  Confirm
+                </Text>
               </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+            </XStack>
+          </YStack>
+        </YStack>
       </Modal>
-    </View>
+    </YStack>
   );
 };
 

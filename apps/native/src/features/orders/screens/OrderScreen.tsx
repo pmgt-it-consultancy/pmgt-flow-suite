@@ -3,8 +3,15 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
-import { Alert, TextInput } from "react-native";
-import { ActivityIndicator, FlatList, Modal, TouchableOpacity, View } from "uniwind/components";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Modal,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -518,18 +525,18 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-100">
+      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#F3F4F6">
         <ActivityIndicator size="large" color="#0D87E1" />
-      </View>
+      </YStack>
     );
   }
 
   // In existing order mode, wait for order data
   if (!isDraftMode && !order) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-100">
+      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#F3F4F6">
         <ActivityIndicator size="large" color="#0D87E1" />
-      </View>
+      </YStack>
     );
   }
 
@@ -540,7 +547,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       : "Dine-In";
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="#F3F4F6">
       <OrderHeader
         title={currentTableName}
         subtitle={subtitle}
@@ -549,22 +556,37 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         onUpdatePax={!isDraftMode && order?.orderType === "dine_in" ? handleUpdatePax : undefined}
       />
 
-      <View className="flex-1 flex-row">
+      <XStack flex={1}>
         {/* Menu Section */}
-        <View className="flex-2 border-r border-gray-200">
+        <YStack flex={2} borderRightWidth={1} borderRightColor="#E5E7EB">
           <CategoryGrid storeId={storeId} products={products} onSelectProduct={handleAddProduct} />
-        </View>
+        </YStack>
 
         {/* Cart Section */}
-        <View className="flex-1 bg-white">
-          <View className="flex-row justify-between items-center px-3 py-2.5 border-b border-gray-200 bg-gray-50">
+        <YStack flex={1} backgroundColor="#FFFFFF">
+          <XStack
+            justifyContent="space-between"
+            alignItems="center"
+            paddingHorizontal={12}
+            paddingVertical={10}
+            borderBottomWidth={1}
+            borderBottomColor="#E5E7EB"
+            backgroundColor="#F9FAFB"
+          >
             <Text variant="heading" size="sm">
               Order Items
             </Text>
-            <View className="bg-blue-500 rounded-full px-2.5 py-0.5">
-              <Text className="text-white font-bold text-xs">{cartItemCount}</Text>
-            </View>
-          </View>
+            <YStack
+              backgroundColor="#0D87E1"
+              borderRadius={9999}
+              paddingHorizontal={10}
+              paddingVertical={2}
+            >
+              <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 12 }}>
+                {cartItemCount}
+              </Text>
+            </YStack>
+          </XStack>
 
           <FlatList
             data={activeItems}
@@ -585,12 +607,12 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
               />
             )}
             ListEmptyComponent={
-              <View className="flex-1 items-center justify-center py-16">
+              <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
                 <Ionicons name="cart-outline" size={48} color="#D1D5DB" />
-                <Text variant="muted" className="mt-2">
+                <Text variant="muted" style={{ marginTop: 8 }}>
                   No items in order
                 </Text>
-              </View>
+              </YStack>
             }
           />
 
@@ -605,8 +627,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             onViewBill={() => setShowViewBill(true)}
             onCancelOrder={handleCancelOrder}
           />
-        </View>
-      </View>
+        </YStack>
+      </XStack>
 
       <ModifierSelectionModal
         visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length > 0}
@@ -670,40 +692,68 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           setPendingPaxAction(null);
         }}
       >
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-2xl p-6 w-72">
-            <Text variant="heading" size="lg" className="text-center mb-4">
+        <YStack
+          flex={1}
+          justifyContent="center"
+          alignItems="center"
+          backgroundColor="rgba(0,0,0,0.5)"
+        >
+          <YStack backgroundColor="#FFFFFF" borderRadius={16} padding={24} width={288}>
+            <Text variant="heading" size="lg" style={{ textAlign: "center", marginBottom: 16 }}>
               {pendingPaxAction === "update" ? "Update Guest Count" : "Guest Count (PAX)"}
             </Text>
             <TextInput
-              className="border border-gray-300 rounded-lg px-4 py-3 text-center text-lg mb-4"
+              style={{
+                borderWidth: 1,
+                borderColor: "#D1D5DB",
+                borderRadius: 8,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                textAlign: "center",
+                fontSize: 18,
+                marginBottom: 16,
+              }}
               keyboardType="number-pad"
               placeholder="Number of guests"
               value={paxInput}
               onChangeText={setPaxInput}
               autoFocus
             />
-            <View className="flex-row gap-3">
+            <XStack gap={12}>
               <TouchableOpacity
-                className="flex-1 bg-gray-200 rounded-lg py-3"
+                style={{
+                  flex: 1,
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: 8,
+                  paddingVertical: 12,
+                }}
                 onPress={() => {
                   setShowPaxModal(false);
                   setPendingPaxAction(null);
                 }}
               >
-                <Text className="text-center font-semibold text-gray-700">Cancel</Text>
+                <Text style={{ textAlign: "center", fontWeight: "600", color: "#374151" }}>
+                  Cancel
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="flex-1 bg-blue-500 rounded-lg py-3"
+                style={{
+                  flex: 1,
+                  backgroundColor: "#0D87E1",
+                  borderRadius: 8,
+                  paddingVertical: 12,
+                }}
                 onPress={handlePaxConfirm}
               >
-                <Text className="text-center font-semibold text-white">Confirm</Text>
+                <Text style={{ textAlign: "center", fontWeight: "600", color: "#FFFFFF" }}>
+                  Confirm
+                </Text>
               </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+            </XStack>
+          </YStack>
+        </YStack>
       </Modal>
-    </View>
+    </YStack>
   );
 };
 

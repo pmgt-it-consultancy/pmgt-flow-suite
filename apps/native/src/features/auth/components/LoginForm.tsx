@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Alert } from "react-native";
-import { Image, View } from "uniwind/components";
+import { Alert, Image } from "react-native";
+import { YStack } from "tamagui";
 import { Button, Input, Text } from "../../shared/components/ui";
 import { useAuth } from "../context";
 
@@ -45,18 +45,18 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   };
 
   return (
-    <View className="w-full items-center px-5">
+    <YStack width="100%" alignItems="center" paddingHorizontal={20}>
       <Image
         source={require("../../../../assets/logo-full.png")}
-        className="h-56 mt-5"
+        style={{ height: 224, marginTop: 20 }}
         resizeMode="contain"
       />
 
-      <Text variant="muted" className="mt-6 mb-8 text-center">
+      <Text variant="muted" style={{ marginTop: 24, marginBottom: 32, textAlign: "center" }}>
         Enter your credentials to continue
       </Text>
 
-      <View className="w-full gap-4">
+      <YStack width="100%" gap={16}>
         <Input
           placeholder="Email"
           value={email}
@@ -86,15 +86,15 @@ export const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
           loading={isLoading}
           disabled={isLoading}
           onPress={handleLogin}
-          className="mt-2"
+          style={{ marginTop: 8 }}
         >
           Login
         </Button>
-      </View>
+      </YStack>
 
-      <Text variant="muted" size="xs" className="mt-10">
+      <Text variant="muted" size="xs" style={{ marginTop: 40 }}>
         PMGT Flow Suite POS v1.0
       </Text>
-    </View>
+    </YStack>
   );
 };

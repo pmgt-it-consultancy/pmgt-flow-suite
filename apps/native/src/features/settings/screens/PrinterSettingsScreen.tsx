@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Alert, Switch } from "react-native";
-import { ScrollView, TouchableOpacity, View } from "uniwind/components";
+import { Alert, ScrollView, Switch, TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Button } from "../../shared/components/ui/Button";
 import { Text } from "../../shared/components/ui/Text";
@@ -35,79 +35,124 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
   };
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="#F3F4F6">
       {/* Header */}
-      <View className="bg-white px-4 py-4 border-b border-gray-200 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3">
+      <XStack
+        backgroundColor="#FFFFFF"
+        paddingHorizontal={16}
+        paddingVertical={16}
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+        alignItems="center"
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12 }}>
           <Ionicons name="arrow-back" size={24} color="#111827" />
         </TouchableOpacity>
-        <Text variant="heading" size="lg" className="flex-1">
+        <Text variant="heading" size="lg" style={{ flex: 1 }}>
           Printers
         </Text>
         <SystemStatusBar />
-      </View>
+      </XStack>
 
-      <ScrollView className="flex-1">
+      <ScrollView style={{ flex: 1 }}>
         {/* Kitchen Printing Toggle */}
-        <View className="bg-white mx-4 mt-4 rounded-xl p-4 flex-row items-center justify-between">
-          <View className="flex-1 mr-4">
-            <Text variant="heading" size="md">
+        <XStack
+          backgroundColor="#FFFFFF"
+          marginHorizontal={16}
+          marginTop={16}
+          borderRadius={12}
+          padding={16}
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <YStack flex={1} marginRight={16}>
+            <Text variant="heading" size="base">
               Kitchen Printing
             </Text>
-            <Text variant="muted" size="sm" className="mt-1">
+            <Text variant="muted" size="sm" style={{ marginTop: 4 }}>
               Print kitchen tickets at checkout
             </Text>
-          </View>
+          </YStack>
           <Switch
             value={kitchenPrintingEnabled}
             onValueChange={setKitchenPrintingEnabled}
             trackColor={{ false: "#D1D5DB", true: "#3B82F6" }}
             thumbColor="#FFFFFF"
           />
-        </View>
+        </XStack>
 
         {/* Section Header */}
-        <Text className="uppercase text-xs text-gray-500 px-4 py-2 mt-4">Paired Printers</Text>
+        <Text
+          style={{
+            textTransform: "uppercase",
+            fontSize: 12,
+            color: "#6B7280",
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            marginTop: 16,
+          }}
+        >
+          Paired Printers
+        </Text>
 
         {/* Printer Cards */}
         {printers.length === 0 ? (
-          <View className="bg-white rounded-xl p-4 mx-4 mb-3 items-center py-8">
+          <YStack
+            backgroundColor="#FFFFFF"
+            borderRadius={12}
+            padding={16}
+            marginHorizontal={16}
+            marginBottom={12}
+            alignItems="center"
+            paddingVertical={32}
+          >
             <Ionicons name="print-outline" size={40} color="#9CA3AF" />
-            <Text variant="muted" size="md" className="mt-2">
+            <Text variant="muted" size="base" style={{ marginTop: 8 }}>
               No printers configured
             </Text>
-          </View>
+          </YStack>
         ) : (
           printers.map((printer) => {
             const isConnected = connectionStatus[printer.id] ?? false;
 
             return (
-              <View key={printer.id} className="bg-white rounded-xl p-4 mx-4 mb-3">
+              <YStack
+                key={printer.id}
+                backgroundColor="#FFFFFF"
+                borderRadius={12}
+                padding={16}
+                marginHorizontal={16}
+                marginBottom={12}
+              >
                 {/* Printer info */}
-                <View className="flex-row items-center mb-1">
+                <XStack alignItems="center" marginBottom={4}>
                   <Ionicons name="print" size={20} color="#374151" />
-                  <Text variant="heading" size="md" className="ml-2">
+                  <Text variant="heading" size="base" style={{ marginLeft: 8 }}>
                     {printer.name}
                   </Text>
-                </View>
+                </XStack>
 
-                <Text variant="muted" size="sm" className="mb-2">
+                <Text variant="muted" size="sm" style={{ marginBottom: 8 }}>
                   Role: {printer.role === "receipt" ? "Receipt" : "Kitchen"} | Paper:{" "}
                   {printer.paperWidth}mm
                 </Text>
 
                 {/* Connection status */}
-                <View className="flex-row items-center mb-3">
-                  <View
-                    className={`w-2 h-2 rounded-full mr-2 ${isConnected ? "bg-green-500" : "bg-gray-400"}`}
+                <XStack alignItems="center" marginBottom={12}>
+                  <YStack
+                    width={8}
+                    height={8}
+                    borderRadius={4}
+                    marginRight={8}
+                    backgroundColor={isConnected ? "#22C55E" : "#9CA3AF"}
                   />
-                  <Text size="sm" className={isConnected ? "text-green-600" : "text-gray-500"}>
+                  <Text size="sm" style={{ color: isConnected ? "#16A34A" : "#6B7280" }}>
                     {isConnected ? "Connected" : "Disconnected"}
                   </Text>
-                </View>
+                </XStack>
 
                 {/* Action buttons */}
-                <View className="flex-row gap-2">
+                <XStack gap={8}>
                   <Button variant="outline" size="sm" onPress={() => testPrint(printer.id)}>
                     Test Print
                   </Button>
@@ -118,22 +163,24 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
                     variant="outline"
                     size="sm"
                     onPress={() => handleRemove(printer)}
-                    className="border-red-300"
+                    style={{ borderColor: "#FCA5A5" }}
                   >
-                    <Text className="text-red-500 text-sm font-medium">Remove</Text>
+                    <Text style={{ color: "#EF4444", fontSize: 14, fontWeight: "500" }}>
+                      Remove
+                    </Text>
                   </Button>
-                </View>
-              </View>
+                </XStack>
+              </YStack>
             );
           })
         )}
 
         {/* Scan button */}
-        <View className="px-4 mt-4 mb-8">
+        <YStack paddingHorizontal={16} marginTop={16} marginBottom={32}>
           <Button variant="primary" size="md" onPress={() => setShowScanModal(true)}>
             Scan for Printers
           </Button>
-        </View>
+        </YStack>
       </ScrollView>
 
       {/* Modals */}
@@ -146,6 +193,6 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
           onClose={() => setEditingPrinter(null)}
         />
       )}
-    </View>
+    </YStack>
   );
 };

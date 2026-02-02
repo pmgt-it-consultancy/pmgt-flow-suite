@@ -3,7 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, View } from "uniwind/components";
+import { FlatList } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { ReceiptPreviewModal } from "../../checkout/components";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -133,8 +134,8 @@ export const TakeoutOrderDetailModal = ({
         wide
       >
         {/* Header */}
-        <View className="flex-row justify-between items-start mb-3">
-          <View>
+        <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={12}>
+          <YStack>
             <Text variant="heading" size="lg">
               {order.orderNumber}
             </Text>
@@ -143,120 +144,128 @@ export const TakeoutOrderDetailModal = ({
                 {order.customerName}
               </Text>
             ) : null}
-            <Text variant="muted" size="xs" className="mt-0.5">
+            <Text variant="muted" size="xs" style={{ marginTop: 2 }}>
               {orderTime} · {order.createdByName}
             </Text>
-          </View>
+          </YStack>
           <Badge variant={config.variant} size="md">
             {config.label}
           </Badge>
-        </View>
+        </XStack>
 
-        <Separator className="mb-3" />
+        <Separator style={{ marginBottom: 12 }} />
 
         {/* Items */}
         <FlatList
           data={activeItems}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <View className="py-2">
-              <View className="flex-row justify-between items-center">
-                <View className="flex-1 mr-3">
-                  <Text className="text-gray-900 text-sm">{item.productName}</Text>
-                  <Text className="text-gray-400 text-xs">
+            <YStack paddingVertical={8}>
+              <XStack justifyContent="space-between" alignItems="center">
+                <YStack flex={1} marginRight={12}>
+                  <Text style={{ color: "#111827", fontSize: 14 }}>{item.productName}</Text>
+                  <Text style={{ color: "#9CA3AF", fontSize: 12 }}>
                     {item.quantity}x {formatCurrency(item.productPrice)}
                   </Text>
-                </View>
-                <Text className="text-gray-900 font-medium text-sm">
+                </YStack>
+                <Text style={{ color: "#111827", fontWeight: "500", fontSize: 14 }}>
                   {formatCurrency(item.lineTotal)}
                 </Text>
-              </View>
+              </XStack>
               {item.modifiers?.length > 0 && (
-                <View className="ml-3 mt-1">
+                <YStack marginLeft={12} marginTop={4}>
                   {item.modifiers.map((mod, idx) => (
-                    <Text key={idx} className="text-gray-400 text-xs">
+                    <Text key={idx} style={{ color: "#9CA3AF", fontSize: 12 }}>
                       + {mod.optionName}
                       {mod.priceAdjustment > 0 ? ` (${formatCurrency(mod.priceAdjustment)})` : ""}
                     </Text>
                   ))}
-                </View>
+                </YStack>
               )}
-            </View>
+            </YStack>
           )}
           style={{ maxHeight: 250 }}
         />
 
-        <Separator className="my-3" />
+        <Separator style={{ marginVertical: 12 }} />
 
         {/* Totals */}
-        <View className="gap-1">
-          <View className="flex-row justify-between">
-            <Text className="text-gray-500 text-sm">Subtotal</Text>
-            <Text className="text-gray-700 text-sm">{formatCurrency(order.grossSales)}</Text>
-          </View>
+        <YStack gap={4}>
+          <XStack justifyContent="space-between">
+            <Text style={{ color: "#6B7280", fontSize: 14 }}>Subtotal</Text>
+            <Text style={{ color: "#374151", fontSize: 14 }}>
+              {formatCurrency(order.grossSales)}
+            </Text>
+          </XStack>
           {order.discountAmount > 0 && (
-            <View className="flex-row justify-between">
-              <Text className="text-red-500 text-sm">Discount</Text>
-              <Text className="text-red-500 text-sm">-{formatCurrency(order.discountAmount)}</Text>
-            </View>
+            <XStack justifyContent="space-between">
+              <Text style={{ color: "#EF4444", fontSize: 14 }}>Discount</Text>
+              <Text style={{ color: "#EF4444", fontSize: 14 }}>
+                -{formatCurrency(order.discountAmount)}
+              </Text>
+            </XStack>
           )}
-          <View className="flex-row justify-between">
-            <Text className="text-gray-500 text-sm">VAT (12%)</Text>
-            <Text className="text-gray-700 text-sm">{formatCurrency(order.vatAmount)}</Text>
-          </View>
-          <View className="flex-row justify-between mt-1">
-            <Text className="text-gray-900 font-bold text-base">Total</Text>
-            <Text className="text-gray-900 font-bold text-base">
+          <XStack justifyContent="space-between">
+            <Text style={{ color: "#6B7280", fontSize: 14 }}>VAT (12%)</Text>
+            <Text style={{ color: "#374151", fontSize: 14 }}>
+              {formatCurrency(order.vatAmount)}
+            </Text>
+          </XStack>
+          <XStack justifyContent="space-between" marginTop={4}>
+            <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>Total</Text>
+            <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>
               {formatCurrency(order.netSales)}
             </Text>
-          </View>
-        </View>
+          </XStack>
+        </YStack>
 
         {/* Payment info for paid orders */}
         {isPaid && order.paymentMethod && (
           <>
-            <Separator className="my-3" />
-            <View className="gap-1">
-              <View className="flex-row justify-between">
-                <Text className="text-gray-500 text-sm">Payment</Text>
-                <Text className="text-gray-700 text-sm">
+            <Separator style={{ marginVertical: 12 }} />
+            <YStack gap={4}>
+              <XStack justifyContent="space-between">
+                <Text style={{ color: "#6B7280", fontSize: 14 }}>Payment</Text>
+                <Text style={{ color: "#374151", fontSize: 14 }}>
                   {order.paymentMethod === "cash" ? "Cash" : "Card/E-Wallet"}
                 </Text>
-              </View>
+              </XStack>
               {order.paymentMethod === "cash" && order.cashReceived != null && (
                 <>
-                  <View className="flex-row justify-between">
-                    <Text className="text-gray-500 text-sm">Tendered</Text>
-                    <Text className="text-gray-700 text-sm">
+                  <XStack justifyContent="space-between">
+                    <Text style={{ color: "#6B7280", fontSize: 14 }}>Tendered</Text>
+                    <Text style={{ color: "#374151", fontSize: 14 }}>
                       {formatCurrency(order.cashReceived)}
                     </Text>
-                  </View>
-                  <View className="flex-row justify-between">
-                    <Text className="text-gray-500 text-sm">Change</Text>
-                    <Text className="text-green-600 text-sm">
+                  </XStack>
+                  <XStack justifyContent="space-between">
+                    <Text style={{ color: "#6B7280", fontSize: 14 }}>Change</Text>
+                    <Text style={{ color: "#16A34A", fontSize: 14 }}>
                       {formatCurrency(order.changeGiven ?? 0)}
                     </Text>
-                  </View>
+                  </XStack>
                 </>
               )}
-            </View>
+            </YStack>
           </>
         )}
 
         {/* Actions */}
-        <View className="mt-4 gap-2">
+        <YStack marginTop={16} gap={8}>
           {isPaid && (
             <Button variant="primary" onPress={handleReceiptPreview}>
-              <View className="flex-row items-center justify-center">
+              <XStack alignItems="center" justifyContent="center">
                 <Ionicons name="receipt-outline" size={18} color="#fff" />
-                <Text className="text-white font-semibold ml-2">Receipt Preview / Print</Text>
-              </View>
+                <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
+                  Receipt Preview / Print
+                </Text>
+              </XStack>
             </Button>
           )}
           <Button variant="outline" onPress={onClose}>
             Close
           </Button>
-        </View>
+        </YStack>
       </Modal>
 
       <ReceiptPreviewModal

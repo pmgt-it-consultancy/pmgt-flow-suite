@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { TextInput, View } from "uniwind/components";
+import { TextInput } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
 const PAYMENT_TYPES = ["Credit/Debit Card", "GCash", "Maya", "Bank Transfer", "Other"] as const;
@@ -24,31 +25,37 @@ export const CardPaymentDetails = ({
   const selectedType = PAYMENT_TYPES.includes(paymentType as any) ? paymentType : "Other";
 
   return (
-    <View className="bg-white mx-4 mt-3 p-4 rounded-xl">
-      <Text variant="heading" size="sm" className="mb-3">
+    <YStack
+      backgroundColor="#FFFFFF"
+      marginHorizontal={16}
+      marginTop={12}
+      padding={16}
+      borderRadius={12}
+    >
+      <Text variant="heading" size="sm" style={{ marginBottom: 12 }}>
         Payment Details
       </Text>
 
       {/* Payment Type Chips */}
-      <Text variant="muted" size="sm" className="mb-2">
+      <Text variant="muted" size="sm" style={{ marginBottom: 8 }}>
         Payment Type
       </Text>
-      <View className="flex-row flex-wrap gap-2 mb-3">
+      <XStack flexWrap="wrap" gap={8} marginBottom={12}>
         {PAYMENT_TYPES.map((type) => {
-          const isSelected =
-            paymentType === type ||
-            (type === "Other" && selectedType === "Other" && paymentType !== "");
           const isOtherSelected =
             type === "Other" &&
             !PAYMENT_TYPES.slice(0, -1).includes(paymentType as any) &&
             paymentType !== "";
           const active = type === paymentType || isOtherSelected;
           return (
-            <View
+            <YStack
               key={type}
-              className={`px-3 py-2 rounded-full border ${
-                active ? "bg-blue-500 border-blue-500" : "bg-white border-gray-300"
-              }`}
+              paddingHorizontal={12}
+              paddingVertical={8}
+              borderRadius={9999}
+              borderWidth={1}
+              backgroundColor={active ? "#0D87E1" : "#FFFFFF"}
+              borderColor={active ? "#0D87E1" : "#D1D5DB"}
               onTouchEnd={() => {
                 if (type === "Other") {
                   onPaymentTypeChange(customPaymentType || "Other");
@@ -57,18 +64,29 @@ export const CardPaymentDetails = ({
                 }
               }}
             >
-              <Text size="sm" className={active ? "text-white font-medium" : "text-gray-700"}>
+              <Text
+                size="sm"
+                style={active ? { color: "#FFFFFF", fontWeight: "500" } : { color: "#374151" }}
+              >
                 {type}
               </Text>
-            </View>
+            </YStack>
           );
         })}
-      </View>
+      </XStack>
 
       {/* Custom Payment Type Input */}
       {selectedType === "Other" && !PAYMENT_TYPES.slice(0, -1).includes(paymentType as any) && (
         <TextInput
-          className="border border-gray-300 rounded-lg px-3 py-2 mb-3 text-base"
+          style={{
+            borderWidth: 1,
+            borderColor: "#D1D5DB",
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            marginBottom: 12,
+            fontSize: 16,
+          }}
           placeholder="Enter payment type..."
           value={customPaymentType}
           onChangeText={(text: string) => {
@@ -80,16 +98,23 @@ export const CardPaymentDetails = ({
       )}
 
       {/* Reference Number */}
-      <Text variant="muted" size="sm" className="mb-2">
+      <Text variant="muted" size="sm" style={{ marginBottom: 8 }}>
         Reference Number
       </Text>
       <TextInput
-        className="border border-gray-300 rounded-lg px-3 py-2 text-base"
+        style={{
+          borderWidth: 1,
+          borderColor: "#D1D5DB",
+          borderRadius: 8,
+          paddingHorizontal: 12,
+          paddingVertical: 8,
+          fontSize: 16,
+        }}
         placeholder="Enter reference number..."
         value={referenceNumber}
         onChangeText={onReferenceNumberChange}
         autoCapitalize="characters"
       />
-    </View>
+    </YStack>
   );
 };

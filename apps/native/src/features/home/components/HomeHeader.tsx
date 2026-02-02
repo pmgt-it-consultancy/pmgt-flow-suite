@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { View } from "uniwind/components";
+import { XStack, YStack } from "tamagui";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { IconButton, Text } from "../../shared/components/ui";
 
@@ -23,21 +23,29 @@ export const HomeHeader = ({ userName, onLogout, onSettings, onOrderHistory }: H
   };
 
   return (
-    <View className="bg-white px-4 py-4 flex-row justify-between items-center border-b border-gray-200">
-      <View>
+    <XStack
+      backgroundColor="$white"
+      paddingHorizontal={16}
+      paddingVertical={16}
+      justifyContent="space-between"
+      alignItems="center"
+      borderBottomWidth={1}
+      borderColor="$gray200"
+    >
+      <YStack>
         <Text variant="heading" size="xl">
           Hello, {userName}
         </Text>
-        <Text variant="muted" size="sm" className="mt-1">
+        <Text variant="muted" size="sm" style={{ marginTop: 4 }}>
           What would you like to do?
         </Text>
-      </View>
-      <View className="flex-row gap-2 items-center">
+      </YStack>
+      <XStack gap={8} alignItems="center">
         <SystemStatusBar />
         <IconButton icon="receipt-outline" onPress={onOrderHistory} />
         <IconButton icon="settings-outline" onPress={onSettings} />
         <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
-      </View>
-    </View>
+      </XStack>
+    </XStack>
   );
 };

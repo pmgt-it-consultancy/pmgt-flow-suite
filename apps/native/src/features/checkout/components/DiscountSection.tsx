@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TouchableOpacity, View } from "uniwind/components";
+import { TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Card, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -26,34 +27,38 @@ export const DiscountSection = ({
   const formatCurrency = useFormatCurrency();
 
   return (
-    <View className="px-4 py-3">
-      <Text variant="heading" className="mb-3">
+    <YStack paddingHorizontal={16} paddingVertical={12}>
+      <Text variant="heading" style={{ marginBottom: 12 }}>
         Discounts
       </Text>
       <Card variant="elevated">
         {discounts.length > 0 ? (
           <>
             {discounts.map((discount) => (
-              <View
+              <XStack
                 key={discount._id}
-                className="flex-row justify-between items-center py-2 border-b border-gray-100"
+                justifyContent="space-between"
+                alignItems="center"
+                paddingVertical={8}
+                borderBottomWidth={1}
+                borderColor="#F3F4F6"
               >
-                <View className="flex-1">
-                  <View className="flex-row items-center">
+                <YStack flex={1}>
+                  <XStack alignItems="center">
                     <Ionicons name="checkmark-circle" size={20} color="#22C55E" />
-                    <Text className="text-green-500 font-medium ml-2">
+                    <Text style={{ color: "#22C55E", fontWeight: "500", marginLeft: 8 }}>
                       {discount.discountType === "senior_citizen" ? "SC" : "PWD"}:{" "}
                       {discount.customerName}
                     </Text>
-                  </View>
+                  </XStack>
                   {discount.itemName && (
-                    <Text variant="muted" size="xs" className="ml-7">
+                    <Text variant="muted" size="xs" style={{ marginLeft: 28 }}>
                       Applied to: {discount.itemName}
                     </Text>
                   )}
-                </View>
-                <View className="flex-row items-center">
-                  <Text className="text-green-500 font-semibold mr-2">
+                </YStack>
+                <XStack alignItems="center">
+                  <Text style={{ color: "#22C55E", fontWeight: "600", marginRight: 8 }}>
                     -{formatCurrency(discount.discountAmount)}
                   </Text>
                   <TouchableOpacity
@@ -62,29 +67,46 @@ export const DiscountSection = ({
                   >
                     <Ionicons name="close-circle" size={20} color="#EF4444" />
                   </TouchableOpacity>
-                </View>
-              </View>
+                </XStack>
+              </XStack>
             ))}
             <TouchableOpacity
-              className="flex-row items-center justify-center py-3 mt-2 border-t border-gray-100"
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: 12,
+                marginTop: 8,
+                borderTopWidth: 1,
+                borderColor: "#F3F4F6",
+              }}
               onPress={onAddDiscount}
               activeOpacity={0.7}
             >
               <Ionicons name="add" size={20} color="#0D87E1" />
-              <Text className="text-blue-500 font-medium ml-2">Add Another Discount</Text>
+              <Text style={{ color: "#0D87E1", fontWeight: "500", marginLeft: 8 }}>
+                Add Another Discount
+              </Text>
             </TouchableOpacity>
           </>
         ) : (
           <TouchableOpacity
-            className="flex-row items-center justify-center py-3"
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              paddingVertical: 12,
+            }}
             onPress={onAddDiscount}
             activeOpacity={0.7}
           >
             <Ionicons name="pricetag-outline" size={20} color="#0D87E1" />
-            <Text className="text-blue-500 font-medium ml-2">Add SC/PWD Discount</Text>
+            <Text style={{ color: "#0D87E1", fontWeight: "500", marginLeft: 8 }}>
+              Add SC/PWD Discount
+            </Text>
           </TouchableOpacity>
         )}
       </Card>
-    </View>
+    </YStack>
   );
 };

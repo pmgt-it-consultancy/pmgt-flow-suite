@@ -1,4 +1,4 @@
-import { View } from "uniwind/components";
+import { XStack, YStack } from "tamagui";
 import { Card, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -17,20 +17,28 @@ export const OrderSummary = ({ items }: OrderSummaryProps) => {
   const formatCurrency = useFormatCurrency();
 
   return (
-    <View className="px-4 py-3">
-      <Text variant="heading" className="mb-3">
+    <YStack paddingHorizontal={16} paddingVertical={12}>
+      <Text variant="heading" style={{ marginBottom: 12 }}>
         Order Summary
       </Text>
       <Card variant="elevated">
         {items.map((item) => (
-          <View key={item._id} className="flex-row justify-between py-2 border-b border-gray-100">
-            <Text className="text-gray-700 flex-1">
+          <XStack
+            key={item._id}
+            justifyContent="space-between"
+            paddingVertical={8}
+            borderBottomWidth={1}
+            borderColor="#F3F4F6"
+          >
+            <Text style={{ color: "#374151", flex: 1 }}>
               {item.quantity}x {item.productName}
             </Text>
-            <Text className="text-gray-900 font-medium">{formatCurrency(item.lineTotal)}</Text>
-          </View>
+            <Text style={{ color: "#111827", fontWeight: "500" }}>
+              {formatCurrency(item.lineTotal)}
+            </Text>
+          </XStack>
         ))}
       </Card>
-    </View>
+    </YStack>
   );
 };

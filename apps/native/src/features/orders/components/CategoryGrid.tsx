@@ -3,7 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, TouchableOpacity, View } from "uniwind/components";
+import { FlatList, TouchableOpacity } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 import { CategoryTile } from "./CategoryTile";
 import { ProductCard } from "./ProductCard";
@@ -184,17 +185,22 @@ export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGri
   );
 
   return (
-    <View className="flex-1">
+    <YStack flex={1}>
       <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
 
       {nav.level > 0 && !searchQuery && (
         <TouchableOpacity
-          className="flex-row items-center px-3 py-2"
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+          }}
           onPress={handleBack}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={20} color="#3B82F6" />
-          <Text className="text-blue-500 font-semibold text-sm ml-1.5">
+          <Ionicons name="arrow-back" size={20} color="#0D87E1" />
+          <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 14, marginLeft: 6 }}>
             {nav.level === 1 ? "Categories" : nav.categoryName}
           </Text>
         </TouchableOpacity>
@@ -208,18 +214,18 @@ export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGri
         contentContainerStyle={{ padding: 6 }}
         columnWrapperStyle={{ justifyContent: "flex-start" }}
         ListEmptyComponent={
-          <View className="flex-1 items-center justify-center py-16">
+          <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
             <Ionicons
               name={searchQuery ? "search-outline" : "grid-outline"}
               size={40}
               color="#D1D5DB"
             />
-            <Text variant="muted" className="mt-3">
+            <Text variant="muted" style={{ marginTop: 12 }}>
               {searchQuery ? "No products found" : "No categories available"}
             </Text>
-          </View>
+          </YStack>
         }
       />
-    </View>
+    </YStack>
   );
 };

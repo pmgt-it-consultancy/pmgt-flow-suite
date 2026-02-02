@@ -2,7 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, View } from "uniwind/components";
+import { ActivityIndicator, View } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { Button, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -42,9 +43,9 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-100">
+      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="$gray100">
         <ActivityIndicator size="large" color="#0D87E1" />
-      </View>
+      </YStack>
     );
   }
 
@@ -56,7 +57,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
   });
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="$gray100">
       <HomeHeader
         userName={user?.name ?? "User"}
         onLogout={handleLogout}
@@ -64,89 +65,130 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
         onOrderHistory={() => navigation.navigate("OrderHistoryScreen")}
       />
 
-      <View className="flex-1 p-6">
+      <YStack flex={1} padding={24}>
         {/* Clock & Date */}
-        <View className="items-center mb-6">
-          <Text className="text-4xl font-bold text-gray-900">{timeString}</Text>
-          <Text variant="muted" size="base" className="mt-1">
+        <YStack alignItems="center" marginBottom={24}>
+          <Text style={{ fontSize: 36, fontWeight: "700", color: "#111827" }}>{timeString}</Text>
+          <Text variant="muted" size="base" style={{ marginTop: 4 }}>
             {dateString}
           </Text>
-        </View>
+        </YStack>
 
         {/* Stats Row */}
         {summary ? (
-          <View className="flex-row gap-3 mb-6">
-            <View className="flex-1 bg-white rounded-xl p-4 items-center">
-              <Text className="text-2xl font-bold text-blue-600">{summary.totalOrdersToday}</Text>
+          <XStack gap={12} marginBottom={24}>
+            <YStack
+              flex={1}
+              backgroundColor="$white"
+              borderRadius={12}
+              padding={16}
+              alignItems="center"
+            >
+              <Text style={{ fontSize: 24, fontWeight: "700", color: "#0B6FBA" }}>
+                {summary.totalOrdersToday}
+              </Text>
               <Text variant="muted" size="sm">
                 Total Orders
               </Text>
-            </View>
-            <View className="flex-1 bg-white rounded-xl p-4 items-center">
-              <Text className="text-2xl font-bold text-green-600">{summary.activeDineIn}</Text>
+            </YStack>
+            <YStack
+              flex={1}
+              backgroundColor="$white"
+              borderRadius={12}
+              padding={16}
+              alignItems="center"
+            >
+              <Text style={{ fontSize: 24, fontWeight: "700", color: "#16A34A" }}>
+                {summary.activeDineIn}
+              </Text>
               <Text variant="muted" size="sm">
                 Active Dine-In
               </Text>
-            </View>
-            <View className="flex-1 bg-white rounded-xl p-4 items-center">
-              <Text className="text-2xl font-bold text-orange-600">{summary.activeTakeout}</Text>
+            </YStack>
+            <YStack
+              flex={1}
+              backgroundColor="$white"
+              borderRadius={12}
+              padding={16}
+              alignItems="center"
+            >
+              <Text style={{ fontSize: 24, fontWeight: "700", color: "#EA580C" }}>
+                {summary.activeTakeout}
+              </Text>
               <Text variant="muted" size="sm">
                 Active Takeout
               </Text>
-            </View>
-            <View className="flex-1 bg-white rounded-xl p-4 items-center">
-              <Text className="text-2xl font-bold text-gray-900">
+            </YStack>
+            <YStack
+              flex={1}
+              backgroundColor="$white"
+              borderRadius={12}
+              padding={16}
+              alignItems="center"
+            >
+              <Text style={{ fontSize: 24, fontWeight: "700", color: "#111827" }}>
                 {formatCurrency(summary.todayRevenue)}
               </Text>
               <Text variant="muted" size="sm">
                 Today's Revenue
               </Text>
-            </View>
-          </View>
+            </YStack>
+          </XStack>
         ) : null}
 
         {/* Action Buttons */}
-        <View className="flex-row gap-4 mb-6">
+        <XStack gap={16} marginBottom={24}>
           <Button
             size="lg"
             variant="primary"
-            className="flex-1 py-8 rounded-2xl"
+            style={{ flex: 1, paddingVertical: 32, borderRadius: 16 }}
             onPress={() => navigation.navigate("TablesScreen")}
           >
-            <View className="items-center">
+            <YStack alignItems="center">
               <Ionicons name="restaurant-outline" size={32} color="#fff" />
-              <Text className="text-white font-bold text-lg mt-2">Dine-In</Text>
-            </View>
+              <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 18, marginTop: 8 }}>
+                Dine-In
+              </Text>
+            </YStack>
           </Button>
 
           <Button
             size="lg"
             variant="outline"
-            className="flex-1 py-8 rounded-2xl border-2 border-orange-400 bg-orange-50"
+            style={{
+              flex: 1,
+              paddingVertical: 32,
+              borderRadius: 16,
+              borderWidth: 2,
+              borderColor: "#FB923C",
+              backgroundColor: "#FFF7ED",
+            }}
             onPress={() => navigation.navigate("TakeoutListScreen")}
           >
-            <View className="items-center">
+            <YStack alignItems="center">
               <Ionicons name="bag-handle-outline" size={32} color="#EA580C" />
-              <Text className="text-orange-600 font-bold text-lg mt-2">Takeout</Text>
-            </View>
+              <Text style={{ color: "#EA580C", fontWeight: "700", fontSize: 18, marginTop: 8 }}>
+                Takeout
+              </Text>
+            </YStack>
           </Button>
-        </View>
+        </XStack>
 
         {/* Active Orders Mini-List */}
-        <View>
-          <Text variant="heading" size="base" className="mb-3">
+        <YStack>
+          <Text variant="heading" size="base" style={{ marginBottom: 12 }}>
             Active Orders
           </Text>
           {activeOrders ? (
             <ActiveOrdersList orders={activeOrders} />
           ) : (
-            <View className="items-center py-6">
+            <YStack alignItems="center" paddingVertical={24}>
               <ActivityIndicator size="small" color="#0D87E1" />
-            </View>
+            </YStack>
           )}
-        </View>
-      </View>
-    </View>
+        </YStack>
+      </YStack>
+    </YStack>
   );
 };
 

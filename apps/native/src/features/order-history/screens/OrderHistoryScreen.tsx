@@ -10,8 +10,8 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  View,
-} from "uniwind/components";
+} from "react-native";
+import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Badge, Chip, IconButton, Text } from "../../shared/components/ui";
@@ -128,22 +128,34 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
 
     return (
       <TouchableOpacity
-        className="bg-white mx-3 mb-2 p-4 rounded-xl border border-gray-100"
+        style={{
+          backgroundColor: "#FFFFFF",
+          marginHorizontal: 12,
+          marginBottom: 8,
+          padding: 16,
+          borderRadius: 12,
+          borderWidth: 1,
+          borderColor: "#F3F4F6",
+        }}
         activeOpacity={0.7}
         onPress={() => handleSelectOrder(item._id)}
       >
-        <View className="flex-row justify-between items-start mb-2">
-          <View className="flex-row items-center gap-2">
-            <Text className="text-gray-900 font-bold text-base">#{item.orderNumber}</Text>
+        <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={8}>
+          <XStack alignItems="center" gap={8}>
+            <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>
+              #{item.orderNumber}
+            </Text>
             <Badge variant={statusVariant}>
               {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
             </Badge>
-          </View>
-          <Text className="text-gray-900 font-bold text-base">{formatCurrency(item.netSales)}</Text>
-        </View>
+          </XStack>
+          <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>
+            {formatCurrency(item.netSales)}
+          </Text>
+        </XStack>
 
-        <View className="flex-row items-center gap-3">
-          <View className="flex-row items-center gap-1">
+        <XStack alignItems="center" gap={12}>
+          <XStack alignItems="center" gap={4}>
             <Ionicons
               name={item.orderType === "dine_in" ? "restaurant-outline" : "bag-handle-outline"}
               size={14}
@@ -152,7 +164,7 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
             <Text variant="muted" size="sm">
               {orderTypeLabel}
             </Text>
-          </View>
+          </XStack>
 
           {displayName ? (
             <Text variant="muted" size="sm">
@@ -161,39 +173,57 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
           ) : null}
 
           {paymentIcon ? (
-            <View className="flex-row items-center gap-1">
+            <XStack alignItems="center" gap={4}>
               <Ionicons name={paymentIcon as any} size={14} color="#6B7280" />
               <Text variant="muted" size="sm">
                 {item.paymentMethod === "cash" ? "Cash" : "Card"}
               </Text>
-            </View>
+            </XStack>
           ) : null}
 
           <Text variant="muted" size="sm">
             {formatTime(item.createdAt)}
           </Text>
-        </View>
+        </XStack>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <YStack flex={1} backgroundColor="#F3F4F6">
       {/* Header */}
-      <View className="bg-white flex-row items-center px-4 py-3 border-b border-gray-200">
-        <IconButton icon="arrow-back" variant="ghost" onPress={handleBack} className="mr-2" />
-        <View className="flex-1">
+      <XStack
+        backgroundColor="#FFFFFF"
+        alignItems="center"
+        paddingHorizontal={16}
+        paddingVertical={12}
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+      >
+        <IconButton
+          icon="arrow-back"
+          variant="ghost"
+          onPress={handleBack}
+          style={{ marginRight: 8 }}
+        />
+        <YStack flex={1}>
           <Text variant="heading" size="lg">
             Order History
           </Text>
-        </View>
+        </YStack>
         <SystemStatusBar />
-      </View>
+      </XStack>
 
       {/* Date Presets */}
-      <View className="bg-white border-b border-gray-200 px-3 py-2">
+      <XStack
+        backgroundColor="#FFFFFF"
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+        paddingHorizontal={12}
+        paddingVertical={8}
+      >
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View className="flex-row gap-2">
+          <XStack gap={8}>
             {datePresets.map((preset) => (
               <Chip
                 key={preset.key}
@@ -203,16 +233,28 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
                 {preset.label}
               </Chip>
             ))}
-          </View>
+          </XStack>
         </ScrollView>
-      </View>
+      </XStack>
 
       {/* Search */}
-      <View className="bg-white border-b border-gray-200 px-3 py-2">
-        <View className="flex-row items-center bg-gray-100 rounded-lg px-3 py-2">
+      <YStack
+        backgroundColor="#FFFFFF"
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+        paddingHorizontal={12}
+        paddingVertical={8}
+      >
+        <XStack
+          alignItems="center"
+          backgroundColor="#F3F4F6"
+          borderRadius={8}
+          paddingHorizontal={12}
+          paddingVertical={8}
+        >
           <Ionicons name="search-outline" size={18} color="#9CA3AF" />
           <TextInput
-            className="flex-1 ml-2 text-base text-gray-900"
+            style={{ flex: 1, marginLeft: 8, fontSize: 16, color: "#111827" }}
             placeholder="Search by order # or customer name..."
             placeholderTextColor="#9CA3AF"
             value={searchQuery}
@@ -224,12 +266,18 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
               <Ionicons name="close-circle" size={18} color="#9CA3AF" />
             </TouchableOpacity>
           ) : null}
-        </View>
-      </View>
+        </XStack>
+      </YStack>
 
       {/* Status Filters */}
-      <View className="bg-white border-b border-gray-200 px-3 py-2">
-        <View className="flex-row gap-2">
+      <XStack
+        backgroundColor="#FFFFFF"
+        borderBottomWidth={1}
+        borderColor="#E5E7EB"
+        paddingHorizontal={12}
+        paddingVertical={8}
+      >
+        <XStack gap={8}>
           {statusFilters.map((filter) => (
             <Chip
               key={filter.key}
@@ -239,24 +287,24 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
               {filter.label}
             </Chip>
           ))}
-        </View>
-      </View>
+        </XStack>
+      </XStack>
 
       {/* Order List */}
       {orders === undefined ? (
-        <View className="flex-1 justify-center items-center">
+        <YStack flex={1} justifyContent="center" alignItems="center">
           <ActivityIndicator size="large" color="#0D87E1" />
-        </View>
+        </YStack>
       ) : orders.length === 0 ? (
-        <View className="flex-1 items-center justify-center">
+        <YStack flex={1} alignItems="center" justifyContent="center">
           <Ionicons name="receipt-outline" size={48} color="#D1D5DB" />
-          <Text variant="muted" className="mt-3 text-base">
+          <Text variant="muted" style={{ marginTop: 12, fontSize: 16 }}>
             No orders found
           </Text>
-          <Text variant="muted" size="sm" className="mt-1">
+          <Text variant="muted" size="sm" style={{ marginTop: 4 }}>
             Try adjusting your filters
           </Text>
-        </View>
+        </YStack>
       ) : (
         <FlatList
           data={orders}
@@ -266,7 +314,7 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         />
       )}
-    </View>
+    </YStack>
   );
 };
 

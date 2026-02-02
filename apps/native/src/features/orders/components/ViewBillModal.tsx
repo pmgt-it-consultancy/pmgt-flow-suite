@@ -1,4 +1,5 @@
-import { FlatList, View } from "uniwind/components";
+import { FlatList } from "react-native";
+import { XStack, YStack } from "tamagui";
 import { Modal, Separator, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
@@ -36,49 +37,51 @@ export const ViewBillModal = ({
 
   return (
     <Modal visible={visible} onClose={onClose} title="Current Bill" position="center" wide>
-      <View className="mb-3">
+      <YStack marginBottom={12}>
         <Text variant="muted" size="sm">
           {tableName ? `${tableName} - ` : ""}Order #{orderNumber}
         </Text>
-      </View>
+      </YStack>
 
-      <Separator className="mb-3" />
+      <Separator style={{ marginBottom: 12 }} />
 
       <FlatList
         data={activeItems}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
-          <View className="flex-row justify-between items-center py-2">
-            <View className="flex-1 mr-3">
-              <Text className="text-gray-900 text-sm">{item.productName}</Text>
-              <Text className="text-gray-400 text-xs">
+          <XStack justifyContent="space-between" alignItems="center" paddingVertical={8}>
+            <YStack flex={1} marginRight={12}>
+              <Text style={{ color: "#111827", fontSize: 14 }}>{item.productName}</Text>
+              <Text style={{ color: "#9CA3AF", fontSize: 12 }}>
                 {item.quantity}x {formatCurrency(item.productPrice)}
               </Text>
-            </View>
-            <Text className="text-gray-900 font-medium text-sm">
+            </YStack>
+            <Text style={{ color: "#111827", fontWeight: "500", fontSize: 14 }}>
               {formatCurrency(item.lineTotal)}
             </Text>
-          </View>
+          </XStack>
         )}
         style={{ maxHeight: 300 }}
       />
 
-      <Separator className="my-3" />
+      <Separator style={{ marginVertical: 12 }} />
 
-      <View className="gap-1">
-        <View className="flex-row justify-between">
-          <Text className="text-gray-500 text-sm">Subtotal</Text>
-          <Text className="text-gray-700 text-sm">{formatCurrency(grossSales)}</Text>
-        </View>
-        <View className="flex-row justify-between">
-          <Text className="text-gray-500 text-sm">VAT (12%)</Text>
-          <Text className="text-gray-700 text-sm">{formatCurrency(vatAmount)}</Text>
-        </View>
-        <View className="flex-row justify-between mt-1">
-          <Text className="text-gray-900 font-bold text-base">Total</Text>
-          <Text className="text-gray-900 font-bold text-base">{formatCurrency(netSales)}</Text>
-        </View>
-      </View>
+      <YStack gap={4}>
+        <XStack justifyContent="space-between">
+          <Text style={{ color: "#6B7280", fontSize: 14 }}>Subtotal</Text>
+          <Text style={{ color: "#374151", fontSize: 14 }}>{formatCurrency(grossSales)}</Text>
+        </XStack>
+        <XStack justifyContent="space-between">
+          <Text style={{ color: "#6B7280", fontSize: 14 }}>VAT (12%)</Text>
+          <Text style={{ color: "#374151", fontSize: 14 }}>{formatCurrency(vatAmount)}</Text>
+        </XStack>
+        <XStack justifyContent="space-between" marginTop={4}>
+          <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>Total</Text>
+          <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>
+            {formatCurrency(netSales)}
+          </Text>
+        </XStack>
+      </YStack>
     </Modal>
   );
 };
