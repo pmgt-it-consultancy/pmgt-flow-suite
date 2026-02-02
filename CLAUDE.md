@@ -88,7 +88,15 @@ Feature-based organization under `src/features/`:
 
 ### Native App Styling (Tamagui)
 
-The native app uses **Tamagui v2 (RC)** for styling. Config is in `apps/native/tamagui.config.ts`. Brand color: `#0D87E1`.
+The native app uses **Tamagui v2 RC** with **v5 config** (`@tamagui/config/v5`). Config is in `apps/native/tamagui.config.ts`. Brand color: `#0D87E1`.
+
+**Config setup:** Uses `defaultConfig` from `@tamagui/config/v5` as base, with `@tamagui/config/v5-reanimated` for animations. Key overrides: `onlyAllowShorthands: false` (allows full prop names like `backgroundColor` instead of only `bg`), `allowedStyleValues: false` (allows any values, not just tokens), `defaultPosition: "relative"` (RN-friendly). Custom color tokens added for brand/gray/badge colors.
+
+**Critical Tamagui gotchas:**
+- **NEVER import `createTamagui` from `@tamagui/core`** — always import from `"tamagui"`. Mixing `tamagui` and `@tamagui/core` imports can create duplicate module instances where the config set by one isn't visible to the other, causing "Can't find Tamagui configuration" runtime errors.
+- **Don't re-export non-UI components from `ui/index.ts`** barrel file — importing shared components that themselves import from `ui/` creates require cycles that can cause uninitialized values at runtime.
+- **Metro config** (`metro.config.js`) pins `@tamagui/core` via `extraNodeModules` to prevent duplicate resolution, and adds `mjs` to source extensions.
+- **Babel plugin** is optional (build-time optimizer). If it causes issues, it can be removed — Tamagui works at runtime without it.
 
 **Layout:** Use `XStack` (flex-row) and `YStack` (flex-column) from `tamagui` for layout containers. Use React Native primitives (`TouchableOpacity`, `TextInput`, `FlatList`, `ScrollView`, `Modal`, etc.) directly from `react-native`.
 
