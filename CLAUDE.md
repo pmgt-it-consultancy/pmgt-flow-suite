@@ -155,6 +155,14 @@ Required in `apps/web/.env.local`:
 Required in `apps/native/.env.local`:
 - `EXPO_PUBLIC_CONVEX_URL`
 
+## UI Design Principles (POS)
+
+This is a POS system used by restaurant staff. Every UI decision must prioritize efficiency:
+- **Use all available space** — flex-fill layouts, no dead whitespace. Buttons and interactive elements should expand to fill their containers.
+- **Large touch targets** — staff tap quickly and repeatedly. Buttons must be large enough to hit without precision.
+- **Glanceable data** — clocks, stats, order counts must be readable at arm's length. Use large, bold font sizes for key numbers.
+- **Information density over aesthetics** — pack useful info into every screen. Combine sections side-by-side (e.g. clock + stats in one row, buttons + order list side-by-side) rather than stacking vertically with margins.
+
 ## Deployment
 
 Web deploys to Vercel with custom build command that deploys Convex first:
