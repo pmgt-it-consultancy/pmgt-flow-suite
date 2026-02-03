@@ -17,6 +17,7 @@ const config = createTamagui({
   tokens: {
     ...defaultConfig.tokens,
     color: {
+      ...defaultConfig.tokens.color,
       // Brand
       primary: "#0D87E1",
       primaryDark: "#0B6FBA",
