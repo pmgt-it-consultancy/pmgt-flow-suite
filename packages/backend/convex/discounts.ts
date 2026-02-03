@@ -129,6 +129,11 @@ export const applyBulkScPwdDiscount = mutation({
       throw new Error("No items selected for discount");
     }
 
+    const uniqueIds = new Set(args.items.map((i) => i.orderItemId));
+    if (uniqueIds.size !== args.items.length) {
+      throw new Error("Duplicate items in discount request");
+    }
+
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
     if (order.status !== "open") {
