@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-02-03T04:37:11.031Z",
+  "counts": {
+    "total": 0,
+    "byStatus": {
+      "discovered": 0,
+      "approved": 0,
+      "ignored": 0,
+      "custom": 0
+    },
+    "byCategory": {
+      "api": 0,
+      "auth": 0,
+      "data": 0,
+      "error": 0,
+      "test": 0,
+      "security": 0,
+      "structural": 0,
+      "performance": 0,
+      "logging": 0,
+      "validation": 0
+    },
+    "byLanguage": {
+      "typescript": 0,
+      "javascript": 0,
+      "python": 0,
+      "java": 0,
+      "csharp": 0,
+      "php": 0,
+      "rust": 0,
+      "cpp": 0,
+      "all": 0
+    },
+    "byEnforcement": {
+      "error": 0,
+      "warning": 0,
+      "info": 0
+    }
+  },
+  "byFile": {},
+  "byCategory": {},
+  "byLanguage": {},
+  "byStatus": {},
+  "summaries": []
+}

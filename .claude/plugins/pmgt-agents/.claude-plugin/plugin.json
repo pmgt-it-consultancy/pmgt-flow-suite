@@ -1,0 +1,9 @@
+{
+  "name": "pmgt-agents",
+  "description": "Custom agents for PMGT Flow Suite - POS system development",
+  "version": "1.0.0",
+  "author": {
+    "name": "PMGT IT Consultancy"
+  },
+  "keywords": ["agents", "frontend", "design", "pos", "react-native"]
+}
