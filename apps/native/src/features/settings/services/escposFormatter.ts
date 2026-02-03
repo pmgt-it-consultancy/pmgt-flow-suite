@@ -62,6 +62,15 @@ export async function printReceiptToThermal(
   await p.printText(`${data.storeName}\n`, bold());
   if (data.storeAddress) await p.printText(`${data.storeAddress}\n`, normal());
   if (data.storeTin) await p.printText(`TIN: ${data.storeTin}\n`, normal());
+  if (data.storeContactNumber) await p.printText(`Tel: ${data.storeContactNumber}\n`, normal());
+  if (data.storeTelephone) await p.printText(`Phone: ${data.storeTelephone}\n`, normal());
+  if (data.storeEmail) await p.printText(`${data.storeEmail}\n`, normal());
+  if (data.storeWebsite) await p.printText(`${data.storeWebsite}\n`, normal());
+  if (data.storeSocials?.length) {
+    for (const social of data.storeSocials) {
+      await p.printText(`${social.platform}: ${social.url}\n`, normal());
+    }
+  }
 
   await p.printText(`${line("-", w)}\n`, normal());
 
@@ -165,7 +174,8 @@ export async function printReceiptToThermal(
 
   // Footer
   await p.printerAlign(ALIGN.CENTER);
-  await p.printText("Thank you for your patronage!\n", normal());
+  const footerText = data.storeFooter || "Thank you for your patronage!";
+  await p.printText(`${footerText}\n`, normal());
   await p.printText("This does not serve as an official receipt\n", normal());
   const feed = charsPerLine >= 48 ? "\n\n\n\n\n\n" : "\n\n\n";
   await p.printText(`Powered by PMGT Flow Suite${feed}`, {

@@ -55,6 +55,12 @@ export default defineSchema({
     vatRate: v.number(),
     printerMac: v.optional(v.string()),
     kitchenPrinterMac: v.optional(v.string()),
+    contactNumber: v.optional(v.string()),
+    telephone: v.optional(v.string()),
+    email: v.optional(v.string()),
+    website: v.optional(v.string()),
+    socials: v.optional(v.array(v.object({ platform: v.string(), url: v.string() }))),
+    footer: v.optional(v.string()),
     isActive: v.boolean(),
     createdAt: v.number(),
   })

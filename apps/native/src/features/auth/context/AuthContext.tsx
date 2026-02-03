@@ -33,6 +33,31 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function parseAuthError(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return "Authentication failed. Please try again.";
+  }
+
+  const message = error.message;
+
+  // Handle specific Convex Auth error codes
+  if (message.includes("InvalidSecret")) {
+    return "Invalid email or password.";
+  }
+  if (message.includes("InvalidAccountId") || message.includes("account not found")) {
+    return "No account found with this email.";
+  }
+  if (message.includes("TooManyFailedAttempts")) {
+    return "Too many failed attempts. Please try again later.";
+  }
+  if (message.includes("EmailNotVerified")) {
+    return "Please verify your email before signing in.";
+  }
+
+  // Generic fallback
+  return "Authentication failed. Please check your credentials and try again.";
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { isLoading: isAuthLoading, isAuthenticated: isConvexAuthenticated } = useConvexAuth();
   const { signIn: convexSignIn, signOut: convexSignOut } = useAuthActions();
@@ -54,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: true };
       } catch (error) {
         console.error("Sign in error:", error);
-        const errorMessage = error instanceof Error ? error.message : "Authentication failed";
+        const errorMessage = parseAuthError(error);
         return { success: false, error: errorMessage };
       }
     },

@@ -75,6 +75,31 @@ Function files organized by domain:
 - `hooks/` — Custom React hooks
 - `stores/` — Zustand stores
 
+#### Colocated Page Architecture
+
+For complex pages, use colocated folders with underscore prefix (ignored by Next.js routing):
+
+```
+app/(admin)/stores/
+├── page.tsx              # Main page component (kept minimal)
+├── _components/          # Page-specific components
+│   ├── index.ts
+│   ├── StoreFormDialog.tsx
+│   └── StoresTable.tsx
+├── _hooks/               # Page-specific hooks
+│   ├── index.ts
+│   └── useStoreMutations.ts
+└── _stores/              # Page-specific Zustand stores
+    └── useStoreFormStore.ts
+```
+
+**Rules:**
+- Keep `page.tsx` minimal — it should compose components, not contain business logic
+- Use Zustand for client-side state management (form state, UI state, selections)
+- Extract mutations/queries into custom hooks when they have complex logic
+- Use barrel exports (`index.ts`) in each folder
+- Prefix folders with `_` so Next.js ignores them as routes
+
 ### Native App (apps/native/src)
 Feature-based organization under `src/features/`:
 - `home/` — Active orders list

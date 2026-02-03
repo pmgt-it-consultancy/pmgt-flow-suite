@@ -21,6 +21,12 @@ export interface ReceiptData {
   storeName: string;
   storeAddress?: string;
   storeTin?: string;
+  storeContactNumber?: string;
+  storeTelephone?: string;
+  storeEmail?: string;
+  storeWebsite?: string;
+  storeSocials?: { platform: string; url: string }[];
+  storeFooter?: string;
   orderNumber: string;
   tableName?: string;
   pax?: number;
@@ -291,7 +297,11 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         <div class="store-name">${data.storeName}</div>
         ${data.storeAddress ? `<div class="store-info">${data.storeAddress}</div>` : ""}
         ${data.storeTin ? `<div class="store-info">TIN: ${data.storeTin}</div>` : ""}
-        <div class="store-info">POS System</div>
+        ${data.storeContactNumber ? `<div class="store-info">Tel: ${data.storeContactNumber}</div>` : ""}
+        ${data.storeTelephone ? `<div class="store-info">Phone: ${data.storeTelephone}</div>` : ""}
+        ${data.storeEmail ? `<div class="store-info">${data.storeEmail}</div>` : ""}
+        ${data.storeWebsite ? `<div class="store-info">${data.storeWebsite}</div>` : ""}
+        ${data.storeSocials?.length ? data.storeSocials.map((s) => `<div class="store-info">${s.platform}: ${s.url}</div>`).join("") : ""}
       </div>
 
       <div class="divider"></div>
@@ -376,7 +386,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
       </div>
 
       <div class="footer">
-        <div class="thank-you">Thank you for your patronage!</div>
+        <div class="thank-you">${data.storeFooter || "Thank you for your patronage!"}</div>
         <div>This does not serve as an official receipt</div>
         <div>Please keep this receipt for your records</div>
         <div class="divider"></div>

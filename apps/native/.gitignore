@@ -19,3 +19,5 @@ web-build/
 
 credentials.json
 *.apk
+.env.production
+.env.staging

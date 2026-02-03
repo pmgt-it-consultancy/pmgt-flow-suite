@@ -274,6 +274,12 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.71.0(react@19.1.0))
+      '@maskito/core':
+        specifier: ^5.1.0
+        version: 5.1.0
+      '@maskito/react':
+        specifier: ^5.1.0
+        version: 5.1.0(@maskito/core@5.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@packages/backend':
         specifier: workspace:*
         version: link:../../packages/backend
@@ -1791,6 +1797,16 @@ packages:
     resolution: {integrity: sha512-5hALp7YCq77FV7HL4N5i+OXGgGEoxYL3lsD7oXycPplBQU3twqLpBo4w/Nn9TleKOZnNstaahGy1BskmvTSdrQ==}
     peerDependencies:
       react-native: '>=0.57.0'
+
+  '@maskito/core@5.1.0':
+    resolution: {integrity: sha512-IWAs2JguYwBGWS7BAMNwT9xR2f0fC4BasLXwpFMsSd3JxKx32dhbNbnSIw99aJOmBr40Wv5j0/779M3akZeuzA==}
+
+  '@maskito/react@5.1.0':
+    resolution: {integrity: sha512-cl4DOmvM8c61l69VOgNdYMzP/8uIMw5+gXc2gMyRdrdi1nSlMpgvMZ6tLZyGsW/z+pK+qLrUg1LfQUaCI/v31g==}
+    peerDependencies:
+      '@maskito/core': ^5.1.0
+      react: '>=16.8'
+      react-dom: '>=16.8'
 
   '@next/env@16.1.1':
     resolution: {integrity: sha512-3oxyM97Sr2PqiVyMyrZUtrtM3jqqFxOQJVuKclDsgj/L728iZt/GyslkN4NwarledZATCenbk4Offjk1hQmaAA==}
@@ -8416,6 +8432,14 @@ snapshots:
   '@kesha-antonov/react-native-background-downloader@4.5.2(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))':
     dependencies:
       react-native: 0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)
+
+  '@maskito/core@5.1.0': {}
+
+  '@maskito/react@5.1.0(@maskito/core@5.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@maskito/core': 5.1.0
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   '@next/env@16.1.1': {}
 

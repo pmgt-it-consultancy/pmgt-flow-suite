@@ -42,8 +42,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     versionCode: 5,
     adaptiveIcon: {
-      foregroundImage: "./assets/app-icon.png",
-      backgroundColor: "#0A1628",
+      foregroundImage: "./assets/adaptive-icon.png",
+      backgroundColor: "#2284E8",
     },
     package: getPackageName(),
   },
