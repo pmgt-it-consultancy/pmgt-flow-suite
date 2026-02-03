@@ -36,7 +36,14 @@ export const ViewBillModal = ({
   const activeItems = items.filter((i) => !i.isVoided);
 
   return (
-    <Modal visible={visible} onClose={onClose} title="Current Bill" position="center" wide>
+    <Modal
+      visible={visible}
+      onClose={onClose}
+      title="Current Bill"
+      position="center"
+      wide
+      scrollable={false}
+    >
       <YStack marginBottom={12}>
         <Text variant="muted" size="sm">
           {tableName ? `${tableName} - ` : ""}Order #{orderNumber}

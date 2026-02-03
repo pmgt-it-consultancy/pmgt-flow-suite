@@ -35,6 +35,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   assetBundlePatterns: ["**/*"],
   android: {
+    permissions: [
+      "android.permission.BLUETOOTH_SCAN",
+      "android.permission.BLUETOOTH_CONNECT",
+      "android.permission.ACCESS_FINE_LOCATION",
+    ],
+    versionCode: 5,
     adaptiveIcon: {
       foregroundImage: "./assets/app-icon.png",
       backgroundColor: "#0A1628",

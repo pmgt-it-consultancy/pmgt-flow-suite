@@ -192,13 +192,17 @@ export default defineSchema({
     paidAt: v.optional(v.number()),
     paidBy: v.optional(v.id("users")),
     pax: v.optional(v.number()),
+    // Multi-tab support: multiple orders per table
+    tabNumber: v.optional(v.number()), // Auto-assigned: 1, 2, 3... per table
+    tabName: v.optional(v.string()), // Default "Tab 1", editable to guest name
   })
     .index("by_store", ["storeId"])
     .index("by_status", ["status"])
     .index("by_store_status", ["storeId", "status"])
     .index("by_createdAt", ["createdAt"])
     .index("by_store_createdAt", ["storeId", "createdAt"])
-    .index("by_tableId", ["tableId"]),
+    .index("by_tableId", ["tableId"])
+    .index("by_tableId_status", ["tableId", "status"]),
 
   orderItems: defineTable({
     orderId: v.id("orders"),

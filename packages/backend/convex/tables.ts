@@ -321,7 +321,7 @@ export const getWithOrder = query({
   },
 });
 
-// Get all tables with order summaries (for POS floor view)
+// Get all tables with order summaries (for POS floor view) - multi-tab support
 export const listWithOrders = query({
   args: {
     storeId: v.id("stores"),
@@ -333,15 +333,23 @@ export const listWithOrders = query({
       capacity: v.optional(v.number()),
       status: v.union(v.literal("available"), v.literal("occupied")),
       sortOrder: v.number(),
-      order: v.optional(
+      // Multi-tab: array of orders instead of single order
+      orders: v.array(
         v.object({
           _id: v.id("orders"),
           orderNumber: v.string(),
+          tabNumber: v.number(),
+          tabName: v.string(),
           itemCount: v.number(),
           netSales: v.number(),
+          pax: v.optional(v.number()),
           createdAt: v.number(),
         }),
       ),
+      // Aggregated totals across all tabs
+      totalTabs: v.number(),
+      totalItemCount: v.number(),
+      totalNetSales: v.number(),
     }),
   ),
   handler: async (ctx, args) => {
@@ -359,20 +367,15 @@ export const listWithOrders = query({
     // Get order details for each table
     const results = await Promise.all(
       activeTables.map(async (table) => {
-        let order:
-          | {
-              _id: Doc<"orders">["_id"];
-              orderNumber: string;
-              itemCount: number;
-              netSales: number;
-              createdAt: number;
-            }
-          | undefined;
+        // Get all open orders for this table
+        const openOrders = await ctx.db
+          .query("orders")
+          .withIndex("by_tableId_status", (q) => q.eq("tableId", table._id).eq("status", "open"))
+          .collect();
 
-        if (table.currentOrderId) {
-          const orderDoc = await ctx.db.get(table.currentOrderId);
-          if (orderDoc) {
-            // Get item count
+        // Get item counts for each order
+        const ordersWithDetails = await Promise.all(
+          openOrders.map(async (orderDoc) => {
             const items = await ctx.db
               .query("orderItems")
               .withIndex("by_order", (q) => q.eq("orderId", orderDoc._id))
@@ -381,15 +384,26 @@ export const listWithOrders = query({
             const activeItems = items.filter((i) => !i.isVoided);
             const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
 
-            order = {
+            return {
               _id: orderDoc._id,
               orderNumber: orderDoc.orderNumber,
+              tabNumber: orderDoc.tabNumber ?? 1,
+              tabName: orderDoc.tabName ?? `Tab ${orderDoc.tabNumber ?? 1}`,
               itemCount,
               netSales: orderDoc.netSales,
+              pax: orderDoc.pax,
               createdAt: orderDoc.createdAt,
             };
-          }
-        }
+          }),
+        );
+
+        // Sort by tabNumber
+        ordersWithDetails.sort((a, b) => a.tabNumber - b.tabNumber);
+
+        // Calculate aggregates
+        const totalTabs = ordersWithDetails.length;
+        const totalItemCount = ordersWithDetails.reduce((sum, o) => sum + o.itemCount, 0);
+        const totalNetSales = ordersWithDetails.reduce((sum, o) => sum + o.netSales, 0);
 
         return {
           _id: table._id,
@@ -397,7 +411,10 @@ export const listWithOrders = query({
           capacity: table.capacity,
           status: table.status,
           sortOrder: table.sortOrder,
-          order,
+          orders: ordersWithDetails,
+          totalTabs,
+          totalItemCount,
+          totalNetSales,
         };
       }),
     );

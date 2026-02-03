@@ -22,6 +22,7 @@ import {
   CartFooter,
   CartItem,
   CategoryGrid,
+  EditTabNameModal,
   ModifierSelectionModal,
   OrderHeader,
   TransferTableModal,
@@ -93,6 +94,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   } | null>(null);
   const [showViewBill, setShowViewBill] = useState(false);
   const [showTransferTable, setShowTransferTable] = useState(false);
+  const [showEditTabName, setShowEditTabName] = useState(false);
 
   // Queries
   const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
@@ -123,7 +125,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const cancelOrderMutation = useMutation(api.checkout.cancelOrder);
   const sendToKitchenMutation = useMutation(api.orders.sendToKitchen);
   const createAndSendMutation = useMutation(api.orders.createAndSendToKitchen);
+  const createOrderMutation = useMutation(api.orders.create);
   const updatePaxMutation = useMutation(api.orders.updatePax);
+  const updateTabNameMutation = useMutation(api.orders.updateTabName);
 
   // Printer
   const { printKitchenTicket } = usePrinterStore();
@@ -159,7 +163,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     () => activeItems.reduce((sum, item) => sum + item.quantity, 0),
     [activeItems],
   );
-  const hasUnsentItems = useMemo(() => activeItems.some((i) => !i.isSentToKitchen), [activeItems]);
+  const hasUnsentItems = useMemo(() => {
+    // In non-draft mode, require order to be loaded before enabling send
+    if (!isDraftMode && !order) return false;
+    return activeItems.some((i) => !i.isSentToKitchen);
+  }, [activeItems, isDraftMode, order]);
   const hasSentItems = useMemo(() => activeItems.some((i) => i.isSentToKitchen), [activeItems]);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
@@ -349,6 +357,12 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   );
 
   const handleSendToKitchen = useCallback(async () => {
+    // Guard: In non-draft mode, wait for order to load
+    if (!isDraftMode && !order) {
+      console.log("[SendToKitchen] Order not loaded yet, ignoring");
+      return;
+    }
+
     // In draft mode, prompt for PAX before first send
     if (isDraftMode) {
       setPaxInput("");
@@ -358,28 +372,68 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     }
 
     await executeSendToKitchen();
-  }, [isDraftMode]);
+  }, [isDraftMode, order]);
 
   const executeSendToKitchen = useCallback(
     async (paxValue?: number) => {
+      console.log("[SendToKitchen] Starting. isDraftMode:", isDraftMode, "paxValue:", paxValue);
       setIsSending(true);
       try {
         let orderNumber: string;
         let sentItemNames: { name: string; quantity: number; notes?: string }[];
 
         if (isDraftMode) {
-          // First-time: create order + send
-          const result = await createAndSendMutation({
-            storeId,
+          // Validate required params
+          console.log("[SendToKitchen] Draft mode - validating params:", {
             tableId,
-            pax: paxValue!,
-            items: draftItems.map((d) => ({
-              productId: d.productId,
-              quantity: d.quantity,
-              notes: d.notes,
-              modifiers: d.modifiers,
-            })),
+            storeId,
+            paxValue,
+            itemCount: draftItems.length,
           });
+
+          if (!tableId) {
+            throw new Error("Table ID is required");
+          }
+          if (!storeId) {
+            throw new Error("Store ID is required");
+          }
+          if (!paxValue || paxValue < 1) {
+            throw new Error("Guest count is required");
+          }
+          if (draftItems.length === 0) {
+            throw new Error("No items to send");
+          }
+
+          console.log("[SendToKitchen] Calling createAndSendMutation...");
+
+          // First-time: create order + send
+          let result: {
+            orderId: Id<"orders">;
+            orderNumber: string;
+            sentItemIds: Id<"orderItems">[];
+          };
+          try {
+            result = await createAndSendMutation({
+              storeId,
+              tableId,
+              pax: paxValue,
+              items: draftItems.map((d) => ({
+                productId: d.productId,
+                quantity: d.quantity,
+                notes: d.notes,
+                modifiers: d.modifiers,
+              })),
+            });
+            console.log("[SendToKitchen] Mutation result:", JSON.stringify(result));
+          } catch (mutationError: any) {
+            console.error("[SendToKitchen] Mutation error:", mutationError);
+            throw new Error(`Mutation failed: ${mutationError.message || mutationError}`);
+          }
+
+          if (!result || !result.orderId || !result.orderNumber) {
+            throw new Error(`Failed to create order - invalid response: ${JSON.stringify(result)}`);
+          }
+
           setCurrentOrderId(result.orderId);
           orderNumber = result.orderNumber;
           sentItemNames = draftItems.map((d) => ({
@@ -394,9 +448,22 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           setDraftItems([]);
         } else {
           // Existing order: send unsent items
+          console.log("[SendToKitchen] Existing order mode:", {
+            currentOrderId,
+            orderExists: !!order,
+            orderNumber: order?.orderNumber,
+          });
+
+          if (!currentOrderId) {
+            throw new Error("Order ID is required");
+          }
+          if (!order) {
+            throw new Error("Order data not loaded");
+          }
+
           const unsentItems = activeItems.filter((i) => !i.isSentToKitchen);
-          await sendToKitchenMutation({ orderId: currentOrderId! });
-          orderNumber = order!.orderNumber;
+          await sendToKitchenMutation({ orderId: currentOrderId });
+          orderNumber = order.orderNumber;
           sentItemNames = unsentItems.map((i) => ({
             name: i.productName,
             quantity: i.quantity,
@@ -523,6 +590,42 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     Alert.alert("Transferred", `Order moved to ${newTableName}`);
   }, []);
 
+  const handleSaveTabName = useCallback(
+    async (newName: string) => {
+      if (!currentOrderId) return;
+      try {
+        await updateTabNameMutation({ orderId: currentOrderId, tabName: newName });
+      } catch (error: any) {
+        Alert.alert("Error", error.message || "Failed to update tab name");
+      }
+    },
+    [currentOrderId, updateTabNameMutation],
+  );
+
+  const handleAddNewTab = useCallback(async () => {
+    if (!tableId || !storeId) return;
+
+    try {
+      // Create a new order (tab) for this table
+      const newOrderId = await createOrderMutation({
+        storeId,
+        orderType: "dine_in",
+        tableId,
+        pax: 1, // Default pax
+      });
+
+      // Navigate to the new order, replacing current screen
+      navigation.replace("OrderScreen", {
+        orderId: newOrderId,
+        tableId,
+        tableName: currentTableName,
+        storeId,
+      });
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to create new tab");
+    }
+  }, [tableId, storeId, createOrderMutation, navigation, currentTableName]);
+
   if (isLoading || !isAuthenticated) {
     return (
       <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#F3F4F6">
@@ -554,6 +657,14 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         onBack={handleBack}
         onTransferTable={!isDraftMode ? () => setShowTransferTable(true) : undefined}
         onUpdatePax={!isDraftMode && order?.orderType === "dine_in" ? handleUpdatePax : undefined}
+        tabNumber={!isDraftMode ? order?.tabNumber : undefined}
+        tabName={!isDraftMode ? order?.tabName : undefined}
+        onEditTabName={
+          !isDraftMode && order?.orderType === "dine_in"
+            ? () => setShowEditTabName(true)
+            : undefined
+        }
+        onAddNewTab={!isDraftMode && order?.orderType === "dine_in" ? handleAddNewTab : undefined}
       />
 
       <XStack flex={1}>
@@ -679,6 +790,16 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           currentTableName={currentTableName}
           onTransferred={handleTransferred}
           onClose={() => setShowTransferTable(false)}
+        />
+      )}
+
+      {!isDraftMode && order?.tabNumber && order?.tabName && (
+        <EditTabNameModal
+          visible={showEditTabName}
+          currentName={order.tabName}
+          tabNumber={order.tabNumber}
+          onSave={handleSaveTabName}
+          onClose={() => setShowEditTabName(false)}
         />
       )}
 

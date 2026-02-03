@@ -193,7 +193,18 @@ export default function OrdersPage() {
                         {order.orderType === "dine_in" ? "Dine-in" : "Takeout"}
                       </div>
                     </TableCell>
-                    <TableCell>{order.tableName || order.customerName || "-"}</TableCell>
+                    <TableCell>
+                      {order.orderType === "dine_in" ? (
+                        <div className="flex flex-col">
+                          <span>{order.tableName || "-"}</span>
+                          {order.tabName && (
+                            <span className="text-xs text-gray-500">{order.tabName}</span>
+                          )}
+                        </div>
+                      ) : (
+                        order.customerName || "-"
+                      )}
+                    </TableCell>
                     <TableCell>{order.itemCount}</TableCell>
                     <TableCell>{formatCurrency(order.netSales)}</TableCell>
                     <TableCell>{getStatusBadge(order.status)}</TableCell>
@@ -243,6 +254,21 @@ export default function OrdersPage() {
                 {orderDetails.tableName && (
                   <div>
                     <span className="text-gray-500">Table:</span> {orderDetails.tableName}
+                  </div>
+                )}
+                {orderDetails.tabName && orderDetails.orderType === "dine_in" && (
+                  <div>
+                    <span className="text-gray-500">Tab:</span> {orderDetails.tabName}
+                    {orderDetails.tabNumber && (
+                      <span className="text-gray-400 text-xs ml-1">
+                        (#{orderDetails.tabNumber})
+                      </span>
+                    )}
+                  </div>
+                )}
+                {orderDetails.pax && orderDetails.orderType === "dine_in" && (
+                  <div>
+                    <span className="text-gray-500">Guests:</span> {orderDetails.pax}
                   </div>
                 )}
                 {orderDetails.customerName && (

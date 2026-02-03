@@ -132,6 +132,7 @@ export const TakeoutOrderDetailModal = ({
         title="Order Details"
         position="center"
         wide
+        scrollable={false}
       >
         {/* Header */}
         <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={12}>

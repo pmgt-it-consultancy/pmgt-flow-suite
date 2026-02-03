@@ -5,14 +5,26 @@ import { XStack, YStack } from "tamagui";
 import { Badge, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
+interface OrderInfo {
+  _id: Id<"orders">;
+  orderNumber: string;
+  tabNumber: number;
+  tabName: string;
+  itemCount: number;
+  netSales: number;
+  pax?: number;
+  createdAt: number;
+}
+
 interface TableCardProps {
   id: Id<"tables">;
   name: string;
   capacity: number;
   isOccupied: boolean;
-  itemCount?: number;
-  total?: number;
-  pax?: number;
+  orders?: OrderInfo[];
+  totalTabs?: number;
+  totalItemCount?: number;
+  totalNetSales?: number;
   onPress: (id: Id<"tables">, name: string) => void;
   onUpdatePax?: (id: Id<"tables">) => void;
 }
@@ -22,9 +34,10 @@ export const TableCard = ({
   name,
   capacity,
   isOccupied,
-  itemCount,
-  total,
-  pax,
+  orders = [],
+  totalTabs = 0,
+  totalItemCount = 0,
+  totalNetSales = 0,
   onPress,
   onUpdatePax,
 }: TableCardProps) => {
@@ -33,6 +46,9 @@ export const TableCard = ({
   const statusColor = isOccupied ? "#F59E0B" : "#22C55E";
   const statusIcon = isOccupied ? "restaurant" : "checkmark-circle";
   const statusLabel = isOccupied ? "OCCUPIED" : "AVAILABLE";
+
+  const hasMultipleTabs = totalTabs > 1;
+  const singleOrder = orders[0];
 
   return (
     <TouchableOpacity
@@ -54,9 +70,26 @@ export const TableCard = ({
       activeOpacity={0.7}
     >
       <XStack justifyContent="space-between" alignItems="center" marginBottom={8}>
-        <Text variant="heading" size="lg">
-          {name}
-        </Text>
+        <XStack alignItems="center" gap={8}>
+          <Text variant="heading" size="lg">
+            {name}
+          </Text>
+          {hasMultipleTabs && (
+            <XStack
+              backgroundColor="#DBEAFE"
+              paddingHorizontal={8}
+              paddingVertical={4}
+              borderRadius={6}
+              alignItems="center"
+              gap={4}
+            >
+              <Ionicons name="layers" size={14} color="#0D87E1" />
+              <Text size="xs" style={{ color: "#0D87E1", fontWeight: "600" }}>
+                {totalTabs}
+              </Text>
+            </XStack>
+          )}
+        </XStack>
         <Ionicons name={statusIcon as any} size={24} color={statusColor} />
       </XStack>
 
@@ -64,15 +97,31 @@ export const TableCard = ({
         Capacity: {capacity} {capacity === 1 ? "person" : "people"}
       </Text>
 
-      {isOccupied && itemCount !== undefined && (
-        <XStack justifyContent="space-between" marginBottom={8}>
-          <Text size="sm" style={{ color: "#4B5563" }}>
-            {itemCount} item(s){pax ? ` · ${pax} pax` : ""}
-          </Text>
-          <Text size="sm" style={{ color: "#0D87E1", fontWeight: "600" }}>
-            {formatCurrency(total ?? 0)}
-          </Text>
-        </XStack>
+      {isOccupied && orders.length > 0 && (
+        <YStack gap={4} marginBottom={8}>
+          {hasMultipleTabs ? (
+            <>
+              <Text size="sm" style={{ color: "#4B5563" }}>
+                {totalTabs} {totalTabs === 1 ? "tab" : "tabs"} · {totalItemCount}{" "}
+                {totalItemCount === 1 ? "item" : "items"}
+              </Text>
+              <Text size="sm" style={{ color: "#0D87E1", fontWeight: "600" }}>
+                ₱{totalNetSales.toFixed(2)}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text size="sm" style={{ color: "#4B5563" }}>
+                {singleOrder.tabName} · {singleOrder.itemCount}{" "}
+                {singleOrder.itemCount === 1 ? "item" : "items"}
+                {singleOrder.pax ? ` · ${singleOrder.pax} pax` : ""}
+              </Text>
+              <Text size="sm" style={{ color: "#0D87E1", fontWeight: "600" }}>
+                ₱{singleOrder.netSales.toFixed(2)}
+              </Text>
+            </>
+          )}
+        </YStack>
       )}
 
       <Badge variant={isOccupied ? "warning" : "success"} style={{ alignSelf: "flex-start" }}>

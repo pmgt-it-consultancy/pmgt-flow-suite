@@ -40,7 +40,7 @@ type PaymentMethod = "cash" | "card_ewallet";
 type DiscountType = "senior_citizen" | "pwd" | null;
 
 export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
-  const { orderId, tableId: _tableId, tableName, orderType } = route.params;
+  const { orderId, tableId, tableName, orderType } = route.params;
   const isTakeout = orderType === "takeout";
   const { user, isLoading, isAuthenticated } = useAuth();
   const formatCurrency = useFormatCurrency();
@@ -513,7 +513,12 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
               },
             ]);
           } else {
-            navigation.reset({ index: 0, routes: [{ name: "HomeScreen" }] });
+            // For dine-in: go back to tables screen so user can see remaining tabs
+            // TablesScreen will show updated state (table still occupied if other tabs exist)
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "HomeScreen" }, { name: "TablesScreen" }],
+            });
           }
         }}
       />

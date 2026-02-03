@@ -3,6 +3,7 @@ export { CartFooter } from "./CartFooter";
 export { CartItem } from "./CartItem";
 export { CategoryGrid } from "./CategoryGrid";
 export { CategoryTile } from "./CategoryTile";
+export { EditTabNameModal } from "./EditTabNameModal";
 export type { SelectedModifier } from "./ModifierSelectionModal";
 export { ModifierSelectionModal } from "./ModifierSelectionModal";
 export { OrderHeader } from "./OrderHeader";

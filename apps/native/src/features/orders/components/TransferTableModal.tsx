@@ -47,6 +47,7 @@ export const TransferTableModal = ({
       title="Transfer Table"
       description={`Move order from ${currentTableName} to:`}
       position="center"
+      scrollable={false}
     >
       {availableTables === undefined ? (
         <YStack alignItems="center" paddingVertical={32}>
