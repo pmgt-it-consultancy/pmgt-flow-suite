@@ -25,12 +25,13 @@ interface DiscountModalProps {
   items: OrderItem[];
   discountedQtyByItem: Map<string, number>;
   discountType: DiscountType;
-  selectedItemId: Id<"orderItems"> | null;
+  selectedItemIds: Set<string>;
   idNumber: string;
   customerName: string;
   onClose: () => void;
   onDiscountTypeChange: (type: DiscountType) => void;
-  onItemSelect: (itemId: Id<"orderItems">) => void;
+  onItemToggle: (itemId: Id<"orderItems">) => void;
+  onSelectAll: () => void;
   onIdNumberChange: (value: string) => void;
   onCustomerNameChange: (value: string) => void;
   onApply: () => void;
@@ -41,12 +42,13 @@ export const DiscountModal = ({
   items,
   discountedQtyByItem,
   discountType,
-  selectedItemId,
+  selectedItemIds,
   idNumber,
   customerName,
   onClose,
   onDiscountTypeChange,
-  onItemSelect,
+  onItemToggle,
+  onSelectAll,
   onIdNumberChange,
   onCustomerNameChange,
   onApply,
@@ -59,7 +61,10 @@ export const DiscountModal = ({
     return discountedQty < item.quantity;
   });
 
-  const isValid = discountType && selectedItemId && idNumber.trim() && customerName.trim();
+  const allSelected =
+    availableItems.length > 0 && availableItems.every((item) => selectedItemIds.has(item._id));
+  const isValid =
+    discountType && selectedItemIds.size > 0 && idNumber.trim() && customerName.trim();
 
   return (
     <Modal
@@ -89,38 +94,51 @@ export const DiscountModal = ({
         </Chip>
       </XStack>
 
-      {/* Select Item */}
-      <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8, marginTop: 16 }}>
-        Select Item
-      </Text>
-      <ScrollView style={{ maxHeight: 120 }}>
-        {availableItems.map((item) => (
-          <TouchableOpacity
-            key={item._id}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              padding: 12,
-              borderWidth: 1,
-              borderRadius: 8,
-              marginBottom: 8,
-              borderColor: selectedItemId === item._id ? "#0D87E1" : "#E5E7EB",
-              backgroundColor: selectedItemId === item._id ? "#EFF6FF" : undefined,
-            }}
-            onPress={() => onItemSelect(item._id)}
-            activeOpacity={0.7}
-          >
-            <Text style={{ flex: 1, color: "#374151" }}>
-              {item.quantity}x {item.productName}
+      {/* Select Items */}
+      <XStack justifyContent="space-between" alignItems="center" marginTop={16} marginBottom={8}>
+        <Text style={{ color: "#374151", fontWeight: "500" }}>Select Items</Text>
+        {availableItems.length > 1 && (
+          <TouchableOpacity onPress={onSelectAll} activeOpacity={0.7}>
+            <Text style={{ color: "#0D87E1", fontWeight: "500", fontSize: 14 }}>
+              {allSelected ? "Deselect All" : "Select All"}
             </Text>
-            <Text style={{ color: "#111827", fontWeight: "500", marginRight: 8 }}>
-              {formatCurrency(item.lineTotal)}
-            </Text>
-            {selectedItemId === item._id && (
-              <Ionicons name="checkmark-circle" size={20} color="#0D87E1" />
-            )}
           </TouchableOpacity>
-        ))}
+        )}
+      </XStack>
+      <ScrollView style={{ maxHeight: 160 }}>
+        {availableItems.map((item) => {
+          const isSelected = selectedItemIds.has(item._id);
+          return (
+            <TouchableOpacity
+              key={item._id}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                padding: 12,
+                borderWidth: 1,
+                borderRadius: 8,
+                marginBottom: 8,
+                borderColor: isSelected ? "#0D87E1" : "#E5E7EB",
+                backgroundColor: isSelected ? "#EFF6FF" : undefined,
+              }}
+              onPress={() => onItemToggle(item._id)}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={isSelected ? "checkbox" : "square-outline"}
+                size={22}
+                color={isSelected ? "#0D87E1" : "#9CA3AF"}
+                style={{ marginRight: 10 }}
+              />
+              <Text style={{ flex: 1, color: "#374151" }}>
+                {item.quantity}x {item.productName}
+              </Text>
+              <Text style={{ color: "#111827", fontWeight: "500" }}>
+                {formatCurrency(item.lineTotal)}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
         {availableItems.length === 0 && (
           <Text variant="muted" style={{ textAlign: "center", paddingVertical: 16 }}>
             All items already have discounts
@@ -183,7 +201,7 @@ export const DiscountModal = ({
         onPress={onApply}
         style={{ marginTop: 20, opacity: !isValid ? 0.5 : 1 }}
       >
-        Apply Discount
+        Apply Discount{selectedItemIds.size > 1 ? ` to ${selectedItemIds.size} Items` : ""}
       </Button>
     </Modal>
   );
