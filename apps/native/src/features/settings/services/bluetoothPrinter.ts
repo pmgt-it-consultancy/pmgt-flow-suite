@@ -34,7 +34,7 @@ async function requestBluetoothPermissions(): Promise<boolean> {
 export async function isBluetoothEnabled(): Promise<boolean> {
   try {
     const enabled = await BluetoothManager.isBluetoothEnabled();
-    return enabled === true || enabled === "true";
+    return enabled === true;
   } catch {
     return false;
   }
@@ -56,6 +56,7 @@ export async function getPairedDevices(): Promise<BluetoothDevice[]> {
   try {
     const result = await BluetoothManager.enableBluetooth();
     const list: unknown[] = Array.isArray(result) ? result : [];
+
     return list
       .map((d) => {
         const device = d as { name?: string; address?: string };
@@ -84,6 +85,7 @@ export async function scanDevices(): Promise<BluetoothDevice[]> {
     const paired: unknown[] = parsed?.paired ?? [];
 
     const deviceMap = new Map<string, BluetoothDevice>();
+    console.log("Scan result:", parsed);
 
     const addDevices = (list: unknown[]) => {
       for (const d of list) {

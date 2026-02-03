@@ -64,17 +64,6 @@ export const checkForUpdate = action({
     }
 
     const releases = await response.json();
-
-    console.log("[checkForUpdate] args:", {
-      currentVersion: args.currentVersion,
-      variant: args.variant,
-    });
-    console.log("[checkForUpdate] fetched releases:", releases.length);
-    console.log(
-      "[checkForUpdate] release tags:",
-      releases.map((r: { tag_name: string }) => r.tag_name),
-    );
-
     // Find the latest release matching the app's variant (staging or production)
     const variantSuffix = args.variant === "production" ? "-production" : "-staging";
     const matchingReleases = releases
@@ -90,8 +79,6 @@ export const checkForUpdate = action({
       });
     const release = matchingReleases[0] ?? null;
 
-    console.log("[checkForUpdate] variantSuffix:", variantSuffix);
-    console.log("[checkForUpdate] matched release:", release ? release.tag_name : "NONE");
     if (release) {
       console.log(
         "[checkForUpdate] release assets:",
@@ -107,17 +94,7 @@ export const checkForUpdate = action({
     // Strip "v" prefix and variant suffix to get the semver
     const latestVersion = release.tag_name.replace(/^v/, "").replace(/-(staging|production)$/, "");
 
-    console.log(
-      "[checkForUpdate] latestVersion:",
-      latestVersion,
-      "currentVersion:",
-      args.currentVersion,
-      "compare:",
-      compareSemver(latestVersion, args.currentVersion),
-    );
-
     if (compareSemver(latestVersion, args.currentVersion) <= 0) {
-      console.log("[checkForUpdate] no update needed, returning updateAvailable: false");
       return { updateAvailable: false as const };
     }
 
