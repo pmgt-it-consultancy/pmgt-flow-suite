@@ -1,3 +1,5 @@
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { IconButton, Text } from "../../shared/components/ui";
@@ -9,6 +11,10 @@ interface OrderHeaderProps {
   onTransferTable?: () => void;
   onUpdatePax?: () => void;
   onViewOrders?: () => void;
+  tabNumber?: number;
+  tabName?: string;
+  onEditTabName?: () => void;
+  onAddNewTab?: () => void;
 }
 
 export const OrderHeader = ({
@@ -18,6 +24,10 @@ export const OrderHeader = ({
   onTransferTable,
   onUpdatePax,
   onViewOrders,
+  tabNumber,
+  tabName,
+  onEditTabName,
+  onAddNewTab,
 }: OrderHeaderProps) => {
   return (
     <XStack
@@ -43,6 +53,42 @@ export const OrderHeader = ({
         <Text variant="muted" size="sm">
           {subtitle}
         </Text>
+        {tabNumber && tabName && (
+          <>
+            <YStack
+              marginHorizontal={8}
+              width={4}
+              height={4}
+              borderRadius={2}
+              backgroundColor="#9CA3AF"
+            />
+            <TouchableOpacity
+              onPress={onEditTabName}
+              disabled={!onEditTabName}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingVertical: 4,
+                paddingHorizontal: 8,
+                backgroundColor: onEditTabName ? "#F3F4F6" : "transparent",
+                borderRadius: 6,
+              }}
+            >
+              <Text variant="muted" size="sm">
+                {tabName}
+              </Text>
+              {onEditTabName && (
+                <Ionicons
+                  name="create-outline"
+                  size={14}
+                  color="#6B7280"
+                  style={{ marginLeft: 4 }}
+                />
+              )}
+            </TouchableOpacity>
+          </>
+        )}
       </XStack>
       {onViewOrders && (
         <IconButton icon="list" variant="ghost" onPress={onViewOrders} iconColor="#6B7280" />
@@ -57,6 +103,14 @@ export const OrderHeader = ({
           variant="ghost"
           onPress={onTransferTable}
           iconColor="#6B7280"
+        />
+      )}
+      {onAddNewTab && (
+        <IconButton
+          icon="add-circle-outline"
+          variant="ghost"
+          onPress={onAddNewTab}
+          iconColor="#0D87E1"
         />
       )}
     </XStack>

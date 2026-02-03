@@ -1,7 +1,34 @@
 import { v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
 import { calculateChange } from "./lib/taxCalculations";
+
+// Helper: Release table only if no other open orders remain
+async function releaseTableIfLastOrder(
+  ctx: { db: any },
+  tableId: Id<"tables">,
+  closingOrderId: Id<"orders">,
+): Promise<void> {
+  // Check for other open orders on this table
+  const otherOpenOrders = await ctx.db
+    .query("orders")
+    .withIndex("by_tableId_status", (q: any) => q.eq("tableId", tableId).eq("status", "open"))
+    .collect();
+
+  // Filter out the order being closed
+  const remainingOpenOrders = otherOpenOrders.filter(
+    (o: { _id: Id<"orders"> }) => o._id !== closingOrderId,
+  );
+
+  // Only release table if no other open orders exist
+  if (remainingOpenOrders.length === 0) {
+    await ctx.db.patch(tableId, {
+      status: "available",
+      currentOrderId: undefined,
+    });
+  }
+}
 
 // Process cash payment
 export const processCashPayment = mutation({
@@ -46,12 +73,9 @@ export const processCashPayment = mutation({
       paidBy: user._id,
     });
 
-    // Release table if dine-in
+    // Release table if dine-in and this was the last open order
     if (order.tableId) {
-      await ctx.db.patch(order.tableId, {
-        status: "available",
-        currentOrderId: undefined,
-      });
+      await releaseTableIfLastOrder(ctx, order.tableId, args.orderId);
     }
 
     return {
@@ -98,12 +122,9 @@ export const processCardPayment = mutation({
       paidBy: user._id,
     });
 
-    // Release table if dine-in
+    // Release table if dine-in and this was the last open order
     if (order.tableId) {
-      await ctx.db.patch(order.tableId, {
-        status: "available",
-        currentOrderId: undefined,
-      });
+      await releaseTableIfLastOrder(ctx, order.tableId, args.orderId);
     }
 
     return {
@@ -285,12 +306,23 @@ export const cancelOrder = mutation({
       await ctx.db.delete(item._id);
     }
 
-    // Release table if dine-in
+    // Release table if dine-in and this was the last open order
+    // Note: We check before deleting the order, so we pass a dummy ID check
     if (order.tableId) {
-      await ctx.db.patch(order.tableId, {
-        status: "available",
-        currentOrderId: undefined,
-      });
+      // Check for other open orders on this table (excluding the one being cancelled)
+      const otherOpenOrders = await ctx.db
+        .query("orders")
+        .withIndex("by_tableId_status", (q) => q.eq("tableId", order.tableId).eq("status", "open"))
+        .collect();
+
+      const remainingOpenOrders = otherOpenOrders.filter((o) => o._id !== args.orderId);
+
+      if (remainingOpenOrders.length === 0) {
+        await ctx.db.patch(order.tableId, {
+          status: "available",
+          currentOrderId: undefined,
+        });
+      }
     }
 
     // Delete the order

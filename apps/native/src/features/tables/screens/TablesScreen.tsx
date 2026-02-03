@@ -15,6 +15,7 @@ import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { Text } from "../../shared/components/ui";
 import { EmptyState, Header, TableCard } from "../components";
+import { TabSelectionModal } from "../components/TabSelectionModal";
 
 interface TablesScreenProps {
   navigation: any;
@@ -26,14 +27,26 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
   const [showPaxModal, setShowPaxModal] = useState(false);
   const [paxInput, setPaxInput] = useState("");
   const [paxOrderId, setPaxOrderId] = useState<Id<"orders"> | null>(null);
+  const [selectedTable, setSelectedTable] = useState<{
+    id: Id<"tables">;
+    name: string;
+    orders: Array<{
+      _id: Id<"orders">;
+      orderNumber: string;
+      tabNumber: number;
+      tabName: string;
+      itemCount: number;
+      netSales: number;
+      pax?: number;
+      createdAt: number;
+    }>;
+  } | null>(null);
   const updatePaxMutation = useMutation(api.orders.updatePax);
+  const createOrderMutation = useMutation(api.orders.create);
 
-  // Query tables for user's store
-  const tables = useQuery(api.tables.list, user?.storeId ? { storeId: user.storeId } : "skip");
-
-  // Query orders to check which tables have active orders
-  const orders = useQuery(
-    api.orders.listActive,
+  // Query tables with multi-tab order information
+  const tablesWithOrders = useQuery(
+    api.tables.listWithOrders,
     user?.storeId ? { storeId: user.storeId } : "skip",
   );
 
@@ -51,29 +64,24 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     });
   }, [signOut, navigation]);
 
-  const getTableOrderInfo = useCallback(
+  const getTableInfo = useCallback(
     (tableId: Id<"tables">) => {
-      const order = orders?.find((o) => o.tableId === tableId);
-      if (!order) return null;
-      return {
-        orderId: order._id,
-        itemCount: order.itemCount,
-        total: order.subtotal,
-        pax: order.pax,
-      };
+      return tablesWithOrders?.find((t) => t._id === tableId);
     },
-    [orders],
+    [tablesWithOrders],
   );
 
   const handleUpdatePax = useCallback(
     (tableId: Id<"tables">) => {
-      const orderInfo = getTableOrderInfo(tableId);
-      if (!orderInfo) return;
-      setPaxOrderId(orderInfo.orderId);
-      setPaxInput(orderInfo.pax?.toString() ?? "");
+      const tableInfo = getTableInfo(tableId);
+      if (!tableInfo || tableInfo.orders.length === 0) return;
+      // For multi-tab tables, update pax for the first order (could be enhanced to select which tab)
+      const firstOrder = tableInfo.orders[0];
+      setPaxOrderId(firstOrder._id);
+      setPaxInput(firstOrder.pax?.toString() ?? "");
       setShowPaxModal(true);
     },
-    [getTableOrderInfo],
+    [getTableInfo],
   );
 
   const handlePaxConfirm = useCallback(async () => {
@@ -96,18 +104,28 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     (tableId: Id<"tables">, tableName: string) => {
       if (!user?.storeId) return;
 
-      const orderInfo = getTableOrderInfo(tableId);
+      const tableInfo = getTableInfo(tableId);
 
-      if (orderInfo) {
-        // Navigate to existing order
-        navigation.navigate("OrderScreen", {
-          orderId: orderInfo.orderId,
-          tableId,
-          tableName,
-          storeId: user.storeId,
-        });
+      if (tableInfo && tableInfo.orders.length > 0) {
+        // Table has active orders
+        if (tableInfo.orders.length === 1) {
+          // Single tab: Navigate directly to the order
+          navigation.navigate("OrderScreen", {
+            orderId: tableInfo.orders[0]._id,
+            tableId,
+            tableName,
+            storeId: user.storeId,
+          });
+        } else {
+          // Multiple tabs: Show tab selection modal
+          setSelectedTable({
+            id: tableId,
+            name: tableName,
+            orders: tableInfo.orders,
+          });
+        }
       } else {
-        // Navigate to draft mode (no order created yet)
+        // No active orders: Navigate to draft mode
         navigation.navigate("OrderScreen", {
           tableId,
           tableName,
@@ -115,8 +133,63 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
         });
       }
     },
-    [user?.storeId, getTableOrderInfo, navigation],
+    [user?.storeId, getTableInfo, navigation],
   );
+
+  const handleSelectOrder = useCallback(
+    (orderId: Id<"orders">) => {
+      if (!user?.storeId || !selectedTable) return;
+
+      // Capture values before clearing state
+      const tableId = selectedTable.id;
+      const tableName = selectedTable.name;
+      const storeId = user.storeId;
+
+      // Close modal
+      setSelectedTable(null);
+
+      // Navigate
+      navigation.navigate("OrderScreen", {
+        orderId,
+        tableId,
+        tableName,
+        storeId,
+      });
+    },
+    [user?.storeId, selectedTable, navigation],
+  );
+
+  const handleAddNewTab = useCallback(async () => {
+    if (!user?.storeId || !selectedTable) return;
+
+    // Capture values before any async operations
+    const tableId = selectedTable.id;
+    const tableName = selectedTable.name;
+    const storeId = user.storeId;
+
+    // Close modal
+    setSelectedTable(null);
+
+    try {
+      // Create a new order for this table
+      const orderId = await createOrderMutation({
+        storeId,
+        orderType: "dine_in",
+        tableId,
+        pax: 1, // Default pax, can be updated later
+      });
+
+      // Navigate to the new order
+      navigation.navigate("OrderScreen", {
+        orderId,
+        tableId,
+        tableName,
+        storeId,
+      });
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to create new tab");
+    }
+  }, [user?.storeId, selectedTable, createOrderMutation, navigation]);
 
   if (isLoading || !isAuthenticated) {
     return (
@@ -126,20 +199,21 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     );
   }
 
-  const renderTable = ({ item }: { item: NonNullable<typeof tables>[number] }) => {
-    const orderInfo = getTableOrderInfo(item._id);
+  const renderTable = ({ item }: { item: NonNullable<typeof tablesWithOrders>[number] }) => {
+    const isOccupied = item.orders.length > 0;
 
     return (
       <TableCard
         id={item._id}
         name={item.name}
-        capacity={item.capacity}
-        isOccupied={!!orderInfo}
-        itemCount={orderInfo?.itemCount}
-        total={orderInfo?.total}
-        pax={orderInfo?.pax}
+        capacity={item.capacity ?? 0}
+        isOccupied={isOccupied}
+        orders={item.orders}
+        totalTabs={item.totalTabs}
+        totalItemCount={item.totalItemCount}
+        totalNetSales={item.totalNetSales}
         onPress={handleSelectTable}
-        onUpdatePax={orderInfo ? handleUpdatePax : undefined}
+        onUpdatePax={isOccupied ? handleUpdatePax : undefined}
       />
     );
   };
@@ -154,15 +228,15 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
         onOrderHistory={() => navigation.navigate("OrderHistoryScreen")}
       />
 
-      {tables === undefined ? (
+      {tablesWithOrders === undefined ? (
         <YStack flex={1} justifyContent="center" alignItems="center">
           <ActivityIndicator size="large" color="#0D87E1" />
         </YStack>
-      ) : tables.length === 0 ? (
+      ) : tablesWithOrders.length === 0 ? (
         <EmptyState title="No tables found" description="Add tables in the admin panel first" />
       ) : (
         <FlatList
-          data={tables}
+          data={tablesWithOrders}
           renderItem={renderTable}
           keyExtractor={(item) => item._id}
           numColumns={2}
@@ -243,6 +317,18 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
           </YStack>
         </YStack>
       </Modal>
+
+      {/* Tab Selection Modal */}
+      {selectedTable && (
+        <TabSelectionModal
+          visible={!!selectedTable}
+          onClose={() => setSelectedTable(null)}
+          tableName={selectedTable.name}
+          orders={selectedTable.orders}
+          onSelectOrder={handleSelectOrder}
+          onAddNewTab={handleAddNewTab}
+        />
+      )}
     </YStack>
   );
 };

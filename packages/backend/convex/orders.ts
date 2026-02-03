@@ -61,13 +61,31 @@ export const create = mutation({
       throw new Error("Dine-in orders require a guest count (pax)");
     }
 
-    // Check table availability if dine-in
+    // Check table exists and get next tab number if dine-in
+    let tabNumber: number | undefined;
+    let tabName: string | undefined;
+    let shouldMarkTableOccupied = false;
+
     if (args.tableId) {
       const table = await ctx.db.get(args.tableId);
       if (!table) throw new Error("Table not found");
-      if (table.status === "occupied") {
-        throw new Error("Table is already occupied");
-      }
+
+      // Get existing open orders for this table to determine tab number
+      const existingOpenOrders = await ctx.db
+        .query("orders")
+        .withIndex("by_tableId_status", (q) => q.eq("tableId", args.tableId).eq("status", "open"))
+        .collect();
+
+      // Find the highest tab number among open orders
+      const maxTabNumber = existingOpenOrders.reduce(
+        (max, order) => Math.max(max, order.tabNumber ?? 1),
+        0,
+      );
+      tabNumber = maxTabNumber + 1;
+      tabName = `Tab ${tabNumber}`;
+
+      // Only mark table as occupied if this is the first tab
+      shouldMarkTableOccupied = existingOpenOrders.length === 0;
     }
 
     // Generate order number
@@ -103,10 +121,12 @@ export const create = mutation({
       paidAt: undefined,
       paidBy: undefined,
       pax: args.pax,
+      tabNumber,
+      tabName,
     });
 
-    // Update table status if dine-in
-    if (args.tableId) {
+    // Update table status if dine-in and this is the first tab
+    if (args.tableId && shouldMarkTableOccupied) {
       await ctx.db.patch(args.tableId, {
         status: "occupied",
         currentOrderId: orderId,
@@ -130,6 +150,8 @@ export const get = query({
       orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
       tableId: v.optional(v.id("tables")),
       tableName: v.optional(v.string()),
+      tabNumber: v.optional(v.number()),
+      tabName: v.optional(v.string()),
       pax: v.optional(v.number()),
       customerName: v.optional(v.string()),
       status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
@@ -262,6 +284,8 @@ export const get = query({
       orderType: order.orderType,
       tableId: order.tableId,
       tableName,
+      tabNumber: order.tabNumber,
+      tabName: order.tabName,
       pax: order.pax,
       customerName: order.customerName,
       status: order.status,
@@ -1149,10 +1173,24 @@ export const createAndSendToKitchen = mutation({
 
     if (args.items.length === 0) throw new Error("No items to send");
 
-    // Check table availability
+    // Check table exists and get next tab number
     const table = await ctx.db.get(args.tableId);
     if (!table) throw new Error("Table not found");
-    if (table.status === "occupied") throw new Error("Table is already occupied");
+
+    // Get existing open orders for this table to determine tab number
+    const existingOpenOrders = await ctx.db
+      .query("orders")
+      .withIndex("by_tableId_status", (q) => q.eq("tableId", args.tableId).eq("status", "open"))
+      .collect();
+
+    // Find the highest tab number among open orders
+    const maxTabNumber = existingOpenOrders.reduce(
+      (max, order) => Math.max(max, order.tabNumber ?? 1),
+      0,
+    );
+    const tabNumber = maxTabNumber + 1;
+    const tabName = `Tab ${tabNumber}`;
+    const shouldMarkTableOccupied = existingOpenOrders.length === 0;
 
     // Generate order number
     const orderNumber = await getNextOrderNumber(ctx, args.storeId, "dine_in");
@@ -1183,13 +1221,17 @@ export const createAndSendToKitchen = mutation({
       paidAt: undefined,
       paidBy: undefined,
       pax: args.pax,
+      tabNumber,
+      tabName,
     });
 
-    // Mark table as occupied
-    await ctx.db.patch(args.tableId, {
-      status: "occupied",
-      currentOrderId: orderId,
-    });
+    // Mark table as occupied only if this is the first tab
+    if (shouldMarkTableOccupied) {
+      await ctx.db.patch(args.tableId, {
+        status: "occupied",
+        currentOrderId: orderId,
+      });
+    }
 
     // Insert items and mark as sent
     const sentItemIds: Id<"orderItems">[] = [];
@@ -1234,6 +1276,87 @@ export const createAndSendToKitchen = mutation({
   },
 });
 
+// Get all open orders for a table (multi-tab support)
+export const getOpenOrdersForTable = query({
+  args: {
+    tableId: v.id("tables"),
+  },
+  returns: v.array(
+    v.object({
+      _id: v.id("orders"),
+      orderNumber: v.string(),
+      tabNumber: v.number(),
+      tabName: v.string(),
+      itemCount: v.number(),
+      netSales: v.number(),
+      pax: v.optional(v.number()),
+      createdAt: v.number(),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    // Get all open orders for this table using the new index
+    const orders = await ctx.db
+      .query("orders")
+      .withIndex("by_tableId_status", (q) => q.eq("tableId", args.tableId).eq("status", "open"))
+      .collect();
+
+    // Get item counts and format response
+    const results = await Promise.all(
+      orders.map(async (order) => {
+        const items = await ctx.db
+          .query("orderItems")
+          .withIndex("by_order", (q) => q.eq("orderId", order._id))
+          .collect();
+
+        const activeItems = items.filter((i) => !i.isVoided);
+        const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
+
+        return {
+          _id: order._id,
+          orderNumber: order.orderNumber,
+          tabNumber: order.tabNumber ?? 1,
+          tabName: order.tabName ?? `Tab ${order.tabNumber ?? 1}`,
+          itemCount,
+          netSales: order.netSales,
+          pax: order.pax,
+          createdAt: order.createdAt,
+        };
+      }),
+    );
+
+    // Sort by tabNumber
+    return results.sort((a, b) => a.tabNumber - b.tabNumber);
+  },
+});
+
+// Update tab name for an order
+export const updateTabName = mutation({
+  args: {
+    orderId: v.id("orders"),
+    tabName: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open") {
+      throw new Error("Cannot modify a closed order");
+    }
+    if (order.orderType !== "dine_in") {
+      throw new Error("Tab names are only for dine-in orders");
+    }
+
+    await ctx.db.patch(args.orderId, {
+      tabName: args.tabName.trim() || `Tab ${order.tabNumber ?? 1}`,
+    });
+    return null;
+  },
+});
+
 // Transfer a running bill from one table to another
 export const transferTable = mutation({
   args: {
@@ -1249,25 +1372,54 @@ export const transferTable = mutation({
     if (order.status !== "open") throw new Error("Order is not open");
     if (!order.tableId) throw new Error("Order is not a dine-in order");
 
-    // Check new table is available
+    const sourceTableId = order.tableId;
+
+    // Check new table exists
     const newTable = await ctx.db.get(args.newTableId);
     if (!newTable) throw new Error("Table not found");
-    if (newTable.status === "occupied") throw new Error("Target table is already occupied");
 
-    // Release old table
-    await ctx.db.patch(order.tableId, {
-      status: "available",
-      currentOrderId: undefined,
+    // Get open orders at destination table to determine new tab number
+    const destOpenOrders = await ctx.db
+      .query("orders")
+      .withIndex("by_tableId_status", (q) => q.eq("tableId", args.newTableId).eq("status", "open"))
+      .collect();
+
+    const maxDestTabNumber = destOpenOrders.reduce((max, o) => Math.max(max, o.tabNumber ?? 1), 0);
+    const newTabNumber = maxDestTabNumber + 1;
+    const newTabName = `Tab ${newTabNumber}`;
+    const shouldMarkDestOccupied = destOpenOrders.length === 0;
+
+    // Check if source table has other open orders
+    const sourceOpenOrders = await ctx.db
+      .query("orders")
+      .withIndex("by_tableId_status", (q) => q.eq("tableId", sourceTableId).eq("status", "open"))
+      .collect();
+
+    const remainingSourceOrders = sourceOpenOrders.filter((o) => o._id !== args.orderId);
+    const shouldReleaseSource = remainingSourceOrders.length === 0;
+
+    // Release source table only if no other open orders remain
+    if (shouldReleaseSource) {
+      await ctx.db.patch(sourceTableId, {
+        status: "available",
+        currentOrderId: undefined,
+      });
+    }
+
+    // Mark destination table as occupied if this is the first order there
+    if (shouldMarkDestOccupied) {
+      await ctx.db.patch(args.newTableId, {
+        status: "occupied",
+        currentOrderId: args.orderId,
+      });
+    }
+
+    // Update order with new table and new tab number
+    await ctx.db.patch(args.orderId, {
+      tableId: args.newTableId,
+      tabNumber: newTabNumber,
+      tabName: newTabName,
     });
-
-    // Assign new table
-    await ctx.db.patch(args.newTableId, {
-      status: "occupied",
-      currentOrderId: args.orderId,
-    });
-
-    // Update order
-    await ctx.db.patch(args.orderId, { tableId: args.newTableId });
 
     return null;
   },
