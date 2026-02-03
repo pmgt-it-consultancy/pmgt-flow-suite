@@ -63,7 +63,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   // Discount State
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [discountType, setDiscountType] = useState<DiscountType>(null);
-  const [selectedItemId, setSelectedItemId] = useState<Id<"orderItems"> | null>(null);
+  const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [discountIdNumber, setDiscountIdNumber] = useState("");
   const [discountName, setDiscountName] = useState("");
 
@@ -80,7 +80,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   // Mutations
   const processCashPayment = useMutation(api.checkout.processCashPayment);
   const processCardPayment = useMutation(api.checkout.processCardPayment);
-  const applyScPwdDiscount = useMutation(api.discounts.applyScPwdDiscount);
+  const applyBulkScPwdDiscount = useMutation(api.discounts.applyBulkScPwdDiscount);
   const removeDiscount = useMutation(api.discounts.removeDiscount);
 
   // Printer Store - kitchen ticket
@@ -107,20 +107,53 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   // Discount handlers
   const handleOpenDiscountModal = useCallback(() => {
     setDiscountType(null);
-    setSelectedItemId(null);
+    setSelectedItemIds(new Set());
     setDiscountIdNumber("");
     setDiscountName("");
     setShowDiscountModal(true);
   }, []);
 
+  const handleItemToggle = useCallback((itemId: Id<"orderItems">) => {
+    setSelectedItemIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemId)) {
+        next.delete(itemId);
+      } else {
+        next.add(itemId);
+      }
+      return next;
+    });
+  }, []);
+
+  const availableItemIds = useMemo(() => {
+    return activeItems
+      .filter((item) => (discountedQtyByItem.get(item._id) ?? 0) < item.quantity)
+      .map((item) => item._id);
+  }, [activeItems, discountedQtyByItem]);
+
+  const handleSelectAll = useCallback(() => {
+    setSelectedItemIds((prev) => {
+      const allSelected = availableItemIds.every((id) => prev.has(id));
+      if (allSelected) {
+        return new Set();
+      }
+      return new Set(availableItemIds);
+    });
+  }, [availableItemIds]);
+
   const handleApplyDiscount = useCallback(() => {
-    if (!discountType || !selectedItemId || !discountIdNumber.trim() || !discountName.trim()) {
+    if (
+      !discountType ||
+      selectedItemIds.size === 0 ||
+      !discountIdNumber.trim() ||
+      !discountName.trim()
+    ) {
       return;
     }
     setPendingManagerAction("apply");
     setShowDiscountModal(false);
     setShowManagerPinModal(true);
-  }, [discountType, selectedItemId, discountIdNumber, discountName]);
+  }, [discountType, selectedItemIds, discountIdNumber, discountName]);
 
   const handleRemoveDiscount = useCallback((discountId: Id<"orderDiscounts">) => {
     Alert.alert("Remove Discount", "Are you sure you want to remove this discount?", [
@@ -141,18 +174,24 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     async (managerId: Id<"users">, _pin: string) => {
       setShowManagerPinModal(false);
 
-      if (pendingManagerAction === "apply" && discountType && selectedItemId) {
+      if (pendingManagerAction === "apply" && discountType && selectedItemIds.size > 0) {
         try {
-          await applyScPwdDiscount({
+          const items = Array.from(selectedItemIds).map((itemId) => ({
+            orderItemId: itemId as Id<"orderItems">,
+            quantityApplied: 1,
+          }));
+          await applyBulkScPwdDiscount({
             orderId,
-            orderItemId: selectedItemId,
+            items,
             discountType,
             customerName: discountName.trim(),
             customerId: discountIdNumber.trim(),
-            quantityApplied: 1,
             managerId,
           });
-          Alert.alert("Success", "Discount applied successfully");
+          Alert.alert(
+            "Success",
+            `Discount applied to ${items.length} item${items.length > 1 ? "s" : ""}`,
+          );
         } catch (error: any) {
           Alert.alert("Error", error.message || "Failed to apply discount");
         }
@@ -170,12 +209,12 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     [
       pendingManagerAction,
       discountType,
-      selectedItemId,
+      selectedItemIds,
       discountName,
       discountIdNumber,
       discountToRemove,
       orderId,
-      applyScPwdDiscount,
+      applyBulkScPwdDiscount,
       removeDiscount,
     ],
   );
@@ -406,12 +445,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         items={activeItems}
         discountedQtyByItem={discountedQtyByItem}
         discountType={discountType}
-        selectedItemId={selectedItemId}
+        selectedItemIds={selectedItemIds}
         idNumber={discountIdNumber}
         customerName={discountName}
         onClose={() => setShowDiscountModal(false)}
         onDiscountTypeChange={setDiscountType}
-        onItemSelect={setSelectedItemId}
+        onItemToggle={handleItemToggle}
+        onSelectAll={handleSelectAll}
         onIdNumberChange={setDiscountIdNumber}
         onCustomerNameChange={setDiscountName}
         onApply={handleApplyDiscount}
