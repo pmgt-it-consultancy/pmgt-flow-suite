@@ -34,20 +34,17 @@
       },
       "android": {
         "buildType": "apk"
-      },
-      "channel": "staging"
+      }
     },
     "production": {
       "extends": "base",
       "credentialsSource": "local",
-      "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_CONVEX_URL": "https://loyal-shark-813.convex.cloud"
       },
       "android": {
         "buildType": "apk"
-      },
-      "channel": "production"
+      }
     }
   }
 }
