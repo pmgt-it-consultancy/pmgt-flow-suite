@@ -108,6 +108,12 @@ jobs:
           printf '{"android":{"keystore":{"keystorePath":"%s","keystorePassword":"%s","keyAlias":"%s","keyPassword":"%s"}}}' \
             "$KEYSTORE_PATH" "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" > credentials.json
 
+      - name: Prebuild Android
+        working-directory: apps/native
+        env:
+          APP_VARIANT: ${{ steps.variant.outputs.name }}
+        run: npx expo prebuild --platform android --clean
+
       - name: Build with EAS
         working-directory: apps/native
         run: |
