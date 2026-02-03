@@ -7,8 +7,11 @@ const config = createTamagui({
   animations,
   settings: {
     ...defaultConfig.settings,
+    // Allow full style prop names (backgroundColor, alignItems, etc.)
     onlyAllowShorthands: false,
+    // Allow any style values (not just tokens)
     allowedStyleValues: false,
+    // RN-friendly defaults
     defaultPosition: "relative",
   },
 });
