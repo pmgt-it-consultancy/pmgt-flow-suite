@@ -1,0 +1,643 @@
+{
+  "modules": {
+    "apps/native/src/features/settings/services/printerStorage.ts": {
+      "path": "apps/native/src/features/settings/services/printerStorage.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/ConvexClientProvider.tsx": {
+      "path": "apps/native/ConvexClientProvider.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/auth/context/AuthContext.tsx": {
+      "path": "apps/native/src/features/auth/context/AuthContext.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/plugins/withApkInstaller.js": {
+      "path": "apps/native/plugins/withApkInstaller.js",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/layout.tsx": {
+      "path": "apps/web/src/app/layout.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/ConvexClientProvider.tsx": {
+      "path": "apps/web/src/app/ConvexClientProvider.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/updater/stores/useUpdateStore.ts": {
+      "path": "apps/native/src/features/updater/stores/useUpdateStore.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/middleware.ts": {
+      "path": "apps/web/src/middleware.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/page.tsx": {
+      "path": "apps/web/src/app/page.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/notes/page.tsx": {
+      "path": "apps/web/src/app/notes/page.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/orders/hooks/useProductModifiers.ts": {
+      "path": "apps/native/src/features/orders/hooks/useProductModifiers.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/notes/[slug]/page.tsx": {
+      "path": "apps/web/src/app/notes/[slug]/page.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/login/page.tsx": {
+      "path": "apps/web/src/app/login/page.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/shims/window.ts": {
+      "path": "apps/native/src/shims/window.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/shared/components/StatusDropdown.tsx": {
+      "path": "apps/native/src/features/shared/components/StatusDropdown.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/shared/hooks/useSystemStatus.ts": {
+      "path": "apps/native/src/features/shared/hooks/useSystemStatus.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/(admin)/audit-logs/page.tsx": {
+      "path": "apps/web/src/app/(admin)/audit-logs/page.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/settings/services/bluetoothPrinter.ts": {
+      "path": "apps/native/src/features/settings/services/bluetoothPrinter.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/settings/services/escposFormatter.ts": {
+      "path": "apps/native/src/features/settings/services/escposFormatter.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/order-history/screens/OrderHistoryScreen.tsx": {
+      "path": "apps/native/src/features/order-history/screens/OrderHistoryScreen.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/plugins/withReactNativeArchitectures.js": {
+      "path": "apps/native/plugins/withReactNativeArchitectures.js",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/takeout/screens/TakeoutListScreen.tsx": {
+      "path": "apps/native/src/features/takeout/screens/TakeoutListScreen.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/src/main.cpp": {
+      "path": "apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/src/main.cpp",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/src/foo.cpp": {
+      "path": "apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/src/foo.cpp",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CompilerIdC/CMakeCCompilerId.c": {
+      "path": "apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CompilerIdC/CMakeCCompilerId.c",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/checkout/screens/CheckoutScreen.tsx": {
+      "path": "apps/native/src/features/checkout/screens/CheckoutScreen.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/src/features/takeout/components/TakeoutOrderDetailModal.tsx": {
+      "path": "apps/native/src/features/takeout/components/TakeoutOrderDetailModal.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/components/ui/badge.tsx": {
+      "path": "apps/web/src/components/ui/badge.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CompilerIdCXX/CMakeCXXCompilerId.cpp": {
+      "path": "apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CompilerIdCXX/CMakeCXXCompilerId.cpp",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/ErrorBoundary.tsx": {
+      "path": "apps/web/src/app/ErrorBoundary.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/components/home/ComplexToggle.tsx": {
+      "path": "apps/web/src/components/home/ComplexToggle.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/components/common/UserNav.tsx": {
+      "path": "apps/web/src/components/common/UserNav.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/hooks/useStoreAccess.ts": {
+      "path": "apps/web/src/hooks/useStoreAccess.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/lib/utils.ts": {
+      "path": "apps/web/src/lib/utils.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/(admin)/products/page.tsx": {
+      "path": "apps/web/src/app/(admin)/products/page.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/lib/format.ts": {
+      "path": "apps/web/src/lib/format.ts",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/hooks/useAuth.tsx": {
+      "path": "apps/web/src/hooks/useAuth.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/(admin)/categories/page.tsx": {
+      "path": "apps/web/src/app/(admin)/categories/page.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    },
+    "apps/web/src/app/(admin)/reports/page.tsx": {
+      "path": "apps/web/src/app/(admin)/reports/page.tsx",
+      "imports": [],
+      "importedBy": [],
+      "exports": [],
+      "metrics": {
+        "Ca": 0,
+        "Ce": 0,
+        "instability": 0,
+        "abstractness": 0,
+        "distance": 1
+      },
+      "role": "balanced",
+      "isEntryPoint": false,
+      "isLeaf": true
+    }
+  },
+  "edges": [],
+  "cycles": [],
+  "metrics": {
+    "totalModules": 39,
+    "totalEdges": 0,
+    "cycleCount": 0,
+    "avgInstability": 0,
+    "avgDistance": 1,
+    "zoneOfPain": [],
+    "zoneOfUselessness": [],
+    "hotspots": [],
+    "isolatedModules": []
+  },
+  "generatedAt": "2026-02-03T03:29:46.488Z",
+  "projectRoot": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite"
+}

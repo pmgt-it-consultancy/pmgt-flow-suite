@@ -1,0 +1,457 @@
+{
+  "version": "1.0.0",
+  "category": "config",
+  "patterns": [
+    {
+      "id": "312f9de327cd793a",
+      "subcategory": "env-config",
+      "name": "Environment Config Detector",
+      "description": "Learns environment configuration patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/env-config",
+          "patternId": "config/env-config/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/README.md",
+          "line": 5,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.764Z",
+        "lastSeen": "2026-02-03T03:30:43.764Z",
+        "source": "auto-detected",
+        "tags": ["config", "env-config"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "489275fcaf364b5a",
+      "subcategory": "environment-detection",
+      "name": "Environment Detection Detector",
+      "description": "Learns environment detection patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/environment-detection",
+          "patternId": "config/environment-detection/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/README.md",
+          "line": 48,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 51,
+          "column": 46,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["config", "environment-detection"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "8feefad6aa8066ac",
+      "subcategory": "env-config",
+      "name": "Environment Config Detector",
+      "description": "Learns environment configuration patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/env-config",
+          "patternId": "config/env-config/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8825,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 86,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 90,
+          "column": 83,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 92,
+          "column": 80,
+          "isOutlier": false,
+          "confidence": 0.8825
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["config", "env-config"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "8a665fa21b5ef940",
+      "subcategory": "env-config",
+      "name": "Environment Config Detector",
+      "description": "Learns environment configuration patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/env-config",
+          "patternId": "config/env-config/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8825,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 100,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8825
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["config", "env-config"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "25ed35c4fe57f848",
+      "subcategory": "feature-flags",
+      "name": "Feature Flags Detector",
+      "description": "Learns feature flag patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/feature-flags",
+          "patternId": "config/feature-flags/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 30,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 31,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.7
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["config", "feature-flags"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1a8e4a50ee35fd14",
+      "subcategory": "feature-flags",
+      "name": "Feature Flags Detector",
+      "description": "Learns feature flag patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/feature-flags",
+          "patternId": "config/feature-flags/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.08,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8999999999999999,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 112,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 112,
+          "column": 148,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 131,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 132,
+          "column": 66,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 135,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 136,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 141,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 142,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.8999999999999999
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["config", "feature-flags"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "193929ed10cbc13a",
+      "subcategory": "config-validation",
+      "name": "Config Validation Detector",
+      "description": "Learns configuration validation patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/config-validation",
+          "patternId": "config/config-validation/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.04,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 27,
+          "column": 15,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 28,
+          "column": 23,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["config", "config-validation"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "e043b53baa0aee52",
+      "subcategory": "environment-detection",
+      "name": "Environment Detection Detector",
+      "description": "Learns environment detection patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/environment-detection",
+          "patternId": "config/environment-detection/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.06,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8825,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 86,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 90,
+          "column": 83,
+          "isOutlier": false,
+          "confidence": 0.8825
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 92,
+          "column": 80,
+          "isOutlier": false,
+          "confidence": 0.8825
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["config", "environment-detection"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4faad8b506a807b5",
+      "subcategory": "environment-detection",
+      "name": "Environment Detection Detector",
+      "description": "Learns environment detection patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "config/environment-detection",
+          "patternId": "config/environment-detection/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8825,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 100,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8825
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["config", "environment-detection"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-02-03T03:31:00.071Z",
+  "checksum": "66481b0300fb08a1"
+}

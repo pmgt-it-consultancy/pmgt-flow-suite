@@ -1,0 +1,224 @@
+{
+  "version": "1.0.0",
+  "category": "structural",
+  "patterns": [
+    {
+      "id": "cefea5eb24d35da4",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.9063636363636364,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 45,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:31:00.024Z",
+        "source": "auto-detected",
+        "tags": ["structural", "import-ordering"],
+        "approvedAt": "2026-02-03T03:31:00.024Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "b347478aee8b94ec",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.09,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.9063636363636364,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 28,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 48,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 53,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 56,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 66,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 72,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 81,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 129,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 139,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.9063636363636364
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:31:00.036Z",
+        "source": "auto-detected",
+        "tags": ["structural", "import-ordering"],
+        "approvedAt": "2026-02-03T03:31:00.036Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "55a33d52579cccac",
+      "subcategory": "circular-deps",
+      "name": "Circular Dependencies Detector",
+      "description": "Learns circular dependency patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/circular-deps",
+          "patternId": "structural/circular-deps/function_call"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 45,
+          "column": 39,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:31:00.043Z",
+        "source": "auto-detected",
+        "tags": ["structural", "circular-deps"],
+        "approvedAt": "2026-02-03T03:31:00.043Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "16dbd374bd606e2e",
+      "subcategory": "package-boundaries",
+      "name": "Package Boundaries Detector",
+      "description": "Learns package boundary patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/package-boundaries",
+          "patternId": "structural/package-boundaries/import"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 43,
+          "column": 32,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:31:00.052Z",
+        "source": "auto-detected",
+        "tags": ["structural", "package-boundaries"],
+        "approvedAt": "2026-02-03T03:31:00.052Z"
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-02-03T03:31:00.084Z",
+  "checksum": "6006cf875d95b76d"
+}

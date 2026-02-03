@@ -1,0 +1,565 @@
+{
+  "version": "1.0.0",
+  "category": "security",
+  "patterns": [
+    {
+      "id": "7ef07f9f377585c0",
+      "subcategory": "input-sanitization",
+      "name": "Input Sanitization Detector",
+      "description": "Learns input sanitization patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/input-sanitization",
+          "patternId": "security/input-sanitization/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.05,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/README.md",
+          "line": 11,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 42,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 45,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 48,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 51,
+          "column": 8,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.764Z",
+        "lastSeen": "2026-02-03T03:30:43.764Z",
+        "source": "auto-detected",
+        "tags": ["security", "input-sanitization"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "1aec41477a60213e",
+      "subcategory": "xss-prevention",
+      "name": "XSS Prevention Detector",
+      "description": "Learns XSS prevention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/xss-prevention",
+          "patternId": "security/xss-prevention/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/README.md",
+          "line": 11,
+          "column": 30,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.764Z",
+        "lastSeen": "2026-02-03T03:30:43.764Z",
+        "source": "auto-detected",
+        "tags": ["security", "xss-prevention"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "bbb145fac90498fa",
+      "subcategory": "csp-headers",
+      "name": "CSP Headers Detector",
+      "description": "Learns Content Security Policy header patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/csp-headers",
+          "patternId": "security/csp-headers/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/README.md",
+          "line": 31,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.77
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.764Z",
+        "lastSeen": "2026-02-03T03:30:43.764Z",
+        "source": "auto-detected",
+        "tags": ["security", "csp-headers"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "49feea1bb9a94bc5",
+      "subcategory": "secret-management",
+      "name": "Secret Management Detector",
+      "description": "Learns secret management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/secret-management",
+          "patternId": "security/secret-management/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.17,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/README.md",
+          "line": 5,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 5,
+          "column": 43,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 7,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 31,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 19,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 20,
+          "column": 4,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 20,
+          "column": 55,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 22,
+          "column": 4,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 22,
+          "column": 16,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/README.md",
+          "line": 28,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.77
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 84,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.6241666666666668
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 102,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.6241666666666668
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 103,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.6241666666666668
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 104,
+          "column": 29,
+          "isOutlier": false,
+          "confidence": 0.6241666666666668
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 95,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.6241666666666668
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 98,
+          "column": 21,
+          "isOutlier": false,
+          "confidence": 0.6241666666666668
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 107,
+          "column": 82,
+          "isOutlier": false,
+          "confidence": 0.6241666666666668
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.764Z",
+        "lastSeen": "2026-02-03T03:30:43.764Z",
+        "source": "auto-detected",
+        "tags": ["security", "secret-management"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4c6a10d37ef2287f",
+      "subcategory": "csrf-protection",
+      "name": "CSRF Protection Detector",
+      "description": "Learns CSRF protection patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/csrf-protection",
+          "patternId": "security/csrf-protection/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 84,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["security", "csrf-protection"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "3bcb33e6e1528f6d",
+      "subcategory": "csp-headers",
+      "name": "CSP Headers Detector",
+      "description": "Learns Content Security Policy header patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/csp-headers",
+          "patternId": "security/csp-headers/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.02,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.95,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 19,
+          "column": 3,
+          "isOutlier": false,
+          "confidence": 0.97
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["security", "csp-headers"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "21f2dd81fd467084",
+      "subcategory": "secret-management",
+      "name": "Secret Management Detector",
+      "description": "Learns secret management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/secret-management",
+          "patternId": "security/secret-management/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.14,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8241666666666667,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 59,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 60,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 77,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 78,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 101,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 101,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 102,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 102,
+          "column": 42,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 103,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 103,
+          "column": 34,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 104,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 104,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 84,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 100,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["security", "secret-management"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "454985d5c96faa5d",
+      "subcategory": "secret-management",
+      "name": "Secret Management Detector",
+      "description": "Learns secret management patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "security/secret-management",
+          "patternId": "security/secret-management/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.03,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8241666666666667,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 86,
+          "column": 22,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 90,
+          "column": 83,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 92,
+          "column": 80,
+          "isOutlier": false,
+          "confidence": 0.8241666666666667
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["security", "secret-management"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-02-03T03:31:00.063Z",
+  "checksum": "c4dda758ddffdc4c"
+}

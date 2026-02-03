@@ -1,0 +1,84 @@
+{
+  "version": "0.9.48",
+  "schemaVersion": "2.0.0",
+  "createdAt": "2026-02-03T03:29:53.416Z",
+  "updatedAt": "2026-02-03T03:29:53.421Z",
+  "project": {
+    "id": "4199a47a-39ef-4edf-b14b-597e1aeb9264",
+    "name": "pmgt-flow-suite",
+    "rootPath": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite"
+  },
+  "baseline": {
+    "scanId": "b3bc15eb",
+    "scannedAt": "2026-02-03T03:29:53.416Z",
+    "fileCount": 177,
+    "patternCount": 0,
+    "approvedCount": 0,
+    "categories": {},
+    "checksum": "539f944cdcb700a0"
+  },
+  "features": {
+    "callGraph": {
+      "enabled": true,
+      "builtAt": "2026-02-03T03:29:42.530Z",
+      "stats": {
+        "functions": 75,
+        "callSites": 433,
+        "resolvedCalls": 34,
+        "entryPoints": 74,
+        "dataAccessors": 9,
+        "filesProcessed": 181
+      }
+    },
+    "testTopology": {
+      "enabled": true,
+      "builtAt": "2026-02-03T03:29:44.259Z",
+      "stats": {
+        "totalTests": 0,
+        "testFiles": 0,
+        "filesAnalyzed": 177
+      }
+    },
+    "coupling": {
+      "enabled": true,
+      "builtAt": "2026-02-03T03:29:46.488Z",
+      "stats": {
+        "modules": 39,
+        "cycles": 0,
+        "hotspots": 0,
+        "healthScore": 100,
+        "filesAnalyzed": 177
+      }
+    },
+    "dna": {
+      "enabled": true,
+      "builtAt": "2026-02-03T03:29:49.228Z",
+      "stats": {
+        "genes": 10,
+        "mutations": 0,
+        "healthScore": 60,
+        "filesAnalyzed": 0,
+        "componentFiles": 0,
+        "backendFiles": 0
+      }
+    },
+    "memory": {
+      "enabled": true,
+      "builtAt": "2026-02-03T03:29:53.415Z",
+      "stats": {
+        "initialized": 1
+      }
+    }
+  },
+  "settings": {
+    "autoApproveThreshold": 0.85,
+    "autoApproveEnabled": false
+  },
+  "history": [
+    {
+      "action": "setup_complete",
+      "timestamp": "2026-02-03T03:29:53.416Z",
+      "details": "Initial setup: 0 patterns, 0 approved"
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "version": "1.0.0",
+  "category": "styling",
+  "patterns": [
+    {
+      "id": "96c7e287f29d99c4",
+      "subcategory": "design-tokens",
+      "name": "Design Tokens Detector",
+      "description": "Learns design token patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "styling/design-tokens",
+          "patternId": "styling/design-tokens/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.13,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 2,
+        "score": 0.77,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/README.md",
+          "line": 5,
+          "column": 55,
+          "isOutlier": true,
+          "confidence": 0.77,
+          "outlierReason": "High confidence outlier"
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 30,
+          "column": 25,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 31,
+          "column": 13,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 112,
+          "column": 41,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 112,
+          "column": 148,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 131,
+          "column": 69,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 132,
+          "column": 66,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 135,
+          "column": 33,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 136,
+          "column": 38,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 141,
+          "column": 31,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 142,
+          "column": 37,
+          "isOutlier": false,
+          "confidence": 0.7116666666666667
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.764Z",
+        "lastSeen": "2026-02-03T03:30:43.764Z",
+        "source": "auto-detected",
+        "tags": ["styling", "design-tokens"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-02-03T03:31:00.067Z",
+  "checksum": "d9ddce078eb99ad8"
+}

@@ -1,0 +1,360 @@
+{
+  "version": "1.0.0",
+  "category": "structural",
+  "patterns": [
+    {
+      "id": "56f6d9d05299e4b6",
+      "subcategory": "file-naming",
+      "name": "File Naming Detector",
+      "description": "Learns file naming convention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/file-naming",
+          "patternId": "structural/file-naming/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.6683870967741936,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 86,
+          "column": 26,
+          "isOutlier": false,
+          "confidence": 0.6683870967741936
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["structural", "file-naming"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "de9e0adc2ded0f4a",
+      "subcategory": "file-naming",
+      "name": "File Naming Detector",
+      "description": "Learns file naming convention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/file-naming",
+          "patternId": "structural/file-naming/assignment"
+        }
+      },
+      "confidence": {
+        "frequency": 0.22,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8683870967741936,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 136,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 1,
+          "column": 1,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 23,
+          "column": 5,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 27,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 30,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 34,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 38,
+          "column": 19,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 43,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 47,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 52,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 55,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 62,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 65,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 71,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 80,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 86,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 95,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 98,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 109,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 114,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 128,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 138,
+          "column": 9,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["structural", "file-naming"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "149ea657cf6d934f",
+      "subcategory": "file-naming",
+      "name": "File Naming Detector",
+      "description": "Learns file naming convention patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/file-naming",
+          "patternId": "structural/file-naming/property_access"
+        }
+      },
+      "confidence": {
+        "frequency": 0.08,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.8683870967741936,
+        "level": "high"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 112,
+          "column": 164,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 131,
+          "column": 85,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 132,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 132,
+          "column": 82,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 136,
+          "column": 54,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 141,
+          "column": 11,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 141,
+          "column": 47,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        },
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 142,
+          "column": 53,
+          "isOutlier": false,
+          "confidence": 0.8683870967741936
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["structural", "file-naming"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    },
+    {
+      "id": "4829a41774993d3f",
+      "subcategory": "import-ordering",
+      "name": "Import Ordering Detector",
+      "description": "Learns import ordering patterns from your codebase",
+      "detector": {
+        "type": "regex",
+        "config": {
+          "detectorId": "structural/import-ordering",
+          "patternId": "structural/import-ordering/unknown"
+        }
+      },
+      "confidence": {
+        "frequency": 0.01,
+        "consistency": 0.9,
+        "age": 0,
+        "spread": 1,
+        "score": 0.7063636363636363,
+        "level": "medium"
+      },
+      "locations": [
+        {
+          "file": ".github/workflows/release-pos.yml",
+          "line": 43,
+          "column": 27,
+          "isOutlier": false,
+          "confidence": 0.7063636363636363
+        }
+      ],
+      "outliers": [],
+      "metadata": {
+        "firstSeen": "2026-02-03T03:30:43.765Z",
+        "lastSeen": "2026-02-03T03:30:43.765Z",
+        "source": "auto-detected",
+        "tags": ["structural", "import-ordering"]
+      },
+      "severity": "info",
+      "autoFixable": false
+    }
+  ],
+  "lastUpdated": "2026-02-03T03:31:00.066Z",
+  "checksum": "364cdaa31d2bae4e"
+}

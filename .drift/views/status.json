@@ -1,51 +1,12 @@
 {
-  "generatedAt": "2026-01-29T09:03:12.068Z",
-  "health": {
-    "score": 0,
-    "trend": "stable",
-    "factors": [
-      {
-        "name": "Pattern Approval Rate",
-        "score": 0,
-        "weight": 0.3,
-        "trend": "stable"
-      },
-      {
-        "name": "High Confidence Patterns",
-        "score": 0,
-        "weight": 0.3,
-        "trend": "stable"
-      },
-      {
-        "name": "Low Outlier Rate",
-        "score": 1,
-        "weight": 0.4,
-        "trend": "stable"
-      }
-    ]
-  },
+  "lastUpdated": "2026-02-03T03:29:53.416Z",
   "patterns": {
     "total": 0,
-    "approved": 0,
-    "discovered": 0,
-    "ignored": 0,
+    "byStatus": {
+      "discovered": 0,
+      "approved": 0,
+      "ignored": 0
+    },
     "byCategory": {}
-  },
-  "issues": {
-    "critical": 0,
-    "warnings": 0,
-    "topIssues": []
-  },
-  "security": {
-    "violations": 0,
-    "sensitiveExposures": 0,
-    "riskLevel": "low"
-  },
-  "lastScan": {
-    "timestamp": "2026-01-29T09:03:12.067Z",
-    "duration": 708,
-    "filesScanned": 0,
-    "patternsFound": 0,
-    "errors": 0
   }
 }
