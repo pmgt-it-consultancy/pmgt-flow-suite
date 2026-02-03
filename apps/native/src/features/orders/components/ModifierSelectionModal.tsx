@@ -1,9 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useCallback, useMemo, useState } from "react";
-import { ScrollView, TextInput, TouchableOpacity } from "react-native";
+import {
+  Pressable,
+  Modal as RNModal,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
-import { Button, IconButton, Modal, Text } from "../../shared/components/ui";
+import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface ModifierGroup {
@@ -143,192 +153,288 @@ export const ModifierSelectionModal = ({
   const lineTotal = unitTotal * quantity;
 
   return (
-    <Modal visible={visible} title="Customize Order" onClose={onClose} onRequestClose={onClose}>
-      <ScrollView style={{ maxHeight: 400 }}>
-        {/* Product Header */}
-        <Text variant="heading" size="xl" style={{ marginBottom: 4 }}>
-          {product.name}
-        </Text>
-        <Text style={{ color: "#0D87E1", fontWeight: "500", fontSize: 18, marginBottom: 16 }}>
-          {formatCurrency(product.price)}
-        </Text>
-
-        {/* Modifier Groups */}
-        {modifierGroups.map((group) => (
-          <YStack key={group.groupId} marginBottom={16}>
-            <XStack alignItems="center" marginBottom={8}>
-              <Text style={{ color: "#111827", fontWeight: "600", fontSize: 16 }}>
-                {group.groupName}
-              </Text>
-              {group.minSelections > 0 ? (
-                <YStack
-                  backgroundColor="#FEE2E2"
-                  borderRadius={4}
-                  paddingHorizontal={8}
-                  paddingVertical={2}
-                  marginLeft={8}
-                >
-                  <Text style={{ color: "#DC2626", fontSize: 12, fontWeight: "500" }}>
-                    Required
-                  </Text>
-                </YStack>
-              ) : (
-                <YStack
-                  backgroundColor="#F3F4F6"
-                  borderRadius={4}
-                  paddingHorizontal={8}
-                  paddingVertical={2}
-                  marginLeft={8}
-                >
-                  <Text style={{ color: "#6B7280", fontSize: 12, fontWeight: "500" }}>
-                    Optional
-                  </Text>
-                </YStack>
-              )}
-              {group.selectionType === "multi" && group.maxSelections && (
-                <Text style={{ color: "#9CA3AF", fontSize: 12, marginLeft: 8 }}>
-                  (max {group.maxSelections})
-                </Text>
-              )}
-            </XStack>
-
-            {group.options.map((option) => {
-              const isSelected = selections[group.groupId]?.has(option.optionId) ?? false;
-              const isSingle = group.selectionType === "single";
-
-              return (
-                <TouchableOpacity
-                  key={option.optionId}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingVertical: 12,
-                    paddingHorizontal: 12,
-                    marginBottom: 4,
-                    borderRadius: 8,
-                    backgroundColor: isSelected ? "#EFF6FF" : "#F9FAFB",
-                    borderWidth: 1,
-                    borderColor: isSelected ? "#BFDBFE" : "#F3F4F6",
-                  }}
-                  onPress={() => handleSelectOption(group, option.optionId)}
-                  activeOpacity={0.7}
-                >
-                  <XStack alignItems="center" flex={1}>
-                    <Ionicons
-                      name={
-                        isSelected
-                          ? isSingle
-                            ? "radio-button-on"
-                            : "checkbox"
-                          : isSingle
-                            ? "radio-button-off"
-                            : "square-outline"
-                      }
-                      size={20}
-                      color={isSelected ? "#3B82F6" : "#9CA3AF"}
-                    />
-                    <Text
-                      style={{
-                        marginLeft: 12,
-                        fontSize: 14,
-                        color: isSelected ? "#111827" : "#374151",
-                        fontWeight: isSelected ? "500" : "400",
-                      }}
-                    >
-                      {option.name}
-                    </Text>
-                  </XStack>
-                  {option.priceAdjustment !== 0 && (
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: isSelected ? "#2563EB" : "#6B7280",
-                        fontWeight: isSelected ? "500" : "400",
-                      }}
-                    >
-                      +{formatCurrency(option.priceAdjustment)}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-          </YStack>
-        ))}
-
-        {/* Quantity */}
-        <XStack justifyContent="space-between" alignItems="center" marginBottom={16}>
-          <Text style={{ color: "#374151", fontWeight: "500" }}>Quantity</Text>
-          <XStack alignItems="center" backgroundColor="#F3F4F6" borderRadius={8}>
-            <IconButton
-              icon="remove"
-              size="md"
-              variant="ghost"
-              iconColor="#EF4444"
-              onPress={() => setQuantity(Math.max(1, quantity - 1))}
-            />
-            <Text
-              style={{ color: "#111827", fontWeight: "600", fontSize: 18, paddingHorizontal: 20 }}
-            >
-              {quantity}
-            </Text>
-            <IconButton
-              icon="add"
-              size="md"
-              variant="ghost"
-              iconColor="#22C55E"
-              onPress={() => setQuantity(quantity + 1)}
-            />
-          </XStack>
-        </XStack>
-
-        {/* Notes */}
-        <YStack marginBottom={16}>
-          <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8 }}>
-            Notes (optional)
-          </Text>
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: "#E5E7EB",
-              borderRadius: 8,
-              padding: 12,
-              fontSize: 16,
-              minHeight: 60,
-              textAlignVertical: "top",
-            }}
-            placeholder="E.g., no ice, extra spicy..."
-            placeholderTextColor="#9CA3AF"
-            value={notes}
-            onChangeText={setNotes}
-            multiline
-            returnKeyType="done"
-            blurOnSubmit
+    <RNModal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
+          {/* Backdrop */}
+          <Pressable
+            onPress={onClose}
+            style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(0,0,0,0.5)" }]}
           />
-        </YStack>
-      </ScrollView>
 
-      {/* Footer */}
-      <XStack
-        justifyContent="space-between"
-        alignItems="center"
-        paddingTop={16}
-        borderTopWidth={1}
-        borderTopColor="#E5E7EB"
-      >
-        <Text style={{ color: "#111827", fontWeight: "700", fontSize: 18 }}>
-          Total: {formatCurrency(lineTotal)}
-        </Text>
-        <Button
-          variant="primary"
-          loading={isLoading}
-          disabled={isLoading || !isValid}
-          onPress={handleConfirm}
-          style={{ minWidth: 120 }}
-        >
-          Add to Order
-        </Button>
-      </XStack>
-    </Modal>
+          <KeyboardAvoidingView
+            behavior="padding"
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+              maxHeight: "92%",
+            }}
+          >
+            <View style={{ maxHeight: "100%" }}>
+              {/* HEADER - Fixed */}
+              <XStack
+                paddingHorizontal={20}
+                paddingTop={20}
+                paddingBottom={16}
+                borderBottomWidth={1}
+                borderBottomColor="#E5E7EB"
+                alignItems="flex-start"
+              >
+                <YStack flex={1}>
+                  <Text variant="heading" size="lg">
+                    Customize Order
+                  </Text>
+                  <Text size="lg" style={{ marginTop: 4 }}>
+                    {product.name}
+                  </Text>
+                  <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 18, marginTop: 2 }}>
+                    {formatCurrency(product.price)}
+                  </Text>
+                </YStack>
+                <TouchableOpacity
+                  onPress={onClose}
+                  style={{ padding: 8, marginRight: -8, marginTop: -4 }}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <Ionicons name="close" size={24} color="#6B7280" />
+                </TouchableOpacity>
+              </XStack>
+
+              {/* CONTENT - Scrollable */}
+              <ScrollView
+                contentContainerStyle={{ padding: 20, paddingBottom: 8 }}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={true}
+              >
+                {/* Modifier Groups */}
+                {modifierGroups.map((group) => (
+                  <YStack key={group.groupId} marginBottom={20}>
+                    <XStack alignItems="center" marginBottom={10}>
+                      <Text style={{ color: "#111827", fontWeight: "600", fontSize: 16 }}>
+                        {group.groupName}
+                      </Text>
+                      {group.minSelections > 0 ? (
+                        <YStack
+                          backgroundColor="#FEE2E2"
+                          borderRadius={6}
+                          paddingHorizontal={10}
+                          paddingVertical={4}
+                          marginLeft={10}
+                        >
+                          <Text style={{ color: "#DC2626", fontSize: 12, fontWeight: "600" }}>
+                            Required
+                          </Text>
+                        </YStack>
+                      ) : (
+                        <YStack
+                          backgroundColor="#F3F4F6"
+                          borderRadius={6}
+                          paddingHorizontal={10}
+                          paddingVertical={4}
+                          marginLeft={10}
+                        >
+                          <Text style={{ color: "#6B7280", fontSize: 12, fontWeight: "500" }}>
+                            Optional
+                          </Text>
+                        </YStack>
+                      )}
+                      {group.selectionType === "multi" && group.maxSelections && (
+                        <Text style={{ color: "#9CA3AF", fontSize: 12, marginLeft: 8 }}>
+                          (max {group.maxSelections})
+                        </Text>
+                      )}
+                    </XStack>
+
+                    {group.options.map((option) => {
+                      const isSelected = selections[group.groupId]?.has(option.optionId) ?? false;
+                      const isSingle = group.selectionType === "single";
+
+                      return (
+                        <TouchableOpacity
+                          key={option.optionId}
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            paddingVertical: 14,
+                            paddingHorizontal: 14,
+                            marginBottom: 6,
+                            borderRadius: 10,
+                            backgroundColor: isSelected ? "#EFF6FF" : "#F9FAFB",
+                            borderWidth: 1.5,
+                            borderColor: isSelected ? "#BFDBFE" : "#F3F4F6",
+                            minHeight: 52,
+                          }}
+                          onPress={() => handleSelectOption(group, option.optionId)}
+                          activeOpacity={0.7}
+                        >
+                          <XStack alignItems="center" flex={1}>
+                            <Ionicons
+                              name={
+                                isSelected
+                                  ? isSingle
+                                    ? "radio-button-on"
+                                    : "checkbox"
+                                  : isSingle
+                                    ? "radio-button-off"
+                                    : "square-outline"
+                              }
+                              size={24}
+                              color={isSelected ? "#3B82F6" : "#9CA3AF"}
+                            />
+                            <Text
+                              style={{
+                                marginLeft: 12,
+                                fontSize: 16,
+                                color: isSelected ? "#111827" : "#374151",
+                                fontWeight: isSelected ? "500" : "400",
+                              }}
+                            >
+                              {option.name}
+                            </Text>
+                          </XStack>
+                          {option.priceAdjustment !== 0 && (
+                            <Text
+                              style={{
+                                fontSize: 15,
+                                color: isSelected ? "#2563EB" : "#6B7280",
+                                fontWeight: isSelected ? "600" : "400",
+                              }}
+                            >
+                              +{formatCurrency(option.priceAdjustment)}
+                            </Text>
+                          )}
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </YStack>
+                ))}
+
+                {/* Notes */}
+                <YStack marginBottom={8}>
+                  <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8 }}>
+                    Notes (optional)
+                  </Text>
+                  <TextInput
+                    style={{
+                      borderWidth: 1,
+                      borderColor: "#E5E7EB",
+                      borderRadius: 10,
+                      padding: 14,
+                      fontSize: 16,
+                      minHeight: 72,
+                      textAlignVertical: "top",
+                    }}
+                    placeholder="E.g., no ice, extra spicy..."
+                    placeholderTextColor="#9CA3AF"
+                    value={notes}
+                    onChangeText={setNotes}
+                    multiline
+                    returnKeyType="done"
+                    blurOnSubmit
+                  />
+                </YStack>
+              </ScrollView>
+
+              {/* FOOTER - Fixed */}
+              <YStack
+                paddingHorizontal={20}
+                paddingTop={16}
+                paddingBottom={24}
+                borderTopWidth={1}
+                borderTopColor="#E5E7EB"
+                backgroundColor="#FFFFFF"
+              >
+                {/* Quantity Controls - Large 56x56 buttons */}
+                <XStack justifyContent="center" alignItems="center" gap={16}>
+                  <TouchableOpacity
+                    onPress={() => setQuantity(Math.max(1, quantity - 1))}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 12,
+                      backgroundColor: "#FEE2E2",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="remove" size={28} color="#EF4444" />
+                  </TouchableOpacity>
+
+                  <YStack
+                    minWidth={80}
+                    paddingVertical={12}
+                    paddingHorizontal={24}
+                    backgroundColor="#F3F4F6"
+                    borderRadius={12}
+                    alignItems="center"
+                  >
+                    <Text style={{ fontSize: 28, fontWeight: "700", color: "#111827" }}>
+                      {quantity}
+                    </Text>
+                  </YStack>
+
+                  <TouchableOpacity
+                    onPress={() => setQuantity(quantity + 1)}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 12,
+                      backgroundColor: "#DCFCE7",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="add" size={28} color="#22C55E" />
+                  </TouchableOpacity>
+                </XStack>
+
+                {/* Total */}
+                <Text
+                  style={{
+                    color: "#111827",
+                    fontWeight: "700",
+                    fontSize: 20,
+                    textAlign: "center",
+                    marginTop: 12,
+                  }}
+                >
+                  {formatCurrency(lineTotal)}
+                </Text>
+
+                {/* Full-width Add Button */}
+                <TouchableOpacity
+                  onPress={handleConfirm}
+                  disabled={!isValid || isLoading}
+                  style={{
+                    backgroundColor: isValid && !isLoading ? "#0D87E1" : "#9CA3AF",
+                    borderRadius: 12,
+                    paddingVertical: 18,
+                    width: "100%",
+                    marginTop: 16,
+                    opacity: isLoading ? 0.7 : 1,
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={{
+                      color: "#FFFFFF",
+                      fontWeight: "700",
+                      fontSize: 18,
+                      textAlign: "center",
+                    }}
+                  >
+                    {isLoading ? "Adding..." : `Add ${quantity} to Order`}
+                  </Text>
+                </TouchableOpacity>
+              </YStack>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </GestureHandlerRootView>
+    </RNModal>
   );
 };

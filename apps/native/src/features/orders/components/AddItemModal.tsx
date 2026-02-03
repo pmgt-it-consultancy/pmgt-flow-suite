@@ -1,7 +1,18 @@
+import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TextInput } from "react-native";
+import {
+  Pressable,
+  Modal as RNModal,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
-import { Button, IconButton, Modal, Text } from "../../shared/components/ui";
+import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface SelectedProduct {
@@ -40,87 +51,185 @@ export const AddItemModal = ({
   const total = product.price * quantity;
 
   return (
-    <Modal visible={visible} title="Add to Order" onClose={onClose} onRequestClose={onClose}>
-      <Text variant="heading" size="xl" style={{ marginBottom: 4 }}>
-        {product.name}
-      </Text>
-      <Text style={{ color: "#0D87E1", fontWeight: "500", fontSize: 18, marginBottom: 20 }}>
-        {formatCurrency(product.price)}
-      </Text>
-
-      {/* Quantity */}
-      <XStack justifyContent="space-between" alignItems="center" marginBottom={16}>
-        <Text style={{ color: "#374151", fontWeight: "500" }}>Quantity</Text>
-        <XStack alignItems="center" backgroundColor="#F3F4F6" borderRadius={8}>
-          <IconButton
-            icon="remove"
-            size="md"
-            variant="ghost"
-            iconColor="#EF4444"
-            onPress={() => onQuantityChange(Math.max(1, quantity - 1))}
+    <RNModal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
+          {/* Backdrop */}
+          <Pressable
+            onPress={onClose}
+            style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(0,0,0,0.5)" }]}
           />
-          <Text
-            style={{ color: "#111827", fontWeight: "600", fontSize: 18, paddingHorizontal: 20 }}
+
+          <KeyboardAvoidingView
+            behavior="padding"
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+              maxHeight: "80%",
+            }}
           >
-            {quantity}
-          </Text>
-          <IconButton
-            icon="add"
-            size="md"
-            variant="ghost"
-            iconColor="#22C55E"
-            onPress={() => onQuantityChange(quantity + 1)}
-          />
-        </XStack>
-      </XStack>
+            <View style={{ maxHeight: "100%" }}>
+              {/* HEADER - Fixed */}
+              <XStack
+                paddingHorizontal={20}
+                paddingTop={20}
+                paddingBottom={16}
+                borderBottomWidth={1}
+                borderBottomColor="#E5E7EB"
+                alignItems="flex-start"
+              >
+                <YStack flex={1}>
+                  <Text variant="heading" size="lg">
+                    Add to Order
+                  </Text>
+                  <Text size="lg" style={{ marginTop: 4 }}>
+                    {product.name}
+                  </Text>
+                  <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 18, marginTop: 2 }}>
+                    {formatCurrency(product.price)}
+                  </Text>
+                </YStack>
+                <TouchableOpacity
+                  onPress={onClose}
+                  style={{ padding: 8, marginRight: -8, marginTop: -4 }}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <Ionicons name="close" size={24} color="#6B7280" />
+                </TouchableOpacity>
+              </XStack>
 
-      {/* Notes */}
-      <YStack marginBottom={20}>
-        <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8 }}>
-          Notes (optional)
-        </Text>
-        <TextInput
-          style={{
-            borderWidth: 1,
-            borderColor: "#E5E7EB",
-            borderRadius: 8,
-            padding: 12,
-            fontSize: 16,
-            minHeight: 60,
-            textAlignVertical: "top",
-          }}
-          placeholder="E.g., no ice, extra spicy..."
-          placeholderTextColor="#9CA3AF"
-          value={notes}
-          onChangeText={onNotesChange}
-          multiline
-          returnKeyType="done"
-          blurOnSubmit
-          onSubmitEditing={onConfirm}
-        />
-      </YStack>
+              {/* CONTENT - Scrollable */}
+              <ScrollView
+                contentContainerStyle={{ padding: 20 }}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
+                {/* Notes */}
+                <YStack>
+                  <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8 }}>
+                    Notes (optional)
+                  </Text>
+                  <TextInput
+                    style={{
+                      borderWidth: 1,
+                      borderColor: "#E5E7EB",
+                      borderRadius: 10,
+                      padding: 14,
+                      fontSize: 16,
+                      minHeight: 72,
+                      textAlignVertical: "top",
+                    }}
+                    placeholder="E.g., no ice, extra spicy..."
+                    placeholderTextColor="#9CA3AF"
+                    value={notes}
+                    onChangeText={onNotesChange}
+                    multiline
+                    returnKeyType="done"
+                    blurOnSubmit
+                    onSubmitEditing={onConfirm}
+                  />
+                </YStack>
+              </ScrollView>
 
-      {/* Footer */}
-      <XStack
-        justifyContent="space-between"
-        alignItems="center"
-        paddingTop={16}
-        borderTopWidth={1}
-        borderTopColor="#E5E7EB"
-      >
-        <Text style={{ color: "#111827", fontWeight: "700", fontSize: 18, flexShrink: 1 }}>
-          Total: {formatCurrency(total)}
-        </Text>
-        <Button
-          variant="primary"
-          loading={isLoading}
-          disabled={isLoading}
-          onPress={onConfirm}
-          style={{ flexShrink: 0 }}
-        >
-          Add Item
-        </Button>
-      </XStack>
-    </Modal>
+              {/* FOOTER - Fixed */}
+              <YStack
+                paddingHorizontal={20}
+                paddingTop={16}
+                paddingBottom={24}
+                borderTopWidth={1}
+                borderTopColor="#E5E7EB"
+                backgroundColor="#FFFFFF"
+              >
+                {/* Quantity Controls - Large 56x56 buttons */}
+                <XStack justifyContent="center" alignItems="center" gap={16}>
+                  <TouchableOpacity
+                    onPress={() => onQuantityChange(Math.max(1, quantity - 1))}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 12,
+                      backgroundColor: "#FEE2E2",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="remove" size={28} color="#EF4444" />
+                  </TouchableOpacity>
+
+                  <YStack
+                    minWidth={80}
+                    paddingVertical={12}
+                    paddingHorizontal={24}
+                    backgroundColor="#F3F4F6"
+                    borderRadius={12}
+                    alignItems="center"
+                  >
+                    <Text style={{ fontSize: 28, fontWeight: "700", color: "#111827" }}>
+                      {quantity}
+                    </Text>
+                  </YStack>
+
+                  <TouchableOpacity
+                    onPress={() => onQuantityChange(quantity + 1)}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 12,
+                      backgroundColor: "#DCFCE7",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="add" size={28} color="#22C55E" />
+                  </TouchableOpacity>
+                </XStack>
+
+                {/* Total */}
+                <Text
+                  style={{
+                    color: "#111827",
+                    fontWeight: "700",
+                    fontSize: 20,
+                    textAlign: "center",
+                    marginTop: 12,
+                  }}
+                >
+                  {formatCurrency(total)}
+                </Text>
+
+                {/* Full-width Add Button */}
+                <TouchableOpacity
+                  onPress={onConfirm}
+                  disabled={isLoading}
+                  style={{
+                    backgroundColor: isLoading ? "#9CA3AF" : "#0D87E1",
+                    borderRadius: 12,
+                    paddingVertical: 18,
+                    width: "100%",
+                    marginTop: 16,
+                    opacity: isLoading ? 0.7 : 1,
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={{
+                      color: "#FFFFFF",
+                      fontWeight: "700",
+                      fontSize: 18,
+                      textAlign: "center",
+                    }}
+                  >
+                    {isLoading ? "Adding..." : `Add ${quantity} to Order`}
+                  </Text>
+                </TouchableOpacity>
+              </YStack>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </GestureHandlerRootView>
+    </RNModal>
   );
 };

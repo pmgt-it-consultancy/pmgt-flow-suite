@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { TextInput } from "react-native";
+import { TextInput, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
@@ -36,11 +35,11 @@ export const CardPaymentDetails = ({
         Payment Details
       </Text>
 
-      {/* Payment Type Chips */}
-      <Text variant="muted" size="sm" style={{ marginBottom: 8 }}>
+      {/* Payment Type Chips - Larger touch targets */}
+      <Text variant="muted" size="sm" style={{ marginBottom: 10 }}>
         Payment Type
       </Text>
-      <XStack flexWrap="wrap" gap={8} marginBottom={12}>
+      <XStack flexWrap="wrap" gap={10} marginBottom={14}>
         {PAYMENT_TYPES.map((type) => {
           const isOtherSelected =
             type === "Other" &&
@@ -48,29 +47,38 @@ export const CardPaymentDetails = ({
             paymentType !== "";
           const active = type === paymentType || isOtherSelected;
           return (
-            <YStack
+            <TouchableOpacity
               key={type}
-              paddingHorizontal={12}
-              paddingVertical={8}
-              borderRadius={9999}
-              borderWidth={1}
-              backgroundColor={active ? "#0D87E1" : "#FFFFFF"}
-              borderColor={active ? "#0D87E1" : "#D1D5DB"}
-              onTouchEnd={() => {
+              onPress={() => {
                 if (type === "Other") {
                   onPaymentTypeChange(customPaymentType || "Other");
                 } else {
                   onPaymentTypeChange(type);
                 }
               }}
+              activeOpacity={0.7}
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                borderRadius: 9999,
+                borderWidth: active ? 0 : 1,
+                backgroundColor: active ? "#0D87E1" : "#FFFFFF",
+                borderColor: "#D1D5DB",
+                minHeight: 48,
+                justifyContent: "center",
+              }}
             >
               <Text
                 size="sm"
-                style={active ? { color: "#FFFFFF", fontWeight: "500" } : { color: "#374151" }}
+                style={
+                  active
+                    ? { color: "#FFFFFF", fontWeight: "600" }
+                    : { color: "#374151", fontWeight: "500" }
+                }
               >
                 {type}
               </Text>
-            </YStack>
+            </TouchableOpacity>
           );
         })}
       </XStack>
@@ -81,11 +89,12 @@ export const CardPaymentDetails = ({
           style={{
             borderWidth: 1,
             borderColor: "#D1D5DB",
-            borderRadius: 8,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-            marginBottom: 12,
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 12,
+            marginBottom: 14,
             fontSize: 16,
+            minHeight: 48,
           }}
           placeholder="Enter payment type..."
           value={customPaymentType}
@@ -98,17 +107,18 @@ export const CardPaymentDetails = ({
       )}
 
       {/* Reference Number */}
-      <Text variant="muted" size="sm" style={{ marginBottom: 8 }}>
+      <Text variant="muted" size="sm" style={{ marginBottom: 10 }}>
         Reference Number
       </Text>
       <TextInput
         style={{
           borderWidth: 1,
           borderColor: "#D1D5DB",
-          borderRadius: 8,
-          paddingHorizontal: 12,
-          paddingVertical: 8,
+          borderRadius: 10,
+          paddingHorizontal: 14,
+          paddingVertical: 12,
           fontSize: 16,
+          minHeight: 48,
         }}
         placeholder="Enter reference number..."
         value={referenceNumber}

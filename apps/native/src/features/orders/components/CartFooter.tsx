@@ -94,14 +94,30 @@ export const CartFooter = ({
       )}
 
       {canCancel && (
-        <Button onPress={onCancelOrder} variant="destructive" size="lg" style={{ marginTop: 8 }}>
-          <Text
-            numberOfLines={1}
-            style={{ color: "#FFFFFF", fontWeight: "800", fontSize: 14, textAlign: "center" }}
-          >
-            Cancel Order
-          </Text>
-        </Button>
+        <TouchableOpacity
+          onPress={onCancelOrder}
+          activeOpacity={0.7}
+          style={{
+            marginTop: 10,
+            paddingVertical: 14,
+            paddingHorizontal: 20,
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "row",
+            backgroundColor: "#FEF2F2",
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: "#FECACA",
+          }}
+        >
+          <Ionicons
+            name="close-circle-outline"
+            size={20}
+            color="#DC2626"
+            style={{ marginRight: 8 }}
+          />
+          <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 15 }}>Cancel Order</Text>
+        </TouchableOpacity>
       )}
     </YStack>
   );

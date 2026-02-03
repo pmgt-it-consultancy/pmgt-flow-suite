@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { IconButton, Text } from "../../shared/components/ui";
+import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface CartItemModifier {
@@ -92,50 +92,75 @@ export const CartItem = ({
       <XStack alignItems="center" justifyContent="space-between">
         {isSentToKitchen ? (
           <>
-            <Text style={{ color: "#6B7280", fontSize: 14 }}>Qty: {quantity}</Text>
+            <YStack
+              backgroundColor="#F3F4F6"
+              paddingHorizontal={14}
+              paddingVertical={8}
+              borderRadius={8}
+            >
+              <Text style={{ color: "#374151", fontWeight: "600", fontSize: 14 }}>
+                Qty: {quantity}
+              </Text>
+            </YStack>
             {onVoidItem && (
               <TouchableOpacity
                 onPress={() => onVoidItem(id)}
-                style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+                activeOpacity={0.7}
+                style={{
+                  backgroundColor: "#FEF2F2",
+                  paddingHorizontal: 14,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: "#FECACA",
+                }}
               >
-                <Text style={{ color: "#EF4444", fontWeight: "500", fontSize: 12 }}>Void</Text>
+                <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 13 }}>Void</Text>
               </TouchableOpacity>
             )}
           </>
         ) : (
-          <XStack
-            alignItems="center"
-            backgroundColor="#F9FAFB"
-            borderRadius={12}
-            borderWidth={1}
-            borderColor="#E5E7EB"
-          >
-            <IconButton
-              icon="remove"
-              size="md"
-              variant="ghost"
-              iconColor="#EF4444"
+          <XStack alignItems="center" gap={8}>
+            <TouchableOpacity
               onPress={() => onDecrement(id, quantity)}
-            />
-            <Text
+              activeOpacity={0.7}
               style={{
-                color: "#111827",
-                fontWeight: "700",
-                fontSize: 16,
-                paddingHorizontal: 16,
-                minWidth: 40,
-                textAlign: "center",
+                width: 44,
+                height: 44,
+                borderRadius: 10,
+                backgroundColor: "#FEE2E2",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              {quantity}
-            </Text>
-            <IconButton
-              icon="add"
-              size="md"
-              variant="ghost"
-              iconColor="#22C55E"
+              <Ionicons name="remove" size={22} color="#EF4444" />
+            </TouchableOpacity>
+
+            <YStack
+              minWidth={48}
+              paddingVertical={10}
+              paddingHorizontal={14}
+              backgroundColor="#F3F4F6"
+              borderRadius={10}
+              alignItems="center"
+            >
+              <Text style={{ fontSize: 18, fontWeight: "700", color: "#111827" }}>{quantity}</Text>
+            </YStack>
+
+            <TouchableOpacity
               onPress={() => onIncrement(id, quantity)}
-            />
+              activeOpacity={0.7}
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 10,
+                backgroundColor: "#DCFCE7",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons name="add" size={22} color="#22C55E" />
+            </TouchableOpacity>
           </XStack>
         )}
       </XStack>

@@ -7,8 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { XStack, YStack } from "tamagui";
-import { Button, Chip, Modal, Text } from "../../shared/components/ui";
+import { XStack } from "tamagui";
+import { Chip, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 type DiscountType = "senior_citizen" | "pwd" | null;
@@ -74,38 +74,57 @@ export const DiscountModal = ({
       onRequestClose={onClose}
     >
       {/* Discount Type */}
-      <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8, marginTop: 12 }}>
+      <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 10, marginTop: 12 }}>
         Discount Type
       </Text>
       <XStack gap={12}>
         <Chip
           selected={discountType === "senior_citizen"}
           onPress={() => onDiscountTypeChange("senior_citizen")}
-          style={{ flex: 1, justifyContent: "center" }}
+          style={{ flex: 1, justifyContent: "center", minHeight: 48, paddingVertical: 12 }}
         >
           Senior Citizen
         </Chip>
         <Chip
           selected={discountType === "pwd"}
           onPress={() => onDiscountTypeChange("pwd")}
-          style={{ flex: 1, justifyContent: "center" }}
+          style={{ flex: 1, justifyContent: "center", minHeight: 48, paddingVertical: 12 }}
         >
           PWD
         </Chip>
       </XStack>
 
-      {/* Select Items */}
-      <XStack justifyContent="space-between" alignItems="center" marginTop={16} marginBottom={8}>
+      {/* Select Items Header with Button */}
+      <XStack justifyContent="space-between" alignItems="center" marginTop={20} marginBottom={10}>
         <Text style={{ color: "#374151", fontWeight: "500" }}>Select Items</Text>
         {availableItems.length > 1 && (
-          <TouchableOpacity onPress={onSelectAll} activeOpacity={0.7}>
-            <Text style={{ color: "#0D87E1", fontWeight: "500", fontSize: 14 }}>
+          <TouchableOpacity
+            onPress={onSelectAll}
+            activeOpacity={0.7}
+            style={{
+              backgroundColor: allSelected ? "#DBEAFE" : "#F3F4F6",
+              paddingHorizontal: 16,
+              paddingVertical: 10,
+              borderRadius: 8,
+              minHeight: 40,
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: "600",
+                color: allSelected ? "#0D87E1" : "#374151",
+                fontSize: 14,
+              }}
+            >
               {allSelected ? "Deselect All" : "Select All"}
             </Text>
           </TouchableOpacity>
         )}
       </XStack>
-      <ScrollView style={{ maxHeight: 160 }}>
+
+      {/* Item List - Increased height and touch targets */}
+      <ScrollView style={{ maxHeight: 280 }}>
         {availableItems.map((item) => {
           const isSelected = selectedItemIds.has(item._id);
           return (
@@ -114,33 +133,35 @@ export const DiscountModal = ({
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                padding: 12,
-                borderWidth: 1,
-                borderRadius: 8,
+                paddingVertical: 14,
+                paddingHorizontal: 14,
+                borderWidth: 1.5,
+                borderRadius: 10,
                 marginBottom: 8,
                 borderColor: isSelected ? "#0D87E1" : "#E5E7EB",
                 backgroundColor: isSelected ? "#EFF6FF" : undefined,
+                minHeight: 56,
               }}
               onPress={() => onItemToggle(item._id)}
               activeOpacity={0.7}
             >
               <Ionicons
                 name={isSelected ? "checkbox" : "square-outline"}
-                size={22}
+                size={26}
                 color={isSelected ? "#0D87E1" : "#9CA3AF"}
-                style={{ marginRight: 10 }}
+                style={{ marginRight: 12 }}
               />
-              <Text style={{ flex: 1, color: "#374151" }}>
+              <Text style={{ flex: 1, color: "#374151", fontSize: 15 }}>
                 {item.quantity}x {item.productName}
               </Text>
-              <Text style={{ color: "#111827", fontWeight: "500" }}>
+              <Text style={{ color: "#111827", fontWeight: "600", fontSize: 15 }}>
                 {formatCurrency(item.lineTotal)}
               </Text>
             </TouchableOpacity>
           );
         })}
         {availableItems.length === 0 && (
-          <Text variant="muted" style={{ textAlign: "center", paddingVertical: 16 }}>
+          <Text variant="muted" style={{ textAlign: "center", paddingVertical: 20 }}>
             All items already have discounts
           </Text>
         )}
@@ -154,9 +175,10 @@ export const DiscountModal = ({
         style={{
           borderWidth: 1,
           borderColor: "#E5E7EB",
-          borderRadius: 8,
-          padding: 12,
+          borderRadius: 10,
+          padding: 14,
           fontSize: 16,
+          minHeight: 52,
         }}
         placeholder="Enter SC/PWD ID number"
         placeholderTextColor="#9CA3AF"
@@ -176,9 +198,10 @@ export const DiscountModal = ({
         style={{
           borderWidth: 1,
           borderColor: "#E5E7EB",
-          borderRadius: 8,
-          padding: 12,
+          borderRadius: 10,
+          padding: 14,
           fontSize: 16,
+          minHeight: 52,
         }}
         placeholder="Enter customer name"
         placeholderTextColor="#9CA3AF"
@@ -194,15 +217,31 @@ export const DiscountModal = ({
         BIR rule: 20% discount applies only to items consumed by SC/PWD
       </Text>
 
-      <Button
-        variant="primary"
-        size="lg"
-        disabled={!isValid}
+      {/* Full-width Apply Button */}
+      <TouchableOpacity
         onPress={onApply}
-        style={{ marginTop: 20, opacity: !isValid ? 0.5 : 1 }}
+        disabled={!isValid}
+        style={{
+          backgroundColor: isValid ? "#0D87E1" : "#9CA3AF",
+          borderRadius: 12,
+          paddingVertical: 18,
+          width: "100%",
+          marginTop: 20,
+          opacity: !isValid ? 0.5 : 1,
+        }}
+        activeOpacity={0.8}
       >
-        Apply Discount{selectedItemIds.size > 1 ? ` to ${selectedItemIds.size} Items` : ""}
-      </Button>
+        <Text
+          style={{
+            color: "#FFFFFF",
+            fontWeight: "700",
+            fontSize: 18,
+            textAlign: "center",
+          }}
+        >
+          Apply Discount{selectedItemIds.size > 1 ? ` to ${selectedItemIds.size} Items` : ""}
+        </Text>
+      </TouchableOpacity>
     </Modal>
   );
 };

@@ -41,24 +41,40 @@ export const CashInput = ({ value, onChange }: CashInputProps) => {
         />
       </XStack>
 
-      <XStack flexWrap="wrap" gap={8} marginTop={12}>
-        {QUICK_AMOUNTS.map((amount) => (
-          <TouchableOpacity
-            key={amount}
-            style={{
-              backgroundColor: "#FFFFFF",
-              paddingVertical: 8,
-              paddingHorizontal: 16,
-              borderRadius: 8,
-              borderWidth: 1,
-              borderColor: "#E5E7EB",
-            }}
-            onPress={() => onChange(amount.toString())}
-            activeOpacity={0.7}
-          >
-            <Text style={{ color: "#374151", fontWeight: "500" }}>{amount}</Text>
-          </TouchableOpacity>
-        ))}
+      {/* Quick Amount Buttons - Larger touch targets */}
+      <XStack flexWrap="wrap" gap={10} marginTop={14}>
+        {QUICK_AMOUNTS.map((amount) => {
+          const isSelected = value === amount.toString();
+          return (
+            <TouchableOpacity
+              key={amount}
+              style={{
+                backgroundColor: isSelected ? "#DBEAFE" : "#FFFFFF",
+                paddingVertical: 14,
+                paddingHorizontal: 20,
+                borderRadius: 10,
+                borderWidth: isSelected ? 2 : 1,
+                borderColor: isSelected ? "#0D87E1" : "#E5E7EB",
+                minWidth: 80,
+                minHeight: 48,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={() => onChange(amount.toString())}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={{
+                  color: isSelected ? "#0D87E1" : "#374151",
+                  fontWeight: "600",
+                  fontSize: 16,
+                }}
+              >
+                ₱{amount.toLocaleString()}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </XStack>
     </YStack>
   );
