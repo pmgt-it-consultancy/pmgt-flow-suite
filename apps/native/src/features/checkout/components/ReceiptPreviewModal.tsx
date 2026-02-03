@@ -290,7 +290,7 @@ export const ReceiptPreviewModal = ({
 
             {/* Footer */}
             <Text variant="heading" size="xs" style={{ textAlign: "center", marginTop: 8 }}>
-              Thank you for your patronage!
+              {receiptData.storeFooter || "Thank you for your patronage!"}
             </Text>
             <Text
               variant="muted"
