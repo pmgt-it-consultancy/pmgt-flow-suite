@@ -87,9 +87,11 @@ jobs:
         working-directory: apps/native
         run: |
           if [ "${{ github.ref_name }}" = "main" ]; then
-            echo "EXPO_PUBLIC_CONVEX_URL=${{ secrets.CONVEX_URL_PRODUCTION }}" > .env
+            echo "APP_VARIANT=production" > .env
+            echo "EXPO_PUBLIC_CONVEX_URL=${{ secrets.CONVEX_URL_PRODUCTION }}" >> .env
           else
-            echo "EXPO_PUBLIC_CONVEX_URL=${{ secrets.CONVEX_URL_STAGING }}" > .env
+            echo "APP_VARIANT=staging" > .env
+            echo "EXPO_PUBLIC_CONVEX_URL=${{ secrets.CONVEX_URL_STAGING }}" >> .env
           fi
 
       - name: Decode keystore

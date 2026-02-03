@@ -40,6 +40,7 @@
       "extends": "base",
       "credentialsSource": "local",
       "env": {
+        "APP_VARIANT": "production",
         "EXPO_PUBLIC_CONVEX_URL": "https://loyal-shark-813.convex.cloud"
       },
       "android": {
