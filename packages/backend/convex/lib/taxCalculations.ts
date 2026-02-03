@@ -2,8 +2,8 @@
  * BIR-Compliant Tax Calculations
  *
  * Philippine tax rules:
- * - Standard VAT rate: 12%
- * - All prices are VAT-inclusive
+ * - Standard VAT rate: 12% (NON-VAT stores use 0%)
+ * - All prices are VAT-inclusive (for VAT-registered stores)
  * - SC/PWD discounts: 20% on VAT-exclusive price + VAT exemption
  *
  * Amounts are stored in centavos (smallest currency unit) to avoid
@@ -15,24 +15,31 @@ export const SC_PWD_DISCOUNT_RATE = 0.2;
 
 /**
  * Calculate VAT breakdown from a VAT-inclusive price
+ *
+ * For NON-VAT stores (vatRate = 0):
+ * - No VAT is extracted from the price
+ * - vatAmount is always 0
+ * - vatExclusive equals the full price
  */
 export function calculateVatBreakdown(
   vatInclusivePrice: number,
   isVatable: boolean,
+  vatRate: number = VAT_RATE,
 ): {
   vatExclusive: number;
   vatAmount: number;
 } {
-  if (!isVatable) {
+  // If non-vatable item OR zero VAT rate (NON-VAT store), no VAT extraction
+  if (!isVatable || vatRate === 0) {
     return {
       vatExclusive: vatInclusivePrice,
       vatAmount: 0,
     };
   }
 
-  // VAT-inclusive formula: price = base + (base * 0.12) = base * 1.12
-  // So base = price / 1.12
-  const vatExclusive = Math.round(vatInclusivePrice / (1 + VAT_RATE));
+  // VAT-inclusive formula: price = base + (base * vatRate) = base * (1 + vatRate)
+  // So base = price / (1 + vatRate)
+  const vatExclusive = Math.round(vatInclusivePrice / (1 + vatRate));
   const vatAmount = vatInclusivePrice - vatExclusive;
 
   return {
@@ -45,14 +52,32 @@ export function calculateVatBreakdown(
  * Calculate SC/PWD discount
  * SC/PWD transactions are VAT-EXEMPT (not just discounted)
  * The 20% discount is applied to the VAT-exclusive price
+ *
+ * For NON-VAT stores (vatRate = 0):
+ * - 20% discount is applied directly to the price (no VAT to remove)
+ * - vatExemptAmount is 0 (no VAT exemption since there's no VAT)
  */
-export function calculateScPwdDiscount(vatInclusivePrice: number): {
+export function calculateScPwdDiscount(
+  vatInclusivePrice: number,
+  vatRate: number = VAT_RATE,
+): {
   discountedPrice: number;
   discountAmount: number;
   vatExemptAmount: number;
 } {
+  // For NON-VAT stores, apply 20% discount directly to the price
+  if (vatRate === 0) {
+    const discountAmount = Math.round(vatInclusivePrice * SC_PWD_DISCOUNT_RATE);
+    const discountedPrice = vatInclusivePrice - discountAmount;
+    return {
+      discountedPrice,
+      discountAmount,
+      vatExemptAmount: 0, // No VAT exemption for NON-VAT stores
+    };
+  }
+
   // Remove VAT first
-  const vatExclusive = Math.round(vatInclusivePrice / (1 + VAT_RATE));
+  const vatExclusive = Math.round(vatInclusivePrice / (1 + vatRate));
 
   // Apply 20% discount on VAT-exclusive price
   const discountAmount = Math.round(vatExclusive * SC_PWD_DISCOUNT_RATE);
@@ -80,20 +105,31 @@ export interface ItemCalculation {
 
 /**
  * Calculate item totals
+ *
+ * For NON-VAT stores (vatRate = 0):
+ * - grossSales = price * quantity (same as VAT stores)
+ * - vatableSales = 0 (no VAT extraction)
+ * - vatAmount = 0
+ * - nonVatSales = grossSales (all sales are non-VAT)
+ * - SC/PWD discount: 20% of price, vatExemptAmount = 0
  */
 export function calculateItemTotals(
   unitPrice: number,
   quantity: number,
   isVatable: boolean,
   scPwdQuantity: number = 0,
+  vatRate: number = VAT_RATE,
 ): ItemCalculation {
   const grossAmount = unitPrice * quantity;
   const regularQuantity = quantity - scPwdQuantity;
 
   // Calculate regular (non-discounted) portion
   const regularGross = unitPrice * regularQuantity;
-  const regularVat = isVatable
-    ? calculateVatBreakdown(regularGross, true)
+
+  // For NON-VAT stores (vatRate = 0), treat all items as non-vatable for VAT purposes
+  const effectivelyVatable = isVatable && vatRate > 0;
+  const regularVat = effectivelyVatable
+    ? calculateVatBreakdown(regularGross, true, vatRate)
     : { vatExclusive: regularGross, vatAmount: 0 };
 
   // Calculate SC/PWD portion
@@ -104,16 +140,18 @@ export function calculateItemTotals(
 
   if (scPwdQuantity > 0) {
     _scPwdGross = unitPrice * scPwdQuantity;
-    const scPwd = calculateScPwdDiscount(unitPrice);
+    const scPwd = calculateScPwdDiscount(unitPrice, vatRate);
     scPwdDiscount = scPwd.discountAmount * scPwdQuantity;
     scPwdVatExempt = scPwd.vatExemptAmount * scPwdQuantity;
     scPwdNet = scPwd.discountedPrice * scPwdQuantity;
   }
 
   // Combine calculations
-  const vatableAmount = isVatable ? regularVat.vatExclusive : 0;
-  const vatAmount = isVatable ? regularVat.vatAmount : 0;
-  const nonVatAmount = !isVatable ? regularGross : 0;
+  // For NON-VAT stores: vatable items go to nonVatAmount, not vatableAmount
+  const vatableAmount = effectivelyVatable ? regularVat.vatExclusive : 0;
+  const vatAmount = effectivelyVatable ? regularVat.vatAmount : 0;
+  // nonVatAmount includes: (1) non-vatable items, (2) all items for NON-VAT stores
+  const nonVatAmount = !effectivelyVatable ? regularGross : 0;
   const vatExemptAmount = scPwdVatExempt;
   const discountAmount = scPwdDiscount;
 

@@ -706,6 +706,13 @@ export const removeItem = mutation({
 
 // Helper function to recalculate order totals
 async function recalculateOrderTotals(ctx: { db: any }, orderId: Id<"orders">): Promise<void> {
+  // Get order to find store's VAT rate
+  const order = await ctx.db.get(orderId);
+  if (!order) throw new Error("Order not found");
+
+  const store = await ctx.db.get(order.storeId);
+  const vatRate = store?.vatRate ?? 0.12; // Default to 12% for backward compatibility
+
   // Get all active (non-voided) items
   const items = await ctx.db
     .query("orderItems")
@@ -730,7 +737,7 @@ async function recalculateOrderTotals(ctx: { db: any }, orderId: Id<"orders">): 
 
       // For now, no SC/PWD discounts in basic calculation
       // Those are handled separately in the discounts module
-      return calculateItemTotals(effectivePrice, item.quantity, isVatable, 0);
+      return calculateItemTotals(effectivePrice, item.quantity, isVatable, 0, vatRate);
     }),
   );
 

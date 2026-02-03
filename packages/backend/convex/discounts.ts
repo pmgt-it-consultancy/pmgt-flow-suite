@@ -71,6 +71,10 @@ export const applyScPwdDiscount = mutation({
       );
     }
 
+    // Get store's VAT rate
+    const store = await ctx.db.get(order.storeId);
+    const vatRate = store?.vatRate ?? 0.12;
+
     // Calculate effective price including modifiers
     const modifiers = await ctx.db
       .query("orderItemModifiers")
@@ -80,7 +84,7 @@ export const applyScPwdDiscount = mutation({
     const effectivePrice = orderItem.productPrice + modifierTotal;
 
     // Calculate SC/PWD discount on full price (product + modifiers)
-    const scPwd = calculateScPwdDiscount(effectivePrice);
+    const scPwd = calculateScPwdDiscount(effectivePrice, vatRate);
     const discountAmount = scPwd.discountAmount * args.quantityApplied;
     const vatExemptAmount = scPwd.vatExemptAmount * args.quantityApplied;
 
@@ -140,6 +144,10 @@ export const applyBulkScPwdDiscount = mutation({
       throw new Error("Cannot apply discount to closed order");
     }
 
+    // Get store's VAT rate
+    const store = await ctx.db.get(order.storeId);
+    const vatRate = store?.vatRate ?? 0.12;
+
     const discountIds: Id<"orderDiscounts">[] = [];
 
     for (const item of args.items) {
@@ -175,7 +183,7 @@ export const applyBulkScPwdDiscount = mutation({
       const modifierTotal = modifiers.reduce((sum: number, m: any) => sum + m.priceAdjustment, 0);
       const effectivePrice = orderItem.productPrice + modifierTotal;
 
-      const scPwd = calculateScPwdDiscount(effectivePrice);
+      const scPwd = calculateScPwdDiscount(effectivePrice, vatRate);
       const discountAmount = scPwd.discountAmount * item.quantityApplied;
       const vatExemptAmount = scPwd.vatExemptAmount * item.quantityApplied;
 
@@ -354,6 +362,13 @@ async function recalculateOrderTotalsWithDiscounts(
   ctx: { db: any },
   orderId: Id<"orders">,
 ): Promise<void> {
+  // Get order to find store's VAT rate
+  const order = await ctx.db.get(orderId);
+  if (!order) throw new Error("Order not found");
+
+  const store = await ctx.db.get(order.storeId);
+  const vatRate = store?.vatRate ?? 0.12; // Default to 12% for backward compatibility
+
   // Get all active (non-voided) items
   const items = await ctx.db
     .query("orderItems")
@@ -398,7 +413,7 @@ async function recalculateOrderTotalsWithDiscounts(
       // Get total SC/PWD discounted quantity for this item
       const scPwdQuantity = itemDiscountQty.get(item._id) ?? 0;
 
-      return calculateItemTotals(effectivePrice, item.quantity, isVatable, scPwdQuantity);
+      return calculateItemTotals(effectivePrice, item.quantity, isVatable, scPwdQuantity, vatRate);
     }),
   );
 
