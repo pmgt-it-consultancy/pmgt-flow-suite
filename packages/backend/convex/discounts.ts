@@ -105,6 +105,98 @@ export const applyScPwdDiscount = mutation({
   },
 });
 
+// Apply SC/PWD discount to multiple order items at once
+export const applyBulkScPwdDiscount = mutation({
+  args: {
+    orderId: v.id("orders"),
+    items: v.array(
+      v.object({
+        orderItemId: v.id("orderItems"),
+        quantityApplied: v.number(),
+      }),
+    ),
+    discountType: v.union(v.literal("senior_citizen"), v.literal("pwd")),
+    customerName: v.string(),
+    customerId: v.string(),
+    managerId: v.id("users"),
+  },
+  returns: v.array(v.id("orderDiscounts")),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+    await requirePermission(ctx, args.managerId, "discounts.approve");
+
+    if (args.items.length === 0) {
+      throw new Error("No items selected for discount");
+    }
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open") {
+      throw new Error("Cannot apply discount to closed order");
+    }
+
+    const discountIds: Id<"orderDiscounts">[] = [];
+
+    for (const item of args.items) {
+      const orderItem = await ctx.db.get(item.orderItemId);
+      if (!orderItem) throw new Error(`Order item not found: ${item.orderItemId}`);
+      if (orderItem.orderId !== args.orderId) {
+        throw new Error("Item does not belong to this order");
+      }
+      if (orderItem.isVoided) {
+        throw new Error(`Cannot apply discount to voided item: ${orderItem.productName}`);
+      }
+      if (item.quantityApplied > orderItem.quantity) {
+        throw new Error(`Discount quantity exceeds item quantity for ${orderItem.productName}`);
+      }
+
+      // Check existing discounts on this item
+      const existingDiscounts = await ctx.db
+        .query("orderDiscounts")
+        .withIndex("by_orderItem", (q) => q.eq("orderItemId", item.orderItemId))
+        .collect();
+      const totalDiscountedQty = existingDiscounts.reduce((sum, d) => sum + d.quantityApplied, 0);
+      if (totalDiscountedQty + item.quantityApplied > orderItem.quantity) {
+        throw new Error(
+          `Cannot apply discount to ${orderItem.productName}: only ${orderItem.quantity - totalDiscountedQty} undiscounted quantity remaining`,
+        );
+      }
+
+      // Calculate effective price including modifiers
+      const modifiers = await ctx.db
+        .query("orderItemModifiers")
+        .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", item.orderItemId))
+        .collect();
+      const modifierTotal = modifiers.reduce((sum: number, m: any) => sum + m.priceAdjustment, 0);
+      const effectivePrice = orderItem.productPrice + modifierTotal;
+
+      const scPwd = calculateScPwdDiscount(effectivePrice);
+      const discountAmount = scPwd.discountAmount * item.quantityApplied;
+      const vatExemptAmount = scPwd.vatExemptAmount * item.quantityApplied;
+
+      const discountId = await ctx.db.insert("orderDiscounts", {
+        orderId: args.orderId,
+        orderItemId: item.orderItemId,
+        discountType: args.discountType,
+        customerName: args.customerName,
+        customerId: args.customerId,
+        quantityApplied: item.quantityApplied,
+        discountAmount,
+        vatExemptAmount,
+        approvedBy: args.managerId,
+        createdAt: Date.now(),
+      });
+
+      discountIds.push(discountId);
+    }
+
+    // Recalculate order totals once (not per item)
+    await recalculateOrderTotalsWithDiscounts(ctx, args.orderId);
+
+    return discountIds;
+  },
+});
+
 // Apply promo or manual discount to an order
 export const applyOrderDiscount = mutation({
   args: {
