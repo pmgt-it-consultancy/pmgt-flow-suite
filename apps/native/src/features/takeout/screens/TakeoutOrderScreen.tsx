@@ -4,7 +4,7 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 
-import { ActivityIndicator, Alert, FlatList, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, FlatList, TextInput, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import type { SelectedModifier } from "../../orders/components";
@@ -16,7 +16,7 @@ import {
   VoidItemModal,
 } from "../../orders/components";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
-import { IconButton, Input, Text } from "../../shared/components/ui";
+import { IconButton, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface TakeoutOrderScreenProps {
@@ -515,18 +515,18 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                   >
                     Customer Name
                   </Text>
-                  <Input
+                  <TextInput
                     placeholder="Enter customer name (optional)"
                     value={customerName}
                     onChangeText={setCustomerName}
+                    placeholderTextColor="#9CA3AF"
                     style={{
                       backgroundColor: "#F8FAFC",
-                      borderColor: customerName.trim() ? "#F97316" : "#E2E8F0",
-                      borderWidth: 1,
                       borderRadius: 8,
                       paddingHorizontal: 12,
                       paddingVertical: 10,
                       fontSize: 16,
+                      color: "#111827",
                     }}
                   />
                 </YStack>
