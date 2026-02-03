@@ -163,6 +163,109 @@ This is a POS system used by restaurant staff. Every UI decision must prioritize
 - **Glanceable data** — clocks, stats, order counts must be readable at arm's length. Use large, bold font sizes for key numbers.
 - **Information density over aesthetics** — pack useful info into every screen. Combine sections side-by-side (e.g. clock + stats in one row, buttons + order list side-by-side) rather than stacking vertically with margins.
 
+### Touch Target Sizing
+
+| Element | Minimum | Recommended |
+|---------|---------|-------------|
+| Any tappable element | 44px | 48-56px |
+| Quantity +/- buttons | 44px | 56x56px |
+| Quick action buttons | 44px | 48-52px height |
+| Primary action buttons | 48px | 56px height |
+| Checkbox/radio rows | 48px | 56px height |
+| Modal action buttons | 48px | Full-width, 18px padding |
+
+### Quantity Controls Pattern
+
+Use colored background tints for increment/decrement buttons:
+```tsx
+// Decrement button (red tint)
+<TouchableOpacity style={{
+  width: 56, height: 56, borderRadius: 12,
+  backgroundColor: "#FEE2E2",  // red-100
+  justifyContent: "center", alignItems: "center",
+}}>
+  <Ionicons name="remove" size={28} color="#EF4444" />
+</TouchableOpacity>
+
+// Increment button (green tint)
+<TouchableOpacity style={{
+  width: 56, height: 56, borderRadius: 12,
+  backgroundColor: "#DCFCE7",  // green-100
+  justifyContent: "center", alignItems: "center",
+}}>
+  <Ionicons name="add" size={28} color="#22C55E" />
+</TouchableOpacity>
+
+// Quantity display
+<YStack backgroundColor="#F3F4F6" borderRadius={12} paddingVertical={12} paddingHorizontal={24}>
+  <Text style={{ fontSize: 28, fontWeight: "700" }}>{quantity}</Text>
+</YStack>
+```
+
+### Modal Layout Pattern (Sticky Footer)
+
+For modals with scrollable content and fixed actions, use this structure:
+```tsx
+<RNModal visible={visible} transparent animationType="slide">
+  <View style={{ flex: 1, justifyContent: "flex-end" }}>
+    <Pressable onPress={onClose} style={StyleSheet.absoluteFill} />  {/* Backdrop */}
+    <KeyboardAvoidingView behavior="padding" style={{ maxHeight: "92%", backgroundColor: "#FFF", borderTopRadius: 16 }}>
+      <View style={{ maxHeight: "100%" }}>
+        {/* Fixed Header */}
+        <XStack paddingHorizontal={20} paddingTop={20} paddingBottom={16} borderBottomWidth={1}>
+          ...
+        </XStack>
+
+        {/* Scrollable Content - NO flex:1 on ScrollView style */}
+        <ScrollView contentContainerStyle={{ padding: 20 }}>
+          ...
+        </ScrollView>
+
+        {/* Fixed Footer */}
+        <YStack paddingHorizontal={20} paddingTop={16} paddingBottom={24} borderTopWidth={1}>
+          ...
+        </YStack>
+      </View>
+    </KeyboardAvoidingView>
+  </View>
+</RNModal>
+```
+
+**Critical:** Do NOT use `style={{ flex: 1 }}` on ScrollView inside KeyboardAvoidingView — it causes the ScrollView to collapse.
+
+### Destructive/Cancel Button Pattern
+
+Use outlined style with light red background for cancel/destructive secondary actions:
+```tsx
+<TouchableOpacity style={{
+  backgroundColor: "#FEF2F2",  // red-50
+  borderRadius: 10,
+  borderWidth: 1,
+  borderColor: "#FECACA",  // red-200
+  paddingVertical: 14,
+  paddingHorizontal: 20,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+}}>
+  <Ionicons name="close-circle-outline" size={20} color="#DC2626" style={{ marginRight: 8 }} />
+  <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 15 }}>Cancel Order</Text>
+</TouchableOpacity>
+```
+
+### Color Conventions
+
+| Purpose | Background | Border | Text/Icon |
+|---------|------------|--------|-----------|
+| Primary action | `#0D87E1` | - | `#FFFFFF` |
+| Success/Confirm | `#22C55E` | - | `#FFFFFF` |
+| Increment button | `#DCFCE7` | - | `#22C55E` |
+| Decrement button | `#FEE2E2` | - | `#EF4444` |
+| Cancel/Destructive | `#FEF2F2` | `#FECACA` | `#DC2626` |
+| Selected state | `#DBEAFE` | `#0D87E1` | `#0D87E1` |
+| Disabled | `#9CA3AF` | - | `#FFFFFF` |
+| Neutral/Default | `#F3F4F6` | `#E5E7EB` | `#374151` |
+
 ## Deployment
 
 Web deploys to Vercel with custom build command that deploys Convex first:
