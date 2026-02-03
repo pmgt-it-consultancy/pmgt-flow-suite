@@ -137,6 +137,15 @@ export const create = mutation({
       throw new Error("Invalid category for this store");
     }
 
+    // Get store to check VAT rate
+    const store = await ctx.db.get(args.storeId);
+    if (!store) {
+      throw new Error("Store not found");
+    }
+
+    // Default isVatable based on store's VAT rate (non-vatable if store has 0% VAT)
+    const defaultIsVatable = store.vatRate > 0;
+
     // Determine sort order
     let sortOrder = args.sortOrder;
     if (sortOrder === undefined) {
@@ -156,7 +165,7 @@ export const create = mutation({
       name: args.name,
       categoryId: args.categoryId,
       price: args.price,
-      isVatable: args.isVatable ?? true, // Default to vatable
+      isVatable: args.isVatable ?? defaultIsVatable, // Default based on store's VAT rate
       isActive: true,
       sortOrder,
       createdAt: now,

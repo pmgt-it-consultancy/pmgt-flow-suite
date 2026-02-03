@@ -71,6 +71,10 @@ export default function ProductsPage() {
   );
 
   // Queries
+  const store = useQuery(
+    api.stores.get,
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
+  );
   const categories = useQuery(
     api.categories.list,
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
@@ -102,9 +106,12 @@ export default function ProductsPage() {
 
   const handleOpenCreate = () => {
     setEditingProduct(null);
+    // Default isVatable based on store's VAT rate (non-vatable if store has 0% VAT)
+    const defaultIsVatable = store ? store.vatRate > 0 : true;
     setFormData({
       ...initialFormData,
       storeId: selectedStoreId ?? undefined,
+      isVatable: defaultIsVatable,
     });
     setIsDialogOpen(true);
   };
