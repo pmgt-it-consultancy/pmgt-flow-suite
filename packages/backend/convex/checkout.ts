@@ -78,6 +78,11 @@ export const processCashPayment = mutation({
       await releaseTableIfLastOrder(ctx, order.tableId, args.orderId);
     }
 
+    // Advance takeout status to "preparing" when paid
+    if (order.orderType === "takeout" && order.takeoutStatus === "pending") {
+      await ctx.db.patch(args.orderId, { takeoutStatus: "preparing" });
+    }
+
     return {
       success: true,
       changeGiven,
@@ -125,6 +130,11 @@ export const processCardPayment = mutation({
     // Release table if dine-in and this was the last open order
     if (order.tableId) {
       await releaseTableIfLastOrder(ctx, order.tableId, args.orderId);
+    }
+
+    // Advance takeout status to "preparing" when paid
+    if (order.orderType === "takeout" && order.takeoutStatus === "pending") {
+      await ctx.db.patch(args.orderId, { takeoutStatus: "preparing" });
     }
 
     return {
