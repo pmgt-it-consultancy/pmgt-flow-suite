@@ -1,4 +1,4 @@
-package com.pmgtitconsultancy.pmgtflow
+package com.pmgtitconsultancy.pmgtflow.stg
 
 import android.app.Application
 import android.content.res.Configuration
