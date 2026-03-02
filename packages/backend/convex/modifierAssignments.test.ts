@@ -516,3 +516,101 @@ describe("getForProduct resolution — category inheritance", () => {
     expect(result).toBe(2);
   });
 });
+
+describe("products.list hasModifiers", () => {
+  it("should be true for products with category-level modifier assignments", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, categoryId, productId, modifierGroupId } = await setupModifierTestData(t);
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("modifierGroupAssignments", {
+        storeId,
+        modifierGroupId,
+        categoryId,
+        sortOrder: 0,
+        createdAt: Date.now(),
+      });
+    });
+
+    const result = await t.run(async (ctx: any) => {
+      const product = await ctx.db.get(productId);
+      const categoryChain = await getCategoryChain(ctx, product.categoryId);
+
+      const productAssignment = await ctx.db
+        .query("modifierGroupAssignments")
+        .withIndex("by_product", (q: any) => q.eq("productId", productId))
+        .first();
+
+      if (productAssignment) return true;
+
+      for (const catId of categoryChain) {
+        const catAssignment = await ctx.db
+          .query("modifierGroupAssignments")
+          .withIndex("by_category", (q: any) => q.eq("categoryId", catId))
+          .first();
+        if (catAssignment) return true;
+      }
+
+      return false;
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it("should be true for products in subcategory with parent category modifier", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, categoryId, modifierGroupId } = await setupModifierTestData(t);
+
+    const subcategoryId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("categories", {
+        storeId,
+        name: "Hot Coffee",
+        parentId: categoryId,
+        sortOrder: 1,
+        isActive: true,
+        createdAt: Date.now(),
+      });
+    });
+
+    const productInSub = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("products", {
+        storeId,
+        name: "Cappuccino",
+        categoryId: subcategoryId,
+        price: 18000,
+        isVatable: true,
+        isActive: true,
+        sortOrder: 2,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    });
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("modifierGroupAssignments", {
+        storeId,
+        modifierGroupId,
+        categoryId,
+        sortOrder: 0,
+        createdAt: Date.now(),
+      });
+    });
+
+    const result = await t.run(async (ctx: any) => {
+      const product = await ctx.db.get(productInSub);
+      const categoryChain = await getCategoryChain(ctx, product.categoryId);
+
+      for (const catId of categoryChain) {
+        const catAssignment = await ctx.db
+          .query("modifierGroupAssignments")
+          .withIndex("by_category", (q: any) => q.eq("categoryId", catId))
+          .first();
+        if (catAssignment) return true;
+      }
+
+      return false;
+    });
+
+    expect(result).toBe(true);
+  });
+});
