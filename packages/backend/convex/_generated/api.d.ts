@@ -14,6 +14,7 @@ import type * as auditLogs from "../auditLogs.js";
 import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
 import type * as checkout from "../checkout.js";
+import type * as closing from "../closing.js";
 import type * as discounts from "../discounts.js";
 import type * as helpers_permissionsHelpers from "../helpers/permissionsHelpers.js";
 import type * as helpers_seedHelpers from "../helpers/seedHelpers.js";
@@ -55,6 +56,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   categories: typeof categories;
   checkout: typeof checkout;
+  closing: typeof closing;
   discounts: typeof discounts;
   "helpers/permissionsHelpers": typeof helpers_permissionsHelpers;
   "helpers/seedHelpers": typeof helpers_seedHelpers;

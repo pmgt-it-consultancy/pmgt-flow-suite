@@ -8,9 +8,16 @@ interface HomeHeaderProps {
   onLogout: () => void;
   onSettings: () => void;
   onOrderHistory: () => void;
+  onDayClosing?: () => void;
 }
 
-export const HomeHeader = ({ userName, onLogout, onSettings, onOrderHistory }: HomeHeaderProps) => {
+export const HomeHeader = ({
+  userName,
+  onLogout,
+  onSettings,
+  onOrderHistory,
+  onDayClosing,
+}: HomeHeaderProps) => {
   const handleLogoutPress = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
@@ -44,6 +51,7 @@ export const HomeHeader = ({ userName, onLogout, onSettings, onOrderHistory }: H
         <SystemStatusBar />
         <IconButton icon="receipt-outline" onPress={onOrderHistory} />
         <IconButton icon="settings-outline" onPress={onSettings} />
+        {onDayClosing && <IconButton icon="today-outline" onPress={onDayClosing} />}
         <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
       </XStack>
     </XStack>
