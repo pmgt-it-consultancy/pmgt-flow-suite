@@ -87,13 +87,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.pmgtitconsultancy.pmgtflow.stg'
+    namespace 'com.pmgtitconsultancy.pmgtflow'
     defaultConfig {
-        applicationId 'com.pmgtitconsultancy.pmgtflow.stg'
+        applicationId 'com.pmgtitconsultancy.pmgtflow'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5
-        versionName "3.1.0"
+        versionCode 30200
+        versionName "3.2.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }

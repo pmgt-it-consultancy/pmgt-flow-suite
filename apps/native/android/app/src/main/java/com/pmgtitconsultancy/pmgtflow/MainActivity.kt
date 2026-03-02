@@ -1,4 +1,4 @@
-package com.pmgtitconsultancy.pmgtflow.stg
+package com.pmgtitconsultancy.pmgtflow
 
 import android.os.Build
 import android.os.Bundle
