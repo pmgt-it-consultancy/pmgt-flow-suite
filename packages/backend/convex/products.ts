@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import type { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
+import { getCategoryChain } from "./lib/categoryHelpers";
 import { requirePermission } from "./lib/permissions";
 
 // List products for a store
@@ -59,10 +60,27 @@ export const list = query({
     const productsWithCategories = await Promise.all(
       products.map(async (product) => {
         const category = await ctx.db.get(product.categoryId);
-        const modifierAssignments = await ctx.db
+        // Check product-level first
+        const productModAssignment = await ctx.db
           .query("modifierGroupAssignments")
           .withIndex("by_product", (q) => q.eq("productId", product._id))
           .first();
+
+        let hasModifiers = productModAssignment !== null;
+        if (!hasModifiers) {
+          const categoryChain = await getCategoryChain(ctx, product.categoryId);
+          for (const catId of categoryChain) {
+            const catAssignment = await ctx.db
+              .query("modifierGroupAssignments")
+              .withIndex("by_category", (q) => q.eq("categoryId", catId))
+              .first();
+            if (catAssignment) {
+              hasModifiers = true;
+              break;
+            }
+          }
+        }
+
         return {
           _id: product._id,
           storeId: product.storeId,
@@ -75,7 +93,7 @@ export const list = query({
           sortOrder: product.sortOrder,
           createdAt: product.createdAt,
           updatedAt: product.updatedAt,
-          hasModifiers: modifierAssignments !== null,
+          hasModifiers,
         };
       }),
     );

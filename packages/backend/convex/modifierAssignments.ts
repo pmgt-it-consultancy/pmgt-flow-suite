@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import type { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
+import { getCategoryChain } from "./lib/categoryHelpers";
 import { requirePermission } from "./lib/permissions";
 
 // Assign a modifier group to a product or category
@@ -159,18 +160,25 @@ export const getForProduct = query({
       .withIndex("by_product", (q) => q.eq("productId", args.productId))
       .collect();
 
-    // 2. Get category-level assignments
-    const categoryAssignments = await ctx.db
-      .query("modifierGroupAssignments")
-      .withIndex("by_category", (q) => q.eq("categoryId", product.categoryId))
-      .collect();
+    // 2. Get category chain (direct category + parent if subcategory)
+    const categoryChain = await getCategoryChain(ctx, product.categoryId);
 
-    // 3. Merge: product-level overrides category-level for same group
-    const productGroupIds = new Set(productAssignments.map((a) => a.modifierGroupId));
-    const mergedAssignments = [
-      ...productAssignments,
-      ...categoryAssignments.filter((a) => !productGroupIds.has(a.modifierGroupId)),
-    ];
+    // 3. Merge with priority: product > direct category > parent category
+    const seenGroupIds = new Set(productAssignments.map((a) => a.modifierGroupId));
+    const mergedAssignments = [...productAssignments];
+
+    for (const catId of categoryChain) {
+      const catAssignments = await ctx.db
+        .query("modifierGroupAssignments")
+        .withIndex("by_category", (q) => q.eq("categoryId", catId))
+        .collect();
+      for (const a of catAssignments) {
+        if (!seenGroupIds.has(a.modifierGroupId)) {
+          mergedAssignments.push(a);
+          seenGroupIds.add(a.modifierGroupId);
+        }
+      }
+    }
 
     // Sort by assignment sortOrder
     mergedAssignments.sort((a, b) => a.sortOrder - b.sortOrder);
@@ -260,18 +268,23 @@ export const getForStore = query({
           .withIndex("by_product", (q) => q.eq("productId", product._id))
           .collect();
 
-        // Category-level assignments
-        const categoryAssignments = await ctx.db
-          .query("modifierGroupAssignments")
-          .withIndex("by_category", (q) => q.eq("categoryId", product.categoryId))
-          .collect();
+        // Walk category chain: direct category first, then parent
+        const categoryChain = await getCategoryChain(ctx, product.categoryId);
+        const seenGroupIds = new Set(productAssignments.map((a) => a.modifierGroupId));
+        const mergedAssignments = [...productAssignments];
 
-        // Merge: product-level overrides category-level
-        const productGroupIds = new Set(productAssignments.map((a) => a.modifierGroupId));
-        const mergedAssignments = [
-          ...productAssignments,
-          ...categoryAssignments.filter((a) => !productGroupIds.has(a.modifierGroupId)),
-        ];
+        for (const catId of categoryChain) {
+          const catAssignments = await ctx.db
+            .query("modifierGroupAssignments")
+            .withIndex("by_category", (q) => q.eq("categoryId", catId))
+            .collect();
+          for (const a of catAssignments) {
+            if (!seenGroupIds.has(a.modifierGroupId)) {
+              mergedAssignments.push(a);
+              seenGroupIds.add(a.modifierGroupId);
+            }
+          }
+        }
 
         if (mergedAssignments.length === 0) return null;
 
