@@ -266,3 +266,253 @@ describe("getCategoryChain", () => {
     expect(chain).toEqual([subcategoryId, categoryId]);
   });
 });
+
+describe("getForProduct resolution — category inheritance", () => {
+  it("should include modifier groups from parent category when product is in subcategory", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, categoryId, modifierGroupId } = await setupModifierTestData(t);
+
+    const subcategoryId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("categories", {
+        storeId,
+        name: "Hot Coffee",
+        parentId: categoryId,
+        sortOrder: 1,
+        isActive: true,
+        createdAt: Date.now(),
+      });
+    });
+
+    const productInSub = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("products", {
+        storeId,
+        name: "Cappuccino",
+        categoryId: subcategoryId,
+        price: 18000,
+        isVatable: true,
+        isActive: true,
+        sortOrder: 2,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    });
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("modifierGroupAssignments", {
+        storeId,
+        modifierGroupId,
+        categoryId, // parent category
+        sortOrder: 0,
+        createdAt: Date.now(),
+      });
+    });
+
+    const result = await t.run(async (ctx: any) => {
+      const product = await ctx.db.get(productInSub);
+      const categoryChain = await getCategoryChain(ctx, product.categoryId);
+
+      const productAssignments = await ctx.db
+        .query("modifierGroupAssignments")
+        .withIndex("by_product", (q: any) => q.eq("productId", productInSub))
+        .collect();
+
+      const seenGroupIds = new Set(productAssignments.map((a: any) => a.modifierGroupId));
+      const mergedAssignments = [...productAssignments];
+
+      for (const catId of categoryChain) {
+        const catAssignments = await ctx.db
+          .query("modifierGroupAssignments")
+          .withIndex("by_category", (q: any) => q.eq("categoryId", catId))
+          .collect();
+        for (const a of catAssignments) {
+          if (!seenGroupIds.has(a.modifierGroupId)) {
+            mergedAssignments.push(a);
+            seenGroupIds.add(a.modifierGroupId);
+          }
+        }
+      }
+
+      return { chainLength: categoryChain.length, assignmentsFound: mergedAssignments.length };
+    });
+
+    expect(result.chainLength).toBe(2);
+    expect(result.assignmentsFound).toBe(1);
+  });
+
+  it("should let subcategory override parent for same modifier group", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, categoryId, modifierGroupId } = await setupModifierTestData(t);
+
+    const subcategoryId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("categories", {
+        storeId,
+        name: "Hot Coffee",
+        parentId: categoryId,
+        sortOrder: 1,
+        isActive: true,
+        createdAt: Date.now(),
+      });
+    });
+
+    const productInSub = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("products", {
+        storeId,
+        name: "Cappuccino",
+        categoryId: subcategoryId,
+        price: 18000,
+        isVatable: true,
+        isActive: true,
+        sortOrder: 2,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    });
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("modifierGroupAssignments", {
+        storeId,
+        modifierGroupId,
+        categoryId, // parent says optional
+        sortOrder: 0,
+        minSelectionsOverride: 0,
+        createdAt: Date.now(),
+      });
+      await ctx.db.insert("modifierGroupAssignments", {
+        storeId,
+        modifierGroupId,
+        categoryId: subcategoryId, // subcategory says required
+        sortOrder: 0,
+        minSelectionsOverride: 1,
+        createdAt: Date.now(),
+      });
+    });
+
+    const result = await t.run(async (ctx: any) => {
+      const productAssignments = await ctx.db
+        .query("modifierGroupAssignments")
+        .withIndex("by_product", (q: any) => q.eq("productId", productInSub))
+        .collect();
+
+      const categoryChain = await getCategoryChain(ctx, subcategoryId);
+      const seenGroupIds = new Set(productAssignments.map((a: any) => a.modifierGroupId));
+      const mergedAssignments = [...productAssignments];
+
+      for (const catId of categoryChain) {
+        const catAssignments = await ctx.db
+          .query("modifierGroupAssignments")
+          .withIndex("by_category", (q: any) => q.eq("categoryId", catId))
+          .collect();
+        for (const a of catAssignments) {
+          if (!seenGroupIds.has(a.modifierGroupId)) {
+            mergedAssignments.push(a);
+            seenGroupIds.add(a.modifierGroupId);
+          }
+        }
+      }
+
+      return {
+        count: mergedAssignments.length,
+        minOverride: mergedAssignments[0]?.minSelectionsOverride,
+      };
+    });
+
+    expect(result.count).toBe(1);
+    expect(result.minOverride).toBe(1);
+  });
+
+  it("should merge different groups from parent and subcategory (additive)", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, categoryId, modifierGroupId } = await setupModifierTestData(t);
+
+    const secondGroupId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("modifierGroups", {
+        storeId,
+        name: "Temperature",
+        selectionType: "single" as const,
+        minSelections: 1,
+        maxSelections: 1,
+        isActive: true,
+        sortOrder: 1,
+        createdAt: Date.now(),
+      });
+    });
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("modifierOptions", {
+        modifierGroupId: secondGroupId,
+        name: "Hot",
+        priceAdjustment: 0,
+        isAvailable: true,
+        isDefault: true,
+        sortOrder: 0,
+        createdAt: Date.now(),
+      });
+    });
+
+    const subcategoryId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("categories", {
+        storeId,
+        name: "Hot Coffee",
+        parentId: categoryId,
+        sortOrder: 1,
+        isActive: true,
+        createdAt: Date.now(),
+      });
+    });
+
+    const productInSub = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("products", {
+        storeId,
+        name: "Cappuccino",
+        categoryId: subcategoryId,
+        price: 18000,
+        isVatable: true,
+        isActive: true,
+        sortOrder: 2,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    });
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("modifierGroupAssignments", {
+        storeId,
+        modifierGroupId,
+        categoryId, // parent
+        sortOrder: 0,
+        createdAt: Date.now(),
+      });
+      await ctx.db.insert("modifierGroupAssignments", {
+        storeId,
+        modifierGroupId: secondGroupId,
+        categoryId: subcategoryId, // subcategory
+        sortOrder: 1,
+        createdAt: Date.now(),
+      });
+    });
+
+    const result = await t.run(async (ctx: any) => {
+      const categoryChain = await getCategoryChain(ctx, subcategoryId);
+
+      const seenGroupIds = new Set<string>();
+      const mergedAssignments: any[] = [];
+
+      for (const catId of categoryChain) {
+        const catAssignments = await ctx.db
+          .query("modifierGroupAssignments")
+          .withIndex("by_category", (q: any) => q.eq("categoryId", catId))
+          .collect();
+        for (const a of catAssignments) {
+          if (!seenGroupIds.has(a.modifierGroupId)) {
+            mergedAssignments.push(a);
+            seenGroupIds.add(a.modifierGroupId);
+          }
+        }
+      }
+
+      return mergedAssignments.length;
+    });
+
+    expect(result).toBe(2);
+  });
+});
