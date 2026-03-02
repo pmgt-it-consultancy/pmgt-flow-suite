@@ -31,6 +31,7 @@
     "@expo/vector-icons": "^15.0.3",
     "@kesha-antonov/react-native-background-downloader": "^4.5.2",
     "@packages/backend": "workspace:*",
+    "@react-native-community/datetimepicker": "^8.6.0",
     "@react-native-community/netinfo": "11.4.1",
     "@react-native/virtualized-lists": "^0.81.5",
     "@react-navigation/bottom-tabs": "^7.8.11",

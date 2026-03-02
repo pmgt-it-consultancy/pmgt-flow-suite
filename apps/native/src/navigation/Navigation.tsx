@@ -10,6 +10,7 @@ import { Alert, AppState } from "react-native";
 import { LoginScreen } from "../features/auth";
 import { useAuth } from "../features/auth/context";
 import { CheckoutScreen } from "../features/checkout";
+import { DayClosingScreen } from "../features/day-closing";
 import { HomeScreen } from "../features/home";
 import { OrderDetailScreen, OrderHistoryScreen } from "../features/order-history";
 import { OrderScreen } from "../features/orders";
@@ -52,6 +53,7 @@ export type RootStackParamList = {
     storeId: Id<"stores">;
   };
   UpdatesScreen: undefined;
+  DayClosingScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -131,6 +133,7 @@ const Navigation = () => {
         <Stack.Screen name="TakeoutListScreen" component={TakeoutListScreen} />
         <Stack.Screen name="TakeoutOrderScreen" component={TakeoutOrderScreen} />
         <Stack.Screen name="UpdatesScreen" component={UpdatesScreen} />
+        <Stack.Screen name="DayClosingScreen" component={DayClosingScreen} />
       </Stack.Navigator>
       {isAuthenticated && updateInfo?.isForced && (
         <ForceUpdateModal

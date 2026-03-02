@@ -63,6 +63,11 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
         onLogout={handleLogout}
         onSettings={() => navigation.navigate("SettingsScreen")}
         onOrderHistory={() => navigation.navigate("OrderHistoryScreen")}
+        onDayClosing={
+          user?.role?.permissions?.includes("reports.print_eod")
+            ? () => navigation.navigate("DayClosingScreen")
+            : undefined
+        }
       />
 
       <YStack flex={1} padding={16} gap={12}>
