@@ -482,6 +482,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           await printToThermal(completedReceiptData);
         }}
         onSkip={() => {
+          const navigateToTakeoutList = () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "HomeScreen" }, { name: "TakeoutListScreen" }],
+            });
+          };
+
           if (isTakeout) {
             Alert.alert("Print Kitchen Receipt?", "Send this order to the kitchen printer?", [
               {
@@ -509,13 +516,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
                   } catch (error: any) {
                     Alert.alert("Error", error.message || "Failed to print kitchen receipt");
                   }
-                  navigation.goBack();
+                  navigateToTakeoutList();
                 },
               },
               {
                 text: "Skip",
                 style: "cancel",
-                onPress: () => navigation.goBack(),
+                onPress: navigateToTakeoutList,
               },
             ]);
           } else {
