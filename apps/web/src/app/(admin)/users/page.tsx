@@ -318,9 +318,19 @@ export default function UsersPage() {
                     </TableCell>
                     <TableCell>{userItem.storeName ?? "All Stores"}</TableCell>
                     <TableCell>
-                      <Badge variant={userItem.isActive ? "default" : "destructive"}>
-                        {userItem.isActive ? "Active" : "Inactive"}
-                      </Badge>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant={userItem.isActive ? "default" : "destructive"}>
+                          {userItem.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                        {userItem.pendingPinSetup && (
+                          <Badge
+                            variant="outline"
+                            className="border-amber-300 bg-amber-50 text-amber-800"
+                          >
+                            PIN required
+                          </Badge>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
