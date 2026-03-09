@@ -39,6 +39,7 @@ export const list = query({
       storeName: v.optional(v.string()),
       isActive: v.boolean(),
       hasPin: v.boolean(),
+      pendingPinSetup: v.boolean(),
     }),
   ),
   handler: async (ctx, args) => {
@@ -114,6 +115,10 @@ export const list = query({
           storeName,
           isActive: user.isActive ?? true,
           hasPin: !!user.pin,
+          pendingPinSetup:
+            (user.isActive ?? true) &&
+            !user.pin &&
+            (role?.permissions.includes("discounts.approve") ?? false),
         };
       }),
     );
