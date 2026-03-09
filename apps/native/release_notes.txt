@@ -1,17 +1,16 @@
 ## What's New
 
-- Add in-app update system with background APK download and local notifications
-- Add version bump scripts (`version:patch`, `version:minor`, `version:major`)
-- Add Software Update screen accessible from Settings
-- Add force update support controlled via admin (minRequiredVersion)
-- Add GitHub Actions workflow for automated release builds (staging + production)
-- Add Convex proxy for secure GitHub Releases API access (private repo support)
+- Add a new Day Closing screen for managers with daily sales, VAT, discount, and payment summaries
+- Print Z-Reports directly from the POS app using the configured receipt printer
+- Batch reprint receipts for selected paid orders from a chosen business date
+- Support backdated day-closing review for late reconciliation
 
 ## Fixes
 
-- None
+- Paid takeout orders now move to `Preparing` automatically after checkout
+- Day-closing actions are now logged for better audit visibility
 
 ## Notes
 
-- Requires `GITHUB_TOKEN` and `GITHUB_REPO` environment variables in Convex dashboard
-- APK downloads continue in background using react-native-background-downloader
+- Day Closing is available from the home screen for users with the appropriate permission
+- Batch receipt reprint requires a connected and configured receipt printer
