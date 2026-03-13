@@ -7,6 +7,7 @@ import { FlatList } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { ReceiptPreviewModal } from "../../checkout/components";
+import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Badge, Button, Modal, Separator, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -50,6 +51,25 @@ export const TakeoutOrderDetailModal = ({
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
   const takeoutStatus = (order?.takeoutStatus as TakeoutStatus | undefined) ?? "pending";
   const isPaid = order?.status === "paid";
+
+  const kitchenTicketData: KitchenTicketData | null = useMemo(() => {
+    if (!order?.orderNumber || !isPaid) return null;
+    return {
+      orderNumber: order.orderNumber,
+      tableName: order.customerName || "Takeout",
+      orderType: "take_out" as const,
+      items: activeItems.map((i) => ({
+        name: i.productName,
+        quantity: i.quantity,
+        notes: i.notes,
+        modifiers: i.modifiers?.map((m) => ({
+          optionName: m.optionName,
+          priceAdjustment: m.priceAdjustment,
+        })),
+      })),
+      timestamp: new Date(),
+    };
+  }, [order, activeItems, isPaid]);
 
   const buildReceiptData = useCallback((): ReceiptData => {
     const discountsList = (discounts ?? []).map((d) => ({
@@ -107,11 +127,6 @@ export const TakeoutOrderDetailModal = ({
     setReceiptData(buildReceiptData());
     setShowReceiptPreview(true);
   }, [buildReceiptData]);
-
-  const handleCloseReceiptPreview = useCallback(() => {
-    setShowReceiptPreview(false);
-    setReceiptData(null);
-  }, []);
 
   if (!order) return null;
 
@@ -272,12 +287,16 @@ export const TakeoutOrderDetailModal = ({
       <ReceiptPreviewModal
         visible={showReceiptPreview}
         receiptData={receiptData}
-        kitchenTicketData={null}
+        kitchenTicketData={kitchenTicketData}
         onPrint={async () => {
           if (!receiptData) return;
           await printToThermal(receiptData);
         }}
-        onSkip={handleCloseReceiptPreview}
+        onSkip={() => {
+          setShowReceiptPreview(false);
+          setReceiptData(null);
+          onClose();
+        }}
       />
     </>
   );

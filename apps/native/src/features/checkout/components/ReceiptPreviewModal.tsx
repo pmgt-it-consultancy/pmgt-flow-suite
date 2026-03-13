@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { XStack, YStack } from "tamagui";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
@@ -77,6 +77,16 @@ export const ReceiptPreviewModal = ({
   const [kitchenPrintResult, setKitchenPrintResult] = useState<"success" | "error" | null>(null);
   const [isKitchenPrinting, setIsKitchenPrinting] = useState(false);
   const { printers, connectionStatus, connectPrinter } = usePrinterStore();
+
+  // Reset print states whenever the modal opens so stale results don't persist
+  useEffect(() => {
+    if (visible) {
+      setPrintResult(null);
+      setKitchenPrintResult(null);
+      setIsPrinting(false);
+      setIsKitchenPrinting(false);
+    }
+  }, [visible]);
 
   const receiptPrinter = printers.find((p) => p.role === "receipt" && p.isDefault);
   const kitchenPrinter = printers.find((p) => p.role === "kitchen" && p.isDefault);
