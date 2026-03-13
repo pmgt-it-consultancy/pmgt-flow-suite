@@ -7,19 +7,43 @@ import { TamaguiProvider } from "tamagui";
 import ConvexClientProvider from "./ConvexClientProvider";
 import { AuthProvider } from "./src/features/auth";
 import { useAuth } from "./src/features/auth/context";
+import { IdleWarningBanner } from "./src/features/lock";
+import { useIdleTimer } from "./src/features/lock/hooks/useIdleTimer";
+import { useLockStore } from "./src/features/lock/stores/useLockStore";
 import { SplashScreen } from "./src/features/shared/components/SplashScreen";
 import Navigation from "./src/navigation/Navigation";
 import config from "./tamagui.config";
 
 function AppContent() {
   const { isLoading, isAuthenticated } = useAuth();
+  const showIdleWarning = useLockStore((state) => state.showIdleWarning);
+  const warningStartedAt = useLockStore((state) => state.warningStartedAt);
+  const { resetActivity, setCurrentRoute } = useIdleTimer();
   const [showSplash, setShowSplash] = useState(true);
   const [animationDone, setAnimationDone] = useState(false);
-  const resolvedRoute = useRef<"HomeScreen" | "LoginScreen" | null>(null);
+  const [storeHydrated, setStoreHydrated] = useState(false);
+  const resolvedRoute = useRef<"HomeScreen" | "LoginScreen" | "LockScreen" | null>(null);
+
+  useEffect(() => {
+    if (useLockStore.persist.hasHydrated()) {
+      setStoreHydrated(true);
+    }
+
+    const unsubscribe = useLockStore.persist.onFinishHydration(() => {
+      setStoreHydrated(true);
+    });
+
+    return unsubscribe;
+  }, []);
 
   // Once auth resolves, lock in the initial route
-  if (!isLoading && resolvedRoute.current === null) {
-    resolvedRoute.current = isAuthenticated ? "HomeScreen" : "LoginScreen";
+  if (!isLoading && storeHydrated && resolvedRoute.current === null) {
+    if (isAuthenticated) {
+      const locked = useLockStore.getState().isLocked;
+      resolvedRoute.current = locked ? "LockScreen" : "HomeScreen";
+    } else {
+      resolvedRoute.current = "LoginScreen";
+    }
   }
 
   // Dismiss splash when both animation is done AND auth has resolved
@@ -28,10 +52,10 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
-    if (animationDone && !isLoading) {
+    if (animationDone && !isLoading && storeHydrated) {
       setShowSplash(false);
     }
-  }, [animationDone, isLoading]);
+  }, [animationDone, isLoading, storeHydrated]);
 
   const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 50 : StatusBar.currentHeight;
 
@@ -49,7 +73,25 @@ function AppContent() {
           <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#0D87E1" }}>
             <StatusBar translucent backgroundColor="#0D87E1" barStyle="light-content" />
           </View>
-          <Navigation initialRoute={resolvedRoute.current ?? "LoginScreen"} />
+          <View
+            style={{ flex: 1 }}
+            onStartShouldSetResponderCapture={() => {
+              resetActivity();
+              return false;
+            }}
+          >
+            <Navigation
+              initialRoute={resolvedRoute.current ?? "LoginScreen"}
+              onRouteChange={setCurrentRoute}
+            />
+            {showIdleWarning && warningStartedAt && (
+              <IdleWarningBanner
+                visible
+                onDismiss={resetActivity}
+                lockTime={warningStartedAt + 30_000}
+              />
+            )}
+          </View>
         </>
       )}
     </View>

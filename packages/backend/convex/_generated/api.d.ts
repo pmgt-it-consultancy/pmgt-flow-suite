@@ -36,6 +36,8 @@ import type * as ping from "../ping.js";
 import type * as products from "../products.js";
 import type * as reports from "../reports.js";
 import type * as roles from "../roles.js";
+import type * as screenLock from "../screenLock.js";
+import type * as screenLockActions from "../screenLockActions.js";
 import type * as seed from "../seed.js";
 import type * as sessions from "../sessions.js";
 import type * as stores from "../stores.js";
@@ -79,6 +81,8 @@ declare const fullApi: ApiFromModules<{
   products: typeof products;
   reports: typeof reports;
   roles: typeof roles;
+  screenLock: typeof screenLock;
+  screenLockActions: typeof screenLockActions;
   seed: typeof seed;
   sessions: typeof sessions;
   stores: typeof stores;

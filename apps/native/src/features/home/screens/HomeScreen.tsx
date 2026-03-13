@@ -1,10 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
+import { useLockStore } from "../../lock/stores/useLockStore";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 import { ActiveOrdersList, HomeHeader } from "../components";
@@ -17,6 +18,8 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const { user, signOut, isLoading, isAuthenticated } = useAuth();
   const formatCurrency = useFormatCurrency();
   const [clock, setClock] = useState(new Date());
+  const lockScreen = useLockStore((state) => state.lock);
+  const screenLockMutation = useMutation(api.screenLock.screenLock);
 
   useEffect(() => {
     const timer = setInterval(() => setClock(new Date()), 60_000);
@@ -32,6 +35,10 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
     api.orders.listActive,
     user?.storeId ? { storeId: user.storeId } : "skip",
   );
+  const userHasPin = useQuery(
+    api.screenLock.getUserHasPin,
+    user?._id ? { userId: user._id } : "skip",
+  );
 
   const handleLogout = useCallback(async () => {
     await signOut();
@@ -40,6 +47,31 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       routes: [{ name: "LoginScreen" }],
     });
   }, [signOut, navigation]);
+
+  const handleLock = useCallback(async () => {
+    if (!user?._id || !user.storeId) {
+      return;
+    }
+
+    if (!userHasPin) {
+      Alert.alert(
+        "PIN Required",
+        "You need to set a PIN before you can lock the screen. Go to Settings to set one.",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Go to Settings", onPress: () => navigation.navigate("SettingsScreen") },
+        ],
+      );
+      return;
+    }
+
+    lockScreen({
+      userId: user._id,
+      userName: user.name ?? "User",
+      userRole: user.role?.name ?? "Staff",
+    });
+    screenLockMutation({ storeId: user.storeId, trigger: "manual" }).catch(() => {});
+  }, [lockScreen, navigation, screenLockMutation, user, userHasPin]);
 
   if (isLoading || !isAuthenticated) {
     return (
@@ -65,6 +97,8 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
         userName={user?.name ?? "User"}
         roleName={user?.role?.name}
         onLogout={handleLogout}
+        onLock={handleLock}
+        showLockButton={!!userHasPin}
         onSettings={() => navigation.navigate("SettingsScreen")}
         onOrderHistory={() => navigation.navigate("OrderHistoryScreen")}
         onDayClosing={

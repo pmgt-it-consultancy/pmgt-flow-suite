@@ -41,7 +41,7 @@ export default defineSchema({
     permissions: v.array(v.string()),
     scopeLevel: v.union(v.literal("system"), v.literal("parent"), v.literal("branch")),
     isSystem: v.boolean(),
-  }),
+  }).index("by_name", ["name"]),
 
   // ===== STORES =====
   stores: defineTable({

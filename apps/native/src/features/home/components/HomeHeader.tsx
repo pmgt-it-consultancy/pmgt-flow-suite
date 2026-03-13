@@ -7,6 +7,8 @@ interface HomeHeaderProps {
   userName: string;
   roleName?: string;
   onLogout: () => void;
+  onLock?: () => void;
+  showLockButton?: boolean;
   onSettings: () => void;
   onOrderHistory: () => void;
   onDayClosing?: () => void;
@@ -16,6 +18,8 @@ export const HomeHeader = ({
   userName,
   roleName,
   onLogout,
+  onLock,
+  showLockButton,
   onSettings,
   onOrderHistory,
   onDayClosing,
@@ -92,6 +96,7 @@ export const HomeHeader = ({
         <IconButton icon="receipt-outline" onPress={onOrderHistory} />
         <IconButton icon="settings-outline" onPress={onSettings} />
         {onDayClosing && <IconButton icon="today-outline" onPress={onDayClosing} />}
+        {showLockButton && onLock && <IconButton icon="lock-closed-outline" onPress={onLock} />}
         <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
       </XStack>
     </XStack>

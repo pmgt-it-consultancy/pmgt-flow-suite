@@ -12,6 +12,8 @@ import { useAuth } from "../features/auth/context";
 import { CheckoutScreen } from "../features/checkout";
 import { DayClosingScreen } from "../features/day-closing";
 import { HomeScreen } from "../features/home";
+import { LockScreen } from "../features/lock";
+import { useLockStore } from "../features/lock/stores/useLockStore";
 import { OrderDetailScreen, OrderHistoryScreen } from "../features/order-history";
 import { OrderScreen } from "../features/orders";
 import { PrinterSettingsScreen, SettingsScreen } from "../features/settings";
@@ -56,14 +58,17 @@ export type RootStackParamList = {
   };
   UpdatesScreen: undefined;
   DayClosingScreen: undefined;
+  LockScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = ({
   initialRoute = "LoginScreen",
+  onRouteChange,
 }: {
   initialRoute?: keyof RootStackParamList;
+  onRouteChange?: (routeName: keyof RootStackParamList | null) => void;
 }) => {
   const initialize = usePrinterStore((s) => s.initialize);
   const isInitialized = usePrinterStore((s) => s.isInitialized);
@@ -76,6 +81,8 @@ const Navigation = ({
   const dialogDismissed = useUpdateStore((s) => s.dialogDismissed);
   const storeCheck = useUpdateStore((s) => s.checkForUpdate);
   const navigationRef = useRef<any>(null);
+  const isLocked = useLockStore((state) => state.isLocked);
+  const setLastRoute = useLockStore((state) => state.setLastRoute);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -122,8 +129,39 @@ const Navigation = ({
     return () => sub.remove();
   }, [storeCheck, checkForUpdateAction]);
 
+  useEffect(() => {
+    if (isLocked && isAuthenticated && navigationRef.current) {
+      const currentRoute = navigationRef.current.getCurrentRoute();
+      if (currentRoute?.name !== "LockScreen") {
+        navigationRef.current.navigate("LockScreen");
+      }
+    }
+  }, [isAuthenticated, isLocked]);
+
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        const currentRoute = navigationRef.current?.getCurrentRoute();
+        if (currentRoute?.name && currentRoute.name !== "LockScreen") {
+          setLastRoute(
+            currentRoute.name,
+            (currentRoute.params as Record<string, unknown> | undefined) ?? null,
+          );
+        }
+        onRouteChange?.((currentRoute?.name as keyof RootStackParamList | undefined) ?? null);
+      }}
+      onStateChange={() => {
+        const currentRoute = navigationRef.current?.getCurrentRoute();
+        if (currentRoute?.name && currentRoute.name !== "LockScreen") {
+          setLastRoute(
+            currentRoute.name,
+            (currentRoute.params as Record<string, unknown> | undefined) ?? null,
+          );
+        }
+        onRouteChange?.((currentRoute?.name as keyof RootStackParamList | undefined) ?? null);
+      }}
+    >
       <Stack.Navigator
         id={undefined}
         initialRouteName={initialRoute}
@@ -142,6 +180,11 @@ const Navigation = ({
         <Stack.Screen name="TakeoutOrderScreen" component={TakeoutOrderScreen} />
         <Stack.Screen name="UpdatesScreen" component={UpdatesScreen} />
         <Stack.Screen name="DayClosingScreen" component={DayClosingScreen} />
+        <Stack.Screen
+          name="LockScreen"
+          component={LockScreen}
+          options={{ gestureEnabled: false, animation: "fade" }}
+        />
       </Stack.Navigator>
       {isAuthenticated && updateInfo?.isForced && (
         <ForceUpdateModal
