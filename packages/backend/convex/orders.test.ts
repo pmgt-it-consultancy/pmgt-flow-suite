@@ -1,5 +1,6 @@
 import { convexTest } from "convex-test";
 import { describe, expect, it } from "vitest";
+import { api } from "./_generated/api";
 import {
   aggregateOrderTotals,
   calculateItemTotals,
@@ -350,5 +351,76 @@ describe("orders — sendToKitchen", () => {
 
     const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
     expect(item.isSentToKitchen).toBe(true);
+  });
+});
+
+describe("orders.get", () => {
+  it("returns full-order void records with the attached reason", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const managerRoleId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("roles", {
+        name: "Manager",
+        permissions: ["orders.view", "orders.void_order", "orders.approve_void"],
+        scopeLevel: "branch",
+        isSystem: false,
+      });
+    });
+
+    const managerId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("users", {
+        name: "Manager User",
+        email: "manager@test.com",
+        roleId: managerRoleId,
+        storeId,
+        isActive: true,
+      });
+    });
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-005",
+        orderType: "dine_in" as const,
+        orderChannel: "walk_in_dine_in" as const,
+        status: "voided" as const,
+        grossSales: 15000,
+        vatableSales: 13393,
+        vatAmount: 1607,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 15000,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("orderVoids", {
+        orderId,
+        voidType: "full_order" as const,
+        reason: "Duplicate order entered by cashier",
+        requestedBy: userId,
+        approvedBy: managerId,
+        amount: 15000,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    const order = await authed.query(api.orders.get, { orderId });
+
+    expect(order).not.toBeNull();
+    expect(order?.status).toBe("voided");
+    expect(order?.voids).toEqual([
+      expect.objectContaining({
+        voidType: "full_order",
+        reason: "Duplicate order entered by cashier",
+        requestedByName: "Test User",
+        approvedByName: "Manager User",
+      }),
+    ]);
   });
 });

@@ -15,6 +15,7 @@ const STATUS_DOT_COLORS: Record<ConnectionStatus, string> = {
   checking: "#F59E0B",
   reconnecting: "#F59E0B",
   failed: "#EF4444",
+  not_configured: "#9CA3AF",
 };
 
 const STATUS_LABELS: Record<ConnectionStatus, string> = {
@@ -23,6 +24,7 @@ const STATUS_LABELS: Record<ConnectionStatus, string> = {
   checking: "Checking...",
   reconnecting: "Reconnecting...",
   failed: "Connection Failed",
+  not_configured: "Not configured",
 };
 
 function formatLastSync(timestamp: number | null): { text: string; isWarning: boolean } {
@@ -141,7 +143,7 @@ export const StatusDropdown = ({ visible, onClose, status }: StatusDropdownProps
                   retryLabel="Reconnect"
                 />
                 <StatusRow
-                  label="Kitchen Printer"
+                  label={status.kitchenPrinterLabel}
                   connectionStatus={status.kitchenPrinter}
                   onRetry={async () => {
                     const success = await status.reconnectPrinter("kitchen");

@@ -10,13 +10,15 @@ export type ConnectionStatus =
   | "disconnected"
   | "checking"
   | "reconnecting"
-  | "failed";
+  | "failed"
+  | "not_configured";
 export type OverallStatus = "ok" | "degraded" | "critical";
 
 export interface SystemStatus {
   server: ConnectionStatus;
   receiptPrinter: ConnectionStatus;
   kitchenPrinter: ConnectionStatus;
+  kitchenPrinterLabel: string;
   lastSyncTimestamp: number | null;
   overallStatus: OverallStatus;
   retryServer: () => void;
@@ -64,10 +66,11 @@ export function useSystemStatus(): SystemStatus {
   const printers = usePrinterStore((s) => s.printers);
   const connectionStatus = usePrinterStore((s) => s.connectionStatus);
   const kitchenPrintingEnabled = usePrinterStore((s) => s.kitchenPrintingEnabled);
+  const useReceiptPrinterForKitchen = usePrinterStore((s) => s.useReceiptPrinterForKitchen);
 
   const receiptPrinter: ConnectionStatus = useMemo(() => {
     const printer = printers.find((p) => p.role === "receipt" && p.isDefault);
-    if (!printer) return "disconnected";
+    if (!printer) return "not_configured";
     const status = connectionStatus[printer.id];
     if (!status || status === "disconnected") return "disconnected";
     if (status === "reconnecting") return "reconnecting";
@@ -75,21 +78,49 @@ export function useSystemStatus(): SystemStatus {
     return "connected";
   }, [printers, connectionStatus]);
 
-  const kitchenPrinter: ConnectionStatus = useMemo(() => {
-    if (!kitchenPrintingEnabled) return "connected"; // not relevant, treat as ok
-    const printer = printers.find((p) => p.role === "kitchen" && p.isDefault);
-    if (!printer) return "disconnected";
-    const status = connectionStatus[printer.id];
-    if (!status || status === "disconnected") return "disconnected";
-    if (status === "reconnecting") return "reconnecting";
-    if (status === "failed") return "failed";
-    return "connected";
-  }, [printers, connectionStatus, kitchenPrintingEnabled]);
+  const hasDedicatedKitchenPrinter = useMemo(
+    () => printers.some((p) => p.role === "kitchen" && p.isDefault),
+    [printers],
+  );
 
-  // Overall status
+  const kitchenPrinter: ConnectionStatus = useMemo(() => {
+    if (!kitchenPrintingEnabled) return "not_configured";
+
+    // Dedicated kitchen printer
+    const printer = printers.find((p) => p.role === "kitchen" && p.isDefault);
+    if (printer) {
+      const status = connectionStatus[printer.id];
+      if (!status || status === "disconnected") return "disconnected";
+      if (status === "reconnecting") return "reconnecting";
+      if (status === "failed") return "failed";
+      return "connected";
+    }
+
+    // Fall back to receipt printer status if toggle is on
+    if (useReceiptPrinterForKitchen) {
+      return receiptPrinter === "not_configured" ? "not_configured" : receiptPrinter;
+    }
+
+    return "not_configured";
+  }, [
+    printers,
+    connectionStatus,
+    kitchenPrintingEnabled,
+    useReceiptPrinterForKitchen,
+    receiptPrinter,
+  ]);
+
+  const kitchenPrinterLabel = useMemo(() => {
+    if (!kitchenPrintingEnabled) return "Kitchen Printer";
+    if (hasDedicatedKitchenPrinter) return "Kitchen Printer";
+    if (useReceiptPrinterForKitchen) return "Kitchen (via Receipt)";
+    return "Kitchen Printer";
+  }, [kitchenPrintingEnabled, hasDedicatedKitchenPrinter, useReceiptPrinterForKitchen]);
+
+  // Overall status (not_configured is neutral, not degraded/critical)
   const overallStatus: OverallStatus = useMemo(() => {
     if (server === "disconnected") return "critical";
-    const printerStatuses = [receiptPrinter, kitchenPrinter];
+    const printerStatuses = [receiptPrinter, kitchenPrinter].filter((s) => s !== "not_configured");
     if (printerStatuses.includes("failed")) return "critical";
     if (printerStatuses.includes("disconnected") || printerStatuses.includes("reconnecting"))
       return "degraded";
@@ -137,6 +168,7 @@ export function useSystemStatus(): SystemStatus {
     server,
     receiptPrinter,
     kitchenPrinter,
+    kitchenPrinterLabel,
     lastSyncTimestamp,
     overallStatus,
     retryServer,

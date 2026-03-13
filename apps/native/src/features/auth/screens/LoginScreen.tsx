@@ -11,7 +11,7 @@ interface LoginScreenProps {
 export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const { isAuthenticated } = useAuth();
 
-  // Navigate to tables screen when authenticated
+  // After successful login, navigate to HomeScreen
   useEffect(() => {
     if (isAuthenticated) {
       navigation.reset({

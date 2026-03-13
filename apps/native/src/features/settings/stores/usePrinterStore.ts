@@ -27,6 +27,7 @@ const RETRY_DELAY_MS = 1000;
 const INITIALIZATION_DELAY_MS = 1000;
 
 export type PrinterConnectionStatus = "connected" | "disconnected" | "reconnecting" | "failed";
+export type PrinterAddProgress = "saving" | "connecting";
 
 interface PrinterStore {
   printers: PrinterConfig[];
@@ -35,6 +36,7 @@ interface PrinterStore {
   isScanning: boolean;
   kitchenPrintingEnabled: boolean;
   cashDrawerEnabled: boolean;
+  useReceiptPrinterForKitchen: boolean;
   isInitialized: boolean;
 
   initialize: () => Promise<{ failedPrinters: string[] }>;
@@ -49,11 +51,13 @@ interface PrinterStore {
     device: BluetoothDevice,
     role: "receipt" | "kitchen",
     paperWidth: 58 | 80,
-  ) => Promise<void>;
+    onProgress?: (progress: PrinterAddProgress) => void,
+  ) => Promise<boolean>;
   removePrinter: (id: string) => Promise<void>;
   updatePrinter: (id: string, updates: Partial<PrinterConfig>) => Promise<void>;
   setKitchenPrintingEnabled: (enabled: boolean) => Promise<void>;
   setCashDrawerEnabled: (enabled: boolean) => Promise<void>;
+  setUseReceiptPrinterForKitchen: (enabled: boolean) => Promise<void>;
 
   printReceipt: (data: ReceiptData) => Promise<void>;
   printKitchenTicket: (data: KitchenTicketData) => Promise<void>;
@@ -68,6 +72,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   isScanning: false,
   kitchenPrintingEnabled: false,
   cashDrawerEnabled: false,
+  useReceiptPrinterForKitchen: false,
   isInitialized: false,
 
   initialize: async () => {
@@ -76,14 +81,15 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
       printers: settings.printers,
       kitchenPrintingEnabled: settings.kitchenPrintingEnabled,
       cashDrawerEnabled: settings.cashDrawerEnabled,
+      useReceiptPrinterForKitchen: settings.useReceiptPrinterForKitchen ?? false,
     });
 
     await enableBluetooth();
 
     await new Promise((resolve) => setTimeout(resolve, INITIALIZATION_DELAY_MS));
 
-    const failedPrinters: string[] = [];
     const connectionStatus: Record<string, PrinterConnectionStatus> = {};
+    const pendingPrinters = new Map(settings.printers.map((printer) => [printer.id, printer]));
 
     for (let i = 0; i < MAX_RETRY_ATTEMPTS; i++) {
       // No need for exponential backoff here since connection attempts are spaced out by user interaction time
@@ -91,15 +97,19 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
         await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
       }
 
-      for (const printer of settings.printers) {
+      for (const [printerId, printer] of pendingPrinters) {
         const connected = await connectToDevice(printer.id);
         connectionStatus[printer.id] = connected ? "connected" : "disconnected";
-        if (!connected) {
-          failedPrinters.push(printer.name);
+
+        if (connected) {
+          pendingPrinters.delete(printerId);
         }
       }
+
+      if (pendingPrinters.size === 0) break;
     }
 
+    const failedPrinters = Array.from(pendingPrinters.values()).map((printer) => printer.name);
     set({ connectionStatus, isInitialized: true });
     return { failedPrinters };
   },
@@ -154,7 +164,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
     return next;
   },
 
-  addPrinter: async (device, role, paperWidth) => {
+  addPrinter: async (device, role, paperWidth, onProgress) => {
     const { printers } = get();
     const hasDefaultForRole = printers.some((p) => p.role === role && p.isDefault);
 
@@ -167,17 +177,28 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
       isDefault: !hasDefaultForRole,
     };
 
+    onProgress?.("saving");
     await storageAddPrinter(config);
-
-    const connected = await connectToDevice(device.address);
 
     set((state) => ({
       printers: [...state.printers, config],
       connectionStatus: {
         ...state.connectionStatus,
+        [device.address]: "reconnecting",
+      },
+    }));
+
+    onProgress?.("connecting");
+    const connected = await connectToDevice(device.address);
+
+    set((state) => ({
+      connectionStatus: {
+        ...state.connectionStatus,
         [device.address]: connected ? "connected" : "disconnected",
       },
     }));
+
+    return connected;
   },
 
   removePrinter: async (id: string) => {
@@ -206,25 +227,39 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   },
 
   setKitchenPrintingEnabled: async (enabled: boolean) => {
-    const { printers, cashDrawerEnabled } = get();
+    const { printers, cashDrawerEnabled, useReceiptPrinterForKitchen } = get();
     const settings: PrinterSettings = {
       printers,
       kitchenPrintingEnabled: enabled,
       cashDrawerEnabled,
+      useReceiptPrinterForKitchen,
     };
     await savePrinterSettings(settings);
     set({ kitchenPrintingEnabled: enabled });
   },
 
   setCashDrawerEnabled: async (enabled: boolean) => {
-    const { printers, kitchenPrintingEnabled } = get();
+    const { printers, kitchenPrintingEnabled, useReceiptPrinterForKitchen } = get();
     const settings: PrinterSettings = {
       printers,
       kitchenPrintingEnabled,
       cashDrawerEnabled: enabled,
+      useReceiptPrinterForKitchen,
     };
     await savePrinterSettings(settings);
     set({ cashDrawerEnabled: enabled });
+  },
+
+  setUseReceiptPrinterForKitchen: async (enabled: boolean) => {
+    const { printers, kitchenPrintingEnabled, cashDrawerEnabled } = get();
+    const settings: PrinterSettings = {
+      printers,
+      kitchenPrintingEnabled,
+      cashDrawerEnabled,
+      useReceiptPrinterForKitchen: enabled,
+    };
+    await savePrinterSettings(settings);
+    set({ useReceiptPrinterForKitchen: enabled });
   },
 
   printReceipt: async (data: ReceiptData) => {
@@ -241,10 +276,13 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   },
 
   printKitchenTicket: async (data: KitchenTicketData) => {
-    const { kitchenPrintingEnabled, printers, connectPrinter } = get();
+    const { kitchenPrintingEnabled, useReceiptPrinterForKitchen, printers, connectPrinter } = get();
     if (!kitchenPrintingEnabled) return;
 
-    const printer = printers.find((p) => p.role === "kitchen" && p.isDefault);
+    let printer = printers.find((p) => p.role === "kitchen" && p.isDefault);
+    if (!printer && useReceiptPrinterForKitchen) {
+      printer = printers.find((p) => p.role === "receipt" && p.isDefault);
+    }
     if (!printer) return;
 
     // Always connect before printing — Bluetooth Classic supports only one active connection

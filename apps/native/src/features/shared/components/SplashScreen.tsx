@@ -88,7 +88,7 @@ export const SplashScreen = ({ onFinish }: SplashScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#0A1628",
+    backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
@@ -96,9 +96,8 @@ const styles = StyleSheet.create({
   gradientOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "transparent",
-    // Subtle lighter center glow
     borderRadius: 9999,
-    opacity: 0.07,
+    opacity: 0.04,
     transform: [{ scaleX: 2.5 }, { scaleY: 1.2 }],
     shadowColor: "#0D87E1",
     shadowOffset: { width: 0, height: 0 },
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
   barTrack: {
     width: BAR_WIDTH,
     height: 3,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "#E5E7EB",
     borderRadius: 2,
     overflow: "hidden",
   },
@@ -133,7 +132,7 @@ const styles = StyleSheet.create({
     bottom: 28,
     fontFamily: "MLight",
     fontSize: 11,
-    color: "rgba(255, 255, 255, 0.3)",
+    color: "#9CA3AF",
     letterSpacing: 2,
     textTransform: "uppercase",
   },

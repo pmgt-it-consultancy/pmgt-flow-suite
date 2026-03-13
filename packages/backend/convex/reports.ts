@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
+import { getPHTDayBoundariesForDate, getPHTHour } from "./lib/dateUtils";
 import { requirePermission } from "./lib/permissions";
 
 // Generate or get daily report for a store
@@ -84,15 +85,14 @@ async function aggregateDailyData(
   transactionCount: number;
   averageTicket: number;
 }> {
-  // Parse date range
-  const startOfDay = new Date(reportDate).setHours(0, 0, 0, 0);
-  const endOfDay = new Date(reportDate).setHours(23, 59, 59, 999);
+  // Parse date range (PHT boundaries)
+  const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(reportDate);
 
   // Get all orders for the day
   const orders = await ctx.db
     .query("orders")
     .withIndex("by_store_createdAt", (q: any) =>
-      q.eq("storeId", storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
+      q.eq("storeId", storeId).gte("createdAt", startOfDay).lt("createdAt", endOfDay),
     )
     .collect();
 
@@ -136,7 +136,7 @@ async function aggregateDailyData(
   // Also get item-level voids from paid orders
   const orderVoids = await ctx.db.query("orderVoids").collect();
   const dayVoids = orderVoids.filter((v: any) => {
-    return v.createdAt >= startOfDay && v.createdAt <= endOfDay;
+    return v.createdAt >= startOfDay && v.createdAt < endOfDay;
   });
 
   for (const v of dayVoids) {
@@ -215,9 +215,8 @@ async function generateProductSalesBreakdown(
   storeId: Id<"stores">,
   reportDate: string,
 ): Promise<void> {
-  // Parse date range
-  const startOfDay = new Date(reportDate).setHours(0, 0, 0, 0);
-  const endOfDay = new Date(reportDate).setHours(23, 59, 59, 999);
+  // Parse date range (PHT boundaries)
+  const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(reportDate);
 
   // Delete existing product sales for this date
   const existingProductSales = await ctx.db
@@ -233,7 +232,7 @@ async function generateProductSalesBreakdown(
   const orders = await ctx.db
     .query("orders")
     .withIndex("by_store_createdAt", (q: any) =>
-      q.eq("storeId", storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
+      q.eq("storeId", storeId).gte("createdAt", startOfDay).lt("createdAt", endOfDay),
     )
     .collect();
 
@@ -713,15 +712,14 @@ export const getHourlySales = query({
       throw new Error("Authentication required");
     }
 
-    // Parse date range
-    const startOfDay = new Date(args.reportDate).setHours(0, 0, 0, 0);
-    const endOfDay = new Date(args.reportDate).setHours(23, 59, 59, 999);
+    // Parse date range (PHT boundaries)
+    const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(args.reportDate);
 
     // Get all paid orders for the day
     const orders = await ctx.db
       .query("orders")
       .withIndex("by_store_createdAt", (q) =>
-        q.eq("storeId", args.storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay).lt("createdAt", endOfDay),
       )
       .collect();
 
@@ -735,10 +733,9 @@ export const getHourlySales = query({
       hourlyData.set(h, { transactionCount: 0, netSales: 0 });
     }
 
-    // Aggregate orders
+    // Aggregate orders by PHT hour
     for (const order of paidOrders) {
-      const orderDate = new Date(order.createdAt);
-      const hour = orderDate.getHours();
+      const hour = getPHTHour(order.createdAt);
       const data = hourlyData.get(hour)!;
       data.transactionCount++;
       data.netSales += order.netSales;
@@ -898,13 +895,12 @@ export const getDashboardSummary = query({
       throw new Error("Authentication required");
     }
 
-    const startOfDay = new Date(args.reportDate).setHours(0, 0, 0, 0);
-    const endOfDay = new Date(args.reportDate).setHours(23, 59, 59, 999);
+    const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(args.reportDate);
 
     const orders = await ctx.db
       .query("orders")
       .withIndex("by_store_createdAt", (q) =>
-        q.eq("storeId", args.storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay).lt("createdAt", endOfDay),
       )
       .collect();
 
@@ -969,13 +965,12 @@ export const getTopSellingProductsLive = query({
       throw new Error("Authentication required");
     }
 
-    const startOfDay = new Date(args.reportDate).setHours(0, 0, 0, 0);
-    const endOfDay = new Date(args.reportDate).setHours(23, 59, 59, 999);
+    const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(args.reportDate);
 
     const orders = await ctx.db
       .query("orders")
       .withIndex("by_store_createdAt", (q) =>
-        q.eq("storeId", args.storeId).gte("createdAt", startOfDay).lte("createdAt", endOfDay),
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay).lt("createdAt", endOfDay),
       )
       .collect();
 

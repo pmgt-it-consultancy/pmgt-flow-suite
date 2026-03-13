@@ -35,6 +35,8 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency } from "@/lib/format";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { BulkVoidConfirmDialog, BulkVoidFooter, ManagerPinDialog } from "./_components";
+import { useBulkVoid } from "./_hooks";
 
 type OrderStatus = "open" | "paid" | "voided";
 
@@ -44,6 +46,7 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState<Id<"orders"> | null>(null);
+  const bulkVoid = useBulkVoid();
 
   // Queries
   const orders = useQuery(
@@ -116,7 +119,10 @@ export default function OrdersPage() {
               </Label>
               <Select
                 value={statusFilter}
-                onValueChange={(value) => setStatusFilter(value as OrderStatus | "all")}
+                onValueChange={(value) => {
+                  setStatusFilter(value as OrderStatus | "all");
+                  if (value !== "open") bulkVoid.exitSelectionMode();
+                }}
               >
                 <SelectTrigger className="w-[140px]">
                   <SelectValue />
@@ -139,6 +145,20 @@ export default function OrdersPage() {
                 className="flex-1"
               />
             </div>
+
+            {statusFilter === "open" && (
+              <Button
+                variant={bulkVoid.isSelectionMode ? "destructive" : "outline"}
+                size="sm"
+                onClick={
+                  bulkVoid.isSelectionMode
+                    ? bulkVoid.exitSelectionMode
+                    : bulkVoid.enterSelectionMode
+                }
+              >
+                {bulkVoid.isSelectionMode ? "Cancel Selection" : "Select"}
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -168,6 +188,25 @@ export default function OrdersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  {bulkVoid.isSelectionMode && (
+                    <TableHead className="w-10">
+                      <input
+                        type="checkbox"
+                        checked={
+                          (filteredOrders?.length ?? 0) > 0 &&
+                          bulkVoid.selectedIds.size === (filteredOrders?.length ?? 0)
+                        }
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            bulkVoid.selectAll(filteredOrders?.map((o) => o._id) ?? []);
+                          } else {
+                            bulkVoid.deselectAll();
+                          }
+                        }}
+                        className="rounded border-gray-300"
+                      />
+                    </TableHead>
+                  )}
                   <TableHead>Order #</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Type</TableHead>
@@ -181,6 +220,16 @@ export default function OrdersPage() {
               <TableBody>
                 {filteredOrders?.map((order) => (
                   <TableRow key={order._id}>
+                    {bulkVoid.isSelectionMode && (
+                      <TableCell>
+                        <input
+                          type="checkbox"
+                          checked={bulkVoid.selectedIds.has(order._id)}
+                          onChange={() => bulkVoid.toggleSelection(order._id)}
+                          className="rounded border-gray-300"
+                        />
+                      </TableCell>
+                    )}
                     <TableCell className="font-medium">{order.orderNumber}</TableCell>
                     <TableCell>{formatDate(order.createdAt)}</TableCell>
                     <TableCell>
@@ -224,6 +273,44 @@ export default function OrdersPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Bulk Void Footer */}
+      {bulkVoid.isSelectionMode && (
+        <BulkVoidFooter
+          selectedCount={bulkVoid.selectedIds.size}
+          onVoidSelected={bulkVoid.startBulkVoid}
+          onCancelSelection={bulkVoid.exitSelectionMode}
+        />
+      )}
+
+      {/* Bulk Void Confirm Dialog */}
+      <BulkVoidConfirmDialog
+        open={bulkVoid.showConfirmDialog}
+        onOpenChange={bulkVoid.setShowConfirmDialog}
+        selectedOrders={
+          filteredOrders
+            ?.filter((o) => bulkVoid.selectedIds.has(o._id))
+            .map((o) => ({
+              _id: o._id,
+              orderNumber: o.orderNumber,
+              orderType: o.orderType,
+              netSales: o.netSales,
+              createdAt: o.createdAt,
+            })) ?? []
+        }
+        onConfirm={bulkVoid.handleConfirm}
+      />
+
+      {/* Manager PIN Dialog */}
+      {selectedStoreId && (
+        <ManagerPinDialog
+          open={bulkVoid.showPinDialog}
+          onOpenChange={bulkVoid.setShowPinDialog}
+          storeId={selectedStoreId}
+          onSubmit={bulkVoid.handlePinSubmit}
+          isSubmitting={bulkVoid.isSubmitting}
+        />
+      )}
 
       {/* Order Details Dialog */}
       <Dialog open={!!selectedOrderId} onOpenChange={(open) => !open && setSelectedOrderId(null)}>
@@ -384,6 +471,39 @@ export default function OrdersPage() {
                           {discount.customerName}
                           {discount.customerId && ` · ID: ${discount.customerId}`}
                           {discount.quantityApplied > 1 && ` · Qty: ${discount.quantityApplied}`}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Void Details */}
+              {orderDetails.voids.length > 0 && (
+                <div className="border rounded-lg border-red-200 bg-red-50/40">
+                  <div className="bg-red-50 px-3 py-2 border-b border-red-200 font-medium text-sm text-red-900">
+                    Void Details
+                  </div>
+                  <div className="divide-y divide-red-100">
+                    {orderDetails.voids.map((voidRecord) => (
+                      <div key={voidRecord._id} className="px-3 py-2 text-sm">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <div className="font-medium text-red-900">
+                              {voidRecord.voidType === "full_order"
+                                ? "Full order void"
+                                : "Voided item"}
+                            </div>
+                            <div className="mt-1 text-red-800">{voidRecord.reason}</div>
+                          </div>
+                          <div className="text-right text-xs text-red-700">
+                            <div>{formatDate(voidRecord.createdAt)}</div>
+                            <div>Approved by {voidRecord.approvedByName}</div>
+                          </div>
+                        </div>
+                        <div className="mt-2 text-xs text-red-700">
+                          Requested by {voidRecord.requestedByName}
+                          {voidRecord.amount > 0 && ` · ${formatCurrency(voidRecord.amount)}`}
                         </div>
                       </div>
                     ))}

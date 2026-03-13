@@ -20,8 +20,10 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
     connectionStatus,
     kitchenPrintingEnabled,
     cashDrawerEnabled,
+    useReceiptPrinterForKitchen,
     setKitchenPrintingEnabled,
     setCashDrawerEnabled,
+    setUseReceiptPrinterForKitchen,
     openCashDrawer,
     testPrint,
     removePrinter,
@@ -113,6 +115,34 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
             thumbColor="#FFFFFF"
           />
         </XStack>
+
+        {/* Use Receipt Printer for Kitchen Toggle */}
+        {kitchenPrintingEnabled && !printers.some((p) => p.role === "kitchen") && (
+          <XStack
+            backgroundColor="#FFFFFF"
+            marginHorizontal={16}
+            marginTop={12}
+            borderRadius={12}
+            padding={16}
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <YStack flex={1} marginRight={16}>
+              <Text variant="heading" size="base">
+                Use Receipt Printer for Kitchen
+              </Text>
+              <Text variant="muted" size="sm" style={{ marginTop: 4 }}>
+                Print kitchen tickets on the receipt printer
+              </Text>
+            </YStack>
+            <Switch
+              value={useReceiptPrinterForKitchen}
+              onValueChange={setUseReceiptPrinterForKitchen}
+              trackColor={{ false: "#D1D5DB", true: "#3B82F6" }}
+              thumbColor="#FFFFFF"
+            />
+          </XStack>
+        )}
 
         {/* Cash Drawer Toggle */}
         <XStack

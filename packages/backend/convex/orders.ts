@@ -2,27 +2,23 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
+import { getPHTDayBoundaries } from "./lib/dateUtils";
 import {
   aggregateOrderTotals,
   calculateItemTotals,
   type ItemCalculation,
 } from "./lib/taxCalculations";
 
-// Generate next order number for today
+// Generate next order number for today (PHT timezone)
 async function getNextOrderNumber(
   ctx: { db: any },
   storeId: Id<"stores">,
   orderType: "dine_in" | "takeout",
 ): Promise<string> {
-  // Get today's date in YYYY-MM-DD format
-  const today = new Date();
-  const dateString = today.toISOString().split("T")[0];
-  const startOfDay = new Date(dateString).getTime();
-  const endOfDay = startOfDay + 24 * 60 * 60 * 1000;
-
   const prefix = orderType === "dine_in" ? "D" : "T";
+  const { startOfDay, endOfDay } = getPHTDayBoundaries();
 
-  // Count today's orders for this store filtered by order type
+  // Get today's orders of this type (using PHT day boundaries)
   const todaysOrders = await ctx.db
     .query("orders")
     .withIndex("by_store_createdAt", (q: any) =>
@@ -33,7 +29,26 @@ async function getNextOrderNumber(
     )
     .collect();
 
-  const nextNumber = todaysOrders.length + 1;
+  // Also get still-open orders of this type from previous days
+  // to avoid collisions in the active orders display
+  const openOrdersFromPreviousDays = await ctx.db
+    .query("orders")
+    .withIndex("by_store_status", (q: any) => q.eq("storeId", storeId).eq("status", "open"))
+    .filter((q: any) =>
+      q.and(q.lt(q.field("createdAt"), startOfDay), q.eq(q.field("orderType"), orderType)),
+    )
+    .collect();
+
+  // Find the highest existing number across both sets
+  let maxNumber = 0;
+  for (const order of [...todaysOrders, ...openOrdersFromPreviousDays]) {
+    const match = order.orderNumber.match(/\d+$/);
+    if (match) {
+      maxNumber = Math.max(maxNumber, Number.parseInt(match[0], 10));
+    }
+  }
+
+  const nextNumber = maxNumber + 1;
   return `${prefix}-${nextNumber.toString().padStart(3, "0")}`;
 }
 
@@ -215,6 +230,18 @@ export const get = query({
           discountAmount: v.number(),
         }),
       ),
+      voids: v.array(
+        v.object({
+          _id: v.id("orderVoids"),
+          voidType: v.union(v.literal("full_order"), v.literal("item")),
+          orderItemId: v.optional(v.id("orderItems")),
+          reason: v.string(),
+          amount: v.number(),
+          approvedByName: v.string(),
+          requestedByName: v.string(),
+          createdAt: v.number(),
+        }),
+      ),
     }),
     v.null(),
   ),
@@ -277,6 +304,30 @@ export const get = query({
       .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
       .collect();
 
+    const voidRecords = await ctx.db
+      .query("orderVoids")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .order("desc")
+      .collect();
+
+    const voids = await Promise.all(
+      voidRecords.map(async (voidRecord) => {
+        const approver = await ctx.db.get(voidRecord.approvedBy);
+        const requester = await ctx.db.get(voidRecord.requestedBy);
+
+        return {
+          _id: voidRecord._id,
+          voidType: voidRecord.voidType,
+          orderItemId: voidRecord.orderItemId,
+          reason: voidRecord.reason,
+          amount: voidRecord.amount,
+          approvedByName: approver?.name ?? "Unknown",
+          requestedByName: requester?.name ?? "Unknown",
+          createdAt: voidRecord.createdAt,
+        };
+      }),
+    );
+
     return {
       _id: order._id,
       storeId: order.storeId,
@@ -315,6 +366,7 @@ export const get = query({
         quantityApplied: d.quantityApplied,
         discountAmount: d.discountAmount,
       })),
+      voids,
     };
   },
 });
@@ -883,9 +935,8 @@ export const getTakeoutOrders = query({
   handler: async (ctx, args) => {
     await requireAuth(ctx);
 
-    const today = new Date();
-    const startOfDay =
-      args.startDate ?? new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+    const { startOfDay: phtStartOfDay } = getPHTDayBoundaries();
+    const startOfDay = args.startDate ?? phtStartOfDay;
     const endOfDay = args.endDate;
 
     const indexQuery = ctx.db.query("orders").withIndex("by_store_createdAt", (q) => {
@@ -939,15 +990,15 @@ export const getDashboardSummary = query({
   handler: async (ctx, args) => {
     await requireAuth(ctx);
 
-    const today = new Date();
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+    const { startOfDay, endOfDay } = getPHTDayBoundaries();
 
-    // Get all today's orders
+    // Get all today's orders (PHT day)
     const todaysOrders = await ctx.db
       .query("orders")
       .withIndex("by_store_createdAt", (q) =>
         q.eq("storeId", args.storeId).gte("createdAt", startOfDay),
       )
+      .filter((q) => q.lt(q.field("createdAt"), endOfDay))
       .collect();
 
     const totalOrdersToday = todaysOrders.length;
@@ -1072,9 +1123,8 @@ export const getTodaysOpenOrders = query({
     // Require authenticated user
     await requireAuth(ctx);
 
-    // Get start of today
-    const today = new Date();
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+    // Get start of today (PHT)
+    const { startOfDay } = getPHTDayBoundaries();
 
     // Get today's open orders
     const orders = await ctx.db

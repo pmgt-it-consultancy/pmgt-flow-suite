@@ -76,7 +76,8 @@ export const ReceiptPreviewModal = ({
   const [printResult, setPrintResult] = useState<"success" | "error" | null>(null);
   const [kitchenPrintResult, setKitchenPrintResult] = useState<"success" | "error" | null>(null);
   const [isKitchenPrinting, setIsKitchenPrinting] = useState(false);
-  const { printers, connectionStatus, connectPrinter } = usePrinterStore();
+  const { printers, connectionStatus, connectPrinter, useReceiptPrinterForKitchen } =
+    usePrinterStore();
 
   // Reset print states whenever the modal opens so stale results don't persist
   useEffect(() => {
@@ -90,6 +91,7 @@ export const ReceiptPreviewModal = ({
 
   const receiptPrinter = printers.find((p) => p.role === "receipt" && p.isDefault);
   const kitchenPrinter = printers.find((p) => p.role === "kitchen" && p.isDefault);
+  const canPrintKitchen = !!kitchenPrinter || (useReceiptPrinterForKitchen && !!receiptPrinter);
   const isConnected = receiptPrinter ? connectionStatus[receiptPrinter.id] === "connected" : false;
   const canPrint = !!receiptPrinter && isConnected;
   const paperWidth = receiptPrinter?.paperWidth ?? 80;
@@ -114,8 +116,9 @@ export const ReceiptPreviewModal = ({
     setIsKitchenPrinting(true);
     setKitchenPrintResult(null);
     try {
-      // Use dedicated kitchen printer if available, otherwise fall back to receipt printer
-      const targetPrinter = kitchenPrinter ?? receiptPrinter;
+      // Use dedicated kitchen printer if available, fall back to receipt printer if toggle is on
+      const targetPrinter = kitchenPrinter ?? (useReceiptPrinterForKitchen ? receiptPrinter : null);
+      if (!targetPrinter) return;
       const connected = await connectPrinter(targetPrinter.id);
       if (!connected) throw new Error("Failed to connect to printer");
 
@@ -480,12 +483,12 @@ export const ReceiptPreviewModal = ({
             </Button>
 
             {/* Kitchen Receipt Button — appears after customer receipt is printed */}
-            {printResult === "success" && kitchenTicketData && (
+            {printResult === "success" && kitchenTicketData && canPrintKitchen && (
               <Text size="xs" variant="muted" style={{ textAlign: "center", marginBottom: 4 }}>
                 Tear the customer receipt first, then print the kitchen receipt below.
               </Text>
             )}
-            {printResult === "success" && kitchenTicketData && (
+            {printResult === "success" && kitchenTicketData && canPrintKitchen && (
               <Button
                 variant="outline"
                 disabled={!canPrint || isKitchenPrinting}
