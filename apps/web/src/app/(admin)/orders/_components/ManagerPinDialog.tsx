@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@packages/backend";
+import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useState } from "react";

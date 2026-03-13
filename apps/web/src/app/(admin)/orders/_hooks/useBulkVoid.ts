@@ -1,18 +1,10 @@
 "use client";
 
-import { api } from "@packages/backend";
+import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAction } from "convex/react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
-
-interface OrderItem {
-  _id: Id<"orders">;
-  orderNumber: string;
-  orderType: "dine_in" | "takeout";
-  netSales: number;
-  createdAt: number;
-}
 
 export function useBulkVoid() {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
@@ -84,7 +76,7 @@ export function useBulkVoid() {
         } else {
           toast.error(result.error);
         }
-      } catch (error) {
+      } catch {
         toast.error("Failed to void orders");
       } finally {
         setIsSubmitting(false);
