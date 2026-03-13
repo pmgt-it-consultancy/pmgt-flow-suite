@@ -18,10 +18,21 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
     printers,
     connectionStatus,
     kitchenPrintingEnabled,
+    cashDrawerEnabled,
     setKitchenPrintingEnabled,
+    setCashDrawerEnabled,
+    openCashDrawer,
     testPrint,
     removePrinter,
   } = usePrinterStore();
+
+  const handleOpenDrawer = async () => {
+    try {
+      await openCashDrawer();
+    } catch {
+      Alert.alert("Error", "Failed to open cash drawer. Make sure a receipt printer is connected.");
+    }
+  };
 
   const handleRemove = (printer: PrinterConfig) => {
     Alert.alert("Remove Printer", `Are you sure you want to remove "${printer.name}"?`, [
@@ -80,6 +91,59 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
             thumbColor="#FFFFFF"
           />
         </XStack>
+
+        {/* Cash Drawer Toggle */}
+        <XStack
+          backgroundColor="#FFFFFF"
+          marginHorizontal={16}
+          marginTop={12}
+          borderRadius={12}
+          padding={16}
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <YStack flex={1} marginRight={16}>
+            <Text variant="heading" size="base">
+              Cash Drawer
+            </Text>
+            <Text variant="muted" size="sm" style={{ marginTop: 4 }}>
+              Auto-open cash drawer after payment
+            </Text>
+          </YStack>
+          <Switch
+            value={cashDrawerEnabled}
+            onValueChange={setCashDrawerEnabled}
+            trackColor={{ false: "#D1D5DB", true: "#3B82F6" }}
+            thumbColor="#FFFFFF"
+          />
+        </XStack>
+
+        {/* Manual Open Drawer Button */}
+        {cashDrawerEnabled && (
+          <YStack paddingHorizontal={16} marginTop={12}>
+            <TouchableOpacity
+              onPress={handleOpenDrawer}
+              style={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: 12,
+                padding: 16,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons
+                name="lock-open-outline"
+                size={20}
+                color="#0D87E1"
+                style={{ marginRight: 8 }}
+              />
+              <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 15 }}>
+                Open Cash Drawer
+              </Text>
+            </TouchableOpacity>
+          </YStack>
+        )}
 
         {/* Section Header */}
         <Text

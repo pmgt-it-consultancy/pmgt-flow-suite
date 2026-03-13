@@ -14,11 +14,13 @@ export interface PrinterConfig {
 export interface PrinterSettings {
   printers: PrinterConfig[];
   kitchenPrintingEnabled: boolean;
+  cashDrawerEnabled: boolean;
 }
 
 const DEFAULT_SETTINGS: PrinterSettings = {
   printers: [],
   kitchenPrintingEnabled: false,
+  cashDrawerEnabled: false,
 };
 
 export async function getPrinterSettings(): Promise<PrinterSettings> {

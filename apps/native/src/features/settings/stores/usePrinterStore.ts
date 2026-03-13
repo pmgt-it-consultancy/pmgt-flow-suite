@@ -7,6 +7,7 @@ import {
   disconnectDevice,
   enableBluetooth,
   getPairedDevices,
+  openCashDrawer as openCashDrawerCommand,
   scanDevices,
 } from "../services/bluetoothPrinter";
 import type { KitchenTicketData } from "../services/escposFormatter";
@@ -30,6 +31,7 @@ interface PrinterStore {
   connectionStatus: Record<string, boolean>;
   isScanning: boolean;
   kitchenPrintingEnabled: boolean;
+  cashDrawerEnabled: boolean;
   isInitialized: boolean;
 
   initialize: () => Promise<{ failedPrinters: string[] }>;
@@ -45,9 +47,11 @@ interface PrinterStore {
   removePrinter: (id: string) => Promise<void>;
   updatePrinter: (id: string, updates: Partial<PrinterConfig>) => Promise<void>;
   setKitchenPrintingEnabled: (enabled: boolean) => Promise<void>;
+  setCashDrawerEnabled: (enabled: boolean) => Promise<void>;
 
   printReceipt: (data: ReceiptData) => Promise<void>;
   printKitchenTicket: (data: KitchenTicketData) => Promise<void>;
+  openCashDrawer: () => Promise<void>;
   testPrint: (address: string) => Promise<void>;
 }
 
@@ -56,6 +60,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   connectionStatus: {},
   isScanning: false,
   kitchenPrintingEnabled: false,
+  cashDrawerEnabled: false,
   isInitialized: false,
 
   initialize: async () => {
@@ -63,6 +68,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
     set({
       printers: settings.printers,
       kitchenPrintingEnabled: settings.kitchenPrintingEnabled,
+      cashDrawerEnabled: settings.cashDrawerEnabled,
     });
 
     await enableBluetooth();
@@ -169,13 +175,25 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   },
 
   setKitchenPrintingEnabled: async (enabled: boolean) => {
-    const { printers } = get();
+    const { printers, cashDrawerEnabled } = get();
     const settings: PrinterSettings = {
       printers,
       kitchenPrintingEnabled: enabled,
+      cashDrawerEnabled,
     };
     await savePrinterSettings(settings);
     set({ kitchenPrintingEnabled: enabled });
+  },
+
+  setCashDrawerEnabled: async (enabled: boolean) => {
+    const { printers, kitchenPrintingEnabled } = get();
+    const settings: PrinterSettings = {
+      printers,
+      kitchenPrintingEnabled,
+      cashDrawerEnabled: enabled,
+    };
+    await savePrinterSettings(settings);
+    set({ cashDrawerEnabled: enabled });
   },
 
   printReceipt: async (data: ReceiptData) => {
@@ -204,6 +222,17 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
 
     const charsPerLine = printer.paperWidth === 58 ? 32 : 48;
     await printKitchenTicketToThermal(data, charsPerLine);
+  },
+
+  openCashDrawer: async () => {
+    const { printers, connectPrinter } = get();
+    const printer = printers.find((p) => p.role === "receipt" && p.isDefault);
+    if (!printer) throw new Error("No receipt printer configured");
+
+    const connected = await connectPrinter(printer.id);
+    if (!connected) throw new Error("Failed to connect to receipt printer");
+
+    await openCashDrawerCommand();
   },
 
   testPrint: async (address: string) => {

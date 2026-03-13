@@ -131,4 +131,14 @@ export async function disconnectDevice(): Promise<void> {
   }
 }
 
+export async function openCashDrawer(pin = 0, onTime = 25, offTime = 250): Promise<void> {
+  try {
+    // ESC p command: pin (0=pin2, 1=pin5), onTime (n×2ms), offTime (n×2ms)
+    await (BluetoothEscposPrinter as any).openDrawer(pin, onTime, offTime);
+  } catch (error) {
+    console.warn("Failed to open cash drawer:", error);
+    throw error;
+  }
+}
+
 export { BluetoothEscposPrinter } from "@vardrz/react-native-bluetooth-escpos-printer";
