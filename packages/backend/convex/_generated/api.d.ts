@@ -23,6 +23,7 @@ import type * as helpers_voidsHelpers from "../helpers/voidsHelpers.js";
 import type * as http from "../http.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_categoryHelpers from "../lib/categoryHelpers.js";
+import type * as lib_dateUtils from "../lib/dateUtils.js";
 import type * as lib_permissions from "../lib/permissions.js";
 import type * as lib_taxCalculations from "../lib/taxCalculations.js";
 import type * as modifierAssignments from "../modifierAssignments.js";
@@ -65,6 +66,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   "lib/auth": typeof lib_auth;
   "lib/categoryHelpers": typeof lib_categoryHelpers;
+  "lib/dateUtils": typeof lib_dateUtils;
   "lib/permissions": typeof lib_permissions;
   "lib/taxCalculations": typeof lib_taxCalculations;
   modifierAssignments: typeof modifierAssignments;

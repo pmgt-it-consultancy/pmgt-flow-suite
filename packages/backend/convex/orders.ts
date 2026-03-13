@@ -230,6 +230,18 @@ export const get = query({
           discountAmount: v.number(),
         }),
       ),
+      voids: v.array(
+        v.object({
+          _id: v.id("orderVoids"),
+          voidType: v.union(v.literal("full_order"), v.literal("item")),
+          orderItemId: v.optional(v.id("orderItems")),
+          reason: v.string(),
+          amount: v.number(),
+          approvedByName: v.string(),
+          requestedByName: v.string(),
+          createdAt: v.number(),
+        }),
+      ),
     }),
     v.null(),
   ),
@@ -292,6 +304,30 @@ export const get = query({
       .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
       .collect();
 
+    const voidRecords = await ctx.db
+      .query("orderVoids")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .order("desc")
+      .collect();
+
+    const voids = await Promise.all(
+      voidRecords.map(async (voidRecord) => {
+        const approver = await ctx.db.get(voidRecord.approvedBy);
+        const requester = await ctx.db.get(voidRecord.requestedBy);
+
+        return {
+          _id: voidRecord._id,
+          voidType: voidRecord.voidType,
+          orderItemId: voidRecord.orderItemId,
+          reason: voidRecord.reason,
+          amount: voidRecord.amount,
+          approvedByName: approver?.name ?? "Unknown",
+          requestedByName: requester?.name ?? "Unknown",
+          createdAt: voidRecord.createdAt,
+        };
+      }),
+    );
+
     return {
       _id: order._id,
       storeId: order.storeId,
@@ -330,6 +366,7 @@ export const get = query({
         quantityApplied: d.quantityApplied,
         discountAmount: d.discountAmount,
       })),
+      voids,
     };
   },
 });

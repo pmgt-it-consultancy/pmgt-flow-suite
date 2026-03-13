@@ -194,7 +194,7 @@ export const voidOrderInternal = internalMutation({
     // Update order status (and takeout status if applicable)
     await ctx.db.patch(args.orderId, {
       status: "voided",
-      ...(order.orderType === "take_out" ? { takeoutStatus: "cancelled" } : {}),
+      ...(order.orderType === "takeout" ? { takeoutStatus: "cancelled" } : {}),
     });
 
     // Release table if dine-in
