@@ -59,7 +59,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const [completedKitchenData, setCompletedKitchenData] = useState<KitchenTicketData | null>(null);
 
   // Printer Store
-  const { printReceipt: printToThermal } = usePrinterStore();
+  const { printReceipt: printToThermal, openCashDrawer, cashDrawerEnabled } = usePrinterStore();
 
   // Discount State
   const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -358,6 +358,15 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         setCompletedKitchenData(kitchenData);
       }
 
+      // Auto-open cash drawer after payment
+      if (cashDrawerEnabled) {
+        try {
+          await openCashDrawer();
+        } catch {
+          // Don't block checkout if drawer fails to open
+        }
+      }
+
       setShowReceiptPreview(true);
     } catch (error: any) {
       Alert.alert("Error", error.message || "Payment failed");
@@ -374,6 +383,8 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     processCardPayment,
     orderId,
     createReceiptData,
+    cashDrawerEnabled,
+    openCashDrawer,
   ]);
 
   if (isLoading || !isAuthenticated || !order) {
