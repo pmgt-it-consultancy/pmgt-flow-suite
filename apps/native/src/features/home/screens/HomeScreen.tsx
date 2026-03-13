@@ -421,12 +421,14 @@ function StatItem({
             fontWeight: "800",
             color,
             letterSpacing: -0.5,
+            flexShrink: 0,
           }}
         >
           {value}
         </Text>
       </YStack>
       <Text
+        numberOfLines={1}
         style={{
           fontSize: 12,
           fontWeight: "600",
