@@ -272,6 +272,7 @@ export const TakeoutOrderDetailModal = ({
       <ReceiptPreviewModal
         visible={showReceiptPreview}
         receiptData={receiptData}
+        kitchenTicketData={null}
         onPrint={async () => {
           if (!receiptData) return;
           await printToThermal(receiptData);

@@ -2,6 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { XStack, YStack } from "tamagui";
+import type { KitchenTicketData } from "../../settings/services/escposFormatter";
+import { printKitchenTicketToThermal } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Button, Modal, Text } from "../../shared/components/ui";
 import type { ReceiptData } from "../../shared/utils/receipt";
@@ -9,6 +11,7 @@ import type { ReceiptData } from "../../shared/utils/receipt";
 interface ReceiptPreviewModalProps {
   visible: boolean;
   receiptData: ReceiptData | null;
+  kitchenTicketData: KitchenTicketData | null;
   onPrint: () => Promise<void>;
   onSkip: () => void;
 }
@@ -65,14 +68,18 @@ const PAPER_WIDTH_PX: Record<number, number> = {
 export const ReceiptPreviewModal = ({
   visible,
   receiptData,
+  kitchenTicketData,
   onPrint,
   onSkip,
 }: ReceiptPreviewModalProps) => {
   const [isPrinting, setIsPrinting] = useState(false);
   const [printResult, setPrintResult] = useState<"success" | "error" | null>(null);
-  const { printers, connectionStatus } = usePrinterStore();
+  const [kitchenPrintResult, setKitchenPrintResult] = useState<"success" | "error" | null>(null);
+  const [isKitchenPrinting, setIsKitchenPrinting] = useState(false);
+  const { printers, connectionStatus, connectPrinter } = usePrinterStore();
 
   const receiptPrinter = printers.find((p) => p.role === "receipt" && p.isDefault);
+  const kitchenPrinter = printers.find((p) => p.role === "kitchen" && p.isDefault);
   const isConnected = receiptPrinter ? connectionStatus[receiptPrinter.id] === true : false;
   const canPrint = !!receiptPrinter && isConnected;
   const paperWidth = receiptPrinter?.paperWidth ?? 80;
@@ -89,6 +96,27 @@ export const ReceiptPreviewModal = ({
       setPrintResult("error");
     } finally {
       setIsPrinting(false);
+    }
+  };
+
+  const handlePrintKitchenReceipt = async () => {
+    if (!kitchenTicketData || !receiptPrinter) return;
+    setIsKitchenPrinting(true);
+    setKitchenPrintResult(null);
+    try {
+      // Use dedicated kitchen printer if available, otherwise fall back to receipt printer
+      const targetPrinter = kitchenPrinter ?? receiptPrinter;
+      const connected = await connectPrinter(targetPrinter.id);
+      if (!connected) throw new Error("Failed to connect to printer");
+
+      const charsPerLine = targetPrinter.paperWidth === 58 ? 32 : 48;
+      await printKitchenTicketToThermal(kitchenTicketData, charsPerLine);
+      setKitchenPrintResult("success");
+    } catch (err) {
+      console.log("Kitchen print error:", err);
+      setKitchenPrintResult("error");
+    } finally {
+      setIsKitchenPrinting(false);
     }
   };
 
@@ -391,6 +419,36 @@ export const ReceiptPreviewModal = ({
             </XStack>
           )}
 
+          {/* Kitchen Print Feedback */}
+          {kitchenPrintResult === "success" && (
+            <XStack
+              alignItems="center"
+              backgroundColor="#F0FDF4"
+              borderRadius={8}
+              padding={12}
+              marginBottom={8}
+            >
+              <Ionicons name="checkmark-circle" size={20} color="#16a34a" />
+              <Text size="sm" style={{ color: "#15803D", marginLeft: 8, fontWeight: "500" }}>
+                Kitchen receipt sent to printer
+              </Text>
+            </XStack>
+          )}
+          {kitchenPrintResult === "error" && (
+            <XStack
+              alignItems="center"
+              backgroundColor="#FEF2F2"
+              borderRadius={8}
+              padding={12}
+              marginBottom={8}
+            >
+              <Ionicons name="alert-circle" size={20} color="#dc2626" />
+              <Text size="sm" style={{ color: "#B91C1C", marginLeft: 8, fontWeight: "500" }}>
+                Kitchen print failed. Check printer connection.
+              </Text>
+            </XStack>
+          )}
+
           {/* Buttons */}
           <YStack gap={8}>
             <Button variant="primary" disabled={!canPrint || isPrinting} onPress={handlePrint}>
@@ -410,6 +468,45 @@ export const ReceiptPreviewModal = ({
                 </XStack>
               )}
             </Button>
+
+            {/* Kitchen Receipt Button — appears after customer receipt is printed */}
+            {printResult === "success" && kitchenTicketData && (
+              <Text size="xs" variant="muted" style={{ textAlign: "center", marginBottom: 4 }}>
+                Tear the customer receipt first, then print the kitchen receipt below.
+              </Text>
+            )}
+            {printResult === "success" && kitchenTicketData && (
+              <Button
+                variant="outline"
+                disabled={!canPrint || isKitchenPrinting}
+                onPress={handlePrintKitchenReceipt}
+              >
+                {isKitchenPrinting ? (
+                  <XStack alignItems="center" justifyContent="center">
+                    <ActivityIndicator color="#0D87E1" size="small" />
+                    <Text
+                      size="base"
+                      style={{ color: "#0D87E1", fontWeight: "600", marginLeft: 8 }}
+                    >
+                      Printing Kitchen Receipt...
+                    </Text>
+                  </XStack>
+                ) : (
+                  <XStack alignItems="center" justifyContent="center">
+                    <Ionicons name="restaurant" size={18} color="#0D87E1" />
+                    <Text
+                      size="base"
+                      style={{ color: "#0D87E1", fontWeight: "600", marginLeft: 8 }}
+                    >
+                      {kitchenPrintResult === "success"
+                        ? "Print Kitchen Again"
+                        : "Print Kitchen Receipt"}
+                    </Text>
+                  </XStack>
+                )}
+              </Button>
+            )}
+
             <Button variant="outline" onPress={onSkip}>
               {printResult === "success" ? "Done" : "Skip"}
             </Button>
