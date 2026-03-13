@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList } from "react-native";
+import { Alert, FlatList, TextInput } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
-import { ReceiptPreviewModal } from "../../checkout/components";
+import { ManagerPinModal, ReceiptPreviewModal } from "../../checkout/components";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Badge, Button, Modal, Separator, Text } from "../../shared/components/ui";
@@ -43,10 +43,14 @@ export const TakeoutOrderDetailModal = ({
 
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
+  const [showVoidReasonModal, setShowVoidReasonModal] = useState(false);
+  const [showManagerPinModal, setShowManagerPinModal] = useState(false);
+  const [voidReason, setVoidReason] = useState("");
 
   const order = useQuery(api.orders.get, orderId ? { orderId } : "skip");
   const store = useQuery(api.stores.get, order?.storeId ? { storeId: order.storeId } : "skip");
   const discounts = useQuery(api.discounts.getOrderDiscounts, orderId ? { orderId } : "skip");
+  const voidOrderAction = useAction(api.voids.voidOrder);
 
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
   const takeoutStatus = (order?.takeoutStatus as TakeoutStatus | undefined) ?? "pending";
@@ -127,6 +131,44 @@ export const TakeoutOrderDetailModal = ({
     setReceiptData(buildReceiptData());
     setShowReceiptPreview(true);
   }, [buildReceiptData]);
+
+  const handleVoidPress = useCallback(() => {
+    setVoidReason("");
+    setShowVoidReasonModal(true);
+  }, []);
+
+  const handleVoidReasonSubmit = useCallback(() => {
+    if (!voidReason.trim()) {
+      Alert.alert("Required", "Please enter a reason for voiding this order");
+      return;
+    }
+    setShowVoidReasonModal(false);
+    setShowManagerPinModal(true);
+  }, [voidReason]);
+
+  const handleManagerPinSuccess = useCallback(
+    async (managerId: Id<"users">, pin: string) => {
+      setShowManagerPinModal(false);
+      try {
+        const result = await voidOrderAction({
+          orderId: orderId!,
+          reason: voidReason.trim(),
+          managerId,
+          managerPin: pin,
+        });
+
+        if (result.success) {
+          Alert.alert("Success", "Order has been voided", [{ text: "OK", onPress: onClose }]);
+        } else {
+          const errorResult = result as { success: false; error: string };
+          Alert.alert("Error", errorResult.error);
+        }
+      } catch (error: any) {
+        Alert.alert("Error", error.message || "Failed to void order");
+      }
+    },
+    [voidOrderAction, orderId, voidReason, onClose],
+  );
 
   if (!order) return null;
 
@@ -278,11 +320,69 @@ export const TakeoutOrderDetailModal = ({
               </XStack>
             </Button>
           )}
+          {isPaid && order.status !== "voided" && (
+            <Button variant="destructive" onPress={handleVoidPress}>
+              <XStack alignItems="center" justifyContent="center">
+                <Ionicons name="close-circle-outline" size={18} color="#fff" />
+                <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
+                  Void Order
+                </Text>
+              </XStack>
+            </Button>
+          )}
           <Button variant="outline" onPress={onClose}>
             Close
           </Button>
         </YStack>
       </Modal>
+
+      {/* Void Reason Modal */}
+      <Modal
+        visible={showVoidReasonModal}
+        title="Void Order"
+        onClose={() => setShowVoidReasonModal(false)}
+        onRequestClose={() => setShowVoidReasonModal(false)}
+        position="center"
+      >
+        <Text variant="muted" style={{ marginBottom: 12 }}>
+          Please provide a reason for voiding this order.
+        </Text>
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderColor: "#E5E7EB",
+            borderRadius: 8,
+            padding: 12,
+            fontSize: 16,
+            color: "#111827",
+            minHeight: 80,
+          }}
+          placeholder="Enter reason..."
+          placeholderTextColor="#9CA3AF"
+          value={voidReason}
+          onChangeText={setVoidReason}
+          multiline
+          textAlignVertical="top"
+        />
+        <Button
+          variant="destructive"
+          size="lg"
+          style={{ marginTop: 16 }}
+          disabled={!voidReason.trim()}
+          onPress={handleVoidReasonSubmit}
+        >
+          Continue
+        </Button>
+      </Modal>
+
+      {/* Manager PIN Modal */}
+      <ManagerPinModal
+        visible={showManagerPinModal}
+        title="Approve Void"
+        description="Manager PIN required to void this order"
+        onClose={() => setShowManagerPinModal(false)}
+        onSuccess={handleManagerPinSuccess}
+      />
 
       <ReceiptPreviewModal
         visible={showReceiptPreview}
