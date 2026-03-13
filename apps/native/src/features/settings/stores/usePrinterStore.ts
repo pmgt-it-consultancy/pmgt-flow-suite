@@ -88,8 +88,8 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
 
     await new Promise((resolve) => setTimeout(resolve, INITIALIZATION_DELAY_MS));
 
-    const failedPrinters: string[] = [];
     const connectionStatus: Record<string, PrinterConnectionStatus> = {};
+    const pendingPrinters = new Map(settings.printers.map((printer) => [printer.id, printer]));
 
     for (let i = 0; i < MAX_RETRY_ATTEMPTS; i++) {
       // No need for exponential backoff here since connection attempts are spaced out by user interaction time
@@ -97,15 +97,19 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
         await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
       }
 
-      for (const printer of settings.printers) {
+      for (const [printerId, printer] of pendingPrinters) {
         const connected = await connectToDevice(printer.id);
         connectionStatus[printer.id] = connected ? "connected" : "disconnected";
-        if (!connected) {
-          failedPrinters.push(printer.name);
+
+        if (connected) {
+          pendingPrinters.delete(printerId);
         }
       }
+
+      if (pendingPrinters.size === 0) break;
     }
 
+    const failedPrinters = Array.from(pendingPrinters.values()).map((printer) => printer.name);
     set({ connectionStatus, isInitialized: true });
     return { failedPrinters };
   },
