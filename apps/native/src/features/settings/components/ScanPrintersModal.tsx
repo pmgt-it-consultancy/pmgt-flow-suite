@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { Button, Modal, Text } from "../../shared/components/ui";
 import type { BluetoothDevice } from "../services/bluetoothPrinter";
+import type { PrinterAddProgress } from "../stores/usePrinterStore";
 import { usePrinterStore } from "../stores/usePrinterStore";
 
 interface ScanPrintersModalProps {
@@ -11,8 +12,20 @@ interface ScanPrintersModalProps {
   onClose: () => void;
 }
 
+type AddRole = "receipt" | "kitchen";
+
+interface AddFeedbackState {
+  device: BluetoothDevice;
+  role: AddRole;
+  paperWidth: 58 | 80;
+  status: "saving" | "connecting" | "success" | "error";
+  message: string;
+}
+
 export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) => {
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
+  const [addFeedback, setAddFeedback] = useState<AddFeedbackState | null>(null);
+  const successCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { isScanning, printers, scanForDevices, fetchPairedDevices, addPrinter } =
     usePrinterStore();
 
@@ -50,25 +63,100 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
   useEffect(() => {
     if (visible) {
       setDevices([]);
+      setAddFeedback(null);
       startScan();
     }
+    return () => {
+      if (successCloseTimeoutRef.current) {
+        clearTimeout(successCloseTimeoutRef.current);
+        successCloseTimeoutRef.current = null;
+      }
+    };
   }, [visible]);
+
+  const closeWithReset = () => {
+    if (successCloseTimeoutRef.current) {
+      clearTimeout(successCloseTimeoutRef.current);
+      successCloseTimeoutRef.current = null;
+    }
+    setAddFeedback(null);
+    onClose();
+  };
+
+  const runAddPrinter = async (device: BluetoothDevice, role: AddRole, paperWidth: 58 | 80) => {
+    setAddFeedback({
+      device,
+      role,
+      paperWidth,
+      status: "saving",
+      message: `Saving ${device.name || "printer"} as the ${role} printer...`,
+    });
+
+    try {
+      const connected = await addPrinter(
+        device,
+        role,
+        paperWidth,
+        (progress: PrinterAddProgress) => {
+          setAddFeedback((current) => {
+            if (!current || current.device.address !== device.address) return current;
+
+            return {
+              ...current,
+              status: progress,
+              message:
+                progress === "saving"
+                  ? `Saving ${device.name || "printer"} as the ${role} printer...`
+                  : `Connecting to ${device.name || "printer"}...`,
+            };
+          });
+        },
+      );
+
+      if (!connected) {
+        setAddFeedback({
+          device,
+          role,
+          paperWidth,
+          status: "error",
+          message: `Saved "${device.name || "printer"}", but the connection failed. Make sure it is turned on and in range.`,
+        });
+        return;
+      }
+
+      setDevices((prev) => prev.filter((d) => d.address !== device.address));
+      setAddFeedback({
+        device,
+        role,
+        paperWidth,
+        status: "success",
+        message: `${device.name || "Printer"} connected successfully.`,
+      });
+
+      successCloseTimeoutRef.current = setTimeout(() => {
+        successCloseTimeoutRef.current = null;
+        closeWithReset();
+      }, 1200);
+    } catch {
+      setAddFeedback({
+        device,
+        role,
+        paperWidth,
+        status: "error",
+        message: `Could not add "${device.name || "printer"}". Please try again.`,
+      });
+    }
+  };
 
   const handleAdd = (device: BluetoothDevice, role: "receipt" | "kitchen") => {
     Alert.alert("Paper Width", "Select the paper width for this printer", [
       {
         text: "58mm",
-        onPress: async () => {
-          await addPrinter(device, role, 58);
-          setDevices((prev) => prev.filter((d) => d.address !== device.address));
-        },
+        onPress: () => void runAddPrinter(device, role, 58),
       },
       {
         text: "80mm",
-        onPress: async () => {
-          await addPrinter(device, role, 80);
-          setDevices((prev) => prev.filter((d) => d.address !== device.address));
-        },
+        onPress: () => void runAddPrinter(device, role, 80),
       },
       { text: "Cancel", style: "cancel" },
     ]);
@@ -77,11 +165,109 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
   return (
     <Modal
       visible={visible}
-      onClose={onClose}
+      onClose={
+        addFeedback?.status === "saving" || addFeedback?.status === "connecting"
+          ? undefined
+          : closeWithReset
+      }
       position="bottom"
       title="Scan for Printers"
       showCloseButton
     >
+      {addFeedback && (
+        <YStack
+          backgroundColor={
+            addFeedback.status === "success"
+              ? "#DCFCE7"
+              : addFeedback.status === "error"
+                ? "#FEF2F2"
+                : "#DBEAFE"
+          }
+          borderRadius={12}
+          borderWidth={1}
+          borderColor={
+            addFeedback.status === "success"
+              ? "#86EFAC"
+              : addFeedback.status === "error"
+                ? "#FECACA"
+                : "#93C5FD"
+          }
+          padding={16}
+          marginBottom={16}
+        >
+          <XStack alignItems="center" gap={12}>
+            {addFeedback.status === "saving" || addFeedback.status === "connecting" ? (
+              <ActivityIndicator size="small" color="#0D87E1" />
+            ) : (
+              <Ionicons
+                name={addFeedback.status === "success" ? "checkmark-circle" : "alert-circle"}
+                size={22}
+                color={addFeedback.status === "success" ? "#16A34A" : "#DC2626"}
+              />
+            )}
+            <YStack flex={1}>
+              <Text
+                variant="heading"
+                size="sm"
+                style={{
+                  color:
+                    addFeedback.status === "success"
+                      ? "#166534"
+                      : addFeedback.status === "error"
+                        ? "#991B1B"
+                        : "#1D4ED8",
+                }}
+              >
+                {addFeedback.status === "saving"
+                  ? "Adding printer"
+                  : addFeedback.status === "connecting"
+                    ? "Connecting printer"
+                    : addFeedback.status === "success"
+                      ? "Printer ready"
+                      : "Connection failed"}
+              </Text>
+              <Text
+                size="sm"
+                style={{
+                  marginTop: 4,
+                  color:
+                    addFeedback.status === "success"
+                      ? "#166534"
+                      : addFeedback.status === "error"
+                        ? "#991B1B"
+                        : "#1D4ED8",
+                }}
+              >
+                {addFeedback.message}
+              </Text>
+            </YStack>
+          </XStack>
+
+          {addFeedback.status === "error" && (
+            <XStack marginTop={12} gap={8}>
+              <Button
+                variant="primary"
+                size="sm"
+                onPress={() =>
+                  void runAddPrinter(addFeedback.device, addFeedback.role, addFeedback.paperWidth)
+                }
+                style={{ flex: 1 }}
+              >
+                Retry
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onPress={() => setAddFeedback(null)}
+                style={{ flex: 1 }}
+              >
+                Dismiss
+              </Button>
+            </XStack>
+          )}
+        </YStack>
+      )}
+
       {devices.length > 0 && (
         <YStack>
           {devices.map((device) => (
@@ -95,10 +281,20 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
               <Text style={{ fontWeight: "600" }}>{device.name || "Unknown Device"}</Text>
               <Text style={{ fontSize: 12, color: "#6B7280" }}>{device.address}</Text>
               <XStack marginTop={8} gap={8}>
-                <Button variant="outline" size="sm" onPress={() => handleAdd(device, "receipt")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onPress={() => handleAdd(device, "receipt")}
+                  disabled={addFeedback !== null}
+                >
                   Add as Receipt
                 </Button>
-                <Button variant="outline" size="sm" onPress={() => handleAdd(device, "kitchen")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onPress={() => handleAdd(device, "kitchen")}
+                  disabled={addFeedback !== null}
+                >
                   Add as Kitchen
                 </Button>
               </XStack>
@@ -123,7 +319,12 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
         </YStack>
       )}
 
-      <Button variant="outline" onPress={startScan} disabled={isScanning} style={{ marginTop: 16 }}>
+      <Button
+        variant="outline"
+        onPress={startScan}
+        disabled={isScanning || addFeedback !== null}
+        style={{ marginTop: 16 }}
+      >
         Scan Again
       </Button>
     </Modal>

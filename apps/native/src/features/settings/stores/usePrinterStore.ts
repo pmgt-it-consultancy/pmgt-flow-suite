@@ -27,6 +27,7 @@ const RETRY_DELAY_MS = 1000;
 const INITIALIZATION_DELAY_MS = 1000;
 
 export type PrinterConnectionStatus = "connected" | "disconnected" | "reconnecting" | "failed";
+export type PrinterAddProgress = "saving" | "connecting";
 
 interface PrinterStore {
   printers: PrinterConfig[];
@@ -50,6 +51,7 @@ interface PrinterStore {
     device: BluetoothDevice,
     role: "receipt" | "kitchen",
     paperWidth: 58 | 80,
+    onProgress?: (progress: PrinterAddProgress) => void,
   ) => Promise<boolean>;
   removePrinter: (id: string) => Promise<void>;
   updatePrinter: (id: string, updates: Partial<PrinterConfig>) => Promise<void>;
@@ -158,7 +160,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
     return next;
   },
 
-  addPrinter: async (device, role, paperWidth) => {
+  addPrinter: async (device, role, paperWidth, onProgress) => {
     const { printers } = get();
     const hasDefaultForRole = printers.some((p) => p.role === role && p.isDefault);
 
@@ -171,12 +173,21 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
       isDefault: !hasDefaultForRole,
     };
 
+    onProgress?.("saving");
     await storageAddPrinter(config);
-
-    const connected = await connectToDevice(device.address);
 
     set((state) => ({
       printers: [...state.printers, config],
+      connectionStatus: {
+        ...state.connectionStatus,
+        [device.address]: "reconnecting",
+      },
+    }));
+
+    onProgress?.("connecting");
+    const connected = await connectToDevice(device.address);
+
+    set((state) => ({
       connectionStatus: {
         ...state.connectionStatus,
         [device.address]: connected ? "connected" : "disconnected",
