@@ -13,8 +13,6 @@ export function BulkVoidFooter({
   onVoidSelected,
   onCancelSelection,
 }: BulkVoidFooterProps) {
-  if (selectedCount === 0) return null;
-
   return (
     <div className="sticky bottom-0 z-50 bg-white border-t shadow-lg px-6 py-4 flex items-center justify-between">
       <span className="text-sm font-medium text-gray-700">
@@ -24,7 +22,7 @@ export function BulkVoidFooter({
         <Button variant="outline" onClick={onCancelSelection}>
           Cancel
         </Button>
-        <Button variant="destructive" onClick={onVoidSelected}>
+        <Button variant="destructive" onClick={onVoidSelected} disabled={selectedCount === 0}>
           Void Selected
         </Button>
       </div>
