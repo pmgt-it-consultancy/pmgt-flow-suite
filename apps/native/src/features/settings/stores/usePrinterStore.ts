@@ -35,6 +35,7 @@ interface PrinterStore {
   isScanning: boolean;
   kitchenPrintingEnabled: boolean;
   cashDrawerEnabled: boolean;
+  useReceiptPrinterForKitchen: boolean;
   isInitialized: boolean;
 
   initialize: () => Promise<{ failedPrinters: string[] }>;
@@ -49,11 +50,12 @@ interface PrinterStore {
     device: BluetoothDevice,
     role: "receipt" | "kitchen",
     paperWidth: 58 | 80,
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   removePrinter: (id: string) => Promise<void>;
   updatePrinter: (id: string, updates: Partial<PrinterConfig>) => Promise<void>;
   setKitchenPrintingEnabled: (enabled: boolean) => Promise<void>;
   setCashDrawerEnabled: (enabled: boolean) => Promise<void>;
+  setUseReceiptPrinterForKitchen: (enabled: boolean) => Promise<void>;
 
   printReceipt: (data: ReceiptData) => Promise<void>;
   printKitchenTicket: (data: KitchenTicketData) => Promise<void>;
@@ -68,6 +70,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   isScanning: false,
   kitchenPrintingEnabled: false,
   cashDrawerEnabled: false,
+  useReceiptPrinterForKitchen: false,
   isInitialized: false,
 
   initialize: async () => {
@@ -76,6 +79,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
       printers: settings.printers,
       kitchenPrintingEnabled: settings.kitchenPrintingEnabled,
       cashDrawerEnabled: settings.cashDrawerEnabled,
+      useReceiptPrinterForKitchen: settings.useReceiptPrinterForKitchen ?? false,
     });
 
     await enableBluetooth();
@@ -178,6 +182,8 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
         [device.address]: connected ? "connected" : "disconnected",
       },
     }));
+
+    return connected;
   },
 
   removePrinter: async (id: string) => {
@@ -206,25 +212,39 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   },
 
   setKitchenPrintingEnabled: async (enabled: boolean) => {
-    const { printers, cashDrawerEnabled } = get();
+    const { printers, cashDrawerEnabled, useReceiptPrinterForKitchen } = get();
     const settings: PrinterSettings = {
       printers,
       kitchenPrintingEnabled: enabled,
       cashDrawerEnabled,
+      useReceiptPrinterForKitchen,
     };
     await savePrinterSettings(settings);
     set({ kitchenPrintingEnabled: enabled });
   },
 
   setCashDrawerEnabled: async (enabled: boolean) => {
-    const { printers, kitchenPrintingEnabled } = get();
+    const { printers, kitchenPrintingEnabled, useReceiptPrinterForKitchen } = get();
     const settings: PrinterSettings = {
       printers,
       kitchenPrintingEnabled,
       cashDrawerEnabled: enabled,
+      useReceiptPrinterForKitchen,
     };
     await savePrinterSettings(settings);
     set({ cashDrawerEnabled: enabled });
+  },
+
+  setUseReceiptPrinterForKitchen: async (enabled: boolean) => {
+    const { printers, kitchenPrintingEnabled, cashDrawerEnabled } = get();
+    const settings: PrinterSettings = {
+      printers,
+      kitchenPrintingEnabled,
+      cashDrawerEnabled,
+      useReceiptPrinterForKitchen: enabled,
+    };
+    await savePrinterSettings(settings);
+    set({ useReceiptPrinterForKitchen: enabled });
   },
 
   printReceipt: async (data: ReceiptData) => {
@@ -241,10 +261,13 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   },
 
   printKitchenTicket: async (data: KitchenTicketData) => {
-    const { kitchenPrintingEnabled, printers, connectPrinter } = get();
+    const { kitchenPrintingEnabled, useReceiptPrinterForKitchen, printers, connectPrinter } = get();
     if (!kitchenPrintingEnabled) return;
 
-    const printer = printers.find((p) => p.role === "kitchen" && p.isDefault);
+    let printer = printers.find((p) => p.role === "kitchen" && p.isDefault);
+    if (!printer && useReceiptPrinterForKitchen) {
+      printer = printers.find((p) => p.role === "receipt" && p.isDefault);
+    }
     if (!printer) return;
 
     // Always connect before printing — Bluetooth Classic supports only one active connection
