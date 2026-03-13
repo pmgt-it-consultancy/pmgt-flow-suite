@@ -1,20 +1,64 @@
 import { useFonts } from "expo-font";
 import * as NavigationBar from "expo-navigation-bar";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LogBox, Platform, StatusBar, View } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { TamaguiProvider } from "tamagui";
 import ConvexClientProvider from "./ConvexClientProvider";
 import { AuthProvider } from "./src/features/auth";
+import { useAuth } from "./src/features/auth/context";
 import { SplashScreen } from "./src/features/shared/components/SplashScreen";
 import Navigation from "./src/navigation/Navigation";
 import config from "./tamagui.config";
 
+function AppContent() {
+  const { isLoading, isAuthenticated } = useAuth();
+  const [showSplash, setShowSplash] = useState(true);
+  const [animationDone, setAnimationDone] = useState(false);
+  const resolvedRoute = useRef<"HomeScreen" | "LoginScreen" | null>(null);
+
+  // Once auth resolves, lock in the initial route
+  if (!isLoading && resolvedRoute.current === null) {
+    resolvedRoute.current = isAuthenticated ? "HomeScreen" : "LoginScreen";
+  }
+
+  // Dismiss splash when both animation is done AND auth has resolved
+  const handleSplashFinish = useCallback(() => {
+    setAnimationDone(true);
+  }, []);
+
+  useEffect(() => {
+    if (animationDone && !isLoading) {
+      setShowSplash(false);
+    }
+  }, [animationDone, isLoading]);
+
+  const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 50 : StatusBar.currentHeight;
+
+  return (
+    <View style={{ flex: 1 }}>
+      {showSplash ? (
+        <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+          <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#FFFFFF" }}>
+            <StatusBar translucent backgroundColor="#FFFFFF" barStyle="dark-content" />
+          </View>
+          <SplashScreen onFinish={handleSplashFinish} />
+        </View>
+      ) : (
+        <>
+          <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#0D87E1" }}>
+            <StatusBar translucent backgroundColor="#0D87E1" barStyle="light-content" />
+          </View>
+          <Navigation initialRoute={resolvedRoute.current ?? "LoginScreen"} />
+        </>
+      )}
+    </View>
+  );
+}
+
 export default function App() {
   LogBox.ignoreLogs(["Warning: ..."]);
   LogBox.ignoreAllLogs();
-
-  const [showSplash, setShowSplash] = useState(true);
 
   const [loaded] = useFonts({
     Bold: require("./src/assets/fonts/Inter-Bold.ttf"),
@@ -29,8 +73,6 @@ export default function App() {
     MLight: require("./src/assets/fonts/Montserrat-Light.ttf"),
   });
 
-  const handleSplashFinish = useCallback(() => setShowSplash(false), []);
-
   useEffect(() => {
     if (Platform.OS === "android") {
       NavigationBar.setVisibilityAsync("hidden");
@@ -42,20 +84,12 @@ export default function App() {
     return null;
   }
 
-  const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 50 : StatusBar.currentHeight;
-
   return (
     <TamaguiProvider config={config} defaultTheme="light">
       <KeyboardProvider>
         <ConvexClientProvider>
           <AuthProvider>
-            <View style={{ flex: 1 }}>
-              <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: "#0D87E1" }}>
-                <StatusBar translucent backgroundColor={"#0D87E1"} barStyle="light-content" />
-              </View>
-              <Navigation />
-              {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
-            </View>
+            <AppContent />
           </AuthProvider>
         </ConvexClientProvider>
       </KeyboardProvider>

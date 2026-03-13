@@ -60,7 +60,11 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const Navigation = () => {
+const Navigation = ({
+  initialRoute = "LoginScreen",
+}: {
+  initialRoute?: keyof RootStackParamList;
+}) => {
   const initialize = usePrinterStore((s) => s.initialize);
   const isInitialized = usePrinterStore((s) => s.isInitialized);
   usePrinterConnectionPolling();
@@ -122,7 +126,7 @@ const Navigation = () => {
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         id={undefined}
-        initialRouteName="LoginScreen"
+        initialRouteName={initialRoute}
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
