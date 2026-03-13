@@ -8,6 +8,7 @@ import { Text } from "../../shared/components/ui/Text";
 import { EditPrinterModal } from "../components/EditPrinterModal";
 import { ScanPrintersModal } from "../components/ScanPrintersModal";
 import type { PrinterConfig } from "../services/printerStorage";
+import type { PrinterConnectionStatus } from "../stores/usePrinterStore";
 import { usePrinterStore } from "../stores/usePrinterStore";
 
 export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
@@ -24,6 +25,9 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
     openCashDrawer,
     testPrint,
     removePrinter,
+    connectPrinter,
+    setConnectionStatus,
+    resetReconnectAttempts,
   } = usePrinterStore();
 
   const handleOpenDrawer = async () => {
@@ -43,6 +47,24 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
         onPress: () => removePrinter(printer.id),
       },
     ]);
+  };
+
+  const handleReconnect = async (printer: PrinterConfig) => {
+    setConnectionStatus(printer.id, "reconnecting");
+    resetReconnectAttempts(printer.id);
+
+    const connected = await connectPrinter(printer.id);
+    if (!connected) {
+      setConnectionStatus(printer.id, "failed");
+      Alert.alert(
+        "Reconnect Failed",
+        `Could not connect to "${printer.name}". Make sure the printer is turned on and in range.`,
+        [
+          { text: "Retry", onPress: () => handleReconnect(printer) },
+          { text: "Dismiss", style: "cancel" },
+        ],
+      );
+    }
   };
 
   return (
@@ -177,7 +199,7 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
           </YStack>
         ) : (
           printers.map((printer) => {
-            const isConnected = connectionStatus[printer.id] ?? false;
+            const status: PrinterConnectionStatus = connectionStatus[printer.id] ?? "disconnected";
 
             return (
               <YStack
@@ -208,15 +230,55 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
                     height={8}
                     borderRadius={4}
                     marginRight={8}
-                    backgroundColor={isConnected ? "#22C55E" : "#9CA3AF"}
+                    backgroundColor={
+                      status === "connected"
+                        ? "#22C55E"
+                        : status === "reconnecting"
+                          ? "#F59E0B"
+                          : status === "failed"
+                            ? "#EF4444"
+                            : "#9CA3AF"
+                    }
                   />
-                  <Text size="sm" style={{ color: isConnected ? "#16A34A" : "#6B7280" }}>
-                    {isConnected ? "Connected" : "Disconnected"}
+                  <Text
+                    size="sm"
+                    style={{
+                      color:
+                        status === "connected"
+                          ? "#16A34A"
+                          : status === "reconnecting"
+                            ? "#D97706"
+                            : status === "failed"
+                              ? "#DC2626"
+                              : "#6B7280",
+                    }}
+                  >
+                    {status === "connected"
+                      ? "Connected"
+                      : status === "reconnecting"
+                        ? "Reconnecting..."
+                        : status === "failed"
+                          ? "Connection Failed"
+                          : "Disconnected"}
                   </Text>
                 </XStack>
 
                 {/* Action buttons */}
-                <XStack gap={8}>
+                <XStack gap={8} flexWrap="wrap">
+                  {(status === "disconnected" || status === "failed") && (
+                    <Button variant="outline" size="sm" onPress={() => handleReconnect(printer)}>
+                      <Text style={{ color: "#0D87E1", fontSize: 14, fontWeight: "500" }}>
+                        Reconnect
+                      </Text>
+                    </Button>
+                  )}
+                  {status === "reconnecting" && (
+                    <Button variant="outline" size="sm" disabled>
+                      <Text style={{ color: "#9CA3AF", fontSize: 14, fontWeight: "500" }}>
+                        Reconnecting...
+                      </Text>
+                    </Button>
+                  )}
                   <Button variant="outline" size="sm" onPress={() => testPrint(printer.id)}>
                     Test Print
                   </Button>

@@ -15,6 +15,7 @@ import { HomeScreen } from "../features/home";
 import { OrderDetailScreen, OrderHistoryScreen } from "../features/order-history";
 import { OrderScreen } from "../features/orders";
 import { PrinterSettingsScreen, SettingsScreen } from "../features/settings";
+import { usePrinterConnectionPolling } from "../features/settings/hooks/usePrinterConnectionPolling";
 import { usePrinterStore } from "../features/settings/stores/usePrinterStore";
 import { TablesScreen } from "../features/tables";
 import { TakeoutListScreen, TakeoutOrderScreen } from "../features/takeout";
@@ -61,6 +62,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Navigation = () => {
   const initialize = usePrinterStore((s) => s.initialize);
   const isInitialized = usePrinterStore((s) => s.isInitialized);
+  usePrinterConnectionPolling();
 
   const checkForUpdateAction = useAction(api.appUpdate.checkForUpdate);
   const { isAuthenticated } = useAuth();
