@@ -70,10 +70,15 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
     if (!takeoutOrders) return { activeOrders: [], completedOrders: [] };
     return {
       activeOrders: takeoutOrders.filter(
-        (o) => o.takeoutStatus && !["completed", "cancelled"].includes(o.takeoutStatus),
+        (o) =>
+          o.status !== "voided" &&
+          o.takeoutStatus &&
+          !["completed", "cancelled"].includes(o.takeoutStatus),
       ),
       completedOrders: takeoutOrders.filter(
-        (o) => o.takeoutStatus && ["completed", "cancelled"].includes(o.takeoutStatus),
+        (o) =>
+          o.status === "voided" ||
+          (o.takeoutStatus && ["completed", "cancelled"].includes(o.takeoutStatus)),
       ),
     };
   }, [takeoutOrders]);
@@ -220,6 +225,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
                   id={item._id}
                   orderNumber={item.orderNumber}
                   customerName={item.customerName}
+                  orderStatus={item.status}
                   takeoutStatus={item.takeoutStatus as TakeoutStatus | undefined}
                   netSales={item.netSales}
                   itemCount={item.itemCount}

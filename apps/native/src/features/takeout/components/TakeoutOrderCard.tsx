@@ -11,6 +11,7 @@ interface TakeoutOrderCardProps {
   id: Id<"orders">;
   orderNumber: string;
   customerName?: string;
+  orderStatus?: "open" | "paid" | "voided";
   takeoutStatus?: TakeoutStatus;
   netSales: number;
   itemCount: number;
@@ -58,6 +59,7 @@ export const TakeoutOrderCard = ({
   id,
   orderNumber,
   customerName,
+  orderStatus,
   takeoutStatus = "pending",
   netSales,
   itemCount,
@@ -66,7 +68,8 @@ export const TakeoutOrderCard = ({
   onPress,
 }: TakeoutOrderCardProps) => {
   const formatCurrency = useFormatCurrency();
-  const config = statusConfig[takeoutStatus];
+  const isVoided = orderStatus === "voided";
+  const config = isVoided ? statusConfig.cancelled : statusConfig[takeoutStatus];
   const time = new Date(createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   return (
@@ -91,8 +94,8 @@ export const TakeoutOrderCard = ({
             </Text>
           ) : null}
         </YStack>
-        <Badge variant={config.variant} size="md">
-          {config.label}
+        <Badge variant={isVoided ? "error" : config.variant} size="md">
+          {isVoided ? "Voided" : config.label}
         </Badge>
       </XStack>
 
@@ -108,7 +111,7 @@ export const TakeoutOrderCard = ({
         </Text>
       </XStack>
 
-      {config.nextLabel && (
+      {config.nextLabel && !isVoided && (
         <TouchableOpacity
           onPress={() => onAdvanceStatus(id, takeoutStatus)}
           activeOpacity={0.8}
