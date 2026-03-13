@@ -48,21 +48,23 @@ Persisted to AsyncStorage so lock survives app restart.
 - Back gesture and hardware back button disabled (`gestureEnabled: false`)
 - Displays: current time (updating), date, lock icon, locked user name + role, "locked since" time
 - Numeric PIN pad (0-9, backspace) with PIN dots (filled/empty)
-- On PIN submit: calls `users.verifyPin` on backend
-  - If valid for locked user → unlock, pop screen, audit log
+- User presses an "Unlock" button after entering PIN (no auto-submit — avoids leaking PIN length)
+- On PIN submit: calls new `screenUnlock` action on backend (see below)
+  - If valid for locked user → unlock, pop screen
   - If invalid → shake animation, clear PIN, show error
 - "Manager Override" link at bottom → shows manager list (reuses pattern from `ManagerPinModal`)
-  - Select manager → enter manager PIN → verify → unlock + audit log with override info
-- Max 5 failed attempts → 30-second cooldown with countdown display
+  - Select manager → enter manager PIN → calls `screenUnlockOverride` action → unlock
+- Max 5 failed attempts → 30-second cooldown with countdown display (client-side only — acceptable for POS threat model where physical terminal access is already controlled)
 
 **Backend (Convex)**
 - **Settings:** Add `autoLockTimeout` field to store settings. Values: `1`, `2`, `5`, `10`, `15`, `30` (minutes) or `0` (disabled). Default: `5`.
 - **PIN Verification:** Reuses existing `users.verifyPin` action (bcrypt compare)
 - **Manager Query:** Reuses existing `usersHelpers.listManagers` for override flow
-- **Audit Logging:** New actions logged:
-  - `screen_locked` — manual or auto, with trigger type
-  - `screen_unlocked` — by own PIN
-  - `screen_unlock_override` — by manager, includes manager ID
+- **New Actions (atomic verify + audit):**
+  - `screenUnlock(userId, pin, storeId)` — action that calls `verifyPin` internally, then `ctx.runMutation` to create audit log. Returns success/failure. This ensures audit logging is atomic with verification.
+  - `screenUnlockOverride(lockedUserId, managerId, managerPin, storeId)` — same pattern, verifies manager PIN then audit logs the override.
+  - `screenLock(userId, storeId, trigger)` — mutation that creates audit log entry for lock events.
+- **Audit Log Fields:** `entityType: "screen_lock"`, `entityId: <userId>` for all lock/unlock events.
 
 ### Navigation Integration
 
@@ -106,9 +108,16 @@ Add an "Auto-Lock Timeout" option to the native app's Settings screen:
 - **No PIN set:** Lock button hidden. If auto-lock is enabled but user has no PIN, prompt them to set one (navigate to settings) rather than locking them out.
 - **App backgrounded:** When app goes to background, record timestamp. On foreground, calculate elapsed time — if it exceeds timeout, lock immediately (no warning).
 - **App killed while locked:** Persisted Zustand state restores `isLocked = true` on next launch → shows lock screen.
-- **Multiple failed PINs:** After 5 wrong attempts, show 30-second cooldown timer. Resets after cooldown.
+- **Multiple failed PINs:** After 5 wrong attempts, show 30-second cooldown timer. Resets after cooldown. Client-side rate limiting is sufficient — POS terminals are in a physically controlled environment.
 - **Manager override with no managers available:** Show message "No managers with PINs available. Contact your administrator."
 - **Timeout changed while idle:** Timer picks up new value on next activity reset.
+- **In-progress order state:** Orders are persisted in Convex, so locking mid-order is safe. The cashier returns to the same screen with the same order state on unlock. No local-only state is at risk.
+- **Active checkout/payment:** Auto-lock is suppressed during active checkout processing (the `CheckoutScreen`) to avoid interrupting payment flows. The idle timer pauses while on checkout and resumes when navigating away.
+- **Warning timing:** The 30-second warning assumes minimum timeout >= 1 minute (which is enforced by the settings options). If the timeout is 1 minute, warning appears at 30s of inactivity.
+
+## Settings Scope
+
+The `autoLockTimeout` setting is configured on the **native app only** (Settings screen). This is intentional — the setting is specific to POS terminal behavior and doesn't need web admin management. The value is stored per-store in Convex so all terminals for a store share the same timeout.
 
 ## Audit Trail
 
