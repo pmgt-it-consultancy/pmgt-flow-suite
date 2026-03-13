@@ -79,6 +79,7 @@ export const ReceiptPreviewModal = ({
   const { printers, connectionStatus, connectPrinter } = usePrinterStore();
 
   const receiptPrinter = printers.find((p) => p.role === "receipt" && p.isDefault);
+  const kitchenPrinter = printers.find((p) => p.role === "kitchen" && p.isDefault);
   const isConnected = receiptPrinter ? connectionStatus[receiptPrinter.id] === true : false;
   const canPrint = !!receiptPrinter && isConnected;
   const paperWidth = receiptPrinter?.paperWidth ?? 80;
@@ -103,11 +104,12 @@ export const ReceiptPreviewModal = ({
     setIsKitchenPrinting(true);
     setKitchenPrintResult(null);
     try {
-      // Connect to the receipt printer (it may already be connected)
-      const connected = await connectPrinter(receiptPrinter.id);
+      // Use dedicated kitchen printer if available, otherwise fall back to receipt printer
+      const targetPrinter = kitchenPrinter ?? receiptPrinter;
+      const connected = await connectPrinter(targetPrinter.id);
       if (!connected) throw new Error("Failed to connect to printer");
 
-      const charsPerLine = receiptPrinter.paperWidth === 58 ? 32 : 48;
+      const charsPerLine = targetPrinter.paperWidth === 58 ? 32 : 48;
       await printKitchenTicketToThermal(kitchenTicketData, charsPerLine);
       setKitchenPrintResult("success");
     } catch (err) {
