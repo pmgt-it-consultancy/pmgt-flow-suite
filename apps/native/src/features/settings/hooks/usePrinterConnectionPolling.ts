@@ -2,10 +2,9 @@ import { useEffect, useRef } from "react";
 import { AppState } from "react-native";
 import { connectToDevice } from "../services/bluetoothPrinter";
 import { usePrinterStore } from "../stores/usePrinterStore";
+import { autoReconnect } from "../utils/autoReconnect";
 
-const POLL_INTERVAL_MS = 15_000;
-const MAX_AUTO_RECONNECT = 3;
-const AUTO_RECONNECT_DELAY_MS = 2_000;
+const POLL_INTERVAL_MS = 60_000;
 
 export function usePrinterConnectionPolling() {
   const isInitialized = usePrinterStore((s) => s.isInitialized);
@@ -35,7 +34,6 @@ export function usePrinterConnectionPolling() {
             store.resetReconnectAttempts(printer.id);
           } else if (currentStatus === "connected") {
             // Was connected, now isn't — start auto-reconnect
-            store.setConnectionStatus(printer.id, "reconnecting");
             autoReconnect(printer.id);
           }
           // If already "disconnected" or "failed", don't re-trigger auto-reconnect
@@ -59,30 +57,4 @@ export function usePrinterConnectionPolling() {
       appStateSub.remove();
     };
   }, [isInitialized, printers.length]);
-}
-
-async function autoReconnect(address: string) {
-  const store = usePrinterStore.getState();
-
-  for (let i = 0; i < MAX_AUTO_RECONNECT; i++) {
-    if (i > 0) {
-      await new Promise((resolve) => setTimeout(resolve, AUTO_RECONNECT_DELAY_MS));
-    }
-
-    store.incrementReconnectAttempts(address);
-    const connected = await connectToDevice(address);
-
-    if (connected) {
-      store.setConnectionStatus(address, "connected");
-      store.resetReconnectAttempts(address);
-      return;
-    }
-
-    // Re-read store in case printer was removed during reconnect
-    const currentStore = usePrinterStore.getState();
-    if (!currentStore.printers.find((p) => p.id === address)) return;
-  }
-
-  // All retries exhausted
-  usePrinterStore.getState().setConnectionStatus(address, "failed");
 }
