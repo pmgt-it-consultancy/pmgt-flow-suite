@@ -1,10 +1,13 @@
 ## What's New
 
-- Cash drawer support via receipt printer's DK port (RJ-11/RJ-12 interface)
-- Auto-open cash drawer after payment completion (configurable in Printer Settings)
-- Manual "Open Cash Drawer" button in Printer Settings for quick access
+- Bluetooth printer connection polling — detects disconnected printers within ~15 seconds
+- Auto-reconnect with up to 3 retries when a printer drops connection
+- Error alerts when manual reconnect fails (Retry/Dismiss options)
+- Reconnect button added to Printer Settings screen for each configured printer
+- Extended status indicators: Connected (green), Reconnecting (amber), Connection Failed (red)
 
 ## Notes
 
-- Cash drawer requires a receipt printer with a DK (Drawer Kick) port connected to the cash drawer
-- Enable the "Cash Drawer" toggle in Printer Settings to activate auto-open on checkout
+- Polling runs every 15 seconds and pauses when the app is backgrounded
+- After 3 failed auto-reconnect attempts, the status shows "Connection Failed" — tap Reconnect to try again
+- Status updates are visible in both the system status dropdown and Printer Settings

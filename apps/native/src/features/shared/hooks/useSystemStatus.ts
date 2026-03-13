@@ -5,7 +5,12 @@ import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 
-export type ConnectionStatus = "connected" | "disconnected" | "checking";
+export type ConnectionStatus =
+  | "connected"
+  | "disconnected"
+  | "checking"
+  | "reconnecting"
+  | "failed";
 export type OverallStatus = "ok" | "degraded" | "critical";
 
 export interface SystemStatus {
@@ -15,7 +20,7 @@ export interface SystemStatus {
   lastSyncTimestamp: number | null;
   overallStatus: OverallStatus;
   retryServer: () => void;
-  reconnectPrinter: (role: "receipt" | "kitchen") => Promise<void>;
+  reconnectPrinter: (role: "receipt" | "kitchen") => Promise<boolean>;
 }
 
 export function useSystemStatus(): SystemStatus {
@@ -63,20 +68,31 @@ export function useSystemStatus(): SystemStatus {
   const receiptPrinter: ConnectionStatus = useMemo(() => {
     const printer = printers.find((p) => p.role === "receipt" && p.isDefault);
     if (!printer) return "disconnected";
-    return connectionStatus[printer.id] ? "connected" : "disconnected";
+    const status = connectionStatus[printer.id];
+    if (!status || status === "disconnected") return "disconnected";
+    if (status === "reconnecting") return "reconnecting";
+    if (status === "failed") return "failed";
+    return "connected";
   }, [printers, connectionStatus]);
 
   const kitchenPrinter: ConnectionStatus = useMemo(() => {
     if (!kitchenPrintingEnabled) return "connected"; // not relevant, treat as ok
     const printer = printers.find((p) => p.role === "kitchen" && p.isDefault);
     if (!printer) return "disconnected";
-    return connectionStatus[printer.id] ? "connected" : "disconnected";
+    const status = connectionStatus[printer.id];
+    if (!status || status === "disconnected") return "disconnected";
+    if (status === "reconnecting") return "reconnecting";
+    if (status === "failed") return "failed";
+    return "connected";
   }, [printers, connectionStatus, kitchenPrintingEnabled]);
 
   // Overall status
   const overallStatus: OverallStatus = useMemo(() => {
     if (server === "disconnected") return "critical";
-    if (receiptPrinter === "disconnected" || kitchenPrinter === "disconnected") return "degraded";
+    const printerStatuses = [receiptPrinter, kitchenPrinter];
+    if (printerStatuses.includes("failed")) return "critical";
+    if (printerStatuses.includes("disconnected") || printerStatuses.includes("reconnecting"))
+      return "degraded";
     if (server === "checking") return "degraded";
     return "ok";
   }, [server, receiptPrinter, kitchenPrinter]);
@@ -102,12 +118,19 @@ export function useSystemStatus(): SystemStatus {
     setRetryCounter((c) => c + 1);
   }, []);
 
-  const reconnectPrinter = useCallback(async (role: "receipt" | "kitchen") => {
+  const reconnectPrinter = useCallback(async (role: "receipt" | "kitchen"): Promise<boolean> => {
     const store = usePrinterStore.getState();
     const printer = store.printers.find((p) => p.role === role && p.isDefault);
-    if (printer) {
-      await store.connectPrinter(printer.id);
+    if (!printer) return false;
+
+    store.setConnectionStatus(printer.id, "reconnecting");
+    store.resetReconnectAttempts(printer.id);
+
+    const connected = await store.connectPrinter(printer.id);
+    if (!connected) {
+      store.setConnectionStatus(printer.id, "failed");
     }
+    return connected;
   }, []);
 
   return {

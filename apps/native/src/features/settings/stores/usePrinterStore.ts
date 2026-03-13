@@ -26,9 +26,12 @@ const RETRY_DELAY_MS = 1000;
 // This is needed as sometimes the Bluetooth stack needs a moment to settle
 const INITIALIZATION_DELAY_MS = 1000;
 
+export type PrinterConnectionStatus = "connected" | "disconnected" | "reconnecting" | "failed";
+
 interface PrinterStore {
   printers: PrinterConfig[];
-  connectionStatus: Record<string, boolean>;
+  connectionStatus: Record<string, PrinterConnectionStatus>;
+  reconnectAttempts: Record<string, number>;
   isScanning: boolean;
   kitchenPrintingEnabled: boolean;
   cashDrawerEnabled: boolean;
@@ -39,6 +42,9 @@ interface PrinterStore {
   scanForDevices: () => Promise<BluetoothDevice[]>;
   connectPrinter: (address: string) => Promise<boolean>;
   disconnectPrinter: (address: string) => Promise<void>;
+  setConnectionStatus: (address: string, status: PrinterConnectionStatus) => void;
+  resetReconnectAttempts: (address: string) => void;
+  incrementReconnectAttempts: (address: string) => number;
   addPrinter: (
     device: BluetoothDevice,
     role: "receipt" | "kitchen",
@@ -58,6 +64,7 @@ interface PrinterStore {
 export const usePrinterStore = create<PrinterStore>((set, get) => ({
   printers: [],
   connectionStatus: {},
+  reconnectAttempts: {},
   isScanning: false,
   kitchenPrintingEnabled: false,
   cashDrawerEnabled: false,
@@ -76,7 +83,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
     await new Promise((resolve) => setTimeout(resolve, INITIALIZATION_DELAY_MS));
 
     const failedPrinters: string[] = [];
-    const connectionStatus: Record<string, boolean> = {};
+    const connectionStatus: Record<string, PrinterConnectionStatus> = {};
 
     for (let i = 0; i < MAX_RETRY_ATTEMPTS; i++) {
       // No need for exponential backoff here since connection attempts are spaced out by user interaction time
@@ -86,7 +93,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
 
       for (const printer of settings.printers) {
         const connected = await connectToDevice(printer.id);
-        connectionStatus[printer.id] = connected;
+        connectionStatus[printer.id] = connected ? "connected" : "disconnected";
         if (!connected) {
           failedPrinters.push(printer.name);
         }
@@ -111,7 +118,10 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   connectPrinter: async (address: string) => {
     const connected = await connectToDevice(address);
     set((state) => ({
-      connectionStatus: { ...state.connectionStatus, [address]: connected },
+      connectionStatus: {
+        ...state.connectionStatus,
+        [address]: connected ? "connected" : "disconnected",
+      },
     }));
     return connected;
   },
@@ -119,8 +129,29 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   disconnectPrinter: async (address: string) => {
     await disconnectDevice();
     set((state) => ({
-      connectionStatus: { ...state.connectionStatus, [address]: false },
+      connectionStatus: { ...state.connectionStatus, [address]: "disconnected" },
     }));
+  },
+
+  setConnectionStatus: (address: string, status: PrinterConnectionStatus) => {
+    set((state) => ({
+      connectionStatus: { ...state.connectionStatus, [address]: status },
+    }));
+  },
+
+  resetReconnectAttempts: (address: string) => {
+    set((state) => ({
+      reconnectAttempts: { ...state.reconnectAttempts, [address]: 0 },
+    }));
+  },
+
+  incrementReconnectAttempts: (address: string) => {
+    const current = get().reconnectAttempts[address] ?? 0;
+    const next = current + 1;
+    set((state) => ({
+      reconnectAttempts: { ...state.reconnectAttempts, [address]: next },
+    }));
+    return next;
   },
 
   addPrinter: async (device, role, paperWidth) => {
@@ -144,14 +175,14 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
       printers: [...state.printers, config],
       connectionStatus: {
         ...state.connectionStatus,
-        [device.address]: connected,
+        [device.address]: connected ? "connected" : "disconnected",
       },
     }));
   },
 
   removePrinter: async (id: string) => {
     const { connectionStatus } = get();
-    if (connectionStatus[id]) {
+    if (connectionStatus[id] === "connected") {
       await disconnectDevice();
     }
 
@@ -238,7 +269,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   testPrint: async (address: string) => {
     const { connectionStatus, connectPrinter, printers } = get();
 
-    if (!connectionStatus[address]) {
+    if (connectionStatus[address] !== "connected") {
       const connected = await connectPrinter(address);
       if (!connected) throw new Error("Failed to connect to printer");
     }

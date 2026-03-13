@@ -80,7 +80,7 @@ export const ReceiptPreviewModal = ({
 
   const receiptPrinter = printers.find((p) => p.role === "receipt" && p.isDefault);
   const kitchenPrinter = printers.find((p) => p.role === "kitchen" && p.isDefault);
-  const isConnected = receiptPrinter ? connectionStatus[receiptPrinter.id] === true : false;
+  const isConnected = receiptPrinter ? connectionStatus[receiptPrinter.id] === "connected" : false;
   const canPrint = !!receiptPrinter && isConnected;
   const paperWidth = receiptPrinter?.paperWidth ?? 80;
   const previewWidth = PAPER_WIDTH_PX[paperWidth] ?? 300;
