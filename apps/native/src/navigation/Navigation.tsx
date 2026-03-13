@@ -15,6 +15,7 @@ import { HomeScreen } from "../features/home";
 import { OrderDetailScreen, OrderHistoryScreen } from "../features/order-history";
 import { OrderScreen } from "../features/orders";
 import { PrinterSettingsScreen, SettingsScreen } from "../features/settings";
+import { useBluetoothConnectionEvents } from "../features/settings/hooks/useBluetoothConnectionEvents";
 import { usePrinterConnectionPolling } from "../features/settings/hooks/usePrinterConnectionPolling";
 import { usePrinterStore } from "../features/settings/stores/usePrinterStore";
 import { TablesScreen } from "../features/tables";
@@ -63,6 +64,7 @@ const Navigation = () => {
   const initialize = usePrinterStore((s) => s.initialize);
   const isInitialized = usePrinterStore((s) => s.isInitialized);
   usePrinterConnectionPolling();
+  useBluetoothConnectionEvents();
 
   const checkForUpdateAction = useAction(api.appUpdate.checkForUpdate);
   const { isAuthenticated } = useAuth();
