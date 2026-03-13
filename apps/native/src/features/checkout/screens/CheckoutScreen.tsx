@@ -56,6 +56,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   // Receipt Preview State
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
   const [completedReceiptData, setCompletedReceiptData] = useState<ReceiptData | null>(null);
+  const [completedKitchenData, setCompletedKitchenData] = useState<KitchenTicketData | null>(null);
 
   // Printer Store
   const { printReceipt: printToThermal } = usePrinterStore();
@@ -82,9 +83,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const processCardPayment = useMutation(api.checkout.processCardPayment);
   const applyBulkScPwdDiscount = useMutation(api.discounts.applyBulkScPwdDiscount);
   const removeDiscount = useMutation(api.discounts.removeDiscount);
-
-  // Printer Store - kitchen ticket
-  const { printKitchenTicket } = usePrinterStore();
 
   // Computed values
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
@@ -339,6 +337,27 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         paymentMethod === "cash" ? cashAmount : undefined,
       );
       setCompletedReceiptData(receiptData);
+
+      // Build kitchen ticket data for printing from the receipt modal
+      if (order?.orderNumber) {
+        const kitchenData: KitchenTicketData = {
+          orderNumber: order.orderNumber,
+          tableName: isTakeout ? order.customerName || "Takeout" : tableName || "",
+          orderType: isTakeout ? "take_out" : "dine_in",
+          items: activeItems.map((i) => ({
+            name: i.productName,
+            quantity: i.quantity,
+            notes: i.notes,
+            modifiers: i.modifiers?.map((m) => ({
+              optionName: m.optionName,
+              priceAdjustment: m.priceAdjustment,
+            })),
+          })),
+          timestamp: new Date(),
+        };
+        setCompletedKitchenData(kitchenData);
+      }
+
       setShowReceiptPreview(true);
     } catch (error: any) {
       Alert.alert("Error", error.message || "Payment failed");
@@ -477,57 +496,18 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       <ReceiptPreviewModal
         visible={showReceiptPreview}
         receiptData={completedReceiptData}
+        kitchenTicketData={completedKitchenData}
         onPrint={async () => {
           if (!completedReceiptData) return;
           await printToThermal(completedReceiptData);
         }}
         onSkip={() => {
-          const navigateToTakeoutList = () => {
+          if (isTakeout) {
             navigation.reset({
               index: 0,
               routes: [{ name: "HomeScreen" }, { name: "TakeoutListScreen" }],
             });
-          };
-
-          if (isTakeout) {
-            Alert.alert("Print Kitchen Receipt?", "Send this order to the kitchen printer?", [
-              {
-                text: "Print",
-                onPress: async () => {
-                  try {
-                    if (order?.orderNumber) {
-                      const kitchenData: KitchenTicketData = {
-                        orderNumber: order.orderNumber,
-                        tableName: order.customerName || "Takeout",
-                        orderType: "take_out",
-                        items: activeItems.map((i) => ({
-                          name: i.productName,
-                          quantity: i.quantity,
-                          notes: i.notes,
-                          modifiers: i.modifiers?.map((m) => ({
-                            optionName: m.optionName,
-                            priceAdjustment: m.priceAdjustment,
-                          })),
-                        })),
-                        timestamp: new Date(),
-                      };
-                      await printKitchenTicket(kitchenData);
-                    }
-                  } catch (error: any) {
-                    Alert.alert("Error", error.message || "Failed to print kitchen receipt");
-                  }
-                  navigateToTakeoutList();
-                },
-              },
-              {
-                text: "Skip",
-                style: "cancel",
-                onPress: navigateToTakeoutList,
-              },
-            ]);
           } else {
-            // For dine-in: go back to tables screen so user can see remaining tabs
-            // TablesScreen will show updated state (table still occupied if other tabs exist)
             navigation.reset({
               index: 0,
               routes: [{ name: "HomeScreen" }, { name: "TablesScreen" }],
