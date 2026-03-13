@@ -28,8 +28,7 @@ export function LockScreen({ navigation }: LockScreenProps) {
   const lockedUserRole = useLockStore((state) => state.lockedUserRole);
   const lockedAt = useLockStore((state) => state.lockedAt);
   const lockedUserId = useLockStore((state) => state.lockedUserId);
-  const lastRouteName = useLockStore((state) => state.lastRouteName);
-  const lastRouteParams = useLockStore((state) => state.lastRouteParams);
+  const routeHistory = useLockStore((state) => state.routeHistory);
   const cooldownUntil = useLockStore((state) => state.cooldownUntil);
   const unlock = useLockStore((state) => state.unlock);
   const recordFailedAttempt = useLockStore((state) => state.recordFailedAttempt);
@@ -43,11 +42,6 @@ export function LockScreen({ navigation }: LockScreenProps) {
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const shakeAnim = useRef(new Animated.Value(0)).current;
-
-  const restoreRouteName =
-    lastRouteName && lastRouteName !== "LockScreen" && lastRouteName !== "LoginScreen"
-      ? lastRouteName
-      : "HomeScreen";
 
   const screenUnlock = useAction(api.screenLockActions.screenUnlock);
   const screenUnlockOverride = useAction(api.screenLockActions.screenUnlockOverride);
@@ -87,18 +81,19 @@ export function LockScreen({ navigation }: LockScreenProps) {
 
   const finishUnlock = useCallback(() => {
     unlock();
+    const restoredRoutes =
+      routeHistory.length > 0
+        ? routeHistory.map((route) => ({
+            name: route.name,
+            ...(route.params ? { params: route.params } : {}),
+          }))
+        : [{ name: "HomeScreen" }];
+
     navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: restoreRouteName,
-          ...(lastRouteParams && restoreRouteName === lastRouteName
-            ? { params: lastRouteParams }
-            : {}),
-        },
-      ],
+      index: restoredRoutes.length - 1,
+      routes: restoredRoutes,
     });
-  }, [lastRouteName, lastRouteParams, navigation, restoreRouteName, unlock]);
+  }, [navigation, routeHistory, unlock]);
 
   const handleUnlock = useCallback(async () => {
     if (!pin || !lockedUserId || !user?.storeId || isVerifying) {

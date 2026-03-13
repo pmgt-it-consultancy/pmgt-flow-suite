@@ -5,14 +5,18 @@ import { createJSONStorage, persist } from "zustand/middleware";
 const MAX_FAILED_ATTEMPTS = 5;
 const COOLDOWN_DURATION_MS = 30_000;
 
+export interface StoredLockRoute {
+  name: string;
+  params: Record<string, unknown> | null;
+}
+
 interface LockState {
   isLocked: boolean;
   lockedAt: number | null;
   lockedUserId: string | null;
   lockedUserName: string | null;
   lockedUserRole: string | null;
-  lastRouteName: string | null;
-  lastRouteParams: Record<string, unknown> | null;
+  routeHistory: StoredLockRoute[];
   showIdleWarning: boolean;
   warningStartedAt: number | null;
   failedAttempts: number;
@@ -22,7 +26,7 @@ interface LockState {
 interface LockActions {
   lock: (user: { userId: string; userName: string; userRole: string }) => void;
   unlock: () => void;
-  setLastRoute: (routeName: string | null, params?: Record<string, unknown> | null) => void;
+  setRouteHistory: (routes: StoredLockRoute[]) => void;
   setShowIdleWarning: (show: boolean) => void;
   recordFailedAttempt: () => boolean;
   resetFailedAttempts: () => void;
@@ -37,8 +41,7 @@ export const useLockStore = create<LockState & LockActions>()(
       lockedUserId: null,
       lockedUserName: null,
       lockedUserRole: null,
-      lastRouteName: null,
-      lastRouteParams: null,
+      routeHistory: [],
       showIdleWarning: false,
       warningStartedAt: null,
       failedAttempts: 0,
@@ -70,10 +73,9 @@ export const useLockStore = create<LockState & LockActions>()(
           cooldownUntil: null,
         }),
 
-      setLastRoute: (routeName, params = null) =>
+      setRouteHistory: (routes) =>
         set({
-          lastRouteName: routeName,
-          lastRouteParams: params,
+          routeHistory: routes,
         }),
 
       setShowIdleWarning: (show) =>
@@ -121,8 +123,7 @@ export const useLockStore = create<LockState & LockActions>()(
         lockedUserId: state.lockedUserId,
         lockedUserName: state.lockedUserName,
         lockedUserRole: state.lockedUserRole,
-        lastRouteName: state.lastRouteName,
-        lastRouteParams: state.lastRouteParams,
+        routeHistory: state.routeHistory,
       }),
     },
   ),

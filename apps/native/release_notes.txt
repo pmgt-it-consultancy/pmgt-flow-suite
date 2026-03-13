@@ -1,5 +1,6 @@
 ## What's New
 
+- Lock screen navigation fix — unlocking now restores the cashier's previous screen stack so back navigation works correctly from Settings and other flows
 - Screen lock & role management — cashiers can lock/unlock the POS with role-based access
 - Bulk void orders — select and void multiple stale orders at once from the orders page
 - Void takeout orders — void functionality added to takeout detail modal with proper status handling
@@ -10,6 +11,7 @@
 
 ## Notes
 
+- Unlocking from the lock screen now returns staff to their prior flow instead of rebuilding a single-screen stack
 - Bulk void releases associated tables automatically when orders are voided
 - Voided takeout orders now appear in the completed section with a "Voided" badge
 - Bluetooth polling interval increased to 60 seconds for better battery performance

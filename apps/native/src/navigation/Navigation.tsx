@@ -1,6 +1,10 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  type NavigationState,
+  type PartialState,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAction } from "convex/react";
 import * as Notifications from "expo-notifications";
@@ -63,6 +67,32 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+function extractRouteHistory(
+  state: NavigationState | PartialState<NavigationState> | undefined,
+): Array<{ name: string; params: Record<string, unknown> | null }> {
+  if (!state?.routes) {
+    return [];
+  }
+
+  return state.routes.flatMap((route) => {
+    const nestedState = route.state as NavigationState | PartialState<NavigationState> | undefined;
+    if (nestedState?.routes?.length) {
+      return extractRouteHistory(nestedState);
+    }
+
+    if (route.name === "LockScreen" || route.name === "LoginScreen") {
+      return [];
+    }
+
+    return [
+      {
+        name: route.name,
+        params: (route.params as Record<string, unknown> | undefined) ?? null,
+      },
+    ];
+  });
+}
+
 const Navigation = ({
   initialRoute = "LoginScreen",
   onRouteChange,
@@ -82,7 +112,7 @@ const Navigation = ({
   const storeCheck = useUpdateStore((s) => s.checkForUpdate);
   const navigationRef = useRef<any>(null);
   const isLocked = useLockStore((state) => state.isLocked);
-  const setLastRoute = useLockStore((state) => state.setLastRoute);
+  const setRouteHistory = useLockStore((state) => state.setRouteHistory);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -143,22 +173,14 @@ const Navigation = ({
       ref={navigationRef}
       onReady={() => {
         const currentRoute = navigationRef.current?.getCurrentRoute();
-        if (currentRoute?.name && currentRoute.name !== "LockScreen") {
-          setLastRoute(
-            currentRoute.name,
-            (currentRoute.params as Record<string, unknown> | undefined) ?? null,
-          );
-        }
+        const rootState = navigationRef.current?.getRootState();
+        setRouteHistory(extractRouteHistory(rootState));
         onRouteChange?.((currentRoute?.name as keyof RootStackParamList | undefined) ?? null);
       }}
       onStateChange={() => {
         const currentRoute = navigationRef.current?.getCurrentRoute();
-        if (currentRoute?.name && currentRoute.name !== "LockScreen") {
-          setLastRoute(
-            currentRoute.name,
-            (currentRoute.params as Record<string, unknown> | undefined) ?? null,
-          );
-        }
+        const rootState = navigationRef.current?.getRootState();
+        setRouteHistory(extractRouteHistory(rootState));
         onRouteChange?.((currentRoute?.name as keyof RootStackParamList | undefined) ?? null);
       }}
     >
