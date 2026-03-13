@@ -176,6 +176,9 @@ export const voidOrderInternal = internalMutation({
     if (order.status === "voided") {
       throw new Error("Order is already voided");
     }
+    if (order.status === "paid") {
+      throw new Error("Cannot void a paid order");
+    }
 
     const now = Date.now();
 
@@ -199,10 +202,14 @@ export const voidOrderInternal = internalMutation({
 
     // Release table if dine-in
     if (order.tableId) {
-      await ctx.db.patch(order.tableId, {
-        status: "available",
-        currentOrderId: undefined,
-      });
+      const table = await ctx.db.get(order.tableId);
+      // Only release table if it still belongs to this order
+      if (table && table.currentOrderId === args.orderId) {
+        await ctx.db.patch(order.tableId, {
+          status: "available",
+          currentOrderId: undefined,
+        });
+      }
     }
 
     // Log audit

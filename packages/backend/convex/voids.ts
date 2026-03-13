@@ -166,6 +166,72 @@ export const voidOrder = action({
   },
 });
 
+// Action: Bulk void multiple orders with PIN verification
+export const bulkVoidOrders = action({
+  args: {
+    orderIds: v.array(v.id("orders")),
+    managerId: v.id("users"),
+    managerPin: v.string(),
+  },
+  returns: v.union(
+    v.object({
+      success: v.literal(true),
+      voidedCount: v.number(),
+      skippedCount: v.number(),
+    }),
+    v.object({ success: v.literal(false), error: v.string() }),
+  ),
+  handler: async (ctx, args) => {
+    if (args.orderIds.length === 0) {
+      return { success: false as const, error: "No orders selected" };
+    }
+    if (args.orderIds.length > 50) {
+      return { success: false as const, error: "Maximum 50 orders per batch" };
+    }
+
+    // 1. Authenticate requester
+    const requesterId = await ctx.runQuery(
+      internal.helpers.voidsHelpers.getAuthenticatedUserId,
+      {},
+    );
+    if (!requesterId) {
+      return { success: false as const, error: "Authentication required" };
+    }
+
+    // 2. Verify manager PIN (once for entire batch)
+    const manager = await ctx.runQuery(internal.helpers.voidsHelpers.getManagerWithPin, {
+      managerId: args.managerId,
+    });
+    if (!manager || !manager.pin || !manager.isActive) {
+      return { success: false as const, error: "Manager not found, inactive, or PIN not set" };
+    }
+    const pinValid = await bcrypt.compare(args.managerPin, manager.pin);
+    if (!pinValid) {
+      return { success: false as const, error: "Invalid manager PIN" };
+    }
+
+    // 3. Process each order sequentially, skip failures
+    let voidedCount = 0;
+    let skippedCount = 0;
+
+    for (const orderId of args.orderIds) {
+      try {
+        await ctx.runMutation(internal.helpers.voidsHelpers.voidOrderInternal, {
+          orderId,
+          reason: "Bulk void - abandoned order",
+          requestedBy: requesterId,
+          approvedBy: args.managerId,
+        });
+        voidedCount++;
+      } catch {
+        skippedCount++;
+      }
+    }
+
+    return { success: true as const, voidedCount, skippedCount };
+  },
+});
+
 // Action to get voids for an order (public facing)
 export const getOrderVoids = action({
   args: {
