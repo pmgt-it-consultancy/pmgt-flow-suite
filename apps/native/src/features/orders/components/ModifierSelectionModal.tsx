@@ -81,7 +81,12 @@ export const ModifierSelectionModal = ({
   const isOpenPrice = product?.isOpenPrice ?? false;
   const openMinPrice = product?.minPrice ?? 0;
   const openMaxPrice = product?.maxPrice ?? Infinity;
-  const isPriceValid = !isOpenPrice || (customPrice >= openMinPrice && customPrice <= openMaxPrice);
+  const isPriceValid =
+    !isOpenPrice ||
+    (customPriceText.trim() !== "" &&
+      customPrice > 0 &&
+      customPrice >= openMinPrice &&
+      customPrice <= openMaxPrice);
 
   // Initialize defaults when modal opens
   const initializedRef = useState<string | null>(null);

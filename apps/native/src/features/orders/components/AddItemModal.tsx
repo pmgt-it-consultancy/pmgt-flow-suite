@@ -61,7 +61,12 @@ export const AddItemModal = ({
   const isOpenPrice = product.isOpenPrice ?? false;
   const minPrice = product.minPrice ?? 0;
   const maxPrice = product.maxPrice ?? Infinity;
-  const isPriceValid = !isOpenPrice || (customPrice >= minPrice && customPrice <= maxPrice);
+  const isPriceValid =
+    !isOpenPrice ||
+    (customPriceText.trim() !== "" &&
+      customPrice > 0 &&
+      customPrice >= minPrice &&
+      customPrice <= maxPrice);
   const effectivePrice = isOpenPrice ? customPrice : product.price;
   const total = effectivePrice * quantity;
 
@@ -185,7 +190,11 @@ export const AddItemModal = ({
                     multiline
                     returnKeyType="done"
                     blurOnSubmit
-                    onSubmitEditing={() => onConfirm(isOpenPrice ? customPrice : undefined)}
+                    onSubmitEditing={() => {
+                      if (!isLoading && (!isOpenPrice || isPriceValid)) {
+                        onConfirm(isOpenPrice ? customPrice : undefined);
+                      }
+                    }}
                   />
                 </YStack>
               </ScrollView>

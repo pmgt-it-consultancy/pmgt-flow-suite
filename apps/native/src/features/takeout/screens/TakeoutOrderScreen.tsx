@@ -32,6 +32,10 @@ interface SelectedProduct {
   id: Id<"products">;
   name: string;
   price: number;
+  hasModifiers: boolean;
+  isOpenPrice: boolean;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 interface DraftItem {
@@ -42,6 +46,7 @@ interface DraftItem {
   quantity: number;
   notes?: string;
   modifiers?: SelectedModifier[];
+  customPrice?: number;
 }
 
 let draftIdCounter = 0;
@@ -145,45 +150,60 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     setSelectedProduct(null);
   }, []);
 
-  const handleConfirmAdd = useCallback(async () => {
-    if (!selectedProduct) return;
+  const handleConfirmAdd = useCallback(
+    async (customPrice?: number) => {
+      if (!selectedProduct) return;
 
-    if (isDraftMode) {
-      setDraftItems((prev) => [
-        ...prev,
-        {
-          localId: `draft-${++draftIdCounter}`,
+      const productPrice =
+        selectedProduct.isOpenPrice && customPrice !== undefined
+          ? customPrice
+          : selectedProduct.price;
+
+      if (isDraftMode) {
+        setDraftItems((prev) => [
+          ...prev,
+          {
+            localId: `draft-${++draftIdCounter}`,
+            productId: selectedProduct.id,
+            productName: selectedProduct.name,
+            productPrice,
+            quantity,
+            notes: notes || undefined,
+            customPrice: selectedProduct.isOpenPrice ? customPrice : undefined,
+          },
+        ]);
+        setSelectedProduct(null);
+        return;
+      }
+
+      setIsAddingItem(true);
+      try {
+        await addItemMutation({
+          orderId: currentOrderId!,
           productId: selectedProduct.id,
-          productName: selectedProduct.name,
-          productPrice: selectedProduct.price,
           quantity,
           notes: notes || undefined,
-        },
-      ]);
-      setSelectedProduct(null);
-      return;
-    }
-
-    setIsAddingItem(true);
-    try {
-      await addItemMutation({
-        orderId: currentOrderId!,
-        productId: selectedProduct.id,
-        quantity,
-        notes: notes || undefined,
-      });
-      setSelectedProduct(null);
-    } catch (error) {
-      console.error("Add item error:", error);
-      Alert.alert("Error", "Failed to add item to order");
-    } finally {
-      setIsAddingItem(false);
-    }
-  }, [selectedProduct, isDraftMode, currentOrderId, quantity, notes, addItemMutation]);
+          ...(selectedProduct.isOpenPrice && customPrice !== undefined ? { customPrice } : {}),
+        });
+        setSelectedProduct(null);
+      } catch (error) {
+        console.error("Add item error:", error);
+        Alert.alert("Error", "Failed to add item to order");
+      } finally {
+        setIsAddingItem(false);
+      }
+    },
+    [selectedProduct, isDraftMode, currentOrderId, quantity, notes, addItemMutation],
+  );
 
   const handleConfirmModifiers = useCallback(
-    async (qty: number, itemNotes: string, modifiers: SelectedModifier[]) => {
+    async (qty: number, itemNotes: string, modifiers: SelectedModifier[], customPrice?: number) => {
       if (!selectedProduct) return;
+
+      const basePrice =
+        selectedProduct.isOpenPrice && customPrice !== undefined
+          ? customPrice
+          : selectedProduct.price;
 
       if (isDraftMode) {
         const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceAdjustment, 0);
@@ -193,10 +213,11 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             localId: `draft-${++draftIdCounter}`,
             productId: selectedProduct.id,
             productName: selectedProduct.name,
-            productPrice: selectedProduct.price + modifierTotal,
+            productPrice: basePrice + modifierTotal,
             quantity: qty,
             notes: itemNotes || undefined,
             modifiers,
+            customPrice: selectedProduct.isOpenPrice ? customPrice : undefined,
           },
         ]);
         setSelectedProduct(null);
@@ -211,6 +232,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
           quantity: qty,
           notes: itemNotes || undefined,
           modifiers,
+          ...(selectedProduct.isOpenPrice && customPrice !== undefined ? { customPrice } : {}),
         });
         setSelectedProduct(null);
       } catch (error) {
@@ -341,6 +363,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             quantity: item.quantity,
             notes: item.notes,
             modifiers: item.modifiers,
+            ...(item.customPrice !== undefined ? { customPrice: item.customPrice } : {}),
           });
         }
 
