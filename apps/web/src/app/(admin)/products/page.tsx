@@ -46,6 +46,9 @@ interface ProductFormData {
   isVatable: boolean;
   sortOrder: number;
   isActive: boolean;
+  isOpenPrice: boolean;
+  minPrice: number;
+  maxPrice: number;
 }
 
 const initialFormData: ProductFormData = {
@@ -56,6 +59,9 @@ const initialFormData: ProductFormData = {
   isVatable: true,
   sortOrder: 0,
   isActive: true,
+  isOpenPrice: false,
+  minPrice: 0,
+  maxPrice: 0,
 };
 
 export default function ProductsPage() {
@@ -126,6 +132,9 @@ export default function ProductsPage() {
       isVatable: product.isVatable,
       sortOrder: product.sortOrder,
       isActive: product.isActive,
+      isOpenPrice: product.isOpenPrice ?? false,
+      minPrice: product.minPrice ?? 0,
+      maxPrice: product.maxPrice ?? 0,
     });
     setIsDialogOpen(true);
   };
@@ -144,6 +153,9 @@ export default function ProductsPage() {
           isVatable: formData.isVatable,
           sortOrder: formData.sortOrder,
           isActive: formData.isActive,
+          isOpenPrice: formData.isOpenPrice,
+          minPrice: formData.isOpenPrice ? formData.minPrice : undefined,
+          maxPrice: formData.isOpenPrice ? formData.maxPrice : undefined,
         });
         toast.success("Product updated successfully");
       } else {
@@ -154,6 +166,9 @@ export default function ProductsPage() {
           price: formData.price,
           isVatable: formData.isVatable,
           sortOrder: formData.sortOrder,
+          isOpenPrice: formData.isOpenPrice,
+          minPrice: formData.isOpenPrice ? formData.minPrice : undefined,
+          maxPrice: formData.isOpenPrice ? formData.maxPrice : undefined,
         });
         toast.success("Product created successfully");
       }
@@ -239,7 +254,16 @@ export default function ProductsPage() {
                   <TableRow key={product._id}>
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>{product.categoryName}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(product.price)}</TableCell>
+                    <TableCell className="text-right">
+                      {product.isOpenPrice ? (
+                        <span className="text-sm text-emerald-600 font-medium">
+                          Open Price ({formatCurrency(product.minPrice ?? 0)} –{" "}
+                          {formatCurrency(product.maxPrice ?? 0)})
+                        </span>
+                      ) : (
+                        formatCurrency(product.price)
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge variant={product.isVatable ? "default" : "secondary"}>
                         {product.isVatable ? "VAT" : "Non-VAT"}
@@ -316,22 +340,94 @@ export default function ProductsPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="price">Price (VAT-inclusive)</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
+            <div className="grid gap-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="isOpenPrice"
+                  checked={formData.isOpenPrice}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      price: parseFloat(e.target.value) || 0,
+                      isOpenPrice: e.target.checked,
+                      price: e.target.checked ? 0 : formData.price,
                     })
                   }
                 />
+                <Label htmlFor="isOpenPrice">Open Price (cashier enters price)</Label>
               </div>
+            </div>
+
+            {!formData.isOpenPrice && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="price">Price (VAT-inclusive)</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        price: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="sortOrder">Sort Order</Label>
+                  <Input
+                    id="sortOrder"
+                    type="number"
+                    value={formData.sortOrder}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        sortOrder: parseInt(e.target.value, 10) || 0,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            )}
+
+            {formData.isOpenPrice && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="minPrice">Minimum Price</Label>
+                  <Input
+                    id="minPrice"
+                    type="number"
+                    step="0.01"
+                    value={formData.minPrice}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        minPrice: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="maxPrice">Maximum Price</Label>
+                  <Input
+                    id="maxPrice"
+                    type="number"
+                    step="0.01"
+                    value={formData.maxPrice}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        maxPrice: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            )}
+
+            {formData.isOpenPrice && (
               <div className="grid gap-2">
                 <Label htmlFor="sortOrder">Sort Order</Label>
                 <Input
@@ -346,7 +442,7 @@ export default function ProductsPage() {
                   }
                 />
               </div>
-            </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
@@ -476,7 +572,7 @@ export default function ProductsPage() {
               </div>
             )}
 
-            {formData.price > 0 && (
+            {!formData.isOpenPrice && formData.price > 0 && (
               <div className="bg-gray-50 p-3 rounded-md text-sm">
                 <p className="text-gray-600">
                   <strong>Net Price (before VAT):</strong>{" "}
@@ -507,7 +603,7 @@ export default function ProductsPage() {
                 !formData.name ||
                 !formData.storeId ||
                 !formData.categoryId ||
-                formData.price <= 0
+                (!formData.isOpenPrice && formData.price <= 0)
               }
             >
               {isSubmitting ? "Saving..." : editingProduct ? "Update" : "Create"}
