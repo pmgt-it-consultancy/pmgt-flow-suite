@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useEffect, useState } from "react";
 import {
   Pressable,
   Modal as RNModal,
@@ -19,6 +20,9 @@ interface SelectedProduct {
   id: Id<"products">;
   name: string;
   price: number;
+  isOpenPrice?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 interface AddItemModalProps {
@@ -30,7 +34,7 @@ interface AddItemModalProps {
   onClose: () => void;
   onQuantityChange: (qty: number) => void;
   onNotesChange: (notes: string) => void;
-  onConfirm: () => void;
+  onConfirm: (customPrice?: number) => void;
 }
 
 export const AddItemModal = ({
@@ -45,10 +49,21 @@ export const AddItemModal = ({
   onConfirm,
 }: AddItemModalProps) => {
   const formatCurrency = useFormatCurrency();
+  const [customPriceText, setCustomPriceText] = useState("");
+
+  useEffect(() => {
+    if (visible) setCustomPriceText("");
+  }, [visible]);
 
   if (!product) return null;
 
-  const total = product.price * quantity;
+  const customPrice = parseFloat(customPriceText) || 0;
+  const isOpenPrice = product.isOpenPrice ?? false;
+  const minPrice = product.minPrice ?? 0;
+  const maxPrice = product.maxPrice ?? Infinity;
+  const isPriceValid = !isOpenPrice || (customPrice >= minPrice && customPrice <= maxPrice);
+  const effectivePrice = isOpenPrice ? customPrice : product.price;
+  const total = effectivePrice * quantity;
 
   return (
     <RNModal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -86,9 +101,52 @@ export const AddItemModal = ({
                   <Text size="lg" style={{ marginTop: 4 }}>
                     {product.name}
                   </Text>
-                  <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 18, marginTop: 2 }}>
-                    {formatCurrency(product.price)}
-                  </Text>
+                  {isOpenPrice ? (
+                    <YStack marginTop={6}>
+                      <XStack alignItems="center">
+                        <Text
+                          style={{
+                            color: "#6B7280",
+                            fontSize: 18,
+                            fontWeight: "600",
+                            marginRight: 4,
+                          }}
+                        >
+                          ₱
+                        </Text>
+                        <TextInput
+                          style={{
+                            fontSize: 24,
+                            fontWeight: "700",
+                            color: "#0D87E1",
+                            borderBottomWidth: 2,
+                            borderBottomColor:
+                              customPriceText && !isPriceValid ? "#EF4444" : "#0D87E1",
+                            paddingVertical: 2,
+                            paddingHorizontal: 4,
+                            minWidth: 120,
+                          }}
+                          keyboardType="decimal-pad"
+                          autoFocus
+                          placeholder="0.00"
+                          placeholderTextColor="#9CA3AF"
+                          value={customPriceText}
+                          onChangeText={setCustomPriceText}
+                        />
+                      </XStack>
+                      <Text style={{ color: "#6B7280", fontSize: 12, marginTop: 4 }}>
+                        {maxPrice !== Infinity
+                          ? `Range: ${formatCurrency(minPrice)} – ${formatCurrency(maxPrice)}`
+                          : `Min: ${formatCurrency(minPrice)}`}
+                      </Text>
+                    </YStack>
+                  ) : (
+                    <Text
+                      style={{ color: "#0D87E1", fontWeight: "600", fontSize: 18, marginTop: 2 }}
+                    >
+                      {formatCurrency(product.price)}
+                    </Text>
+                  )}
                 </YStack>
                 <TouchableOpacity
                   onPress={onClose}
@@ -127,7 +185,7 @@ export const AddItemModal = ({
                     multiline
                     returnKeyType="done"
                     blurOnSubmit
-                    onSubmitEditing={onConfirm}
+                    onSubmitEditing={() => onConfirm(isOpenPrice ? customPrice : undefined)}
                   />
                 </YStack>
               </ScrollView>
@@ -202,15 +260,16 @@ export const AddItemModal = ({
 
                 {/* Full-width Add Button */}
                 <TouchableOpacity
-                  onPress={onConfirm}
-                  disabled={isLoading}
+                  onPress={() => onConfirm(isOpenPrice ? customPrice : undefined)}
+                  disabled={isLoading || (isOpenPrice && !isPriceValid)}
                   style={{
-                    backgroundColor: isLoading ? "#9CA3AF" : "#0D87E1",
+                    backgroundColor:
+                      isLoading || (isOpenPrice && !isPriceValid) ? "#9CA3AF" : "#0D87E1",
                     borderRadius: 12,
                     paddingVertical: 18,
                     width: "100%",
                     marginTop: 16,
-                    opacity: isLoading ? 0.7 : 1,
+                    opacity: isLoading || (isOpenPrice && !isPriceValid) ? 0.7 : 1,
                   }}
                   activeOpacity={0.8}
                 >

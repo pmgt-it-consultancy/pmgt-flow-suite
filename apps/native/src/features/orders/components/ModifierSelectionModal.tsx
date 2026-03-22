@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Pressable,
   Modal as RNModal,
@@ -39,11 +39,23 @@ export interface SelectedModifier {
 
 interface ModifierSelectionModalProps {
   visible: boolean;
-  product: { id: Id<"products">; name: string; price: number } | null;
+  product: {
+    id: Id<"products">;
+    name: string;
+    price: number;
+    isOpenPrice?: boolean;
+    minPrice?: number;
+    maxPrice?: number;
+  } | null;
   modifierGroups: ModifierGroup[];
   isLoading: boolean;
   onClose: () => void;
-  onConfirm: (quantity: number, notes: string, modifiers: SelectedModifier[]) => void;
+  onConfirm: (
+    quantity: number,
+    notes: string,
+    modifiers: SelectedModifier[],
+    customPrice?: number,
+  ) => void;
 }
 
 export const ModifierSelectionModal = ({
@@ -57,8 +69,19 @@ export const ModifierSelectionModal = ({
   const formatCurrency = useFormatCurrency();
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
+  const [customPriceText, setCustomPriceText] = useState("");
   // Map of groupId -> Set of selected optionIds
   const [selections, setSelections] = useState<Record<string, Set<string>>>({});
+
+  useEffect(() => {
+    if (visible) setCustomPriceText("");
+  }, [visible]);
+
+  const customPrice = parseFloat(customPriceText) || 0;
+  const isOpenPrice = product?.isOpenPrice ?? false;
+  const openMinPrice = product?.minPrice ?? 0;
+  const openMaxPrice = product?.maxPrice ?? Infinity;
+  const isPriceValid = !isOpenPrice || (customPrice >= openMinPrice && customPrice <= openMaxPrice);
 
   // Initialize defaults when modal opens
   const initializedRef = useState<string | null>(null);
@@ -144,12 +167,13 @@ export const ModifierSelectionModal = ({
       }
     }
 
-    onConfirm(quantity, notes, modifiers);
-  }, [product, modifierGroups, selections, quantity, notes, onConfirm]);
+    onConfirm(quantity, notes, modifiers, isOpenPrice ? customPrice : undefined);
+  }, [product, modifierGroups, selections, quantity, notes, onConfirm, isOpenPrice, customPrice]);
 
   if (!product) return null;
 
-  const unitTotal = product.price + modifierTotal;
+  const basePrice = isOpenPrice ? customPrice : product.price;
+  const unitTotal = basePrice + modifierTotal;
   const lineTotal = unitTotal * quantity;
 
   return (
@@ -188,9 +212,52 @@ export const ModifierSelectionModal = ({
                   <Text size="lg" style={{ marginTop: 4 }}>
                     {product.name}
                   </Text>
-                  <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 18, marginTop: 2 }}>
-                    {formatCurrency(product.price)}
-                  </Text>
+                  {isOpenPrice ? (
+                    <YStack marginTop={6}>
+                      <XStack alignItems="center">
+                        <Text
+                          style={{
+                            color: "#6B7280",
+                            fontSize: 18,
+                            fontWeight: "600",
+                            marginRight: 4,
+                          }}
+                        >
+                          ₱
+                        </Text>
+                        <TextInput
+                          style={{
+                            fontSize: 24,
+                            fontWeight: "700",
+                            color: "#0D87E1",
+                            borderBottomWidth: 2,
+                            borderBottomColor:
+                              customPriceText && !isPriceValid ? "#EF4444" : "#0D87E1",
+                            paddingVertical: 2,
+                            paddingHorizontal: 4,
+                            minWidth: 120,
+                          }}
+                          keyboardType="decimal-pad"
+                          autoFocus
+                          placeholder="0.00"
+                          placeholderTextColor="#9CA3AF"
+                          value={customPriceText}
+                          onChangeText={setCustomPriceText}
+                        />
+                      </XStack>
+                      <Text style={{ color: "#6B7280", fontSize: 12, marginTop: 4 }}>
+                        {openMaxPrice !== Infinity
+                          ? `Range: ${formatCurrency(openMinPrice)} – ${formatCurrency(openMaxPrice)}`
+                          : `Min: ${formatCurrency(openMinPrice)}`}
+                      </Text>
+                    </YStack>
+                  ) : (
+                    <Text
+                      style={{ color: "#0D87E1", fontWeight: "600", fontSize: 18, marginTop: 2 }}
+                    >
+                      {formatCurrency(product.price)}
+                    </Text>
+                  )}
                 </YStack>
                 <TouchableOpacity
                   onPress={onClose}
@@ -408,14 +475,17 @@ export const ModifierSelectionModal = ({
                 {/* Full-width Add Button */}
                 <TouchableOpacity
                   onPress={handleConfirm}
-                  disabled={!isValid || isLoading}
+                  disabled={!isValid || isLoading || (isOpenPrice && !isPriceValid)}
                   style={{
-                    backgroundColor: isValid && !isLoading ? "#0D87E1" : "#9CA3AF",
+                    backgroundColor:
+                      isValid && !isLoading && (!isOpenPrice || isPriceValid)
+                        ? "#0D87E1"
+                        : "#9CA3AF",
                     borderRadius: 12,
                     paddingVertical: 18,
                     width: "100%",
                     marginTop: 16,
-                    opacity: isLoading ? 0.7 : 1,
+                    opacity: isLoading || (isOpenPrice && !isPriceValid) ? 0.7 : 1,
                   }}
                   activeOpacity={0.8}
                 >
