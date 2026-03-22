@@ -1230,6 +1230,7 @@ export const createAndSendToKitchen = mutation({
         productId: v.id("products"),
         quantity: v.number(),
         notes: v.optional(v.string()),
+        customPrice: v.optional(v.number()),
         modifiers: v.optional(
           v.array(
             v.object({
@@ -1319,11 +1320,28 @@ export const createAndSendToKitchen = mutation({
       if (!product) throw new Error(`Product not found`);
       if (!product.isActive) throw new Error(`Product not available: ${product.name}`);
 
+      // Resolve price: open-price products use customPrice
+      let itemPrice: number;
+      if (product.isOpenPrice) {
+        if (item.customPrice === undefined) {
+          throw new Error("Custom price is required for open-price products");
+        }
+        if (product.minPrice === undefined || product.maxPrice === undefined) {
+          throw new Error("Open-price product is missing min/max price configuration");
+        }
+        if (item.customPrice < product.minPrice || item.customPrice > product.maxPrice) {
+          throw new Error(`Price must be between ${product.minPrice} and ${product.maxPrice}`);
+        }
+        itemPrice = item.customPrice;
+      } else {
+        itemPrice = product.price;
+      }
+
       const itemId = await ctx.db.insert("orderItems", {
         orderId,
         productId: item.productId,
         productName: product.name,
-        productPrice: product.price,
+        productPrice: itemPrice,
         quantity: item.quantity,
         notes: item.notes,
         isVoided: false,

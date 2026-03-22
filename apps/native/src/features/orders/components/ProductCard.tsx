@@ -9,15 +9,30 @@ interface ProductCardProps {
   name: string;
   price: number;
   hasModifiers?: boolean;
+  isOpenPrice?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
   onPress: (product: {
     id: Id<"products">;
     name: string;
     price: number;
     hasModifiers: boolean;
+    isOpenPrice: boolean;
+    minPrice?: number;
+    maxPrice?: number;
   }) => void;
 }
 
-export const ProductCard = ({ id, name, price, hasModifiers, onPress }: ProductCardProps) => {
+export const ProductCard = ({
+  id,
+  name,
+  price,
+  hasModifiers,
+  isOpenPrice,
+  minPrice,
+  maxPrice,
+  onPress,
+}: ProductCardProps) => {
   const formatCurrency = useFormatCurrency();
 
   return (
@@ -34,7 +49,17 @@ export const ProductCard = ({ id, name, price, hasModifiers, onPress }: ProductC
         borderColor: "#E5E7EB",
         justifyContent: "space-between",
       }}
-      onPress={() => onPress({ id, name, price, hasModifiers: !!hasModifiers })}
+      onPress={() =>
+        onPress({
+          id,
+          name,
+          price,
+          hasModifiers: !!hasModifiers,
+          isOpenPrice: isOpenPrice ?? false,
+          minPrice,
+          maxPrice,
+        })
+      }
       activeOpacity={0.7}
     >
       <Text
@@ -49,10 +74,12 @@ export const ProductCard = ({ id, name, price, hasModifiers, onPress }: ProductC
           paddingHorizontal={12}
           paddingVertical={6}
           borderRadius={8}
-          backgroundColor="#EFF6FF"
+          backgroundColor={isOpenPrice ? "#ECFDF5" : "#EFF6FF"}
         >
-          <Text style={{ color: "#2563EB", fontWeight: "700", fontSize: 14 }}>
-            {formatCurrency(price)}
+          <Text
+            style={{ color: isOpenPrice ? "#059669" : "#2563EB", fontWeight: "700", fontSize: 14 }}
+          >
+            {isOpenPrice ? "Enter Price" : formatCurrency(price)}
           </Text>
         </YStack>
         {hasModifiers && (

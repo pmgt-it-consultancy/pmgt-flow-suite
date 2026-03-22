@@ -17,6 +17,9 @@ interface Product {
   categoryId: Id<"categories">;
   isActive: boolean;
   hasModifiers: boolean;
+  isOpenPrice?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 interface SelectedProduct {
@@ -24,6 +27,9 @@ interface SelectedProduct {
   name: string;
   price: number;
   hasModifiers: boolean;
+  isOpenPrice: boolean;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 interface CategoryGridProps {
@@ -177,6 +183,9 @@ export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGri
           name={item.product.name}
           price={item.product.price}
           hasModifiers={item.product.hasModifiers}
+          isOpenPrice={item.product.isOpenPrice ?? false}
+          minPrice={item.product.minPrice}
+          maxPrice={item.product.maxPrice}
           onPress={onSelectProduct}
         />
       );
