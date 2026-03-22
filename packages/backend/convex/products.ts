@@ -140,6 +140,9 @@ export const create = mutation({
     price: v.number(),
     isVatable: v.optional(v.boolean()),
     sortOrder: v.optional(v.number()),
+    isOpenPrice: v.optional(v.boolean()),
+    minPrice: v.optional(v.number()),
+    maxPrice: v.optional(v.number()),
   },
   returns: v.id("products"),
   handler: async (ctx, args) => {
@@ -148,6 +151,19 @@ export const create = mutation({
 
     // Check permission
     await requirePermission(ctx, user._id, "products.manage");
+
+    // Validate open price fields
+    if (args.isOpenPrice) {
+      if (args.minPrice === undefined || args.maxPrice === undefined) {
+        throw new Error("minPrice and maxPrice are required for open-price products");
+      }
+      if (args.minPrice < 0) {
+        throw new Error("minPrice must be >= 0");
+      }
+      if (args.minPrice >= args.maxPrice) {
+        throw new Error("minPrice must be less than maxPrice");
+      }
+    }
 
     // Validate category belongs to same store
     const category = await ctx.db.get(args.categoryId);
@@ -182,9 +198,12 @@ export const create = mutation({
       storeId: args.storeId,
       name: args.name,
       categoryId: args.categoryId,
-      price: args.price,
+      price: args.isOpenPrice ? 0 : args.price,
       isVatable: args.isVatable ?? defaultIsVatable, // Default based on store's VAT rate
       isActive: true,
+      isOpenPrice: args.isOpenPrice ?? false,
+      minPrice: args.isOpenPrice ? args.minPrice : undefined,
+      maxPrice: args.isOpenPrice ? args.maxPrice : undefined,
       sortOrder,
       createdAt: now,
       updatedAt: now,
@@ -202,6 +221,9 @@ export const update = mutation({
     isVatable: v.optional(v.boolean()),
     isActive: v.optional(v.boolean()),
     sortOrder: v.optional(v.number()),
+    isOpenPrice: v.optional(v.boolean()),
+    minPrice: v.optional(v.number()),
+    maxPrice: v.optional(v.number()),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
@@ -210,14 +232,32 @@ export const update = mutation({
 
     await requirePermission(ctx, user._id, "products.manage");
 
+    const product = await ctx.db.get(args.productId);
+    if (!product) throw new Error("Product not found");
+
     // If changing category, validate it belongs to same store
     if (args.categoryId) {
-      const product = await ctx.db.get(args.productId);
-      if (!product) throw new Error("Product not found");
-
       const category = await ctx.db.get(args.categoryId);
       if (!category || category.storeId !== product.storeId) {
         throw new Error("Invalid category for this store");
+      }
+    }
+
+    // Determine effective open price state
+    const effectiveIsOpenPrice = args.isOpenPrice ?? product.isOpenPrice ?? false;
+
+    if (effectiveIsOpenPrice) {
+      const effectiveMinPrice = args.minPrice ?? product.minPrice;
+      const effectiveMaxPrice = args.maxPrice ?? product.maxPrice;
+
+      if (effectiveMinPrice === undefined || effectiveMaxPrice === undefined) {
+        throw new Error("minPrice and maxPrice are required for open-price products");
+      }
+      if (effectiveMinPrice < 0) {
+        throw new Error("minPrice must be >= 0");
+      }
+      if (effectiveMinPrice >= effectiveMaxPrice) {
+        throw new Error("minPrice must be less than maxPrice");
       }
     }
 
@@ -226,10 +266,20 @@ export const update = mutation({
       Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
-    await ctx.db.patch(productId, {
-      ...filteredUpdates,
-      updatedAt: Date.now(),
-    });
+    // When turning off open price, clear minPrice and maxPrice
+    if (args.isOpenPrice === false) {
+      await ctx.db.patch(productId, {
+        ...filteredUpdates,
+        minPrice: undefined,
+        maxPrice: undefined,
+        updatedAt: Date.now(),
+      });
+    } else {
+      await ctx.db.patch(productId, {
+        ...filteredUpdates,
+        updatedAt: Date.now(),
+      });
+    }
     return null;
   },
 });
