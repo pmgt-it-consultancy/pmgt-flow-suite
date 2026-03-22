@@ -124,7 +124,7 @@ export const DiscountModal = ({
       </XStack>
 
       {/* Item List - Increased height and touch targets */}
-      <ScrollView style={{ maxHeight: 280 }}>
+      <ScrollView style={{ maxHeight: 280 }} nestedScrollEnabled={true}>
         {availableItems.map((item) => {
           const isSelected = selectedItemIds.has(item._id);
           return (

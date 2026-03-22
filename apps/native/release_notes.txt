@@ -1,17 +1,4 @@
 ## What's New
 
-- Lock screen navigation fix — unlocking now restores the cashier's previous screen stack so back navigation works correctly from Settings and other flows
-- Screen lock & role management — cashiers can lock/unlock the POS with role-based access
-- Bulk void orders — select and void multiple stale orders at once from the orders page
-- Void takeout orders — void functionality added to takeout detail modal with proper status handling
-- POS home dashboard redesign — cohesive cashier experience with improved layout
-- Bluetooth connection events — native module for real-time printer disconnect/reconnect detection
-- Printer connection improvements — progress feedback during pairing, shared printer toggle, kitchen printer status fix
-- Auth-aware splash screen — light theme redesign with proper authentication flow
-
-## Notes
-
-- Unlocking from the lock screen now returns staff to their prior flow instead of rebuilding a single-screen stack
-- Bulk void releases associated tables automatically when orders are voided
-- Voided takeout orders now appear in the completed section with a "Voided" badge
-- Bluetooth polling interval increased to 60 seconds for better battery performance
+- SC/PWD discount item selection fix — item list now scrolls properly when there are many order items
+- Dialog responsiveness — improved DialogContent styles for better overflow handling on smaller screens
