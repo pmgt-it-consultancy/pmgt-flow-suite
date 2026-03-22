@@ -149,7 +149,7 @@ export default function ProductsPage() {
           productId: editingProduct,
           categoryId: formData.categoryId,
           name: formData.name,
-          price: formData.price,
+          price: formData.isOpenPrice ? 0 : formData.price,
           isVatable: formData.isVatable,
           sortOrder: formData.sortOrder,
           isActive: formData.isActive,
@@ -256,10 +256,13 @@ export default function ProductsPage() {
                     <TableCell>{product.categoryName}</TableCell>
                     <TableCell className="text-right">
                       {product.isOpenPrice ? (
-                        <span className="text-sm text-emerald-600 font-medium">
+                        <Badge
+                          variant="outline"
+                          className="text-emerald-600 border-emerald-300 bg-emerald-50"
+                        >
                           Open Price ({formatCurrency(product.minPrice ?? 0)} –{" "}
                           {formatCurrency(product.maxPrice ?? 0)})
-                        </span>
+                        </Badge>
                       ) : (
                         formatCurrency(product.price)
                       )}
@@ -603,7 +606,11 @@ export default function ProductsPage() {
                 !formData.name ||
                 !formData.storeId ||
                 !formData.categoryId ||
-                (!formData.isOpenPrice && formData.price <= 0)
+                (!formData.isOpenPrice && formData.price <= 0) ||
+                (formData.isOpenPrice &&
+                  (formData.minPrice <= 0 ||
+                    formData.maxPrice <= 0 ||
+                    formData.minPrice >= formData.maxPrice))
               }
             >
               {isSubmitting ? "Saving..." : editingProduct ? "Update" : "Create"}
