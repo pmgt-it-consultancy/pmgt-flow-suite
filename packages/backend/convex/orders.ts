@@ -571,6 +571,7 @@ export const addItem = mutation({
     productId: v.id("products"),
     quantity: v.number(),
     notes: v.optional(v.string()),
+    customPrice: v.optional(v.number()),
     modifiers: v.optional(
       v.array(
         v.object({
@@ -598,12 +599,30 @@ export const addItem = mutation({
     if (!product) throw new Error("Product not found");
     if (!product.isActive) throw new Error("Product is not available");
 
+    // Resolve price: open-price products require customPrice
+    let itemPrice: number;
+    if (product.isOpenPrice) {
+      if (args.customPrice === undefined) {
+        throw new Error("Custom price is required for open-price products");
+      }
+      if (
+        product.minPrice !== undefined &&
+        product.maxPrice !== undefined &&
+        (args.customPrice < product.minPrice || args.customPrice > product.maxPrice)
+      ) {
+        throw new Error(`Price must be between ${product.minPrice} and ${product.maxPrice}`);
+      }
+      itemPrice = args.customPrice;
+    } else {
+      itemPrice = product.price;
+    }
+
     // Create order item with product snapshot
     const itemId = await ctx.db.insert("orderItems", {
       orderId: args.orderId,
       productId: args.productId,
       productName: product.name,
-      productPrice: product.price,
+      productPrice: itemPrice,
       quantity: args.quantity,
       notes: args.notes,
       isVoided: false,
