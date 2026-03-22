@@ -275,6 +275,11 @@ export const update = mutation({
       Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
+    // When turning on open price, set price to 0
+    if (args.isOpenPrice === true) {
+      filteredUpdates.price = 0;
+    }
+
     // When turning off open price, clear minPrice and maxPrice
     if (args.isOpenPrice === false) {
       await ctx.db.patch(productId, {

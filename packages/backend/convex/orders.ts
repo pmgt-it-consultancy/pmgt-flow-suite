@@ -605,11 +605,10 @@ export const addItem = mutation({
       if (args.customPrice === undefined) {
         throw new Error("Custom price is required for open-price products");
       }
-      if (
-        product.minPrice !== undefined &&
-        product.maxPrice !== undefined &&
-        (args.customPrice < product.minPrice || args.customPrice > product.maxPrice)
-      ) {
+      if (product.minPrice === undefined || product.maxPrice === undefined) {
+        throw new Error("Open-price product is missing min/max price configuration");
+      }
+      if (args.customPrice < product.minPrice || args.customPrice > product.maxPrice) {
         throw new Error(`Price must be between ${product.minPrice} and ${product.maxPrice}`);
       }
       itemPrice = args.customPrice;

@@ -171,6 +171,40 @@ describe("orders — addItem with open price", () => {
     ).rejects.toThrowError("Price must be between");
   });
 
+  it("should accept customPrice at exactly minPrice", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, openPriceProductId } = await setupOpenPriceTestData(t);
+    const orderId = await createOpenOrder(t, storeId, userId);
+
+    const authed = t.withIdentity({ subject: userId });
+    const itemId = await authed.mutation(api.orders.addItem, {
+      orderId,
+      productId: openPriceProductId,
+      quantity: 1,
+      customPrice: 50, // exactly minPrice
+    });
+
+    const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
+    expect(item?.productPrice).toBe(50);
+  });
+
+  it("should accept customPrice at exactly maxPrice", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, openPriceProductId } = await setupOpenPriceTestData(t);
+    const orderId = await createOpenOrder(t, storeId, userId);
+
+    const authed = t.withIdentity({ subject: userId });
+    const itemId = await authed.mutation(api.orders.addItem, {
+      orderId,
+      productId: openPriceProductId,
+      quantity: 1,
+      customPrice: 500, // exactly maxPrice
+    });
+
+    const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
+    expect(item?.productPrice).toBe(500);
+  });
+
   it("should ignore customPrice for regular products", async () => {
     const t = convexTest(schema, modules);
     const { storeId, userId, regularProductId } = await setupOpenPriceTestData(t);
