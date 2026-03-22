@@ -1,4 +1,11 @@
 ## What's New
 
-- SC/PWD discount item selection fix — item list now scrolls properly when there are many order items
-- Dialog responsiveness — improved DialogContent styles for better overflow handling on smaller screens
+- Open price products — products can now be configured as "open price" where the cashier enters the price at order time, with min/max validation
+- Product card display — open price products show "Enter Price" label instead of a fixed price
+- Price input in order flow — AddItemModal and ModifierSelectionModal now support inline price entry for open price products
+- Web admin — new Open Price toggle in product form with min/max price configuration
+- Takeout support — open price products work in both dine-in and takeout order flows
+
+## Notes
+
+- To use this feature, toggle "Open Price" when creating or editing a product in the web admin and set the min/max price range
