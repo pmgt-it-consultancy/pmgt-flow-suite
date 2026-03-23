@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { Alert, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { Text } from "../../../shared/components/ui";
+import { Text } from "../../shared/components/ui";
 
 interface DraftOrderCardProps {
   id: Id<"orders">;

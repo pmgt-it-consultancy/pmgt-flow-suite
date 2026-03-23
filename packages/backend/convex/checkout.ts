@@ -245,7 +245,7 @@ export const getReceipt = query({
       min: store.min,
       vatRate: store.vatRate,
 
-      orderNumber: order.orderNumber,
+      orderNumber: order.orderNumber ?? "",
       orderType: order.orderType,
       tableName,
       pax: order.pax,

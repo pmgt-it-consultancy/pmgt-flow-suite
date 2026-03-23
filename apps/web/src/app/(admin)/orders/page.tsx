@@ -71,7 +71,7 @@ export default function OrdersPage() {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
-      order.orderNumber.toLowerCase().includes(query) ||
+      (order.orderNumber?.toLowerCase().includes(query) ?? false) ||
       order.customerName?.toLowerCase().includes(query) ||
       order.tableName?.toLowerCase().includes(query)
     );

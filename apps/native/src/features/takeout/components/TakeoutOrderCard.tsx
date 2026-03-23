@@ -9,9 +9,9 @@ type TakeoutStatus = "pending" | "preparing" | "ready_for_pickup" | "completed" 
 
 interface TakeoutOrderCardProps {
   id: Id<"orders">;
-  orderNumber: string;
+  orderNumber?: string;
   customerName?: string;
-  orderStatus?: "open" | "paid" | "voided";
+  orderStatus?: "draft" | "open" | "paid" | "voided";
   takeoutStatus?: TakeoutStatus;
   netSales: number;
   itemCount: number;

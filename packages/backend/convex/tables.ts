@@ -260,7 +260,7 @@ export const getWithOrder = query({
       order: v.optional(
         v.object({
           _id: v.id("orders"),
-          orderNumber: v.string(),
+          orderNumber: v.optional(v.string()),
           orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
           itemCount: v.number(),
           netSales: v.number(),
@@ -280,7 +280,7 @@ export const getWithOrder = query({
     let order:
       | {
           _id: Doc<"orders">["_id"];
-          orderNumber: string;
+          orderNumber?: string;
           orderType: "dine_in" | "takeout";
           itemCount: number;
           netSales: number;
@@ -337,7 +337,7 @@ export const listWithOrders = query({
       orders: v.array(
         v.object({
           _id: v.id("orders"),
-          orderNumber: v.string(),
+          orderNumber: v.optional(v.string()),
           tabNumber: v.number(),
           tabName: v.string(),
           itemCount: v.number(),

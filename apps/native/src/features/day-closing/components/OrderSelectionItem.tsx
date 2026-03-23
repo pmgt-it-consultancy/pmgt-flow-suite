@@ -7,9 +7,9 @@ import { Badge, Text } from "../../shared/components/ui";
 
 interface OrderItem {
   _id: Id<"orders">;
-  orderNumber: string;
+  orderNumber?: string;
   orderType: "dine_in" | "takeout";
-  status: "open" | "paid" | "voided";
+  status: "draft" | "open" | "paid" | "voided";
   netSales: number;
   createdAt: number;
   paymentMethod?: "cash" | "card_ewallet";

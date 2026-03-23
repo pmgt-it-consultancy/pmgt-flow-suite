@@ -13,7 +13,7 @@ import {
 
 interface OrderSummary {
   _id: string;
-  orderNumber: string;
+  orderNumber?: string;
   orderType: "dine_in" | "takeout";
   netSales: number;
   createdAt: number;
