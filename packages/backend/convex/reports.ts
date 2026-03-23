@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
-import { getPHTDayBoundariesForDate, getPHTHour } from "./lib/dateUtils";
+import { getPHTDayBoundaries, getPHTDayBoundariesForDate, getPHTHour } from "./lib/dateUtils";
 import { requirePermission } from "./lib/permissions";
 
 // Generate or get daily report for a store
@@ -37,6 +37,9 @@ export const generateDailyReport = mutation({
         generatedBy: currentUser._id,
       });
 
+      // Clean up expired draft orders
+      await cleanupExpiredDraftOrders(ctx, args.storeId);
+
       return existingReport._id;
     }
 
@@ -56,6 +59,9 @@ export const generateDailyReport = mutation({
 
     // Also generate product sales breakdown
     await generateProductSalesBreakdown(ctx, args.storeId, args.reportDate);
+
+    // Clean up expired draft orders (created before today's PHT boundary)
+    await cleanupExpiredDraftOrders(ctx, args.storeId);
 
     return reportId;
   },
@@ -1014,3 +1020,33 @@ export const getTopSellingProductsLive = query({
     }));
   },
 });
+
+// Helper: Clean up expired draft orders (created before today's PHT start)
+async function cleanupExpiredDraftOrders(ctx: { db: any }, storeId: Id<"stores">): Promise<void> {
+  const { startOfDay } = getPHTDayBoundaries();
+
+  const allDrafts = await ctx.db
+    .query("orders")
+    .withIndex("by_store_status", (q: any) => q.eq("storeId", storeId).eq("status", "draft"))
+    .collect();
+
+  const expiredDrafts = allDrafts.filter((d: any) => d.createdAt < startOfDay);
+
+  for (const draft of expiredDrafts) {
+    const items = await ctx.db
+      .query("orderItems")
+      .withIndex("by_order", (q: any) => q.eq("orderId", draft._id))
+      .collect();
+    for (const item of items) {
+      const modifiers = await ctx.db
+        .query("orderItemModifiers")
+        .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", item._id))
+        .collect();
+      for (const mod of modifiers) {
+        await ctx.db.delete(mod._id);
+      }
+      await ctx.db.delete(item._id);
+    }
+    await ctx.db.delete(draft._id);
+  }
+}
