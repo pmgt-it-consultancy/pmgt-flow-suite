@@ -42,7 +42,7 @@ async function getNextOrderNumber(
   // Find the highest existing number across both sets
   let maxNumber = 0;
   for (const order of [...todaysOrders, ...openOrdersFromPreviousDays]) {
-    const match = order.orderNumber.match(/\d+$/);
+    const match = order.orderNumber?.match(/\d+$/);
     if (match) {
       maxNumber = Math.max(maxNumber, Number.parseInt(match[0], 10));
     }
@@ -152,6 +152,200 @@ export const create = mutation({
   },
 });
 
+// Create a draft takeout order (not yet submitted for payment)
+export const createDraftOrder = mutation({
+  args: {
+    storeId: v.id("stores"),
+  },
+  returns: v.id("orders"),
+  handler: async (ctx, args) => {
+    const user = await requireAuth(ctx);
+    const { startOfDay } = getPHTDayBoundaries();
+
+    // Count all drafts created today (monotonic — gaps allowed if drafts are discarded)
+    const todaysDrafts = await ctx.db
+      .query("orders")
+      .withIndex("by_store_createdAt", (q) =>
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay),
+      )
+      .filter((q) => q.eq(q.field("status"), "draft"))
+      .collect();
+
+    // Also include submitted (formerly draft) orders to avoid reusing numbers
+    const todaysTakeoutOrders = await ctx.db
+      .query("orders")
+      .withIndex("by_store_createdAt", (q) =>
+        q.eq("storeId", args.storeId).gte("createdAt", startOfDay),
+      )
+      .filter((q) =>
+        q.and(q.eq(q.field("orderType"), "takeout"), q.neq(q.field("draftLabel"), undefined)),
+      )
+      .collect();
+
+    const allWithLabels = [...todaysDrafts, ...todaysTakeoutOrders];
+    let maxNumber = 0;
+    for (const draft of allWithLabels) {
+      const match = draft.draftLabel?.match(/\d+$/);
+      if (match) {
+        maxNumber = Math.max(maxNumber, parseInt(match[0], 10));
+      }
+    }
+
+    const draftLabel = `Customer #${maxNumber + 1}`;
+    const now = Date.now();
+    const orderId = await ctx.db.insert("orders", {
+      storeId: args.storeId,
+      orderType: "takeout",
+      status: "draft",
+      draftLabel,
+      grossSales: 0,
+      vatableSales: 0,
+      vatAmount: 0,
+      vatExemptSales: 0,
+      nonVatSales: 0,
+      discountAmount: 0,
+      netSales: 0,
+      createdBy: user._id,
+      createdAt: now,
+    });
+    return orderId;
+  },
+});
+
+// Submit a draft order — transitions draft → open
+export const submitDraft = mutation({
+  args: { orderId: v.id("orders") },
+  returns: v.object({ orderNumber: v.string() }),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "draft") throw new Error("Only draft orders can be submitted");
+
+    const items = await ctx.db
+      .query("orderItems")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .filter((q) => q.eq(q.field("isVoided"), false))
+      .collect();
+    if (items.length === 0) throw new Error("Cannot submit a draft with no items");
+
+    const orderNumber = await getNextOrderNumber(ctx, order.storeId, "takeout");
+    await ctx.db.patch(args.orderId, {
+      status: "open",
+      orderNumber,
+      orderChannel: "walk_in_takeout",
+      takeoutStatus: "pending",
+    });
+    return { orderNumber };
+  },
+});
+
+// Discard a draft order — hard-deletes order, items, and modifiers
+export const discardDraft = mutation({
+  args: { orderId: v.id("orders") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "draft") throw new Error("Only draft orders can be discarded");
+
+    const items = await ctx.db
+      .query("orderItems")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .collect();
+    for (const item of items) {
+      const modifiers = await ctx.db
+        .query("orderItemModifiers")
+        .withIndex("by_orderItem", (q) => q.eq("orderItemId", item._id))
+        .collect();
+      for (const mod of modifiers) {
+        await ctx.db.delete(mod._id);
+      }
+      await ctx.db.delete(item._id);
+    }
+    await ctx.db.delete(args.orderId);
+    return null;
+  },
+});
+
+// Get all draft orders for a store
+export const getDraftOrders = query({
+  args: { storeId: v.id("stores") },
+  returns: v.array(
+    v.object({
+      _id: v.id("orders"),
+      draftLabel: v.optional(v.string()),
+      customerName: v.optional(v.string()),
+      itemCount: v.number(),
+      subtotal: v.number(),
+      createdAt: v.number(),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+    const drafts = await ctx.db
+      .query("orders")
+      .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "draft"))
+      .collect();
+
+    const results = await Promise.all(
+      drafts.map(async (draft) => {
+        const items = await ctx.db
+          .query("orderItems")
+          .withIndex("by_order", (q) => q.eq("orderId", draft._id))
+          .collect();
+        const activeItems = items.filter((i) => !i.isVoided);
+        const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
+        return {
+          _id: draft._id,
+          draftLabel: draft.draftLabel,
+          customerName: draft.customerName,
+          itemCount,
+          subtotal: draft.netSales,
+          createdAt: draft.createdAt,
+        };
+      }),
+    );
+    return results;
+  },
+});
+
+// Clean up expired drafts (created before today)
+export const cleanupExpiredDrafts = mutation({
+  args: { storeId: v.id("stores") },
+  returns: v.object({ deletedCount: v.number() }),
+  handler: async (ctx, args) => {
+    await requireAuth(ctx);
+    const { startOfDay } = getPHTDayBoundaries();
+
+    const expiredDrafts = await ctx.db
+      .query("orders")
+      .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "draft"))
+      .collect();
+    const oldDrafts = expiredDrafts.filter((d) => d.createdAt < startOfDay);
+
+    for (const draft of oldDrafts) {
+      const items = await ctx.db
+        .query("orderItems")
+        .withIndex("by_order", (q) => q.eq("orderId", draft._id))
+        .collect();
+      for (const item of items) {
+        const modifiers = await ctx.db
+          .query("orderItemModifiers")
+          .withIndex("by_orderItem", (q) => q.eq("orderItemId", item._id))
+          .collect();
+        for (const mod of modifiers) {
+          await ctx.db.delete(mod._id);
+        }
+        await ctx.db.delete(item._id);
+      }
+      await ctx.db.delete(draft._id);
+    }
+    return { deletedCount: oldDrafts.length };
+  },
+});
+
 // Get single order with items
 export const get = query({
   args: {
@@ -161,7 +355,7 @@ export const get = query({
     v.object({
       _id: v.id("orders"),
       storeId: v.id("stores"),
-      orderNumber: v.string(),
+      orderNumber: v.optional(v.string()),
       orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
       tableId: v.optional(v.id("tables")),
       tableName: v.optional(v.string()),
@@ -169,7 +363,12 @@ export const get = query({
       tabName: v.optional(v.string()),
       pax: v.optional(v.number()),
       customerName: v.optional(v.string()),
-      status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
+      status: v.union(
+        v.literal("draft"),
+        v.literal("open"),
+        v.literal("paid"),
+        v.literal("voided"),
+      ),
       takeoutStatus: v.optional(
         v.union(
           v.literal("pending"),
@@ -381,13 +580,18 @@ export const list = query({
   returns: v.array(
     v.object({
       _id: v.id("orders"),
-      orderNumber: v.string(),
+      orderNumber: v.optional(v.string()),
       orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
       tableName: v.optional(v.string()),
       tabNumber: v.optional(v.number()),
       tabName: v.optional(v.string()),
       customerName: v.optional(v.string()),
-      status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
+      status: v.union(
+        v.literal("draft"),
+        v.literal("open"),
+        v.literal("paid"),
+        v.literal("voided"),
+      ),
       netSales: v.number(),
       itemCount: v.number(),
       createdAt: v.number(),
@@ -467,11 +671,16 @@ export const getOrderHistory = query({
   returns: v.array(
     v.object({
       _id: v.id("orders"),
-      orderNumber: v.string(),
+      orderNumber: v.optional(v.string()),
       orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
       tableName: v.optional(v.string()),
       customerName: v.optional(v.string()),
-      status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
+      status: v.union(
+        v.literal("draft"),
+        v.literal("open"),
+        v.literal("paid"),
+        v.literal("voided"),
+      ),
       netSales: v.number(),
       itemCount: v.number(),
       createdAt: v.number(),
@@ -933,9 +1142,14 @@ export const getTakeoutOrders = query({
   returns: v.array(
     v.object({
       _id: v.id("orders"),
-      orderNumber: v.string(),
+      orderNumber: v.optional(v.string()),
       customerName: v.optional(v.string()),
-      status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
+      status: v.union(
+        v.literal("draft"),
+        v.literal("open"),
+        v.literal("paid"),
+        v.literal("voided"),
+      ),
       takeoutStatus: v.optional(
         v.union(
           v.literal("pending"),
@@ -1042,7 +1256,7 @@ export const listActive = query({
   returns: v.array(
     v.object({
       _id: v.id("orders"),
-      orderNumber: v.string(),
+      orderNumber: v.optional(v.string()),
       orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
       tableId: v.optional(v.id("tables")),
       tableName: v.optional(v.string()),
@@ -1119,7 +1333,7 @@ export const getTodaysOpenOrders = query({
   returns: v.array(
     v.object({
       _id: v.id("orders"),
-      orderNumber: v.string(),
+      orderNumber: v.optional(v.string()),
       orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
       tableName: v.optional(v.string()),
       customerName: v.optional(v.string()),
@@ -1381,7 +1595,7 @@ export const getOpenOrdersForTable = query({
   returns: v.array(
     v.object({
       _id: v.id("orders"),
-      orderNumber: v.string(),
+      orderNumber: v.optional(v.string()),
       tabNumber: v.number(),
       tabName: v.string(),
       itemCount: v.number(),
