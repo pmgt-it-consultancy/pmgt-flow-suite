@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ActivityIndicator, Alert, FlatList, TextInput, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
@@ -24,6 +24,7 @@ interface TakeoutOrderScreenProps {
   route: {
     params: {
       storeId: Id<"stores">;
+      orderId: Id<"orders">;
     };
   };
 }
@@ -38,30 +39,12 @@ interface SelectedProduct {
   maxPrice?: number;
 }
 
-interface DraftItem {
-  localId: string;
-  productId: Id<"products">;
-  productName: string;
-  productPrice: number;
-  quantity: number;
-  notes?: string;
-  modifiers?: SelectedModifier[];
-  customPrice?: number;
-}
-
-let draftIdCounter = 0;
-
 export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProps) => {
-  const { storeId } = route.params;
+  const { storeId, orderId } = route.params;
   const { isLoading, isAuthenticated } = useAuth();
 
-  // Takeout-specific state
+  // Customer name local state (synced to backend on blur)
   const [customerName, setCustomerName] = useState("");
-  const [currentOrderId, setCurrentOrderId] = useState<Id<"orders"> | undefined>();
-  const isDraftMode = !currentOrderId;
-
-  // Draft mode state
-  const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
 
   // Shared UI state
   const [isAddingItem, setIsAddingItem] = useState(false);
@@ -78,7 +61,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   } | null>(null);
 
   // Queries
-  const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
+  const order = useQuery(api.orders.get, { orderId });
   const products = useQuery(api.products.list, { storeId });
 
   // Prefetch all modifier data for the store — available instantly on product tap
@@ -96,32 +79,30 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const modifierGroups = selectedProduct ? (modifiersByProduct.get(selectedProduct.id) ?? []) : [];
 
   // Mutations
-  const createOrder = useMutation(api.orders.create);
   const addItemMutation = useMutation(api.orders.addItem);
   const updateItemQuantity = useMutation(api.orders.updateItemQuantity);
   const removeItemMutation = useMutation(api.orders.removeItem);
-  // Cart data
-  const activeItems = useMemo(() => {
-    if (isDraftMode) {
-      return draftItems.map((d) => ({
-        _id: d.localId as unknown as Id<"orderItems">,
-        productId: d.productId,
-        productName: d.productName,
-        productPrice: d.productPrice,
-        quantity: d.quantity,
-        notes: d.notes,
-        isVoided: false,
-        isSentToKitchen: false,
-        lineTotal: d.productPrice * d.quantity,
-        modifiers: d.modifiers?.map((m) => ({
-          groupName: m.modifierGroupName,
-          optionName: m.modifierOptionName,
-          priceAdjustment: m.priceAdjustment,
-        })),
-      }));
+  const submitDraftMutation = useMutation(api.orders.submitDraft);
+  const updateCustomerNameMutation = useMutation(api.orders.updateCustomerName);
+
+  // Sync customer name from backend when order loads
+  useEffect(() => {
+    if (order?.customerName !== undefined) {
+      setCustomerName(order.customerName ?? "");
     }
+  }, [order?.customerName]);
+
+  const handleCustomerNameBlur = useCallback(() => {
+    updateCustomerNameMutation({
+      orderId,
+      customerName: customerName.trim() || undefined,
+    });
+  }, [orderId, customerName, updateCustomerNameMutation]);
+
+  // Cart data — always derived from order
+  const activeItems = useMemo(() => {
     return order?.items.filter((i) => !i.isVoided) ?? [];
-  }, [isDraftMode, draftItems, order]);
+  }, [order]);
 
   const cartTotal = useMemo(
     () => activeItems.reduce((sum, item) => sum + item.lineTotal, 0),
@@ -131,8 +112,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     () => activeItems.reduce((sum, item) => sum + item.quantity, 0),
     [activeItems],
   );
-  const hasUnsentItems = useMemo(() => activeItems.some((i) => !i.isSentToKitchen), [activeItems]);
-  const hasSentItems = useMemo(() => activeItems.some((i) => i.isSentToKitchen), [activeItems]);
+  const hasItems = activeItems.length > 0;
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -154,32 +134,10 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     async (customPrice?: number) => {
       if (!selectedProduct) return;
 
-      const productPrice =
-        selectedProduct.isOpenPrice && customPrice !== undefined
-          ? customPrice
-          : selectedProduct.price;
-
-      if (isDraftMode) {
-        setDraftItems((prev) => [
-          ...prev,
-          {
-            localId: `draft-${++draftIdCounter}`,
-            productId: selectedProduct.id,
-            productName: selectedProduct.name,
-            productPrice,
-            quantity,
-            notes: notes || undefined,
-            customPrice: selectedProduct.isOpenPrice ? customPrice : undefined,
-          },
-        ]);
-        setSelectedProduct(null);
-        return;
-      }
-
       setIsAddingItem(true);
       try {
         await addItemMutation({
-          orderId: currentOrderId!,
+          orderId,
           productId: selectedProduct.id,
           quantity,
           notes: notes || undefined,
@@ -193,41 +151,17 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         setIsAddingItem(false);
       }
     },
-    [selectedProduct, isDraftMode, currentOrderId, quantity, notes, addItemMutation],
+    [selectedProduct, orderId, quantity, notes, addItemMutation],
   );
 
   const handleConfirmModifiers = useCallback(
     async (qty: number, itemNotes: string, modifiers: SelectedModifier[], customPrice?: number) => {
       if (!selectedProduct) return;
 
-      const basePrice =
-        selectedProduct.isOpenPrice && customPrice !== undefined
-          ? customPrice
-          : selectedProduct.price;
-
-      if (isDraftMode) {
-        const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceAdjustment, 0);
-        setDraftItems((prev) => [
-          ...prev,
-          {
-            localId: `draft-${++draftIdCounter}`,
-            productId: selectedProduct.id,
-            productName: selectedProduct.name,
-            productPrice: basePrice + modifierTotal,
-            quantity: qty,
-            notes: itemNotes || undefined,
-            modifiers,
-            customPrice: selectedProduct.isOpenPrice ? customPrice : undefined,
-          },
-        ]);
-        setSelectedProduct(null);
-        return;
-      }
-
       setIsAddingItem(true);
       try {
         await addItemMutation({
-          orderId: currentOrderId!,
+          orderId,
           productId: selectedProduct.id,
           quantity: qty,
           notes: itemNotes || undefined,
@@ -242,21 +176,11 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         setIsAddingItem(false);
       }
     },
-    [selectedProduct, isDraftMode, currentOrderId, addItemMutation],
+    [selectedProduct, orderId, addItemMutation],
   );
 
   const handleIncrement = useCallback(
     async (itemId: Id<"orderItems">, currentQty: number) => {
-      if (isDraftMode) {
-        setDraftItems((prev) =>
-          prev.map((d) =>
-            (d.localId as unknown as Id<"orderItems">) === itemId
-              ? { ...d, quantity: d.quantity + 1 }
-              : d,
-          ),
-        );
-        return;
-      }
       try {
         await updateItemQuantity({ orderItemId: itemId, quantity: currentQty + 1 });
       } catch (error) {
@@ -264,28 +188,11 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [isDraftMode, updateItemQuantity],
+    [updateItemQuantity],
   );
 
   const handleDecrement = useCallback(
     async (itemId: Id<"orderItems">, currentQty: number) => {
-      if (isDraftMode) {
-        if (currentQty <= 1) {
-          setDraftItems((prev) =>
-            prev.filter((d) => (d.localId as unknown as Id<"orderItems">) !== itemId),
-          );
-        } else {
-          setDraftItems((prev) =>
-            prev.map((d) =>
-              (d.localId as unknown as Id<"orderItems">) === itemId
-                ? { ...d, quantity: d.quantity - 1 }
-                : d,
-            ),
-          );
-        }
-        return;
-      }
-
       if (currentQty <= 1) {
         Alert.alert("Remove Item", "Are you sure you want to remove this item?", [
           { text: "Cancel", style: "cancel" },
@@ -312,7 +219,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [isDraftMode, updateItemQuantity, removeItemMutation],
+    [updateItemQuantity, removeItemMutation],
   );
 
   const handleVoidItem = useCallback(
@@ -338,81 +245,29 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   );
 
   const handleCheckout = useCallback(async () => {
-    if (draftItems.length === 0 && isDraftMode) {
-      Alert.alert("No Items", "Add items before checkout");
+    const items = order?.items.filter((i) => !i.isVoided) ?? [];
+    if (items.length === 0) {
+      Alert.alert("No Items", "Please add items before proceeding to payment.");
       return;
     }
 
     setIsSending(true);
     try {
-      let orderId: Id<"orders">;
-
-      if (isDraftMode) {
-        // Create takeout order
-        orderId = await createOrder({
-          storeId,
-          orderType: "takeout",
-          customerName: customerName.trim() || undefined,
-        });
-
-        // Add items one by one
-        for (const item of draftItems) {
-          await addItemMutation({
-            orderId,
-            productId: item.productId,
-            quantity: item.quantity,
-            notes: item.notes,
-            modifiers: item.modifiers,
-            ...(item.customPrice !== undefined ? { customPrice: item.customPrice } : {}),
-          });
-        }
-
-        setCurrentOrderId(orderId);
-        setDraftItems([]);
-      } else {
-        orderId = currentOrderId!;
+      if (order?.status === "draft") {
+        await submitDraftMutation({ orderId });
       }
 
-      // Navigate to checkout
       navigation.navigate("CheckoutScreen", {
         orderId,
         orderType: "takeout",
       });
     } catch (error: any) {
       console.error("Checkout error:", error);
-      Alert.alert("Error", error.message || "Failed to proceed to checkout");
+      Alert.alert("Error", error.message || "Failed to proceed to payment");
     } finally {
       setIsSending(false);
     }
-  }, [
-    isDraftMode,
-    draftItems,
-    createOrder,
-    addItemMutation,
-    storeId,
-    customerName,
-    currentOrderId,
-    navigation,
-  ]);
-
-  const handleCancelOrder = useCallback(() => {
-    if (isDraftMode) {
-      if (draftItems.length === 0) {
-        navigation.goBack();
-        return;
-      }
-      Alert.alert("Cancel Order", "Discard all items and go back?", [
-        { text: "No", style: "cancel" },
-        {
-          text: "Yes, Discard",
-          style: "destructive",
-          onPress: () => navigation.goBack(),
-        },
-      ]);
-      return;
-    }
-    navigation.goBack();
-  }, [isDraftMode, draftItems.length, navigation]);
+  }, [order, orderId, submitDraftMutation, navigation]);
 
   const formatCurrency = useFormatCurrency();
 
@@ -487,7 +342,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 </YStack>
               </XStack>
               <Text variant="muted" size="sm" style={{ marginTop: 2 }}>
-                {isDraftMode ? "New order — add items to continue" : "Order in progress"}
+                {order?.status === "draft" ? "Draft — add items to continue" : "Order in progress"}
               </Text>
             </YStack>
           </XStack>
@@ -506,56 +361,55 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
       <XStack flex={1}>
         {/* Menu Section */}
         <YStack flex={2} borderRightWidth={1} borderRightColor="#E2E8F0">
-          {/* Customer Name Input - Enhanced */}
-          {isDraftMode && (
-            <YStack
-              paddingHorizontal={16}
-              paddingVertical={12}
-              backgroundColor="#FFFFFF"
-              borderBottomWidth={1}
-              borderBottomColor="#E2E8F0"
-            >
-              <XStack alignItems="center">
-                <YStack
-                  backgroundColor={customerName.trim() ? "#FFF7ED" : "#F8FAFC"}
-                  borderRadius={8}
-                  padding={10}
-                  marginRight={12}
-                  borderWidth={1}
-                  borderColor={customerName.trim() ? "#FDBA74" : "#E2E8F0"}
+          {/* Customer Name Input - Always visible for takeout orders */}
+          <YStack
+            paddingHorizontal={16}
+            paddingVertical={12}
+            backgroundColor="#FFFFFF"
+            borderBottomWidth={1}
+            borderBottomColor="#E2E8F0"
+          >
+            <XStack alignItems="center">
+              <YStack
+                backgroundColor={customerName.trim() ? "#FFF7ED" : "#F8FAFC"}
+                borderRadius={8}
+                padding={10}
+                marginRight={12}
+                borderWidth={1}
+                borderColor={customerName.trim() ? "#FDBA74" : "#E2E8F0"}
+              >
+                <Ionicons
+                  name="person"
+                  size={20}
+                  color={customerName.trim() ? "#EA580C" : "#94A3B8"}
+                />
+              </YStack>
+              <YStack flex={1}>
+                <Text
+                  variant="muted"
+                  size="xs"
+                  style={{ marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}
                 >
-                  <Ionicons
-                    name="person"
-                    size={20}
-                    color={customerName.trim() ? "#EA580C" : "#94A3B8"}
-                  />
-                </YStack>
-                <YStack flex={1}>
-                  <Text
-                    variant="muted"
-                    size="xs"
-                    style={{ marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}
-                  >
-                    Customer Name
-                  </Text>
-                  <TextInput
-                    placeholder="Enter customer name (optional)"
-                    value={customerName}
-                    onChangeText={setCustomerName}
-                    placeholderTextColor="#9CA3AF"
-                    style={{
-                      backgroundColor: "#F8FAFC",
-                      borderRadius: 8,
-                      paddingHorizontal: 12,
-                      paddingVertical: 10,
-                      fontSize: 16,
-                      color: "#111827",
-                    }}
-                  />
-                </YStack>
-              </XStack>
-            </YStack>
-          )}
+                  Customer Name
+                </Text>
+                <TextInput
+                  placeholder="Enter customer name (optional)"
+                  value={customerName}
+                  onChangeText={setCustomerName}
+                  onBlur={handleCustomerNameBlur}
+                  placeholderTextColor="#9CA3AF"
+                  style={{
+                    backgroundColor: "#F8FAFC",
+                    borderRadius: 8,
+                    paddingHorizontal: 12,
+                    paddingVertical: 10,
+                    fontSize: 16,
+                    color: "#111827",
+                  }}
+                />
+              </YStack>
+            </XStack>
+          </YStack>
 
           <CategoryGrid storeId={storeId} products={products} onSelectProduct={handleAddProduct} />
         </YStack>
@@ -691,20 +545,20 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             {/* Action Buttons */}
             <TouchableOpacity
               onPress={handleCheckout}
-              disabled={!hasUnsentItems}
+              disabled={!hasItems}
               activeOpacity={0.8}
               style={{
-                backgroundColor: hasUnsentItems ? "#F97316" : "#CBD5E1",
+                backgroundColor: hasItems ? "#F97316" : "#CBD5E1",
                 borderRadius: 12,
                 paddingVertical: 16,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                shadowColor: hasUnsentItems ? "#F97316" : "transparent",
+                shadowColor: hasItems ? "#F97316" : "transparent",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,
-                elevation: hasUnsentItems ? 4 : 0,
+                elevation: hasItems ? 4 : 0,
               }}
             >
               <Ionicons name="card-outline" size={22} color="#FFFFFF" style={{ marginRight: 10 }} />
@@ -713,34 +567,32 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
               </Text>
             </TouchableOpacity>
 
-            {!hasSentItems && (
-              <TouchableOpacity
-                onPress={handleCancelOrder}
-                activeOpacity={0.7}
-                style={{
-                  marginTop: 12,
-                  paddingVertical: 14,
-                  paddingHorizontal: 20,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "row",
-                  backgroundColor: "#FEF2F2",
-                  borderRadius: 10,
-                  borderWidth: 1,
-                  borderColor: "#FECACA",
-                }}
-              >
-                <Ionicons
-                  name="close-circle-outline"
-                  size={20}
-                  color="#DC2626"
-                  style={{ marginRight: 8 }}
-                />
-                <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 15 }}>
-                  Cancel Order
-                </Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              onPress={handleBack}
+              activeOpacity={0.7}
+              style={{
+                marginTop: 12,
+                paddingVertical: 14,
+                paddingHorizontal: 20,
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+                backgroundColor: "#FEF2F2",
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: "#FECACA",
+              }}
+            >
+              <Ionicons
+                name="close-circle-outline"
+                size={20}
+                color="#DC2626"
+                style={{ marginRight: 8 }}
+              />
+              <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 15 }}>
+                Cancel Order
+              </Text>
+            </TouchableOpacity>
           </YStack>
         </YStack>
       </XStack>

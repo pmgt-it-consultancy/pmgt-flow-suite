@@ -313,7 +313,11 @@ export const ReceiptPreviewModal = ({
             {/* Payment */}
             <InfoRow
               label="Method"
-              value={receiptData.paymentMethod === "cash" ? "Cash" : "Card"}
+              value={
+                receiptData.paymentMethod === "cash"
+                  ? "Cash"
+                  : receiptData.cardPaymentType || "Card/E-Wallet"
+              }
             />
             {receiptData.paymentMethod === "cash" ? (
               <>
@@ -324,7 +328,11 @@ export const ReceiptPreviewModal = ({
                 <InfoRow label="Change" value={formatCurrency(receiptData.change || 0)} />
               </>
             ) : (
-              <InfoRow label="Card Payment" value={`**** ${receiptData.cardLastFour || "0000"}`} />
+              <>
+                {receiptData.cardReferenceNumber ? (
+                  <InfoRow label="Ref #" value={receiptData.cardReferenceNumber} />
+                ) : null}
+              </>
             )}
 
             <DashedSeparator />
