@@ -424,3 +424,193 @@ describe("orders.get", () => {
     ]);
   });
 });
+
+describe("orders — draft takeout orders", () => {
+  it("should create a draft order with auto-generated label", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const authed = t.withIdentity({ subject: userId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+
+    const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+    expect(order).not.toBeNull();
+    expect(order.status).toBe("draft");
+    expect(order.draftLabel).toBe("Customer #1");
+    expect(order.orderNumber).toBeUndefined();
+    expect(order.orderType).toBe("takeout");
+    expect(order.grossSales).toBe(0);
+    expect(order.netSales).toBe(0);
+  });
+
+  it("should auto-increment draft labels for subsequent drafts", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const authed = t.withIdentity({ subject: userId });
+    const orderId1 = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const orderId2 = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const orderId3 = await authed.mutation(api.orders.createDraftOrder, { storeId });
+
+    const order1 = await t.run(async (ctx: any) => ctx.db.get(orderId1));
+    const order2 = await t.run(async (ctx: any) => ctx.db.get(orderId2));
+    const order3 = await t.run(async (ctx: any) => ctx.db.get(orderId3));
+
+    expect(order1.draftLabel).toBe("Customer #1");
+    expect(order2.draftLabel).toBe("Customer #2");
+    expect(order3.draftLabel).toBe("Customer #3");
+  });
+
+  it("should submit a draft order — transitions to open with order number", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const authed = t.withIdentity({ subject: userId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+
+    // Add an item to the draft
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        isVoided: false,
+        isSentToKitchen: false,
+      });
+    });
+
+    const result = await authed.mutation(api.orders.submitDraft, { orderId });
+
+    expect(result.orderNumber).toMatch(/^T-\d{3}$/);
+
+    const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+    expect(order.status).toBe("open");
+    expect(order.orderNumber).toBe(result.orderNumber);
+    expect(order.orderChannel).toBe("walk_in_takeout");
+    expect(order.takeoutStatus).toBe("pending");
+  });
+
+  it("should reject submitting a draft with zero items", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const authed = t.withIdentity({ subject: userId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+
+    await expect(authed.mutation(api.orders.submitDraft, { orderId })).rejects.toThrowError(
+      "Cannot submit a draft with no items",
+    );
+  });
+
+  it("should discard a draft — deletes order, items, and modifiers", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const authed = t.withIdentity({ subject: userId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+
+    // Add item with modifier
+    const itemId = await t.run(async (ctx: any) => {
+      const id = await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        isVoided: false,
+        isSentToKitchen: false,
+      });
+      await ctx.db.insert("orderItemModifiers", {
+        orderItemId: id,
+        modifierGroupName: "Size",
+        modifierOptionName: "Large",
+        priceAdjustment: 2000,
+      });
+      return id;
+    });
+
+    await authed.mutation(api.orders.discardDraft, { orderId });
+
+    const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+    const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
+    const modifiers = await t.run(async (ctx: any) => {
+      return await ctx.db
+        .query("orderItemModifiers")
+        .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", itemId))
+        .collect();
+    });
+
+    expect(order).toBeNull();
+    expect(item).toBeNull();
+    expect(modifiers).toHaveLength(0);
+  });
+
+  it("should reject discarding a non-draft order", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const openOrderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "T-001",
+        orderType: "takeout" as const,
+        orderChannel: "walk_in_takeout" as const,
+        takeoutStatus: "pending" as const,
+        status: "open" as const,
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    await expect(
+      authed.mutation(api.orders.discardDraft, { orderId: openOrderId }),
+    ).rejects.toThrowError("Only draft orders can be discarded");
+  });
+
+  it("should return draft orders with item counts", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const authed = t.withIdentity({ subject: userId });
+    const orderId1 = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const orderId2 = await authed.mutation(api.orders.createDraftOrder, { storeId });
+
+    // Add 2 items to orderId1
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("orderItems", {
+        orderId: orderId1,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 2,
+        isVoided: false,
+        isSentToKitchen: false,
+      });
+    });
+
+    const drafts = await authed.query(api.orders.getDraftOrders, { storeId });
+
+    expect(drafts).toHaveLength(2);
+
+    const draft1 = drafts.find((d: any) => d._id === orderId1);
+    const draft2 = drafts.find((d: any) => d._id === orderId2);
+
+    expect(draft1).toBeDefined();
+    expect(draft1.itemCount).toBe(2);
+    expect(draft1.draftLabel).toBe("Customer #1");
+
+    expect(draft2).toBeDefined();
+    expect(draft2.itemCount).toBe(0);
+    expect(draft2.draftLabel).toBe("Customer #2");
+  });
+});
