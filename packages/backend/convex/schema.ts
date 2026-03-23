@@ -161,7 +161,7 @@ export default defineSchema({
   // ===== ORDERS =====
   orders: defineTable({
     storeId: v.id("stores"),
-    orderNumber: v.string(),
+    orderNumber: v.optional(v.string()),
     orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
     orderChannel: v.optional(
       v.union(
@@ -183,7 +183,8 @@ export default defineSchema({
     ),
     tableId: v.optional(v.id("tables")),
     customerName: v.optional(v.string()),
-    status: v.union(v.literal("open"), v.literal("paid"), v.literal("voided")),
+    draftLabel: v.optional(v.string()),
+    status: v.union(v.literal("draft"), v.literal("open"), v.literal("paid"), v.literal("voided")),
     grossSales: v.number(),
     vatableSales: v.number(),
     vatAmount: v.number(),
