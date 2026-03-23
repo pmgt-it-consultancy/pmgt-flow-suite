@@ -4,12 +4,12 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 
-import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
+import { ActivityIndicator, Alert, FlatList, RefreshControl } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Button, IconButton, Text } from "../../shared/components/ui";
-import { TakeoutOrderCard, TakeoutOrderDetailModal } from "../components";
+import { DraftOrderCard, TakeoutOrderCard, TakeoutOrderDetailModal } from "../components";
 
 type TakeoutStatus = "pending" | "preparing" | "ready_for_pickup" | "completed" | "cancelled";
 
@@ -65,6 +65,13 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   );
 
   const updateStatus = useMutation(api.orders.updateTakeoutStatus);
+  const createDraftMutation = useMutation(api.orders.createDraftOrder);
+  const discardDraftMutation = useMutation(api.orders.discardDraft);
+
+  const drafts = useQuery(
+    api.orders.getDraftOrders,
+    user?.storeId ? { storeId: user.storeId } : "skip",
+  );
 
   const { activeOrders, completedOrders } = useMemo(() => {
     if (!takeoutOrders) return { activeOrders: [], completedOrders: [] };
@@ -102,10 +109,40 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
     [updateStatus],
   );
 
-  const handleNewOrder = useCallback(() => {
+  const handleNewOrder = useCallback(async () => {
     if (!user?.storeId) return;
-    navigation.navigate("TakeoutOrderScreen", { storeId: user.storeId });
-  }, [user?.storeId, navigation]);
+    try {
+      const orderId = await createDraftMutation({ storeId: user.storeId });
+      navigation.navigate("TakeoutOrderScreen", {
+        storeId: user.storeId,
+        orderId,
+      });
+    } catch (error) {
+      Alert.alert("Error", "Failed to create order. Please try again.");
+    }
+  }, [user?.storeId, navigation, createDraftMutation]);
+
+  const handleResumeDraft = useCallback(
+    (orderId: Id<"orders">) => {
+      if (!user?.storeId) return;
+      navigation.navigate("TakeoutOrderScreen", {
+        storeId: user.storeId,
+        orderId,
+      });
+    },
+    [user?.storeId, navigation],
+  );
+
+  const handleDiscardDraft = useCallback(
+    async (orderId: Id<"orders">) => {
+      try {
+        await discardDraftMutation({ orderId });
+      } catch (error) {
+        Alert.alert("Error", "Failed to discard draft. Please try again.");
+      }
+    },
+    [discardDraftMutation],
+  );
 
   const handlePrevDay = useCallback(() => {
     setSelectedDate((prev) => {
@@ -190,6 +227,27 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
           </Button>
         )}
       </XStack>
+
+      {drafts && drafts.length > 0 && (
+        <YStack paddingHorizontal={16} paddingTop={8} paddingBottom={12} gap={8}>
+          <Text variant="heading" size="base" style={{ color: "#92400E" }}>
+            Drafts ({drafts.length})
+          </Text>
+          {drafts.map((draft) => (
+            <DraftOrderCard
+              key={draft._id}
+              id={draft._id}
+              draftLabel={draft.draftLabel}
+              customerName={draft.customerName}
+              itemCount={draft.itemCount}
+              subtotal={draft.subtotal}
+              createdAt={draft.createdAt}
+              onResume={handleResumeDraft}
+              onDiscard={handleDiscardDraft}
+            />
+          ))}
+        </YStack>
+      )}
 
       {takeoutOrders === undefined ? (
         <YStack flex={1} justifyContent="center" alignItems="center">

@@ -59,6 +59,7 @@ export type RootStackParamList = {
   TakeoutListScreen: undefined;
   TakeoutOrderScreen: {
     storeId: Id<"stores">;
+    orderId: Id<"orders">;
   };
   UpdatesScreen: undefined;
   DayClosingScreen: undefined;
