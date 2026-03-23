@@ -363,6 +363,7 @@ export const get = query({
       tabName: v.optional(v.string()),
       pax: v.optional(v.number()),
       customerName: v.optional(v.string()),
+      draftLabel: v.optional(v.string()),
       status: v.union(
         v.literal("draft"),
         v.literal("open"),
@@ -538,6 +539,7 @@ export const get = query({
       tabName: order.tabName,
       pax: order.pax,
       customerName: order.customerName,
+      draftLabel: order.draftLabel,
       status: order.status,
       takeoutStatus: order.takeoutStatus,
       grossSales: order.grossSales,
@@ -612,11 +614,13 @@ export const list = query({
         .order("desc")
         .take(args.limit ?? 100);
     } else {
-      orders = await ctx.db
+      const allOrders = await ctx.db
         .query("orders")
         .withIndex("by_store", (q) => q.eq("storeId", args.storeId))
+        .filter((q) => q.neq(q.field("status"), "draft"))
         .order("desc")
         .take(args.limit ?? 100);
+      orders = allOrders;
     }
 
     // Get additional info for each order
@@ -699,15 +703,20 @@ export const getOrderHistory = query({
       .order("desc")
       .collect();
 
+    // Exclude draft orders
+    let filtered = allOrders.filter((o) => o.status !== "draft");
+
     // Apply status filter
-    let filtered = args.status ? allOrders.filter((o) => o.status === args.status) : allOrders;
+    if (args.status) {
+      filtered = filtered.filter((o) => o.status === args.status);
+    }
 
     // Apply search filter
     if (args.search) {
       const search = args.search.toLowerCase();
       filtered = filtered.filter(
         (o) =>
-          o.orderNumber.toLowerCase().includes(search) ||
+          (o.orderNumber?.toLowerCase().includes(search) ?? false) ||
           (o.customerName && o.customerName.toLowerCase().includes(search)),
       );
     }
@@ -796,10 +805,10 @@ export const addItem = mutation({
     // Require authenticated user
     await requireAuth(ctx);
 
-    // Validate order is open
+    // Validate order is open or draft
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
-    if (order.status !== "open") {
+    if (order.status !== "open" && order.status !== "draft") {
       throw new Error("Cannot add items to a closed order");
     }
 
@@ -875,10 +884,10 @@ export const updateItemQuantity = mutation({
     if (!item) throw new Error("Order item not found");
     if (item.isVoided) throw new Error("Cannot modify voided item");
 
-    // Validate order is open
+    // Validate order is open or draft
     const order = await ctx.db.get(item.orderId);
     if (!order) throw new Error("Order not found");
-    if (order.status !== "open") {
+    if (order.status !== "open" && order.status !== "draft") {
       throw new Error("Cannot modify items in a closed order");
     }
 
@@ -916,10 +925,10 @@ export const updateItemNotes = mutation({
     const item = await ctx.db.get(args.orderItemId);
     if (!item) throw new Error("Order item not found");
 
-    // Validate order is open
+    // Validate order is open or draft
     const order = await ctx.db.get(item.orderId);
     if (!order) throw new Error("Order not found");
-    if (order.status !== "open") {
+    if (order.status !== "open" && order.status !== "draft") {
       throw new Error("Cannot modify items in a closed order");
     }
 
@@ -945,10 +954,10 @@ export const removeItem = mutation({
     if (!item) throw new Error("Order item not found");
     if (item.isVoided) throw new Error("Item is already voided");
 
-    // Validate order is open
+    // Validate order is open or draft
     const order = await ctx.db.get(item.orderId);
     if (!order) throw new Error("Order not found");
-    if (order.status !== "open") {
+    if (order.status !== "open" && order.status !== "draft") {
       throw new Error("Cannot modify items in a closed order");
     }
 
@@ -1048,7 +1057,7 @@ export const updateCustomerName = mutation({
 
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
-    if (order.status !== "open") {
+    if (order.status !== "open" && order.status !== "draft") {
       throw new Error("Cannot modify a closed order");
     }
 
@@ -1177,7 +1186,9 @@ export const getTakeoutOrders = query({
     });
 
     const orders = await indexQuery
-      .filter((q) => q.eq(q.field("orderType"), "takeout"))
+      .filter((q) =>
+        q.and(q.eq(q.field("orderType"), "takeout"), q.neq(q.field("status"), "draft")),
+      )
       .order("desc")
       .collect();
 
@@ -1233,7 +1244,8 @@ export const getDashboardSummary = query({
       .filter((q) => q.lt(q.field("createdAt"), endOfDay))
       .collect();
 
-    const totalOrdersToday = todaysOrders.length;
+    const nonDraftOrders = todaysOrders.filter((o) => o.status !== "draft");
+    const totalOrdersToday = nonDraftOrders.length;
     const activeDineIn = todaysOrders.filter(
       (o) => o.orderType === "dine_in" && o.status === "open",
     ).length;
