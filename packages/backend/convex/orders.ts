@@ -312,37 +312,46 @@ export const getDraftOrders = query({
 });
 
 // Clean up expired drafts (created before today)
+// Shared helper: delete expired draft orders (created before today's PHT boundary)
+export async function cleanupExpiredDraftOrders(
+  ctx: { db: any },
+  storeId: Id<"stores">,
+): Promise<number> {
+  const { startOfDay } = getPHTDayBoundaries();
+
+  const expiredDrafts = await ctx.db
+    .query("orders")
+    .withIndex("by_store_status", (q: any) => q.eq("storeId", storeId).eq("status", "draft"))
+    .collect();
+  const oldDrafts = expiredDrafts.filter((d: any) => d.createdAt < startOfDay);
+
+  for (const draft of oldDrafts) {
+    const items = await ctx.db
+      .query("orderItems")
+      .withIndex("by_order", (q: any) => q.eq("orderId", draft._id))
+      .collect();
+    for (const item of items) {
+      const modifiers = await ctx.db
+        .query("orderItemModifiers")
+        .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", item._id))
+        .collect();
+      for (const mod of modifiers) {
+        await ctx.db.delete(mod._id);
+      }
+      await ctx.db.delete(item._id);
+    }
+    await ctx.db.delete(draft._id);
+  }
+  return oldDrafts.length;
+}
+
 export const cleanupExpiredDrafts = mutation({
   args: { storeId: v.id("stores") },
   returns: v.object({ deletedCount: v.number() }),
   handler: async (ctx, args) => {
     await requireAuth(ctx);
-    const { startOfDay } = getPHTDayBoundaries();
-
-    const expiredDrafts = await ctx.db
-      .query("orders")
-      .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "draft"))
-      .collect();
-    const oldDrafts = expiredDrafts.filter((d) => d.createdAt < startOfDay);
-
-    for (const draft of oldDrafts) {
-      const items = await ctx.db
-        .query("orderItems")
-        .withIndex("by_order", (q) => q.eq("orderId", draft._id))
-        .collect();
-      for (const item of items) {
-        const modifiers = await ctx.db
-          .query("orderItemModifiers")
-          .withIndex("by_orderItem", (q) => q.eq("orderItemId", item._id))
-          .collect();
-        for (const mod of modifiers) {
-          await ctx.db.delete(mod._id);
-        }
-        await ctx.db.delete(item._id);
-      }
-      await ctx.db.delete(draft._id);
-    }
-    return { deletedCount: oldDrafts.length };
+    const deletedCount = await cleanupExpiredDraftOrders(ctx, args.storeId);
+    return { deletedCount };
   },
 });
 

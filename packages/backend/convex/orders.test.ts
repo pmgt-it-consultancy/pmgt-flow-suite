@@ -613,4 +613,67 @@ describe("orders — draft takeout orders", () => {
     expect(draft2.itemCount).toBe(0);
     expect(draft2.draftLabel).toBe("Customer #2");
   });
+
+  it("should clean up drafts created before today", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    // Create a draft with a timestamp from yesterday
+    const yesterday = Date.now() - 24 * 60 * 60 * 1000;
+    const oldDraftId = await t.run(async (ctx: any) => {
+      const oid = await ctx.db.insert("orders", {
+        storeId,
+        orderType: "takeout" as const,
+        status: "draft" as const,
+        draftLabel: "Customer #1",
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: yesterday,
+      });
+
+      // Add an item to make it non-trivial
+      await ctx.db.insert("orderItems", {
+        orderId: oid,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        isVoided: false,
+      });
+
+      return oid;
+    });
+
+    // Create a draft from today (should NOT be cleaned up)
+    const authed = t.withIdentity({ subject: userId });
+    const todayDraftId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+
+    // Run cleanup
+    const result = await authed.mutation(api.orders.cleanupExpiredDrafts, { storeId });
+    expect(result.deletedCount).toBe(1);
+
+    // Old draft should be gone
+    const oldDraft = await t.run(async (ctx: any) => ctx.db.get(oldDraftId));
+    expect(oldDraft).toBeNull();
+
+    // Old draft items should be gone
+    const oldItems = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("orderItems")
+        .withIndex("by_order", (q: any) => q.eq("orderId", oldDraftId))
+        .collect(),
+    );
+    expect(oldItems).toHaveLength(0);
+
+    // Today's draft should still exist
+    const todayDraft = await t.run(async (ctx: any) => ctx.db.get(todayDraftId));
+    expect(todayDraft).not.toBeNull();
+    expect(todayDraft.status).toBe("draft");
+  });
 });
