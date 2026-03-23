@@ -1,11 +1,13 @@
 ## What's New
 
-- Open price products — products can now be configured as "open price" where the cashier enters the price at order time, with min/max validation
-- Product card display — open price products show "Enter Price" label instead of a fixed price
-- Price input in order flow — AddItemModal and ModifierSelectionModal now support inline price entry for open price products
-- Web admin — new Open Price toggle in product form with min/max price configuration
-- Takeout support — open price products work in both dine-in and takeout order flows
+- Draft takeout orders — customers can step aside while deciding, and their order is saved as a draft that any staff member can resume later
+- Auto-generated customer labels — drafts are labeled "Customer #1", "Customer #2", etc. for easy identification, editable to real names
+- Drafts section on takeout list — amber highlighted section at the top shows all parked orders with resume and discard actions
+- End-of-day draft cleanup — leftover drafts are automatically cleaned up when the daily report is generated
+- Receipt preview fix — cashless payments now show the actual payment type (GCash, Maya, etc.) and reference number instead of generic "Card" label
 
 ## Notes
 
-- To use this feature, toggle "Open Price" when creating or editing a product in the web admin and set the min/max price range
+- Staff tap "New Order" to create a draft, add items, then go back to park it — no extra save step needed
+- Drafts are stored in the backend and visible across all devices
+- The "Proceed to Payment" button submits the draft and assigns an order number at that point
