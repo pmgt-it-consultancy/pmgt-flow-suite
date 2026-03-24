@@ -545,10 +545,10 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             {/* Action Buttons */}
             <TouchableOpacity
               onPress={handleCheckout}
-              disabled={!hasItems}
+              disabled={!hasItems || isSending}
               activeOpacity={0.8}
               style={{
-                backgroundColor: hasItems ? "#F97316" : "#CBD5E1",
+                backgroundColor: hasItems && !isSending ? "#F97316" : "#CBD5E1",
                 borderRadius: 12,
                 paddingVertical: 16,
                 flexDirection: "row",

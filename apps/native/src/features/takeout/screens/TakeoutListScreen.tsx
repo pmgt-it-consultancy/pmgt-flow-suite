@@ -50,6 +50,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<Id<"orders"> | null>(null);
   const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [isCreating, setIsCreating] = useState(false);
 
   const isToday = getStartOfDay(selectedDate) === getStartOfDay(new Date());
 
@@ -110,17 +111,23 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   );
 
   const handleNewOrder = useCallback(async () => {
-    if (!user?.storeId) return;
+    if (!user?.storeId || isCreating) return;
+    setIsCreating(true);
     try {
-      const orderId = await createDraftMutation({ storeId: user.storeId });
+      const orderId = await createDraftMutation({
+        storeId: user.storeId,
+        requestId: crypto.randomUUID(),
+      });
       navigation.navigate("TakeoutOrderScreen", {
         storeId: user.storeId,
         orderId,
       });
     } catch (error) {
       Alert.alert("Error", "Failed to create order. Please try again.");
+    } finally {
+      setIsCreating(false);
     }
-  }, [user?.storeId, navigation, createDraftMutation]);
+  }, [user?.storeId, navigation, createDraftMutation, isCreating]);
 
   const handleResumeDraft = useCallback(
     (orderId: Id<"orders">) => {
@@ -133,15 +140,21 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
     [user?.storeId, navigation],
   );
 
+  const [discardingId, setDiscardingId] = useState<Id<"orders"> | null>(null);
+
   const handleDiscardDraft = useCallback(
     async (orderId: Id<"orders">) => {
+      if (discardingId) return;
+      setDiscardingId(orderId);
       try {
         await discardDraftMutation({ orderId });
       } catch (error) {
         Alert.alert("Error", "Failed to discard draft. Please try again.");
+      } finally {
+        setDiscardingId(null);
       }
     },
-    [discardDraftMutation],
+    [discardDraftMutation, discardingId],
   );
 
   const handlePrevDay = useCallback(() => {
@@ -190,7 +203,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
         </XStack>
         <XStack alignItems="center" gap={8}>
           <SystemStatusBar />
-          <Button size="md" onPress={handleNewOrder}>
+          <Button size="md" onPress={handleNewOrder} disabled={isCreating}>
             <XStack alignItems="center" gap={6}>
               <Ionicons name="add" size={20} color="#fff" />
               <Text style={{ color: "#FFFFFF", fontWeight: "600" }}>New Order</Text>
