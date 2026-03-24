@@ -51,6 +51,9 @@ export const processCashPayment = mutation({
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
     if (order.status !== "open") {
+      if (order.status === "paid" && order.paymentMethod === "cash") {
+        return { success: true, changeGiven: order.changeGiven ?? 0 };
+      }
       throw new Error("Order is not open for payment");
     }
 
@@ -111,6 +114,9 @@ export const processCardPayment = mutation({
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
     if (order.status !== "open") {
+      if (order.status === "paid" && order.paymentMethod === "card_ewallet") {
+        return { success: true };
+      }
       throw new Error("Order is not open for payment");
     }
 
