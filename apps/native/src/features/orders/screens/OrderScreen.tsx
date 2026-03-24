@@ -84,6 +84,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isCreatingTab, setIsCreatingTab] = useState(false);
 
   // PAX state
   const [showPaxModal, setShowPaxModal] = useState(false);
@@ -625,19 +626,19 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   );
 
   const handleAddNewTab = useCallback(async () => {
-    if (!tableId || !storeId) return;
+    if (!tableId || !storeId || isCreatingTab) return;
+    setIsCreatingTab(true);
 
     try {
-      // Create a new order (tab) for this table
       const newOrderId = await createOrderMutation({
         storeId,
         orderType: "dine_in",
         tableId,
-        pax: 1, // Default pax
+        pax: 1,
+        requestId: crypto.randomUUID(),
       });
 
-      // Navigate to the new order, replacing current screen
-      navigation.replace("OrderScreen", {
+      navigation.navigate("OrderScreen", {
         orderId: newOrderId,
         tableId,
         tableName: currentTableName,
@@ -645,8 +646,10 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       });
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to create new tab");
+    } finally {
+      setIsCreatingTab(false);
     }
-  }, [tableId, storeId, createOrderMutation, navigation, currentTableName]);
+  }, [tableId, storeId, createOrderMutation, navigation, currentTableName, isCreatingTab]);
 
   if (isLoading || !isAuthenticated) {
     return (
@@ -880,9 +883,10 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
+                disabled={isSending}
                 style={{
                   flex: 1,
-                  backgroundColor: "#0D87E1",
+                  backgroundColor: isSending ? "#93C5FD" : "#0D87E1",
                   borderRadius: 8,
                   paddingVertical: 12,
                 }}

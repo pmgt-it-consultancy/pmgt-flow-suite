@@ -7,7 +7,7 @@ interface EditTabNameModalProps {
   onClose: () => void;
   currentName: string;
   tabNumber: number;
-  onSave: (newName: string) => void;
+  onSave: (newName: string) => Promise<void> | void;
 }
 
 export const EditTabNameModal = ({
@@ -18,17 +18,25 @@ export const EditTabNameModal = ({
   onSave,
 }: EditTabNameModalProps) => {
   const [tabName, setTabName] = useState(currentName);
+  const [isSaving, setIsSaving] = useState(false);
   const defaultName = `Tab ${tabNumber}`;
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
     const trimmedName = tabName.trim();
-    if (!trimmedName) {
-      // If empty, use default
-      onSave(defaultName);
-    } else {
-      onSave(trimmedName);
+    try {
+      if (!trimmedName) {
+        await onSave(defaultName);
+      } else {
+        await onSave(trimmedName);
+      }
+      onClose();
+    } catch {
+      // Error handled by parent
+    } finally {
+      setIsSaving(false);
     }
-    onClose();
   };
 
   const handleClear = () => {
@@ -37,6 +45,7 @@ export const EditTabNameModal = ({
 
   const handleClose = () => {
     setTabName(currentName);
+    setIsSaving(false);
     onClose();
   };
 
@@ -76,7 +85,7 @@ export const EditTabNameModal = ({
           </Button>
         </YStack>
         <YStack flex={1}>
-          <Button variant="primary" size="lg" onPress={handleSave}>
+          <Button variant="primary" size="lg" onPress={handleSave} disabled={isSaving}>
             <Text style={{ color: "#FFFFFF", fontWeight: "500" }}>Save</Text>
           </Button>
         </YStack>

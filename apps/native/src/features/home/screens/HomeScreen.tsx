@@ -18,6 +18,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const { user, signOut, isLoading, isAuthenticated } = useAuth();
   const formatCurrency = useFormatCurrency();
   const [clock, setClock] = useState(new Date());
+  const [isLocking, setIsLocking] = useState(false);
   const lockScreen = useLockStore((state) => state.lock);
   const screenLockMutation = useMutation(api.screenLock.screenLock);
 
@@ -49,9 +50,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
   }, [signOut, navigation]);
 
   const handleLock = useCallback(async () => {
-    if (!user?._id || !user.storeId) {
-      return;
-    }
+    if (!user?._id || !user.storeId || isLocking) return;
 
     if (!userHasPin) {
       Alert.alert(
@@ -65,13 +64,15 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
       return;
     }
 
+    setIsLocking(true);
     lockScreen({
       userId: user._id,
       userName: user.name ?? "User",
       userRole: user.role?.name ?? "Staff",
     });
     screenLockMutation({ storeId: user.storeId, trigger: "manual" }).catch(() => {});
-  }, [lockScreen, navigation, screenLockMutation, user, userHasPin]);
+    // Note: don't reset isLocking since screen transitions to lock screen
+  }, [lockScreen, navigation, screenLockMutation, user, userHasPin, isLocking]);
 
   if (isLoading || !isAuthenticated) {
     return (

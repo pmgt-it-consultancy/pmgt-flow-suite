@@ -6,7 +6,7 @@ interface VoidItemModalProps {
   visible: boolean;
   itemName: string;
   itemQuantity: number;
-  onConfirm: (reason: string) => void;
+  onConfirm: (reason: string) => Promise<void> | void;
   onClose: () => void;
 }
 
@@ -18,15 +18,24 @@ export const VoidItemModal = ({
   onClose,
 }: VoidItemModalProps) => {
   const [reason, setReason] = useState("");
+  const [isVoiding, setIsVoiding] = useState(false);
 
-  const handleConfirm = () => {
-    if (!reason.trim()) return;
-    onConfirm(reason.trim());
-    setReason("");
+  const handleConfirm = async () => {
+    if (!reason.trim() || isVoiding) return;
+    setIsVoiding(true);
+    try {
+      await onConfirm(reason.trim());
+      setReason("");
+    } catch {
+      // Error handled by parent
+    } finally {
+      setIsVoiding(false);
+    }
   };
 
   const handleClose = () => {
     setReason("");
+    setIsVoiding(false);
     onClose();
   };
 
@@ -58,9 +67,9 @@ export const VoidItemModal = ({
           <Button
             variant="destructive"
             size="lg"
-            disabled={!reason.trim()}
+            disabled={!reason.trim() || isVoiding}
             onPress={handleConfirm}
-            style={!reason.trim() ? { opacity: 0.4 } : undefined}
+            style={!reason.trim() || isVoiding ? { opacity: 0.4 } : undefined}
           >
             <Text style={{ color: "#FFFFFF", fontWeight: "500" }}>Confirm Void</Text>
           </Button>
