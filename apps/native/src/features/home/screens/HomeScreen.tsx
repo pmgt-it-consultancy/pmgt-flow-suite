@@ -41,13 +41,21 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
     user?._id ? { userId: user._id } : "skip",
   );
 
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const handleLogout = useCallback(async () => {
-    await signOut();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "LoginScreen" }],
-    });
-  }, [signOut, navigation]);
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await signOut();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "LoginScreen" }],
+      });
+    } catch {
+      setIsLoggingOut(false);
+    }
+  }, [signOut, navigation, isLoggingOut]);
 
   const handleLock = useCallback(async () => {
     if (!user?._id || !user.storeId || isLocking) return;
