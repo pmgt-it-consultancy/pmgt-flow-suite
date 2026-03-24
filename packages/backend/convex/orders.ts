@@ -1281,12 +1281,16 @@ export const getDashboardSummary = query({
 
     const nonDraftOrders = todaysOrders.filter((o) => o.status !== "draft");
     const totalOrdersToday = nonDraftOrders.length;
-    const activeDineIn = todaysOrders.filter(
-      (o) => o.orderType === "dine_in" && o.status === "open",
-    ).length;
-    const activeTakeout = todaysOrders.filter(
-      (o) => o.orderType === "takeout" && o.status === "open",
-    ).length;
+
+    // Active counts should reflect ALL open orders (not just today's)
+    // to match what the active orders list displays
+    const allOpenOrders = await ctx.db
+      .query("orders")
+      .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "open"))
+      .collect();
+    const activeDineIn = allOpenOrders.filter((o) => o.orderType === "dine_in").length;
+    const activeTakeout = allOpenOrders.filter((o) => o.orderType === "takeout").length;
+
     const todayRevenue = todaysOrders
       .filter((o) => o.status === "paid")
       .reduce((sum, o) => sum + o.netSales, 0);
