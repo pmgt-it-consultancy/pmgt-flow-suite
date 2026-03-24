@@ -60,11 +60,21 @@ export const create = mutation({
     tableId: v.optional(v.id("tables")),
     customerName: v.optional(v.string()),
     pax: v.optional(v.number()),
+    requestId: v.optional(v.string()),
   },
   returns: v.id("orders"),
   handler: async (ctx, args) => {
     // Require authenticated user
     const user = await requireAuth(ctx);
+
+    // Idempotency: if requestId provided and order exists, return it
+    if (args.requestId) {
+      const existing = await ctx.db
+        .query("orders")
+        .withIndex("by_requestId", (q) => q.eq("requestId", args.requestId))
+        .unique();
+      if (existing) return existing._id;
+    }
 
     // Validate dine-in orders have a table
     if (args.orderType === "dine_in" && !args.tableId) {
@@ -138,6 +148,7 @@ export const create = mutation({
       pax: args.pax,
       tabNumber,
       tabName,
+      requestId: args.requestId,
     });
 
     // Update table status if dine-in and this is the first tab
