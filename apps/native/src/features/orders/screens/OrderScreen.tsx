@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
+import * as Crypto from "expo-crypto";
 import { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -635,7 +636,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         orderType: "dine_in",
         tableId,
         pax: 1,
-        requestId: crypto.randomUUID(),
+        requestId: Crypto.randomUUID(),
       });
 
       navigation.navigate("OrderScreen", {
