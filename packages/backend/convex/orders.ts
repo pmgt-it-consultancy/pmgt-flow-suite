@@ -156,10 +156,19 @@ export const create = mutation({
 export const createDraftOrder = mutation({
   args: {
     storeId: v.id("stores"),
+    requestId: v.string(),
   },
   returns: v.id("orders"),
   handler: async (ctx, args) => {
     const user = await requireAuth(ctx);
+
+    // Idempotency: if an order with this requestId already exists, return it
+    const existing = await ctx.db
+      .query("orders")
+      .withIndex("by_requestId", (q) => q.eq("requestId", args.requestId))
+      .unique();
+    if (existing) return existing._id;
+
     const { startOfDay } = getPHTDayBoundaries();
 
     // Count all drafts created today (monotonic — gaps allowed if drafts are discarded)
@@ -198,6 +207,7 @@ export const createDraftOrder = mutation({
       orderType: "takeout",
       status: "draft",
       draftLabel,
+      requestId: args.requestId,
       grossSales: 0,
       vatableSales: 0,
       vatAmount: 0,
@@ -220,7 +230,12 @@ export const submitDraft = mutation({
     await requireAuth(ctx);
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
-    if (order.status !== "draft") throw new Error("Only draft orders can be submitted");
+    if (order.status !== "draft") {
+      if (order.status === "open" && order.orderNumber) {
+        return { orderNumber: order.orderNumber! };
+      }
+      throw new Error("Only draft orders can be submitted");
+    }
 
     const items = await ctx.db
       .query("orderItems")

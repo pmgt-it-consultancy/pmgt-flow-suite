@@ -431,7 +431,10 @@ describe("orders — draft takeout orders", () => {
     const { storeId, userId } = await setupTestData(t);
 
     const authed = t.withIdentity({ subject: userId });
-    const orderId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "draft-label-1",
+    });
 
     const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
     expect(order).not.toBeNull();
@@ -448,9 +451,18 @@ describe("orders — draft takeout orders", () => {
     const { storeId, userId } = await setupTestData(t);
 
     const authed = t.withIdentity({ subject: userId });
-    const orderId1 = await authed.mutation(api.orders.createDraftOrder, { storeId });
-    const orderId2 = await authed.mutation(api.orders.createDraftOrder, { storeId });
-    const orderId3 = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const orderId1 = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "incr-1",
+    });
+    const orderId2 = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "incr-2",
+    });
+    const orderId3 = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "incr-3",
+    });
 
     const order1 = await t.run(async (ctx: any) => ctx.db.get(orderId1));
     const order2 = await t.run(async (ctx: any) => ctx.db.get(orderId2));
@@ -466,7 +478,10 @@ describe("orders — draft takeout orders", () => {
     const { storeId, userId, productId } = await setupTestData(t);
 
     const authed = t.withIdentity({ subject: userId });
-    const orderId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "submit-draft-1",
+    });
 
     // Add an item to the draft
     await t.run(async (ctx: any) => {
@@ -497,7 +512,10 @@ describe("orders — draft takeout orders", () => {
     const { storeId, userId } = await setupTestData(t);
 
     const authed = t.withIdentity({ subject: userId });
-    const orderId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "reject-empty-1",
+    });
 
     await expect(authed.mutation(api.orders.submitDraft, { orderId })).rejects.toThrowError(
       "Cannot submit a draft with no items",
@@ -509,7 +527,10 @@ describe("orders — draft takeout orders", () => {
     const { storeId, userId, productId } = await setupTestData(t);
 
     const authed = t.withIdentity({ subject: userId });
-    const orderId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "discard-draft-1",
+    });
 
     // Add item with modifier
     const itemId = await t.run(async (ctx: any) => {
@@ -582,8 +603,14 @@ describe("orders — draft takeout orders", () => {
     const { storeId, userId, productId } = await setupTestData(t);
 
     const authed = t.withIdentity({ subject: userId });
-    const orderId1 = await authed.mutation(api.orders.createDraftOrder, { storeId });
-    const orderId2 = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const orderId1 = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "item-count-1",
+    });
+    const orderId2 = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "item-count-2",
+    });
 
     // Add 2 items to orderId1
     await t.run(async (ctx: any) => {
@@ -652,7 +679,10 @@ describe("orders — draft takeout orders", () => {
 
     // Create a draft from today (should NOT be cleaned up)
     const authed = t.withIdentity({ subject: userId });
-    const todayDraftId = await authed.mutation(api.orders.createDraftOrder, { storeId });
+    const todayDraftId = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "cleanup-today-1",
+    });
 
     // Run cleanup
     const result = await authed.mutation(api.orders.cleanupExpiredDrafts, { storeId });
@@ -675,5 +705,86 @@ describe("orders — draft takeout orders", () => {
     const todayDraft = await t.run(async (ctx: any) => ctx.db.get(todayDraftId));
     expect(todayDraft).not.toBeNull();
     expect(todayDraft.status).toBe("draft");
+  });
+});
+
+describe("orders — submitDraft idempotency", () => {
+  it("should return orderNumber without error if draft is already submitted", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const authed = t.withIdentity({ subject: userId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "test-submit-idemp-1",
+    });
+
+    // Add an item so it can be submitted
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        isVoided: false,
+      });
+    });
+
+    // First submit — should succeed
+    const result1 = await authed.mutation(api.orders.submitDraft, { orderId });
+    expect(result1.orderNumber).toBeDefined();
+
+    // Second submit — should return same orderNumber, not throw
+    const result2 = await authed.mutation(api.orders.submitDraft, { orderId });
+    expect(result2.orderNumber).toBe(result1.orderNumber);
+  });
+});
+
+describe("orders — createDraftOrder requestId dedup", () => {
+  it("should return same orderId for duplicate requestId", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const authed = t.withIdentity({ subject: userId });
+    const requestId = "dedup-test-001";
+
+    const orderId1 = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId,
+    });
+    const orderId2 = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId,
+    });
+
+    expect(orderId1).toBe(orderId2);
+
+    // Verify only one order exists with this requestId
+    const orders = await t.run(async (ctx: any) => {
+      return await ctx.db
+        .query("orders")
+        .withIndex("by_requestId", (q: any) => q.eq("requestId", requestId))
+        .collect();
+    });
+    expect(orders).toHaveLength(1);
+  });
+
+  it("should create separate orders for different requestIds", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const authed = t.withIdentity({ subject: userId });
+
+    const orderId1 = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "request-a",
+    });
+    const orderId2 = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "request-b",
+    });
+
+    expect(orderId1).not.toBe(orderId2);
   });
 });
