@@ -205,6 +205,7 @@ export default defineSchema({
     // Multi-tab support: multiple orders per table
     tabNumber: v.optional(v.number()), // Auto-assigned: 1, 2, 3... per table
     tabName: v.optional(v.string()), // Default "Tab 1", editable to guest name
+    requestId: v.optional(v.string()), // Idempotency key to prevent duplicate orders
   })
     .index("by_store", ["storeId"])
     .index("by_status", ["status"])
@@ -212,7 +213,8 @@ export default defineSchema({
     .index("by_createdAt", ["createdAt"])
     .index("by_store_createdAt", ["storeId", "createdAt"])
     .index("by_tableId", ["tableId"])
-    .index("by_tableId_status", ["tableId", "status"]),
+    .index("by_tableId_status", ["tableId", "status"])
+    .index("by_requestId", ["requestId"]),
 
   orderItems: defineTable({
     orderId: v.id("orders"),
