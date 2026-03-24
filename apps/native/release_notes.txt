@@ -1,13 +1,10 @@
 ## What's New
 
-- Draft takeout orders — customers can step aside while deciding, and their order is saved as a draft that any staff member can resume later
-- Auto-generated customer labels — drafts are labeled "Customer #1", "Customer #2", etc. for easy identification, editable to real names
-- Drafts section on takeout list — amber highlighted section at the top shows all parked orders with resume and discard actions
-- End-of-day draft cleanup — leftover drafts are automatically cleaned up when the daily report is generated
-- Receipt preview fix — cashless payments now show the actual payment type (GCash, Maya, etc.) and reference number instead of generic "Card" label
+- Fix duplicate transactions — prevents double-tap from creating duplicate orders or processing payments twice
+- Backend idempotency — retrying order submission or payment no longer creates duplicates
+- Loading guards on all action buttons — buttons disable while processing to prevent accidental double-taps across takeout and dine-in flows
 
 ## Notes
 
-- Staff tap "New Order" to create a draft, add items, then go back to park it — no extra save step needed
-- Drafts are stored in the backend and visible across all devices
-- The "Proceed to Payment" button submits the draft and assigns an order number at that point
+- Affects both takeout and dine-in order flows
+- Existing orders are unaffected (backward compatible)
