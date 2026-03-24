@@ -762,6 +762,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             onCloseTable={handleCloseTable}
             onViewBill={() => setShowViewBill(true)}
             onCancelOrder={handleCancelOrder}
+            isSendingToKitchen={isSending}
+            isClosingTable={false}
+            isCancellingOrder={false}
           />
         </YStack>
       </XStack>

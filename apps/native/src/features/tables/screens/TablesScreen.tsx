@@ -41,6 +41,8 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
       createdAt: number;
     }>;
   } | null>(null);
+  const [isCreatingTab, setIsCreatingTab] = useState(false);
+  const [isUpdatingPax, setIsUpdatingPax] = useState(false);
   const updatePaxMutation = useMutation(api.orders.updatePax);
   const createOrderMutation = useMutation(api.orders.create);
 
@@ -90,15 +92,18 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
       Alert.alert("Invalid", "Please enter a valid number of guests");
       return;
     }
-    if (!paxOrderId) return;
+    if (!paxOrderId || isUpdatingPax) return;
+    setIsUpdatingPax(true);
     setShowPaxModal(false);
     try {
       await updatePaxMutation({ orderId: paxOrderId, pax });
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to update PAX");
+    } finally {
+      setIsUpdatingPax(false);
+      setPaxOrderId(null);
     }
-    setPaxOrderId(null);
-  }, [paxInput, paxOrderId, updatePaxMutation]);
+  }, [paxInput, paxOrderId, updatePaxMutation, isUpdatingPax]);
 
   const handleSelectTable = useCallback(
     (tableId: Id<"tables">, tableName: string) => {
@@ -160,26 +165,24 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
   );
 
   const handleAddNewTab = useCallback(async () => {
-    if (!user?.storeId || !selectedTable) return;
+    if (!user?.storeId || !selectedTable || isCreatingTab) return;
 
-    // Capture values before any async operations
     const tableId = selectedTable.id;
     const tableName = selectedTable.name;
     const storeId = user.storeId;
 
-    // Close modal
+    setIsCreatingTab(true);
     setSelectedTable(null);
 
     try {
-      // Create a new order for this table
       const orderId = await createOrderMutation({
         storeId,
         orderType: "dine_in",
         tableId,
-        pax: 1, // Default pax, can be updated later
+        pax: 1,
+        requestId: crypto.randomUUID(),
       });
 
-      // Navigate to the new order
       navigation.navigate("OrderScreen", {
         orderId,
         tableId,
@@ -188,8 +191,10 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
       });
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to create new tab");
+    } finally {
+      setIsCreatingTab(false);
     }
-  }, [user?.storeId, selectedTable, createOrderMutation, navigation]);
+  }, [user?.storeId, selectedTable, createOrderMutation, navigation, isCreatingTab]);
 
   if (isLoading || !isAuthenticated) {
     return (
@@ -301,9 +306,10 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
+                disabled={isUpdatingPax}
                 style={{
                   flex: 1,
-                  backgroundColor: "#0D87E1",
+                  backgroundColor: isUpdatingPax ? "#93C5FD" : "#0D87E1",
                   borderRadius: 8,
                   paddingVertical: 12,
                 }}
@@ -327,6 +333,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
           orders={selectedTable.orders}
           onSelectOrder={handleSelectOrder}
           onAddNewTab={handleAddNewTab}
+          isCreating={isCreatingTab}
         />
       )}
     </YStack>

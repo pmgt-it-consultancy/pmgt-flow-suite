@@ -15,6 +15,9 @@ interface CartFooterProps {
   onCloseTable?: () => void;
   onViewBill?: () => void;
   onCancelOrder: () => void;
+  isClosingTable?: boolean;
+  isCancellingOrder?: boolean;
+  isSendingToKitchen?: boolean;
 }
 
 export const CartFooter = ({
@@ -28,11 +31,14 @@ export const CartFooter = ({
   onCloseTable,
   onViewBill,
   onCancelOrder,
+  isClosingTable,
+  isCancellingOrder,
+  isSendingToKitchen,
 }: CartFooterProps) => {
   const formatCurrency = useFormatCurrency();
 
   const isTakeout = orderType === "takeout";
-  const canSendToKitchen = hasUnsentItems;
+  const canSendToKitchen = hasUnsentItems && !isSendingToKitchen;
   const canCloseTable = !isDraftMode && itemCount > 0 && !!onCloseTable;
   const canViewBill = !isDraftMode && itemCount > 0 && !!onViewBill;
   const canCancel = !hasSentItems;
@@ -72,7 +78,13 @@ export const CartFooter = ({
       </Button>
 
       {canCloseTable && (
-        <Button variant="primary" size="lg" onPress={onCloseTable} style={{ marginTop: 8 }}>
+        <Button
+          variant="primary"
+          size="lg"
+          onPress={onCloseTable}
+          disabled={isClosingTable}
+          style={{ marginTop: 8, opacity: isClosingTable ? 0.6 : 1 }}
+        >
           <XStack alignItems="center">
             <Ionicons name="card-outline" size={20} color="#FFF" />
             <Text style={{ color: "#FFFFFF", fontWeight: "700", marginLeft: 8, fontSize: 16 }}>
@@ -96,6 +108,7 @@ export const CartFooter = ({
       {canCancel && (
         <TouchableOpacity
           onPress={onCancelOrder}
+          disabled={isCancellingOrder}
           activeOpacity={0.7}
           style={{
             marginTop: 10,
@@ -108,6 +121,7 @@ export const CartFooter = ({
             borderRadius: 10,
             borderWidth: 1,
             borderColor: "#FECACA",
+            opacity: isCancellingOrder ? 0.6 : 1,
           }}
         >
           <Ionicons

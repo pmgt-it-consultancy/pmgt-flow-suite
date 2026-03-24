@@ -31,6 +31,7 @@ interface TabSelectionModalProps {
   orders: TabOrder[];
   onSelectOrder: (orderId: Id<"orders">) => void;
   onAddNewTab: () => void;
+  isCreating?: boolean;
 }
 
 export const TabSelectionModal = ({
@@ -40,6 +41,7 @@ export const TabSelectionModal = ({
   orders,
   onSelectOrder,
   onAddNewTab,
+  isCreating,
 }: TabSelectionModalProps) => {
   const formatCurrency = useFormatCurrency();
 
@@ -163,9 +165,10 @@ export const TabSelectionModal = ({
             >
               <TouchableOpacity
                 onPress={handleAddNewTab}
+                disabled={isCreating}
                 activeOpacity={0.7}
                 style={{
-                  backgroundColor: "#0D87E1",
+                  backgroundColor: isCreating ? "#93C5FD" : "#0D87E1",
                   borderRadius: 12,
                   paddingVertical: 18,
                   paddingHorizontal: 20,
