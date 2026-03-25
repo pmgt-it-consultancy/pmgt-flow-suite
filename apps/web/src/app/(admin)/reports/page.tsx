@@ -13,6 +13,7 @@ import {
   ShoppingCart,
   TrendingUp,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +33,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency, formatDate, formatDateString } from "@/lib/format";
 import { useAdminStore } from "@/stores/useAdminStore";
+
+const DownloadPdfButton = dynamic(
+  () => import("./_components/DownloadPdfButton").then((mod) => mod.DownloadPdfButton),
+  { ssr: false },
+);
 
 export default function ReportsPage() {
   const { isAuthenticated } = useAuth();
@@ -67,6 +73,10 @@ export default function ReportsPage() {
     isAuthenticated && selectedStoreId
       ? { storeId: selectedStoreId, startDate: dateRangeStart, endDate: dateRangeEnd }
       : "skip",
+  );
+  const store = useQuery(
+    api.stores.get,
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
 
   // Mutations
@@ -196,6 +206,50 @@ export default function ReportsPage() {
                           <Printer className="mr-2 h-4 w-4" />
                           Mark as Printed
                         </Button>
+                      )}
+                      {store && productSales && categorySales && hourlySales && (
+                        <DownloadPdfButton
+                          reportDate={reportDate}
+                          storeName={store.name}
+                          disabled={false}
+                          data={{
+                            store: {
+                              name: store.name,
+                              address1: store.address1,
+                              address2: store.address2,
+                              tin: store.tin,
+                              contactNumber: store.contactNumber,
+                              telephone: store.telephone,
+                              email: store.email,
+                              website: store.website,
+                            },
+                            reportDate,
+                            report: {
+                              grossSales: dailyReport.grossSales,
+                              netSales: dailyReport.netSales,
+                              vatableSales: dailyReport.vatableSales,
+                              vatAmount: dailyReport.vatAmount,
+                              vatExemptSales: dailyReport.vatExemptSales,
+                              nonVatSales: dailyReport.nonVatSales,
+                              seniorDiscounts: dailyReport.seniorDiscounts,
+                              pwdDiscounts: dailyReport.pwdDiscounts,
+                              promoDiscounts: dailyReport.promoDiscounts,
+                              manualDiscounts: dailyReport.manualDiscounts,
+                              totalDiscounts: dailyReport.totalDiscounts,
+                              voidCount: dailyReport.voidCount,
+                              voidAmount: dailyReport.voidAmount,
+                              cashTotal: dailyReport.cashTotal,
+                              cardEwalletTotal: dailyReport.cardEwalletTotal,
+                              transactionCount: dailyReport.transactionCount,
+                              averageTicket: dailyReport.averageTicket,
+                              generatedByName: dailyReport.generatedByName,
+                              generatedAt: dailyReport.generatedAt,
+                            },
+                            productSales,
+                            categorySales,
+                            hourlySales,
+                          }}
+                        />
                       )}
                     </div>
                   </div>
