@@ -1,5 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { Card, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -22,8 +20,6 @@ interface ZReportData {
 interface ZReportSummaryProps {
   report: ZReportData | null;
   isLoading: boolean;
-  onPrintZReport: () => void;
-  isPrintingZReport: boolean;
 }
 
 const StatBox = ({ label, value, color }: { label: string; value: string; color: string }) => (
@@ -42,12 +38,7 @@ const StatBox = ({ label, value, color }: { label: string; value: string; color:
   </YStack>
 );
 
-export const ZReportSummary = ({
-  report,
-  isLoading,
-  onPrintZReport,
-  isPrintingZReport,
-}: ZReportSummaryProps) => {
+export const ZReportSummary = ({ report, isLoading }: ZReportSummaryProps) => {
   const formatCurrency = useFormatCurrency();
 
   if (isLoading) {
@@ -133,36 +124,6 @@ export const ZReportSummary = ({
           </Text>
         </XStack>
       </YStack>
-
-      {/* Print Z-Report button */}
-      <TouchableOpacity
-        onPress={onPrintZReport}
-        disabled={isPrintingZReport}
-        activeOpacity={0.7}
-        style={[styles.printButton, isPrintingZReport && styles.printButtonDisabled]}
-      >
-        <Ionicons name="print-outline" size={20} color="#0D87E1" />
-        <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 15, marginLeft: 8 }}>
-          {isPrintingZReport ? "Printing..." : "Print Z-Report"}
-        </Text>
-      </TouchableOpacity>
     </YStack>
   );
 };
-
-const styles = StyleSheet.create({
-  printButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#DBEAFE",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#93C5FD",
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-  },
-  printButtonDisabled: {
-    opacity: 0.6,
-  },
-});
