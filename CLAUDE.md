@@ -34,6 +34,7 @@ cd packages/backend && pnpm vitest run    # single run, no watch
 cd apps/web && pnpm lint
 cd apps/native && pnpm ios
 cd apps/native && pnpm android
+cd apps/native && pnpm start
 ```
 
 ## Architecture
@@ -48,6 +49,11 @@ Managed with **Turborepo** (`turbo.json`) and **pnpm** workspaces.
 
 ### Data Flow
 Both frontends import from `@packages/backend` and use Convex client hooks (`useQuery`, `useMutation`) for real-time data. Authentication uses `@convex-dev/auth` with Convex Auth tables.
+
+Money handling follows the current app behavior, not the older centavo-only assumption:
+- Product prices, modifier adjustments, discounts, and tendered cash are treated as peso amounts with decimals.
+- Store VAT is often entered in admin forms as a whole percent such as `12`; `packages/backend/convex/lib/taxCalculations.ts` normalizes that to `0.12` before computing VAT and SC/PWD discounts.
+- Tax and discount calculations round to centavo precision.
 
 ### Backend (Convex)
 
@@ -140,15 +146,20 @@ Feature-based organization under `src/features/`:
 
 ### Native App Styling (Tamagui)
 
-The native app uses **Tamagui v2 RC** with **v5 config** (`@tamagui/config/v5`). Config is in `apps/native/tamagui.config.ts`. Brand color: `#0D87E1`.
+The native app uses Tamagui with `@tamagui/config/v5` plus `@tamagui/config/v5-reanimated`. Config lives in `apps/native/tamagui.config.ts`.
 
-**Config setup:** Uses `defaultConfig` from `@tamagui/config/v5` as base, with `@tamagui/config/v5-reanimated` for animations. Key overrides: `onlyAllowShorthands: false` (allows full prop names like `backgroundColor` instead of only `bg`), `allowedStyleValues: false` (allows any values, not just tokens), `defaultPosition: "relative"` (RN-friendly). Custom color tokens added for brand/gray/badge colors.
+Current config notes:
+- `createTamagui` must be imported from `"tamagui"`, not `@tamagui/core`
+- `defaultConfig` is used as the base config
+- animations come from `@tamagui/config/v5-reanimated`
+- `onlyAllowShorthands: false`
+- `allowedStyleValues: false`
+- `defaultPosition: "relative"`
 
 **Critical Tamagui gotchas:**
 - **NEVER import `createTamagui` from `@tamagui/core`** — always import from `"tamagui"`. Mixing `tamagui` and `@tamagui/core` imports can create duplicate module instances where the config set by one isn't visible to the other, causing "Can't find Tamagui configuration" runtime errors.
 - **Don't re-export non-UI components from `ui/index.ts`** barrel file — importing shared components that themselves import from `ui/` creates require cycles that can cause uninitialized values at runtime.
 - **Metro config** (`metro.config.js`) pins `@tamagui/core` via `extraNodeModules` to prevent duplicate resolution, and adds `mjs` to source extensions.
-- **Babel plugin** is optional (build-time optimizer). If it causes issues, it can be removed — Tamagui works at runtime without it.
 
 **Layout:** Use `XStack` (flex-row) and `YStack` (flex-column) from `tamagui` for layout containers. Use React Native primitives (`TouchableOpacity`, `TextInput`, `FlatList`, `ScrollView`, `Modal`, etc.) directly from `react-native`.
 
@@ -165,9 +176,12 @@ The native app uses **Tamagui v2 RC** with **v5 config** (`@tamagui/config/v5`).
 - Colors use hex values directly (e.g., `"#F3F4F6"`) or Tamagui tokens (e.g., `"$gray100"`)
 
 ### Key Patterns
-- **Auth**: `@convex-dev/auth` with auth tables spread into schema; `getUserId(ctx)` extracts user identity
+- **Auth**: `@convex-dev/auth` with auth tables spread into schema; most functions use `requireAuth`, `getAuthenticatedUser`, or `getAuthenticatedUserWithRole` from `packages/backend/convex/lib/auth.ts`
 - **Store scoping**: Most queries/mutations take `storeId` and use `by_store` indexes
 - **Tax model**: Philippine VAT (12%) with vatable/non-vat/VAT-exempt classification; calculations in `lib/taxCalculations.ts`
+  - VAT rates may be stored as either `12` or `0.12`; normalize before using them in formulas
+  - Money values are currently treated as peso amounts with decimal precision, not integer centavos
+  - SC/PWD discounts should preserve centavo precision
 - **Modifier system**: Groups assigned to products or categories via join table (`modifierGroupAssignments`), with optional min/max override
 - **Order snapshots**: Product names and prices are snapshotted into order items at creation time
 - **Audit logging**: Operations tracked in `auditLogs` table with store, action, entity references
@@ -195,6 +209,7 @@ export const myQuery = query({
 - Add `"use node";` at top of files using Node.js modules
 - Use `Id<'tableName'>` and `Doc<'tableName'>` from `./_generated/dataModel` for type safety
 - Function references: `api.orders.getOrder` (public), `internal.orders.getOrder` (private)
+- Be careful with money math: round at centavo precision, not whole-number precision
 
 ## Environment Variables
 
@@ -324,3 +339,8 @@ Web deploys to Vercel with custom build command that deploys Convex first:
 ```bash
 cd ../../packages/backend && npx convex deploy --cmd 'cd ../../apps/web && turbo run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL
 ```
+
+## Git Notes
+
+- Commit messages in this repo follow conventional commit style such as `feat(scope): summary` or `fix(scope): summary`
+- `lint-staged` runs `biome check --write --no-errors-on-unmatched` on staged JS/TS/JSON files during commit
