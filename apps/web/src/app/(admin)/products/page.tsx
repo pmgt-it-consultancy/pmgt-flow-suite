@@ -252,7 +252,13 @@ export default function ProductsPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Products</CardTitle>
-          <CardDescription>{filteredProducts?.length ?? 0} product(s) found</CardDescription>
+          <CardDescription>
+            {categoryFilter === "all" && statusFilter === "all" && !searchQuery
+              ? `${products?.length ?? 0} product(s)`
+              : categoryFilter === "all" && statusFilter === "active" && !searchQuery
+                ? `${filteredProducts?.length ?? 0} active product(s)`
+                : `${filteredProducts?.length ?? 0} of ${products?.length ?? 0} product(s)`}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {!selectedStoreId ? (
@@ -268,8 +274,8 @@ export default function ProductsPage() {
             <div className="flex flex-col items-center justify-center h-32 text-gray-500">
               <Package className="h-8 w-8 mb-2" />
               <p>
-                {searchQuery
-                  ? "No products match your search."
+                {searchQuery || categoryFilter !== "all" || statusFilter !== "all"
+                  ? "No products match your filters."
                   : "No products found. Create your first product."}
               </p>
             </div>
