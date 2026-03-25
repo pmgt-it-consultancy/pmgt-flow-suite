@@ -1,5 +1,5 @@
 ## What's New
 
-- Discount precision fix — corrected rounding for discount calculations at checkout
-- Non-VAT item visibility — non-vat items now properly surfaced in checkout summary
-- CI improvements — resolved artifact storage issues in release pipeline
+- POS header layout — standardized header actions and layout across home screen
+- Bluetooth printer stability — hardened pairing and scanning for more reliable connections
+- Fullscreen mode — restored immersive fullscreen retriggers on Android
