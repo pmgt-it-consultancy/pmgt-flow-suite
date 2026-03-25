@@ -47,6 +47,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     package: getPackageName(),
   },
+  androidNavigationBar: {
+    visible: "sticky-immersive",
+  },
   web: {
     favicon: "./assets/favicon.png",
   },

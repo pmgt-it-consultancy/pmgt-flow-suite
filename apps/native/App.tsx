@@ -1,5 +1,4 @@
 import { useFonts } from "expo-font";
-import * as NavigationBar from "expo-navigation-bar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LogBox, Platform, StatusBar, View } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -11,10 +10,11 @@ import { IdleWarningBanner } from "./src/features/lock";
 import { useIdleTimer } from "./src/features/lock/hooks/useIdleTimer";
 import { useLockStore } from "./src/features/lock/stores/useLockStore";
 import { SplashScreen } from "./src/features/shared/components/SplashScreen";
+import { useAndroidFullscreen } from "./src/features/shared/hooks";
 import Navigation from "./src/navigation/Navigation";
 import config from "./tamagui.config";
 
-function AppContent() {
+function AppContent({ retriggerFullscreen }: { retriggerFullscreen: () => void }) {
   const { isLoading, isAuthenticated } = useAuth();
   const showIdleWarning = useLockStore((state) => state.showIdleWarning);
   const warningStartedAt = useLockStore((state) => state.warningStartedAt);
@@ -57,6 +57,14 @@ function AppContent() {
     }
   }, [animationDone, isLoading, storeHydrated]);
 
+  const handleRouteChange = useCallback(
+    (routeName: string | null) => {
+      retriggerFullscreen();
+      setCurrentRoute(routeName as "HomeScreen" | "LoginScreen" | "LockScreen" | null);
+    },
+    [retriggerFullscreen, setCurrentRoute],
+  );
+
   const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? 50 : StatusBar.currentHeight;
 
   return (
@@ -76,13 +84,14 @@ function AppContent() {
           <View
             style={{ flex: 1 }}
             onStartShouldSetResponderCapture={() => {
+              retriggerFullscreen();
               resetActivity();
               return false;
             }}
           >
             <Navigation
               initialRoute={resolvedRoute.current ?? "LoginScreen"}
-              onRouteChange={setCurrentRoute}
+              onRouteChange={handleRouteChange}
             />
             {showIdleWarning && warningStartedAt && (
               <IdleWarningBanner
@@ -114,13 +123,7 @@ export default function App() {
     MRegular: require("./src/assets/fonts/Montserrat-Regular.ttf"),
     MLight: require("./src/assets/fonts/Montserrat-Light.ttf"),
   });
-
-  useEffect(() => {
-    if (Platform.OS === "android") {
-      NavigationBar.setVisibilityAsync("hidden");
-      NavigationBar.setBehaviorAsync("overlay-swipe");
-    }
-  }, []);
+  const retriggerFullscreen = useAndroidFullscreen(loaded);
 
   if (!loaded) {
     return null;
@@ -131,7 +134,7 @@ export default function App() {
       <KeyboardProvider>
         <ConvexClientProvider>
           <AuthProvider>
-            <AppContent />
+            <AppContent retriggerFullscreen={retriggerFullscreen} />
           </AuthProvider>
         </ConvexClientProvider>
       </KeyboardProvider>
