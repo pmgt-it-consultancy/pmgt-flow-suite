@@ -84,6 +84,8 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
           storeAddress: storeAddress || undefined,
           storeTin: store.tin || undefined,
           reportDate,
+          startTime,
+          endTime,
           grossSales: report.grossSales,
           netSales: report.netSales,
           vatableSales: report.vatableSales,
@@ -112,7 +114,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     } finally {
       setIsPrintingZReport(false);
     }
-  }, [report, storeId, store, reportDate, charsPerLine, productSales]);
+  }, [report, storeId, store, reportDate, charsPerLine, productSales, startTime, endTime]);
 
   const canPrint = !!report && !isPrintingZReport;
 
