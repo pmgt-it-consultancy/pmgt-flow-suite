@@ -3,7 +3,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import * as Crypto from "expo-crypto";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ActivityIndicator, Alert, FlatList, RefreshControl } from "react-native";
 import { XStack, YStack } from "tamagui";
@@ -52,6 +52,10 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   const [selectedOrderId, setSelectedOrderId] = useState<Id<"orders"> | null>(null);
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [isCreating, setIsCreating] = useState(false);
+  const creatingLockRef = useRef(false);
+  const advanceLocksRef = useRef<Set<string>>(new Set());
+  const [advancingOrderIds, setAdvancingOrderIds] = useState<Set<string>>(new Set());
+  const discardLockRef = useRef<Set<string>>(new Set());
 
   const isToday = getStartOfDay(selectedDate) === getStartOfDay(new Date());
 
@@ -70,24 +74,36 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   const createDraftMutation = useMutation(api.orders.createDraftOrder);
   const discardDraftMutation = useMutation(api.orders.discardDraft);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      creatingLockRef.current = false;
+      setIsCreating(false);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const drafts = useQuery(
     api.orders.getDraftOrders,
     user?.storeId ? { storeId: user.storeId } : "skip",
   );
 
-  const { activeOrders, completedOrders } = useMemo(() => {
-    if (!takeoutOrders) return { activeOrders: [], completedOrders: [] };
+  const { attentionOrders, kitchenOrders, completedOrders } = useMemo(() => {
+    if (!takeoutOrders) return { attentionOrders: [], kitchenOrders: [], completedOrders: [] };
     return {
-      activeOrders: takeoutOrders.filter(
+      attentionOrders: takeoutOrders.filter((o) => o.status === "open"),
+      kitchenOrders: takeoutOrders.filter(
         (o) =>
-          o.status !== "voided" &&
+          o.status === "paid" &&
           o.takeoutStatus &&
           !["completed", "cancelled"].includes(o.takeoutStatus),
       ),
       completedOrders: takeoutOrders.filter(
         (o) =>
           o.status === "voided" ||
-          (o.takeoutStatus && ["completed", "cancelled"].includes(o.takeoutStatus)),
+          (o.status === "paid" &&
+            o.takeoutStatus &&
+            ["completed", "cancelled"].includes(o.takeoutStatus)),
       ),
     };
   }, [takeoutOrders]);
@@ -100,19 +116,34 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
 
   const handleAdvanceStatus = useCallback(
     async (orderId: Id<"orders">, currentStatus: TakeoutStatus) => {
+      if (advanceLocksRef.current.has(orderId)) return;
+
       const nextStatus = NEXT_STATUS[currentStatus];
       if (!nextStatus) return;
+
+      advanceLocksRef.current.add(orderId);
+      setAdvancingOrderIds((prev) => new Set(prev).add(orderId));
       try {
         await updateStatus({ orderId, newStatus: nextStatus });
       } catch (error: any) {
         console.error("Update takeout status error:", error);
+        Alert.alert("Error", error.message || "Failed to update takeout status");
+      } finally {
+        advanceLocksRef.current.delete(orderId);
+        setAdvancingOrderIds((prev) => {
+          const next = new Set(prev);
+          next.delete(orderId);
+          return next;
+        });
       }
     },
     [updateStatus],
   );
 
   const handleNewOrder = useCallback(async () => {
-    if (!user?.storeId || isCreating) return;
+    if (!user?.storeId || creatingLockRef.current) return;
+
+    creatingLockRef.current = true;
     setIsCreating(true);
     try {
       const orderId = await createDraftMutation({
@@ -123,12 +154,12 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
         storeId: user.storeId,
         orderId,
       });
-    } catch (error) {
-      Alert.alert("Error", "Failed to create order. Please try again.");
-    } finally {
+    } catch (_error) {
+      creatingLockRef.current = false;
       setIsCreating(false);
+      Alert.alert("Error", "Failed to create order. Please try again.");
     }
-  }, [user?.storeId, navigation, createDraftMutation, isCreating]);
+  }, [user?.storeId, navigation, createDraftMutation]);
 
   const handleResumeDraft = useCallback(
     (orderId: Id<"orders">) => {
@@ -141,21 +172,41 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
     [user?.storeId, navigation],
   );
 
-  const [discardingId, setDiscardingId] = useState<Id<"orders"> | null>(null);
+  const handleOpenTakeoutOrder = useCallback(
+    (orderId: Id<"orders">, status?: "draft" | "open" | "paid" | "voided") => {
+      if (!user?.storeId) return;
+
+      if (status === "open") {
+        navigation.navigate("TakeoutOrderScreen", {
+          storeId: user.storeId,
+          orderId,
+        });
+        return;
+      }
+
+      setSelectedOrderId(orderId);
+    },
+    [user?.storeId, navigation],
+  );
+
+  const [_discardingId, setDiscardingId] = useState<Id<"orders"> | null>(null);
 
   const handleDiscardDraft = useCallback(
     async (orderId: Id<"orders">) => {
-      if (discardingId) return;
+      if (discardLockRef.current.has(orderId)) return;
+
+      discardLockRef.current.add(orderId);
       setDiscardingId(orderId);
       try {
         await discardDraftMutation({ orderId });
-      } catch (error) {
+      } catch (_error) {
         Alert.alert("Error", "Failed to discard draft. Please try again.");
       } finally {
+        discardLockRef.current.delete(orderId);
         setDiscardingId(null);
       }
     },
-    [discardDraftMutation, discardingId],
+    [discardDraftMutation],
   );
 
   const handlePrevDay = useCallback(() => {
@@ -269,27 +320,37 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
         </YStack>
       ) : (
         <FlatList
-          data={[...activeOrders, ...completedOrders]}
+          data={[...attentionOrders, ...kitchenOrders, ...completedOrders]}
           keyExtractor={(item) => item._id}
           renderItem={({ item, index }) => (
             <YStack>
               {/* Section headers */}
-              {index === 0 && activeOrders.length > 0 ? (
+              {index === 0 && attentionOrders.length > 0 ? (
                 <Text
                   variant="heading"
                   size="sm"
                   style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}
                 >
-                  Active ({activeOrders.length})
+                  Needs Attention ({attentionOrders.length})
                 </Text>
               ) : null}
-              {index === activeOrders.length && completedOrders.length > 0 ? (
+              {index === attentionOrders.length && kitchenOrders.length > 0 ? (
                 <Text
                   variant="heading"
                   size="sm"
                   style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}
                 >
-                  Completed ({completedOrders.length})
+                  In Progress ({kitchenOrders.length})
+                </Text>
+              ) : null}
+              {index === attentionOrders.length + kitchenOrders.length &&
+              completedOrders.length > 0 ? (
+                <Text
+                  variant="heading"
+                  size="sm"
+                  style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}
+                >
+                  History ({completedOrders.length})
                 </Text>
               ) : null}
               <YStack paddingHorizontal={16}>
@@ -303,7 +364,11 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
                   itemCount={item.itemCount}
                   createdAt={item.createdAt}
                   onAdvanceStatus={handleAdvanceStatus}
-                  onPress={setSelectedOrderId}
+                  onPress={(orderId) => handleOpenTakeoutOrder(orderId, item.status)}
+                  disableAdvance={
+                    (item.takeoutStatus === "ready_for_pickup" && item.status !== "paid") ||
+                    advancingOrderIds.has(item._id)
+                  }
                 />
               </YStack>
             </YStack>

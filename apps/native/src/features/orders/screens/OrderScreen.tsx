@@ -3,7 +3,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import * as Crypto from "expo-crypto";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -86,6 +86,15 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const [notes, setNotes] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isCreatingTab, setIsCreatingTab] = useState(false);
+  const [isClosingTable, setIsClosingTable] = useState(false);
+  const [isCancellingOrder, setIsCancellingOrder] = useState(false);
+  const [isUpdatingPax, setIsUpdatingPax] = useState(false);
+  const addItemLockRef = useRef(false);
+  const sendToKitchenLockRef = useRef(false);
+  const cancelOrderLockRef = useRef(false);
+  const createTabLockRef = useRef(false);
+  const closeTableLockRef = useRef(false);
+  const paxLockRef = useRef(false);
 
   // PAX state
   const [showPaxModal, setShowPaxModal] = useState(false);
@@ -137,6 +146,22 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
   // Printer
   const { printKitchenTicket } = usePrinterStore();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      sendToKitchenLockRef.current = false;
+      cancelOrderLockRef.current = false;
+      createTabLockRef.current = false;
+      closeTableLockRef.current = false;
+      setIsCreatingTab(false);
+      setIsClosingTable(false);
+      setIsSending(false);
+      setIsUpdatingPax(false);
+      paxLockRef.current = false;
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   // Cart data — unified from draft or server
   const activeItems = useMemo(() => {
@@ -192,34 +217,33 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
   const handleConfirmAdd = useCallback(
     async (customPrice?: number) => {
-      if (!selectedProduct) return;
+      if (!selectedProduct || addItemLockRef.current) return;
 
+      addItemLockRef.current = true;
       const productPrice =
         selectedProduct.isOpenPrice && customPrice !== undefined
           ? customPrice
           : selectedProduct.price;
 
-      if (isDraftMode) {
-        // Add to local draft
-        setDraftItems((prev) => [
-          ...prev,
-          {
-            localId: `draft-${++draftIdCounter}`,
-            productId: selectedProduct.id,
-            productName: selectedProduct.name,
-            productPrice,
-            quantity,
-            notes: notes || undefined,
-            customPrice: selectedProduct.isOpenPrice ? customPrice : undefined,
-          },
-        ]);
-        setSelectedProduct(null);
-        return;
-      }
-
-      // Add to existing order
-      setIsAddingItem(true);
       try {
+        if (isDraftMode) {
+          setDraftItems((prev) => [
+            ...prev,
+            {
+              localId: `draft-${++draftIdCounter}`,
+              productId: selectedProduct.id,
+              productName: selectedProduct.name,
+              productPrice,
+              quantity,
+              notes: notes || undefined,
+              customPrice: selectedProduct.isOpenPrice ? customPrice : undefined,
+            },
+          ]);
+          setSelectedProduct(null);
+          return;
+        }
+
+        setIsAddingItem(true);
         await addItem({
           orderId: currentOrderId!,
           productId: selectedProduct.id,
@@ -232,6 +256,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         console.error("Add item error:", error);
         Alert.alert("Error", "Failed to add item to order");
       } finally {
+        addItemLockRef.current = false;
         setIsAddingItem(false);
       }
     },
@@ -240,34 +265,35 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
   const handleConfirmModifiers = useCallback(
     async (qty: number, itemNotes: string, modifiers: SelectedModifier[], customPrice?: number) => {
-      if (!selectedProduct) return;
+      if (!selectedProduct || addItemLockRef.current) return;
 
+      addItemLockRef.current = true;
       const basePrice =
         selectedProduct.isOpenPrice && customPrice !== undefined
           ? customPrice
           : selectedProduct.price;
 
-      if (isDraftMode) {
-        const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceAdjustment, 0);
-        setDraftItems((prev) => [
-          ...prev,
-          {
-            localId: `draft-${++draftIdCounter}`,
-            productId: selectedProduct.id,
-            productName: selectedProduct.name,
-            productPrice: basePrice + modifierTotal,
-            quantity: qty,
-            notes: itemNotes || undefined,
-            modifiers,
-            customPrice: selectedProduct.isOpenPrice ? customPrice : undefined,
-          },
-        ]);
-        setSelectedProduct(null);
-        return;
-      }
-
-      setIsAddingItem(true);
       try {
+        if (isDraftMode) {
+          const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceAdjustment, 0);
+          setDraftItems((prev) => [
+            ...prev,
+            {
+              localId: `draft-${++draftIdCounter}`,
+              productId: selectedProduct.id,
+              productName: selectedProduct.name,
+              productPrice: basePrice + modifierTotal,
+              quantity: qty,
+              notes: itemNotes || undefined,
+              modifiers,
+              customPrice: selectedProduct.isOpenPrice ? customPrice : undefined,
+            },
+          ]);
+          setSelectedProduct(null);
+          return;
+        }
+
+        setIsAddingItem(true);
         await addItem({
           orderId: currentOrderId!,
           productId: selectedProduct.id,
@@ -281,6 +307,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         console.error("Add item error:", error);
         Alert.alert("Error", "Failed to add item to order");
       } finally {
+        addItemLockRef.current = false;
         setIsAddingItem(false);
       }
     },
@@ -379,28 +406,14 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     [voidingItem, removeItemMutation],
   );
 
-  const handleSendToKitchen = useCallback(async () => {
-    // Guard: In non-draft mode, wait for order to load
-    if (!isDraftMode && !order) {
-      console.log("[SendToKitchen] Order not loaded yet, ignoring");
-      return;
-    }
-
-    // In draft mode, prompt for PAX before first send
-    if (isDraftMode) {
-      setPaxInput("");
-      setPendingPaxAction("send");
-      setShowPaxModal(true);
-      return;
-    }
-
-    await executeSendToKitchen();
-  }, [isDraftMode, order]);
-
   const executeSendToKitchen = useCallback(
     async (paxValue?: number) => {
+      if (sendToKitchenLockRef.current) return;
+
       console.log("[SendToKitchen] Starting. isDraftMode:", isDraftMode, "paxValue:", paxValue);
+      sendToKitchenLockRef.current = true;
       setIsSending(true);
+      let shouldReleaseLock = true;
       try {
         let orderNumber: string;
         let sentItemNames: { name: string; quantity: number; notes?: string }[];
@@ -512,11 +525,15 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         Alert.alert("Sent", "Items sent to kitchen", [
           { text: "OK", onPress: () => navigation.goBack() },
         ]);
+        shouldReleaseLock = false;
       } catch (error: any) {
         console.error("Send to kitchen error:", error);
         Alert.alert("Error", error.message || "Failed to send to kitchen");
       } finally {
-        setIsSending(false);
+        if (shouldReleaseLock) {
+          sendToKitchenLockRef.current = false;
+          setIsSending(false);
+        }
       }
     },
     [
@@ -535,24 +552,58 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     ],
   );
 
+  const handleSendToKitchen = useCallback(async () => {
+    if (sendToKitchenLockRef.current) return;
+
+    // Guard: In non-draft mode, wait for order to load
+    if (!isDraftMode && !order) {
+      console.log("[SendToKitchen] Order not loaded yet, ignoring");
+      return;
+    }
+
+    // In draft mode, prompt for PAX before first send
+    if (isDraftMode) {
+      setPaxInput("");
+      setPendingPaxAction("send");
+      setShowPaxModal(true);
+      return;
+    }
+
+    await executeSendToKitchen();
+  }, [isDraftMode, order, executeSendToKitchen]);
+
   const handlePaxConfirm = useCallback(async () => {
+    if (paxLockRef.current) return;
+
     const pax = parseInt(paxInput, 10);
     if (!pax || pax < 1) {
       Alert.alert("Invalid", "Please enter a valid number of guests");
       return;
     }
+
+    paxLockRef.current = true;
+    setIsUpdatingPax(true);
     setShowPaxModal(false);
 
-    if (pendingPaxAction === "send") {
-      await executeSendToKitchen(pax);
-    } else if (pendingPaxAction === "update" && currentOrderId) {
-      try {
+    try {
+      if (pendingPaxAction === "send") {
+        await executeSendToKitchen(pax);
+      } else if (pendingPaxAction === "update" && currentOrderId) {
         await updatePaxMutation({ orderId: currentOrderId, pax });
-      } catch (error: any) {
-        Alert.alert("Error", error.message || "Failed to update PAX");
       }
+      setPendingPaxAction(null);
+    } catch (error: any) {
+      Alert.alert(
+        "Error",
+        error.message ||
+          (pendingPaxAction === "send"
+            ? "Failed to send items to kitchen"
+            : "Failed to update PAX"),
+      );
+    } finally {
+      paxLockRef.current = false;
+      setIsUpdatingPax(false);
     }
-    setPendingPaxAction(null);
   }, [paxInput, pendingPaxAction, executeSendToKitchen, currentOrderId, updatePaxMutation]);
 
   const handleUpdatePax = useCallback(() => {
@@ -562,7 +613,10 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   }, [order?.pax]);
 
   const handleCloseTable = useCallback(() => {
-    if (!currentOrderId || activeItems.length === 0) return;
+    if (!currentOrderId || activeItems.length === 0 || closeTableLockRef.current) return;
+
+    closeTableLockRef.current = true;
+    setIsClosingTable(true);
     navigation.navigate("CheckoutScreen", {
       orderId: currentOrderId,
       tableId,
@@ -571,6 +625,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   }, [currentOrderId, activeItems.length, navigation, tableId, currentTableName]);
 
   const handleCancelOrder = useCallback(() => {
+    if (cancelOrderLockRef.current) return;
+
     if (isDraftMode) {
       if (draftItems.length === 0) {
         navigation.goBack();
@@ -596,11 +652,17 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           text: "Yes, Cancel",
           style: "destructive",
           onPress: async () => {
+            if (cancelOrderLockRef.current) return;
+
+            cancelOrderLockRef.current = true;
+            setIsCancellingOrder(true);
             try {
               await cancelOrderMutation({ orderId: currentOrderId! });
               navigation.goBack();
             } catch (error: any) {
               Alert.alert("Error", error.message || "Failed to cancel order");
+              cancelOrderLockRef.current = false;
+              setIsCancellingOrder(false);
             }
           },
         },
@@ -608,7 +670,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     );
   }, [isDraftMode, draftItems.length, cancelOrderMutation, currentOrderId, navigation]);
 
-  const handleTransferred = useCallback((newTableId: Id<"tables">, newTableName: string) => {
+  const handleTransferred = useCallback((_newTableId: Id<"tables">, newTableName: string) => {
     setCurrentTableName(newTableName);
     setShowTransferTable(false);
     Alert.alert("Transferred", `Order moved to ${newTableName}`);
@@ -627,7 +689,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   );
 
   const handleAddNewTab = useCallback(async () => {
-    if (!tableId || !storeId || isCreatingTab) return;
+    if (!tableId || !storeId || createTabLockRef.current || isCreatingTab) return;
+
+    createTabLockRef.current = true;
     setIsCreatingTab(true);
 
     try {
@@ -646,8 +710,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         storeId,
       });
     } catch (error: any) {
+      createTabLockRef.current = false;
       Alert.alert("Error", error.message || "Failed to create new tab");
-    } finally {
       setIsCreatingTab(false);
     }
   }, [tableId, storeId, createOrderMutation, navigation, currentTableName, isCreatingTab]);
@@ -683,6 +747,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         onBack={handleBack}
         onTransferTable={!isDraftMode ? () => setShowTransferTable(true) : undefined}
         onUpdatePax={!isDraftMode && order?.orderType === "dine_in" ? handleUpdatePax : undefined}
+        disableUpdatePax={isUpdatingPax || isSending}
         tabNumber={!isDraftMode ? order?.tabNumber : undefined}
         tabName={!isDraftMode ? order?.tabName : undefined}
         onEditTabName={
@@ -691,6 +756,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             : undefined
         }
         onAddNewTab={!isDraftMode && order?.orderType === "dine_in" ? handleAddNewTab : undefined}
+        disableAddNewTab={isCreatingTab}
       />
 
       <XStack flex={1}>
@@ -764,8 +830,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             onViewBill={() => setShowViewBill(true)}
             onCancelOrder={handleCancelOrder}
             isSendingToKitchen={isSending}
-            isClosingTable={false}
-            isCancellingOrder={false}
+            isClosingTable={isClosingTable}
+            isCancellingOrder={isCancellingOrder}
           />
         </YStack>
       </XStack>
@@ -887,10 +953,10 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                disabled={isSending}
+                disabled={isSending || isUpdatingPax}
                 style={{
                   flex: 1,
-                  backgroundColor: isSending ? "#93C5FD" : "#0D87E1",
+                  backgroundColor: isSending || isUpdatingPax ? "#93C5FD" : "#0D87E1",
                   borderRadius: 8,
                   paddingVertical: 12,
                 }}

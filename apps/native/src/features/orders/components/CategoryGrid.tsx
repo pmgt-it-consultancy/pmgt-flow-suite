@@ -4,8 +4,8 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList, TouchableOpacity } from "react-native";
-import { XStack, YStack } from "tamagui";
-import { Text } from "../../shared/components/ui";
+import { YStack } from "tamagui";
+import { LoadingState, Text } from "../../shared/components/ui";
 import { CategoryTile } from "./CategoryTile";
 import { ProductCard } from "./ProductCard";
 import { SearchBar } from "./SearchBar";
@@ -197,44 +197,54 @@ export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGri
     <YStack flex={1}>
       <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
 
-      {nav.level > 0 && !searchQuery && (
-        <TouchableOpacity
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-          }}
-          onPress={handleBack}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="arrow-back" size={20} color="#0D87E1" />
-          <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 14, marginLeft: 6 }}>
-            {nav.level === 1 ? "Categories" : nav.categoryName}
-          </Text>
-        </TouchableOpacity>
-      )}
+      {(categoryTree === undefined || products === undefined) && !searchQuery ? (
+        <LoadingState
+          title="Loading menu"
+          description="Fetching categories and products for this store."
+          fullHeight
+        />
+      ) : (
+        <>
+          {nav.level > 0 && !searchQuery && (
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+              }}
+              onPress={handleBack}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="arrow-back" size={20} color="#0D87E1" />
+              <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 14, marginLeft: 6 }}>
+                {nav.level === 1 ? "Categories" : nav.categoryName}
+              </Text>
+            </TouchableOpacity>
+          )}
 
-      <FlatList
-        data={gridItems}
-        numColumns={3}
-        keyExtractor={(item) => item.key}
-        renderItem={renderItem}
-        contentContainerStyle={{ padding: 6 }}
-        columnWrapperStyle={{ justifyContent: "flex-start" }}
-        ListEmptyComponent={
-          <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
-            <Ionicons
-              name={searchQuery ? "search-outline" : "grid-outline"}
-              size={40}
-              color="#D1D5DB"
-            />
-            <Text variant="muted" style={{ marginTop: 12 }}>
-              {searchQuery ? "No products found" : "No categories available"}
-            </Text>
-          </YStack>
-        }
-      />
+          <FlatList
+            data={gridItems}
+            numColumns={3}
+            keyExtractor={(item) => item.key}
+            renderItem={renderItem}
+            contentContainerStyle={{ padding: 6 }}
+            columnWrapperStyle={{ justifyContent: "flex-start" }}
+            ListEmptyComponent={
+              <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
+                <Ionicons
+                  name={searchQuery ? "search-outline" : "grid-outline"}
+                  size={40}
+                  color="#D1D5DB"
+                />
+                <Text variant="muted" style={{ marginTop: 12 }}>
+                  {searchQuery ? "No products found" : "No categories available"}
+                </Text>
+              </YStack>
+            }
+          />
+        </>
+      )}
     </YStack>
   );
 };

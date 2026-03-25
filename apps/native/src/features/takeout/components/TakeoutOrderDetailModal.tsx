@@ -9,7 +9,7 @@ import { useAuth } from "../../auth/context";
 import { ManagerPinModal, ReceiptPreviewModal } from "../../checkout/components";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
-import { Badge, Button, Modal, Separator, Text } from "../../shared/components/ui";
+import { Badge, Button, LoadingState, Modal, Separator, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 import type { ReceiptData } from "../../shared/utils/receipt";
 
@@ -170,7 +170,23 @@ export const TakeoutOrderDetailModal = ({
     [voidOrderAction, orderId, voidReason, onClose],
   );
 
-  if (!order) return null;
+  if (!order) {
+    return (
+      <Modal
+        visible={visible && !showReceiptPreview}
+        onClose={onClose}
+        title="Order Details"
+        position="center"
+        wide
+        scrollable={false}
+      >
+        <LoadingState
+          title="Loading order details"
+          description="Pulling the latest order items, totals, and payment status."
+        />
+      </Modal>
+    );
+  }
 
   const config = statusConfig[takeoutStatus];
   const orderTime = new Date(order.createdAt).toLocaleString("en-PH", {
@@ -320,7 +336,7 @@ export const TakeoutOrderDetailModal = ({
               </XStack>
             </Button>
           )}
-          {isPaid && order.status !== "voided" && (
+          {!isPaid && order.status !== "voided" && (
             <Button variant="destructive" onPress={handleVoidPress}>
               <XStack alignItems="center" justifyContent="center">
                 <Ionicons name="close-circle-outline" size={18} color="#fff" />

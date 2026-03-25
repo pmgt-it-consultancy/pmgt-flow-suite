@@ -2,16 +2,10 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAction, useQuery } from "convex/react";
 import { useCallback, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  type TextInput as RNTextInput,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-import { XStack, YStack } from "tamagui";
+import { Alert, type TextInput as RNTextInput, TextInput, TouchableOpacity } from "react-native";
+import { YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
-import { Button, Modal, Text } from "../../shared/components/ui";
+import { Button, LoadingState, Modal, Text } from "../../shared/components/ui";
 
 interface ManagerPinModalProps {
   visible: boolean;
@@ -95,7 +89,10 @@ export const ManagerPinModal = ({
       <Text style={{ color: "#374151", fontWeight: "500", marginBottom: 8 }}>Select Manager</Text>
       <YStack marginBottom={16}>
         {managers === undefined ? (
-          <ActivityIndicator size="small" color="#0D87E1" />
+          <LoadingState
+            title="Loading managers"
+            description="Fetching manager accounts for approval."
+          />
         ) : managers.length === 0 ? (
           <Text variant="muted" style={{ textAlign: "center", paddingVertical: 16 }}>
             No managers found

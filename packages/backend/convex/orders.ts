@@ -1147,6 +1147,9 @@ export const updateTakeoutStatus = mutation({
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
     if (order.orderType !== "takeout") throw new Error("Not a takeout order");
+    if (args.newStatus === "completed" && order.status !== "paid") {
+      throw new Error("Cannot complete an unpaid takeout order");
+    }
 
     // Validate status transitions
     const currentStatus = order.takeoutStatus;

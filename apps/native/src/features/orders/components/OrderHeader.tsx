@@ -10,11 +10,13 @@ interface OrderHeaderProps {
   onBack: () => void;
   onTransferTable?: () => void;
   onUpdatePax?: () => void;
+  disableUpdatePax?: boolean;
   onViewOrders?: () => void;
   tabNumber?: number;
   tabName?: string;
   onEditTabName?: () => void;
   onAddNewTab?: () => void;
+  disableAddNewTab?: boolean;
 }
 
 export const OrderHeader = ({
@@ -23,11 +25,13 @@ export const OrderHeader = ({
   onBack,
   onTransferTable,
   onUpdatePax,
+  disableUpdatePax,
   onViewOrders,
   tabNumber,
   tabName,
   onEditTabName,
   onAddNewTab,
+  disableAddNewTab,
 }: OrderHeaderProps) => {
   return (
     <XStack
@@ -95,7 +99,13 @@ export const OrderHeader = ({
       )}
       <SystemStatusBar />
       {onUpdatePax && (
-        <IconButton icon="people" variant="ghost" onPress={onUpdatePax} iconColor="#6B7280" />
+        <IconButton
+          icon="people"
+          variant="ghost"
+          onPress={onUpdatePax}
+          iconColor="#6B7280"
+          disabled={disableUpdatePax}
+        />
       )}
       {onTransferTable && (
         <IconButton
@@ -111,6 +121,7 @@ export const OrderHeader = ({
           variant="ghost"
           onPress={onAddNewTab}
           iconColor="#0D87E1"
+          disabled={disableAddNewTab}
         />
       )}
     </XStack>

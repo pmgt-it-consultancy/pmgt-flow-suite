@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ActivityIndicator, Alert, FlatList, TextInput, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
@@ -52,6 +52,10 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const addItemLockRef = useRef(false);
+  const checkoutLockRef = useRef(false);
+  const cancelOrderLockRef = useRef(false);
 
   // Modal state
   const [voidingItem, setVoidingItem] = useState<{
@@ -82,8 +86,19 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const addItemMutation = useMutation(api.orders.addItem);
   const updateItemQuantity = useMutation(api.orders.updateItemQuantity);
   const removeItemMutation = useMutation(api.orders.removeItem);
+  const cancelOrderMutation = useMutation(api.checkout.cancelOrder);
+  const discardDraftMutation = useMutation(api.orders.discardDraft);
   const submitDraftMutation = useMutation(api.orders.submitDraft);
   const updateCustomerNameMutation = useMutation(api.orders.updateCustomerName);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      checkoutLockRef.current = false;
+      setIsSending(false);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   // Sync customer name from backend when order loads
   useEffect(() => {
@@ -116,6 +131,53 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
+  const handleCancelOrder = useCallback(() => {
+    if (cancelOrderLockRef.current) return;
+
+    const isDraftOrder = order?.status === "draft";
+
+    Alert.alert(
+      isDraftOrder ? "Discard Draft" : "Cancel Order",
+      isDraftOrder
+        ? "If you just need to take another customer's order, tap Keep Draft and go back. Only discard this draft if you're sure you no longer need this cart."
+        : "Are you sure you want to cancel this order? All items will be removed.",
+      [
+        {
+          text: isDraftOrder ? "Keep Draft" : "No",
+          style: "cancel",
+          onPress: isDraftOrder ? () => navigation.goBack() : undefined,
+        },
+        {
+          text: isDraftOrder ? "Yes, Discard" : "Yes, Cancel",
+          style: "destructive",
+          onPress: async () => {
+            if (cancelOrderLockRef.current) return;
+
+            cancelOrderLockRef.current = true;
+            setIsCancelling(true);
+            try {
+              if (isDraftOrder) {
+                await discardDraftMutation({ orderId });
+              } else {
+                await cancelOrderMutation({ orderId });
+              }
+              navigation.goBack();
+            } catch (error: any) {
+              Alert.alert(
+                "Error",
+                error.message ||
+                  (isDraftOrder ? "Failed to discard draft" : "Failed to cancel order"),
+              );
+            } finally {
+              cancelOrderLockRef.current = false;
+              setIsCancelling(false);
+            }
+          },
+        },
+      ],
+    );
+  }, [cancelOrderMutation, discardDraftMutation, navigation, order?.status, orderId]);
+
   const handleViewOrders = useCallback(() => {
     navigation.navigate("TakeoutListScreen");
   }, [navigation]);
@@ -132,8 +194,9 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
   const handleConfirmAdd = useCallback(
     async (customPrice?: number) => {
-      if (!selectedProduct) return;
+      if (!selectedProduct || addItemLockRef.current) return;
 
+      addItemLockRef.current = true;
       setIsAddingItem(true);
       try {
         await addItemMutation({
@@ -148,6 +211,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         console.error("Add item error:", error);
         Alert.alert("Error", "Failed to add item to order");
       } finally {
+        addItemLockRef.current = false;
         setIsAddingItem(false);
       }
     },
@@ -156,8 +220,9 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
   const handleConfirmModifiers = useCallback(
     async (qty: number, itemNotes: string, modifiers: SelectedModifier[], customPrice?: number) => {
-      if (!selectedProduct) return;
+      if (!selectedProduct || addItemLockRef.current) return;
 
+      addItemLockRef.current = true;
       setIsAddingItem(true);
       try {
         await addItemMutation({
@@ -173,6 +238,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         console.error("Add item error:", error);
         Alert.alert("Error", "Failed to add item to order");
       } finally {
+        addItemLockRef.current = false;
         setIsAddingItem(false);
       }
     },
@@ -245,13 +311,17 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   );
 
   const handleCheckout = useCallback(async () => {
+    if (checkoutLockRef.current) return;
+
     const items = order?.items.filter((i) => !i.isVoided) ?? [];
     if (items.length === 0) {
       Alert.alert("No Items", "Please add items before proceeding to payment.");
       return;
     }
 
+    checkoutLockRef.current = true;
     setIsSending(true);
+    let shouldReleaseLock = true;
     try {
       if (order?.status === "draft") {
         await submitDraftMutation({ orderId });
@@ -261,11 +331,15 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         orderId,
         orderType: "takeout",
       });
+      shouldReleaseLock = false;
     } catch (error: any) {
       console.error("Checkout error:", error);
       Alert.alert("Error", error.message || "Failed to proceed to payment");
     } finally {
-      setIsSending(false);
+      if (shouldReleaseLock) {
+        checkoutLockRef.current = false;
+        setIsSending(false);
+      }
     }
   }, [order, orderId, submitDraftMutation, navigation]);
 
@@ -568,7 +642,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={handleBack}
+              onPress={handleCancelOrder}
+              disabled={isCancelling}
               activeOpacity={0.7}
               style={{
                 marginTop: 12,
@@ -581,6 +656,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 borderRadius: 10,
                 borderWidth: 1,
                 borderColor: "#FECACA",
+                opacity: isCancelling ? 0.6 : 1,
               }}
             >
               <Ionicons
@@ -590,7 +666,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 style={{ marginRight: 8 }}
               />
               <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 15 }}>
-                Cancel Order
+                {isCancelling ? "Cancelling..." : "Cancel Order"}
               </Text>
             </TouchableOpacity>
           </YStack>

@@ -4,6 +4,7 @@ export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 export { Chip } from "./Chip";
 export { IconButton } from "./IconButton";
 export { Input } from "./Input";
+export { LoadingState } from "./LoadingState";
 export { Modal } from "./Modal";
 export { Separator } from "./Separator";
 export { Text } from "./Text";

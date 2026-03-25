@@ -3,9 +3,9 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
-import { ActivityIndicator, Alert, FlatList, TouchableOpacity } from "react-native";
+import { Alert, FlatList, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { Modal, Text } from "../../shared/components/ui";
+import { LoadingState, Modal, Text } from "../../shared/components/ui";
 
 interface TransferTableModalProps {
   visible: boolean;
@@ -50,9 +50,10 @@ export const TransferTableModal = ({
       scrollable={false}
     >
       {availableTables === undefined ? (
-        <YStack alignItems="center" paddingVertical={32}>
-          <ActivityIndicator size="small" color="#0D87E1" />
-        </YStack>
+        <LoadingState
+          title="Loading available tables"
+          description="Checking which tables are ready to receive this order."
+        />
       ) : availableTables.length === 0 ? (
         <YStack alignItems="center" paddingVertical={32}>
           <Ionicons name="alert-circle-outline" size={32} color="#D1D5DB" />

@@ -708,6 +708,70 @@ describe("orders — draft takeout orders", () => {
   });
 });
 
+describe("orders — takeout status workflow", () => {
+  it("should reject completing a takeout order that is not yet paid", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "T-001",
+        orderType: "takeout" as const,
+        orderChannel: "walk_in_takeout" as const,
+        takeoutStatus: "ready_for_pickup" as const,
+        status: "open" as const,
+        grossSales: 150,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 150,
+        discountAmount: 0,
+        netSales: 150,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    await expect(
+      authed.mutation(api.orders.updateTakeoutStatus, { orderId, newStatus: "completed" }),
+    ).rejects.toThrowError("Cannot complete an unpaid takeout order");
+  });
+
+  it("should allow completing a takeout order after payment", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "T-002",
+        orderType: "takeout" as const,
+        orderChannel: "walk_in_takeout" as const,
+        takeoutStatus: "ready_for_pickup" as const,
+        status: "paid" as const,
+        paymentMethod: "cash" as const,
+        grossSales: 150,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 150,
+        discountAmount: 0,
+        netSales: 150,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    await authed.mutation(api.orders.updateTakeoutStatus, { orderId, newStatus: "completed" });
+
+    const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+    expect(order?.takeoutStatus).toBe("completed");
+  });
+});
+
 describe("orders — submitDraft idempotency", () => {
   it("should return orderNumber without error if draft is already submitted", async () => {
     const t = convexTest(schema, modules);
