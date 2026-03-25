@@ -1,7 +1,6 @@
-import { Alert } from "react-native";
+import { Alert, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
-import { IconButton, Text } from "../../shared/components/ui";
+import { Text } from "../../shared/components/ui";
 
 interface HomeHeaderProps {
   userName: string;
@@ -35,6 +34,9 @@ export const HomeHeader = ({
     ]);
   };
 
+  const cleanedUserName = userName.replace(/\s*\([^)]*\)\s*/g, "").trim();
+  const showRoleLine = roleName && !userName.includes("(");
+
   return (
     <XStack
       backgroundColor="#FFFFFF"
@@ -56,17 +58,19 @@ export const HomeHeader = ({
           justifyContent="center"
         >
           <Text
+            numberOfLines={1}
             style={{
               color: "#FFFFFF",
               fontSize: 17,
               fontWeight: "700",
             }}
           >
-            {userName.charAt(0).toUpperCase()}
+            {cleanedUserName.charAt(0).toUpperCase()}
           </Text>
         </YStack>
         <YStack>
           <Text
+            numberOfLines={1}
             style={{
               fontSize: 17,
               fontWeight: "700",
@@ -74,10 +78,11 @@ export const HomeHeader = ({
               letterSpacing: -0.2,
             }}
           >
-            {userName}
+            {cleanedUserName}
           </Text>
-          {roleName && (
+          {showRoleLine && (
             <Text
+              numberOfLines={1}
               style={{
                 fontSize: 13,
                 fontWeight: "500",
@@ -91,14 +96,50 @@ export const HomeHeader = ({
         </YStack>
       </XStack>
 
-      <XStack gap={6} alignItems="center">
-        <SystemStatusBar />
-        <IconButton icon="receipt-outline" onPress={onOrderHistory} />
-        <IconButton icon="settings-outline" onPress={onSettings} />
-        {onDayClosing && <IconButton icon="today-outline" onPress={onDayClosing} />}
-        {showLockButton && onLock && <IconButton icon="lock-closed-outline" onPress={onLock} />}
-        <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
+      <XStack gap={8} alignItems="center">
+        <HeaderActionButton label="Past Orders" onPress={onOrderHistory} />
+        <HeaderActionButton label="Settings" onPress={onSettings} />
+        {onDayClosing && <HeaderActionButton label="End Day" onPress={onDayClosing} />}
+        {showLockButton && onLock && <HeaderActionButton label="Lock" onPress={onLock} />}
+        <HeaderActionButton label="Logout" onPress={handleLogoutPress} destructive />
       </XStack>
     </XStack>
   );
 };
+
+function HeaderActionButton({
+  label,
+  onPress,
+  destructive,
+}: {
+  label: string;
+  onPress: () => void;
+  destructive?: boolean;
+}) {
+  return (
+    <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
+      <YStack
+        minWidth={74}
+        paddingHorizontal={12}
+        paddingVertical={10}
+        borderRadius={12}
+        alignItems="center"
+        justifyContent="center"
+        backgroundColor={destructive ? "#FEF2F2" : "#F8FAFC"}
+        borderWidth={1}
+        borderColor={destructive ? "#FECACA" : "#E2E8F0"}
+      >
+        <Text
+          numberOfLines={1}
+          style={{
+            fontSize: 12,
+            fontWeight: "700",
+            color: destructive ? "#DC2626" : "#334155",
+          }}
+        >
+          {label}
+        </Text>
+      </YStack>
+    </TouchableOpacity>
+  );
+}

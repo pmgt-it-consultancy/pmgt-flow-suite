@@ -32,8 +32,9 @@ function getTimeAgo(createdAt: number): string {
 
 const ORDER_STYLES = {
   dine_in: {
-    borderColor: "#0D87E1",
-    iconBg: "#EFF6FF",
+    borderColor: "#BFDBFE",
+    stripe: "#0D87E1",
+    iconBg: "#E8F3FE",
     iconColor: "#0D87E1",
     icon: "restaurant-outline" as const,
     label: "Dine-In",
@@ -41,8 +42,9 @@ const ORDER_STYLES = {
     labelBg: "#DBEAFE",
   },
   takeout: {
-    borderColor: "#EA580C",
-    iconBg: "#FFF7ED",
+    borderColor: "#FED7AA",
+    stripe: "#EA580C",
+    iconBg: "#FFF1E7",
     iconColor: "#EA580C",
     icon: "bag-handle-outline" as const,
     label: "Takeout",
@@ -56,105 +58,179 @@ export const ActiveOrdersList = ({ orders }: ActiveOrdersListProps) => {
 
   if (orders.length === 0) {
     return (
-      <YStack flex={1} alignItems="center" justifyContent="center" gap={8} padding={24}>
+      <YStack flex={1} alignItems="center" justifyContent="center" gap={10} padding={24}>
         <YStack
-          backgroundColor="#F8FAFC"
-          borderRadius={16}
-          width={56}
-          height={56}
+          backgroundColor="#F8FBFD"
+          borderRadius={20}
+          width={64}
+          height={64}
           alignItems="center"
           justifyContent="center"
         >
-          <Ionicons name="receipt-outline" size={26} color="#CBD5E1" />
+          <Ionicons name="receipt-outline" size={28} color="#B6C3D1" />
         </YStack>
-        <Text style={{ color: "#94A3B8", fontSize: 14, fontWeight: "500" }}>No active orders</Text>
+        <Text numberOfLines={1} style={{ color: "#5F7387", fontSize: 16, fontWeight: "700" }}>
+          No active orders
+        </Text>
+        <Text numberOfLines={1} style={{ color: "#94A3B8", fontSize: 13, fontWeight: "500" }}>
+          New tickets will appear here as soon as service starts moving.
+        </Text>
       </YStack>
     );
   }
 
   return (
     <ScrollView
-      contentContainerStyle={{ padding: 12, gap: 8 }}
+      contentContainerStyle={{ padding: 14, gap: 10 }}
       showsVerticalScrollIndicator={false}
     >
       {orders.map((order) => {
         const style = ORDER_STYLES[order.orderType];
         const timeAgo = getTimeAgo(order.createdAt);
+        const destination =
+          order.orderType === "dine_in"
+            ? order.tableName || "Dining floor"
+            : order.customerName || "Takeout queue";
 
         return (
           <XStack
             key={order._id}
             backgroundColor="#FFFFFF"
-            borderRadius={12}
-            borderLeftWidth={4}
-            borderLeftColor={style.borderColor}
+            borderRadius={16}
             borderWidth={1}
-            borderColor="#F1F5F9"
-            paddingVertical={12}
-            paddingLeft={14}
-            paddingRight={16}
-            alignItems="center"
-            gap={12}
+            borderColor={style.borderColor}
+            overflow="hidden"
+            alignItems="stretch"
           >
-            {/* Icon */}
-            <YStack
-              backgroundColor={style.iconBg}
-              borderRadius={10}
-              width={38}
-              height={38}
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Ionicons name={style.icon} size={18} color={style.iconColor} />
-            </YStack>
+            <YStack width={6} backgroundColor={style.stripe} />
 
-            {/* Order Info */}
-            <YStack flex={1} gap={3}>
-              <XStack alignItems="center" gap={8}>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    fontWeight: "700",
-                    color: "#0F172A",
-                    letterSpacing: -0.2,
-                  }}
-                >
-                  {order.orderNumber}
-                </Text>
-                <XStack
-                  backgroundColor={style.labelBg}
-                  borderRadius={4}
-                  paddingHorizontal={6}
-                  paddingVertical={1}
-                >
-                  <Text style={{ fontSize: 11, fontWeight: "600", color: style.labelColor }}>
-                    {style.label}
+            <XStack
+              flex={1}
+              paddingVertical={14}
+              paddingLeft={14}
+              paddingRight={16}
+              gap={12}
+              alignItems="center"
+            >
+              <YStack
+                backgroundColor={style.iconBg}
+                borderRadius={14}
+                width={46}
+                height={46}
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Ionicons name={style.icon} size={20} color={style.iconColor} />
+              </YStack>
+
+              <YStack flex={1} gap={7}>
+                <XStack justifyContent="space-between" alignItems="center">
+                  <XStack alignItems="center" gap={8}>
+                    <Text
+                      numberOfLines={1}
+                      style={{
+                        fontSize: 17,
+                        fontWeight: "800",
+                        color: "#0F172A",
+                        letterSpacing: -0.3,
+                      }}
+                    >
+                      {order.orderNumber}
+                    </Text>
+                    <XStack
+                      backgroundColor={style.labelBg}
+                      borderRadius={999}
+                      paddingHorizontal={8}
+                      paddingVertical={3}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        style={{ fontSize: 11, fontWeight: "700", color: style.labelColor }}
+                      >
+                        {style.label}
+                      </Text>
+                    </XStack>
+                  </XStack>
+
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      fontSize: 17,
+                      fontWeight: "800",
+                      color: "#0F172A",
+                      letterSpacing: -0.3,
+                    }}
+                  >
+                    {formatCurrency(order.subtotal)}
                   </Text>
                 </XStack>
-              </XStack>
-              <XStack alignItems="center" gap={6}>
-                <Text style={{ fontSize: 13, color: "#94A3B8", fontWeight: "500" }}>
-                  {order.itemCount} {order.itemCount === 1 ? "item" : "items"}
-                </Text>
-                <Text style={{ fontSize: 13, color: "#CBD5E1" }}>&middot;</Text>
-                <Text style={{ fontSize: 13, color: "#94A3B8", fontWeight: "500" }}>{timeAgo}</Text>
-              </XStack>
-            </YStack>
 
-            {/* Amount */}
-            <Text
-              style={{
-                fontSize: 15,
-                fontWeight: "700",
-                color: "#0F172A",
-                letterSpacing: -0.2,
-              }}
-            >
-              {formatCurrency(order.subtotal)}
-            </Text>
+                <XStack alignItems="center" justifyContent="space-between">
+                  <YStack gap={3}>
+                    <Text
+                      numberOfLines={1}
+                      style={{ fontSize: 13, color: "#475569", fontWeight: "700" }}
+                    >
+                      {destination}
+                    </Text>
+                    <XStack alignItems="center" gap={7} flexWrap="nowrap">
+                      <MetricPill
+                        icon="cube-outline"
+                        label={`${order.itemCount} ${order.itemCount === 1 ? "item" : "items"}`}
+                      />
+                      <MetricPill icon="time-outline" label={timeAgo} />
+                    </XStack>
+                  </YStack>
+
+                  <YStack
+                    backgroundColor="#F8FBFD"
+                    borderRadius={12}
+                    paddingHorizontal={10}
+                    paddingVertical={8}
+                    alignItems="center"
+                  >
+                    <Text
+                      numberOfLines={1}
+                      style={{
+                        fontSize: 10,
+                        fontWeight: "700",
+                        color: "#94A3B8",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Status
+                    </Text>
+                    <Text
+                      numberOfLines={1}
+                      style={{ fontSize: 13, fontWeight: "800", color: "#334155", marginTop: 2 }}
+                    >
+                      Open
+                    </Text>
+                  </YStack>
+                </XStack>
+              </YStack>
+            </XStack>
           </XStack>
         );
       })}
     </ScrollView>
   );
 };
+
+function MetricPill({ icon, label }: { icon: keyof typeof Ionicons.glyphMap; label: string }) {
+  return (
+    <XStack
+      backgroundColor="#F8FBFD"
+      borderRadius={999}
+      paddingHorizontal={8}
+      paddingVertical={4}
+      alignItems="center"
+      gap={5}
+    >
+      <Ionicons name={icon} size={12} color="#64748B" />
+      <Text numberOfLines={1} style={{ fontSize: 12, fontWeight: "600", color: "#64748B" }}>
+        {label}
+      </Text>
+    </XStack>
+  );
+}
