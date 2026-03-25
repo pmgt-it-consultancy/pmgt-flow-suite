@@ -75,6 +75,33 @@ Function files organized by domain:
 - `hooks/` — Custom React hooks
 - `stores/` — Zustand stores
 
+#### Admin Table Filter Pattern
+
+For admin pages with filterable tables, use an inline filter bar inside a `Card` above the data table:
+
+```tsx
+<Card>
+  <CardContent className="pt-6">
+    <div className="flex items-center gap-3">
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <Input placeholder="Search..." value={searchQuery} onChange={...} className="pl-10" />
+      </div>
+      <Select value={filter1} onValueChange={setFilter1}>
+        <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
+        <SelectContent>...</SelectContent>
+      </Select>
+      {/* Additional filters as needed */}
+    </div>
+  </CardContent>
+</Card>
+```
+
+- Search input takes `flex-1`, filter dropdowns have fixed widths (`w-[140px]` to `w-[200px]`)
+- Filtering is client-side on the already-loaded Convex query data
+- Status filters default to "Active" to hide inactive items by default
+- `CardDescription` shows contextual counts (e.g., "12 of 45 product(s)")
+
 #### Colocated Page Architecture
 
 For complex pages, use colocated folders with underscore prefix (ignored by Next.js routing):
