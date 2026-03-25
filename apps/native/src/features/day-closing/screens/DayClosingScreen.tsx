@@ -1,26 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
-import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { useMutation, useQuery } from "convex/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Alert,
-  FlatList,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { useCallback, useState } from "react";
+import { Alert, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Text } from "../../shared/components/ui";
-import { useFormatCurrency } from "../../shared/hooks";
-import { OrderSelectionItem } from "../components/OrderSelectionItem";
-import { PrintProgressModal } from "../components/PrintProgressModal";
+import { DateNavigationBar } from "../components/DateNavigationBar";
+import { ItemBreakdownCard } from "../components/ItemBreakdownCard";
 import { ZReportSummary } from "../components/ZReportSummary";
-import { useBatchPrint } from "../hooks/useBatchPrint";
 import { printZReportToThermal } from "../utils/zReportFormatter";
 
 interface DayClosingScreenProps {
@@ -34,78 +23,31 @@ const formatDateKey = (date: Date): string => {
   return `${y}-${m}-${d}`;
 };
 
-const getDateRange = (date: Date): { start: number; end: number } => {
-  const start = new Date(date);
-  start.setHours(0, 0, 0, 0);
-  const end = new Date(date);
-  end.setHours(23, 59, 59, 999);
-  return { start: start.getTime(), end: end.getTime() };
-};
-
 export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   const { user } = useAuth();
-  const formatCurrency = useFormatCurrency();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<Id<"orders">>>(new Set());
   const [isPrintingZReport, setIsPrintingZReport] = useState(false);
 
   const storeId = user?.storeId;
   const reportDate = formatDateKey(selectedDate);
-  const { start, end } = useMemo(() => getDateRange(selectedDate), [selectedDate]);
 
   // Queries
   const report = useQuery(api.reports.getDailyReport, storeId ? { storeId, reportDate } : "skip");
-
-  const orders = useQuery(
-    api.orders.getOrderHistory,
-    storeId ? { storeId, startDate: start, endDate: end } : "skip",
+  const productSales = useQuery(
+    api.reports.getDailyProductSales,
+    storeId ? { storeId, reportDate } : "skip",
   );
-
   const store = useQuery(api.stores.get, storeId ? { storeId } : "skip");
 
   // Mutations
   const generateReport = useMutation(api.reports.generateDailyReport);
   const logDayClosing = useMutation(api.closing.logDayClosing);
 
-  // Batch print
-  const { isPrinting, currentIndex, totalCount, printBatch, cancelBatch } = useBatchPrint();
+  // Printer config
   const charsPerLine = usePrinterStore((s) => {
     const receipt = s.printers.find((p) => p.role === "receipt");
     return receipt?.paperWidth === 80 ? 48 : 32;
   });
-
-  // Auto-select paid orders when orders load
-  useEffect(() => {
-    if (orders) {
-      const paidIds = new Set(orders.filter((o) => o.status === "paid").map((o) => o._id));
-      setSelectedOrderIds(paidIds);
-    }
-  }, [orders]);
-
-  const paidOrders = useMemo(() => orders?.filter((o) => o.status === "paid") ?? [], [orders]);
-  const allOrders = orders ?? [];
-  const selectedCount = selectedOrderIds.size;
-
-  const toggleOrder = useCallback((orderId: Id<"orders">) => {
-    setSelectedOrderIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(orderId)) {
-        next.delete(orderId);
-      } else {
-        next.add(orderId);
-      }
-      return next;
-    });
-  }, []);
-
-  const toggleSelectAll = useCallback(() => {
-    if (selectedCount === paidOrders.length) {
-      setSelectedOrderIds(new Set());
-    } else {
-      setSelectedOrderIds(new Set(paidOrders.map((o) => o._id)));
-    }
-  }, [selectedCount, paidOrders]);
 
   // Generate report + log closing
   const handleGenerateReport = useCallback(async () => {
@@ -118,7 +60,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     }
   }, [storeId, reportDate, generateReport, logDayClosing]);
 
-  // Print Z-Report to thermal
+  // Print Z-Report to thermal printer
   const handlePrintZReport = useCallback(async () => {
     if (!report || !storeId || !store) return;
     setIsPrintingZReport(true);
@@ -151,6 +93,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
           generatedByName: report.generatedByName,
         },
         charsPerLine,
+        productSales ?? [],
       );
       Alert.alert("Success", "Z-Report printed successfully.");
     } catch (error) {
@@ -158,46 +101,9 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     } finally {
       setIsPrintingZReport(false);
     }
-  }, [report, storeId, store, reportDate, charsPerLine]);
+  }, [report, storeId, store, reportDate, charsPerLine, productSales]);
 
-  // Batch reprint selected receipts
-  const handleBatchReprint = useCallback(() => {
-    const orderIds = Array.from(selectedOrderIds);
-    if (orderIds.length === 0) {
-      Alert.alert("No Receipts", "Select at least one order to reprint.");
-      return;
-    }
-
-    Alert.alert(
-      "Batch Reprint",
-      `Print ${orderIds.length} receipt(s)? This may take a few minutes.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Print", onPress: () => printBatch(orderIds) },
-      ],
-    );
-  }, [selectedOrderIds, printBatch]);
-
-  const renderOrderItem = useCallback(
-    ({ item }: { item: (typeof allOrders)[0] }) => (
-      <OrderSelectionItem
-        order={item}
-        isSelected={selectedOrderIds.has(item._id)}
-        onToggle={toggleOrder}
-        formatCurrency={formatCurrency}
-      />
-    ),
-    [selectedOrderIds, toggleOrder, formatCurrency],
-  );
-
-  const keyExtractor = useCallback((item: (typeof allOrders)[0]) => item._id, []);
-
-  const dateLabel = selectedDate.toLocaleDateString("en-PH", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const canPrint = !!report && !isPrintingZReport;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -218,120 +124,46 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
             <Text variant="heading" size="lg">
               Day Closing
             </Text>
-            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-              <XStack alignItems="center" gap={4} marginTop={2}>
-                <Ionicons name="calendar-outline" size={16} color="#0D87E1" />
-                <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 14 }}>
-                  {dateLabel}
-                </Text>
-              </XStack>
-            </TouchableOpacity>
           </YStack>
-          {/* Generate/Refresh report button */}
           <TouchableOpacity onPress={handleGenerateReport} style={styles.refreshButton}>
             <Ionicons name="refresh" size={22} color="#0D87E1" />
           </TouchableOpacity>
         </XStack>
 
-        {showDatePicker && (
-          <DateTimePicker
-            value={selectedDate}
-            mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            maximumDate={new Date()}
-            onChange={(_, date) => {
-              setShowDatePicker(false);
-              if (date) setSelectedDate(date);
-            }}
-          />
-        )}
+        {/* Date Navigation */}
+        <DateNavigationBar selectedDate={selectedDate} onDateChange={setSelectedDate} />
 
-        {/* Content */}
-        <FlatList
-          data={allOrders}
-          keyExtractor={keyExtractor}
-          renderItem={renderOrderItem}
-          extraData={selectedOrderIds}
-          contentContainerStyle={styles.listContent}
-          ListHeaderComponent={
-            <YStack gap={16} marginBottom={16}>
-              {/* Z-Report Summary */}
-              <ZReportSummary
-                report={report ?? null}
-                isLoading={report === undefined}
-                onPrintZReport={handlePrintZReport}
-                isPrintingZReport={isPrintingZReport}
-              />
-
-              {/* Receipts header */}
-              <XStack justifyContent="space-between" alignItems="center">
-                <Text variant="heading" size="base">
-                  Receipts ({allOrders.length} orders)
-                </Text>
-                <TouchableOpacity onPress={toggleSelectAll} style={styles.selectAllButton}>
-                  <Ionicons
-                    name={
-                      selectedCount === paidOrders.length && paidOrders.length > 0
-                        ? "checkbox"
-                        : "square-outline"
-                    }
-                    size={20}
-                    color="#0D87E1"
-                  />
-                  <Text
-                    style={{ color: "#0D87E1", fontWeight: "600", fontSize: 14, marginLeft: 6 }}
-                  >
-                    {selectedCount === paidOrders.length && paidOrders.length > 0
-                      ? "Deselect All"
-                      : "Select All"}
-                  </Text>
-                </TouchableOpacity>
-              </XStack>
-            </YStack>
-          }
-          ListEmptyComponent={
-            <YStack alignItems="center" justifyContent="center" paddingVertical={40}>
-              <Ionicons name="receipt-outline" size={48} color="#D1D5DB" />
-              <Text variant="muted" size="base" style={{ marginTop: 12 }}>
-                No orders found for this date.
-              </Text>
-            </YStack>
-          }
-        />
-
-        {/* Sticky Footer */}
-        {allOrders.length > 0 && (
-          <YStack
-            backgroundColor="$white"
-            paddingHorizontal={20}
-            paddingVertical={16}
-            borderTopWidth={1}
-            borderColor="$gray200"
-          >
-            <TouchableOpacity
-              onPress={handleBatchReprint}
-              disabled={selectedCount === 0 || isPrinting}
-              activeOpacity={0.7}
-              style={[
-                styles.batchPrintButton,
-                (selectedCount === 0 || isPrinting) && styles.batchPrintButtonDisabled,
-              ]}
-            >
-              <Ionicons name="print-outline" size={22} color="#FFFFFF" />
-              <Text style={styles.batchPrintText}>
-                Reprint {selectedCount} Selected Receipt{selectedCount !== 1 ? "s" : ""}
-              </Text>
-            </TouchableOpacity>
+        {/* Scrollable Content — single ScrollView, no nested scrollables */}
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <YStack gap={16}>
+            <ZReportSummary report={report ?? null} isLoading={report === undefined} />
+            <ItemBreakdownCard
+              productSales={productSales ?? undefined}
+              isLoading={productSales === undefined}
+            />
           </YStack>
-        )}
+        </ScrollView>
 
-        {/* Print Progress Modal */}
-        <PrintProgressModal
-          visible={isPrinting}
-          currentIndex={currentIndex}
-          totalCount={totalCount}
-          onCancel={cancelBatch}
-        />
+        {/* Sticky Footer — Print Z-Report */}
+        <YStack
+          backgroundColor="$white"
+          paddingHorizontal={20}
+          paddingVertical={16}
+          borderTopWidth={1}
+          borderColor="$gray200"
+        >
+          <TouchableOpacity
+            onPress={handlePrintZReport}
+            disabled={!canPrint}
+            activeOpacity={0.7}
+            style={[styles.printButton, !canPrint && styles.printButtonDisabled]}
+          >
+            <Ionicons name="print-outline" size={22} color="#FFFFFF" />
+            <Text style={styles.printButtonText}>
+              {isPrintingZReport ? "Printing..." : "Print Z-Report"}
+            </Text>
+          </TouchableOpacity>
+        </YStack>
       </YStack>
     </SafeAreaView>
   );
@@ -351,17 +183,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#EFF6FF",
   },
-  listContent: {
+  scrollContent: {
     padding: 16,
     paddingBottom: 8,
   },
-  selectAllButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-  },
-  batchPrintButton: {
+  printButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -371,10 +197,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 10,
   },
-  batchPrintButtonDisabled: {
+  printButtonDisabled: {
     opacity: 0.5,
   },
-  batchPrintText: {
+  printButtonText: {
     color: "#FFFFFF",
     fontWeight: "700",
     fontSize: 16,
