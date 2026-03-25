@@ -25,6 +25,12 @@ export interface ZReportData {
   generatedByName: string;
 }
 
+export interface ProductSaleItem {
+  productName: string;
+  quantitySold: number;
+  grossAmount: number;
+}
+
 const line = (char: string, width: number): string => char.repeat(width);
 
 const formatRow = (left: string, right: string, width: number): string => {
@@ -59,6 +65,7 @@ const large = () => ({ encoding: "UTF-8", widthtimes: 1, heigthtimes: 1, fonttyp
 export async function printZReportToThermal(
   data: ZReportData,
   charsPerLine: number,
+  productSales: ProductSaleItem[] = [],
 ): Promise<void> {
   const w = charsPerLine;
   const p = BluetoothEscposPrinter;
@@ -166,6 +173,53 @@ export async function printZReportToThermal(
   await p.printText(`${formatRow("Non-VAT", formatCurrency(data.nonVatSales), w)}\n`, normal());
 
   await p.printText(`${line("=", w)}\n`, normal());
+
+  // Items sold breakdown
+  if (productSales.length > 0) {
+    await p.printText("\n", normal());
+    await p.printerAlign(ALIGN.CENTER);
+    await p.printText("ITEMS SOLD\n", bold());
+    await p.printerAlign(ALIGN.LEFT);
+    await p.printText(`${line("-", w)}\n`, normal());
+
+    // Column widths: product name gets remaining space, qty = 5 chars, amount = 10 chars
+    const qtyCol = 5;
+    const amtCol = 10;
+    const nameCol = w - qtyCol - amtCol - 2; // 2 for spacing
+
+    // Header
+    const hdrName = "Item".padEnd(nameCol);
+    const hdrQty = "Qty".padStart(qtyCol);
+    const hdrAmt = "Amt".padStart(amtCol);
+    await p.printText(`${hdrName} ${hdrQty} ${hdrAmt}\n`, normal());
+    await p.printText(`${line("-", w)}\n`, normal());
+
+    // Sort by quantity descending
+    const sorted = [...productSales].sort((a, b) => b.quantitySold - a.quantitySold);
+
+    let totalQty = 0;
+    let totalAmt = 0;
+
+    for (const item of sorted) {
+      totalQty += item.quantitySold;
+      totalAmt += item.grossAmount;
+
+      const name =
+        item.productName.length > nameCol
+          ? item.productName.slice(0, nameCol)
+          : item.productName.padEnd(nameCol);
+      const qty = String(item.quantitySold).padStart(qtyCol);
+      const amt = formatCurrency(item.grossAmount).padStart(amtCol);
+      await p.printText(`${name} ${qty} ${amt}\n`, normal());
+    }
+
+    await p.printText(`${line("-", w)}\n`, normal());
+    const totalLabel = "Total".padEnd(nameCol);
+    const totalQtyStr = String(totalQty).padStart(qtyCol);
+    const totalAmtStr = formatCurrency(totalAmt).padStart(amtCol);
+    await p.printText(`${totalLabel} ${totalQtyStr} ${totalAmtStr}\n`, bold());
+    await p.printText(`${line("=", w)}\n`, normal());
+  }
 
   // Footer
   await p.printerAlign(ALIGN.CENTER);
