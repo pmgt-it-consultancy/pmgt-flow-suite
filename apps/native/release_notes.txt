@@ -1,16 +1,4 @@
 ## What's New
 
-- Day Closing overhaul — redesigned screen with prominent date navigation, item breakdown showing per-product sales, and time range selector (Full Day / Custom)
-- Z-Report item breakdown — thermal print now includes an items-sold section with product quantities and amounts
-- Time range support — generate reports for specific time periods (e.g., morning shift, evening shift) instead of full day only
-- PDF report export — download comprehensive daily sales reports as PDF from the web admin
-- Product filters — filter products by category and status in the admin panel
-- Dashboard trends — summary cards now show real percentage comparisons vs previous period
-- Duplicate transaction prevention — guards against double-tap creating duplicate orders or payments
-- Checkout flow refinements — improved layout and discount safeguards
-
-## Notes
-
-- Batch receipt reprinting has been removed from the Day Closing screen
-- Time range defaults to Full Day when not specified (backward compatible)
-- PDF generation uses client-side rendering (no server infrastructure needed)
+- POS dashboard workflow improvements — refined home screen layout and navigation clarity
+- Day closing label fix — clarified action button text for end-of-day flow
