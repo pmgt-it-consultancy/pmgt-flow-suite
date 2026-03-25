@@ -31,59 +31,67 @@ export const DiscountSection = ({
       <Text variant="heading" style={{ marginBottom: 12 }}>
         Discounts
       </Text>
-      <Card variant="elevated">
+
+      <Card variant="outlined">
         {discounts.length > 0 ? (
           <>
-            {discounts.map((discount) => (
+            {discounts.map((discount, index) => (
               <XStack
                 key={discount._id}
                 justifyContent="space-between"
                 alignItems="center"
-                paddingVertical={8}
-                borderBottomWidth={1}
+                paddingVertical={10}
+                borderBottomWidth={index === discounts.length - 1 ? 0 : 1}
                 borderColor="#F3F4F6"
               >
-                <YStack flex={1}>
-                  <XStack alignItems="center">
-                    <Ionicons name="checkmark-circle" size={20} color="#22C55E" />
-                    <Text style={{ color: "#22C55E", fontWeight: "500", marginLeft: 8 }}>
-                      {discount.discountType === "senior_citizen" ? "SC" : "PWD"}:{" "}
-                      {discount.customerName}
-                    </Text>
-                  </XStack>
+                <YStack flex={1} marginRight={12}>
+                  <Text style={{ color: "#111827", fontWeight: "600" }}>
+                    {discount.discountType === "senior_citizen" ? "SC" : "PWD"}:{" "}
+                    {discount.customerName}
+                  </Text>
                   {discount.itemName && (
-                    <Text variant="muted" size="xs" style={{ marginLeft: 28 }}>
+                    <Text variant="muted" size="xs" style={{ marginTop: 2 }}>
                       Applied to: {discount.itemName}
                     </Text>
                   )}
                 </YStack>
+
                 <XStack alignItems="center">
-                  <Text style={{ color: "#22C55E", fontWeight: "600", marginRight: 8 }}>
+                  <Text style={{ color: "#22C55E", fontWeight: "600", marginRight: 10 }}>
                     -{formatCurrency(discount.discountAmount)}
                   </Text>
                   <TouchableOpacity
                     onPress={() => onRemoveDiscount(discount._id)}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#F9FAFB",
+                    }}
                   >
-                    <Ionicons name="close-circle" size={20} color="#EF4444" />
+                    <Ionicons name="close" size={18} color="#6B7280" />
                   </TouchableOpacity>
                 </XStack>
               </XStack>
             ))}
+
             <TouchableOpacity
               style={{
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                paddingVertical: 12,
-                marginTop: 8,
+                paddingTop: 12,
+                marginTop: 4,
                 borderTopWidth: 1,
                 borderColor: "#F3F4F6",
               }}
               onPress={onAddDiscount}
               activeOpacity={0.7}
             >
-              <Ionicons name="add" size={20} color="#0D87E1" />
+              <Ionicons name="add" size={18} color="#0D87E1" />
               <Text style={{ color: "#0D87E1", fontWeight: "500", marginLeft: 8 }}>
                 Add Another Discount
               </Text>

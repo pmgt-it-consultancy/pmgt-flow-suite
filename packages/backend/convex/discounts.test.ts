@@ -1,5 +1,6 @@
 import { convexTest } from "convex-test";
 import { describe, expect, it } from "vitest";
+import { api } from "./_generated/api";
 import {
   aggregateOrderTotals,
   calculateItemTotals,
@@ -155,7 +156,7 @@ describe("discounts — SC/PWD discount", () => {
   it("should block discount quantity exceeding item quantity", async () => {
     const t = convexTest(schema, modules);
     const { storeId, userId, productId } = await setupDiscountTestData(t);
-    const { orderId, itemId } = await createOrderWithItem(t, storeId, userId, productId, 2);
+    const { itemId } = await createOrderWithItem(t, storeId, userId, productId, 2);
 
     await expect(async () => {
       await t.run(async (ctx: any) => {
@@ -166,6 +167,36 @@ describe("discounts — SC/PWD discount", () => {
         }
       });
     }).rejects.toThrowError("Discount quantity exceeds item quantity");
+  });
+
+  it("should reject applying another SC/PWD discount to an already discounted item", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupDiscountTestData(t);
+    const { orderId, itemId } = await createOrderWithItem(t, storeId, userId, productId, 2);
+
+    const authed = t.withIdentity({ subject: userId });
+
+    await authed.mutation(api.discounts.applyScPwdDiscount, {
+      orderId,
+      orderItemId: itemId,
+      discountType: "senior_citizen",
+      customerName: "Juan Dela Cruz",
+      customerId: "SC-12345",
+      quantityApplied: 1,
+      managerId: userId,
+    });
+
+    await expect(
+      authed.mutation(api.discounts.applyScPwdDiscount, {
+        orderId,
+        orderItemId: itemId,
+        discountType: "senior_citizen",
+        customerName: "Maria Dela Cruz",
+        customerId: "SC-67890",
+        quantityApplied: 1,
+        managerId: userId,
+      }),
+    ).rejects.toThrowError("Item already has an SC/PWD discount");
   });
 
   it("should recalculate order totals with SC/PWD discount", async () => {

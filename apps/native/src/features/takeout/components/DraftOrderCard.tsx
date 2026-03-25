@@ -3,6 +3,7 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { Alert, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
+import { useFormatCurrency } from "../../shared/hooks";
 
 interface DraftOrderCardProps {
   id: Id<"orders">;
@@ -25,6 +26,7 @@ export function DraftOrderCard({
   onResume,
   onDiscard,
 }: DraftOrderCardProps) {
+  const formatCurrency = useFormatCurrency();
   const displayName = customerName || draftLabel || "Draft";
   const time = new Date(createdAt).toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -58,8 +60,7 @@ export function DraftOrderCard({
               {displayName}
             </Text>
             <Text variant="muted" size="sm">
-              {time} · {itemCount} {itemCount === 1 ? "item" : "items"} · ₱
-              {(subtotal / 100).toFixed(2)}
+              {time} · {itemCount} {itemCount === 1 ? "item" : "items"} · {formatCurrency(subtotal)}
             </Text>
           </YStack>
           <XStack gap={8} alignItems="center">

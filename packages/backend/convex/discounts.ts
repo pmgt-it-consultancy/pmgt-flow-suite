@@ -18,6 +18,14 @@ const discountTypeValidator = v.union(
   v.literal("manual"),
 );
 
+function hasExistingScPwdDiscount(
+  discounts: Array<Pick<Doc<"orderDiscounts">, "discountType">>,
+): boolean {
+  return discounts.some(
+    (discount) => discount.discountType === "senior_citizen" || discount.discountType === "pwd",
+  );
+}
+
 // Apply SC/PWD discount to an order item
 export const applyScPwdDiscount = mutation({
   args: {
@@ -64,6 +72,9 @@ export const applyScPwdDiscount = mutation({
       .query("orderDiscounts")
       .withIndex("by_orderItem", (q) => q.eq("orderItemId", args.orderItemId))
       .collect();
+    if (hasExistingScPwdDiscount(existingDiscounts)) {
+      throw new Error("Item already has an SC/PWD discount");
+    }
     const totalDiscountedQty = existingDiscounts.reduce((sum, d) => sum + d.quantityApplied, 0);
     if (totalDiscountedQty + args.quantityApplied > orderItem.quantity) {
       throw new Error(
@@ -168,6 +179,11 @@ export const applyBulkScPwdDiscount = mutation({
         .query("orderDiscounts")
         .withIndex("by_orderItem", (q) => q.eq("orderItemId", item.orderItemId))
         .collect();
+      if (hasExistingScPwdDiscount(existingDiscounts)) {
+        throw new Error(
+          `Cannot apply discount to ${orderItem.productName}: item already has an SC/PWD discount`,
+        );
+      }
       const totalDiscountedQty = existingDiscounts.reduce((sum, d) => sum + d.quantityApplied, 0);
       if (totalDiscountedQty + item.quantityApplied > orderItem.quantity) {
         throw new Error(
@@ -383,7 +399,7 @@ async function recalculateOrderTotalsWithDiscounts(
     .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
     .collect();
 
-  // Sum discounted quantities per item (multiple seniors can share an item)
+  // Sum discounted quantities per item for SC/PWD total recalculation.
   const itemDiscountQty = new Map<string, number>();
   let orderLevelDiscountAmount = 0;
 

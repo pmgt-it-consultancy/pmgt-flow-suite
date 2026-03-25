@@ -15,25 +15,48 @@ interface OrderSummaryProps {
 
 export const OrderSummary = ({ items }: OrderSummaryProps) => {
   const formatCurrency = useFormatCurrency();
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <YStack paddingHorizontal={16} paddingVertical={12}>
-      <Text variant="heading" style={{ marginBottom: 12 }}>
-        Order Summary
-      </Text>
-      <Card variant="elevated">
-        {items.map((item) => (
+      <XStack justifyContent="space-between" alignItems="center" marginBottom={12}>
+        <YStack>
+          <Text variant="heading">Order Summary</Text>
+          <Text variant="muted" size="xs" style={{ marginTop: 2 }}>
+            Review items before taking payment
+          </Text>
+        </YStack>
+        <YStack
+          backgroundColor="#FFFFFF"
+          borderRadius={999}
+          paddingHorizontal={12}
+          paddingVertical={6}
+          borderWidth={1}
+          borderColor="#E5E7EB"
+        >
+          <Text style={{ color: "#6B7280", fontWeight: "700", fontSize: 12 }}>
+            {itemCount} {itemCount === 1 ? "item" : "items"}
+          </Text>
+        </YStack>
+      </XStack>
+
+      <Card variant="outlined">
+        {items.map((item, index) => (
           <XStack
             key={item._id}
             justifyContent="space-between"
-            paddingVertical={8}
-            borderBottomWidth={1}
+            alignItems="center"
+            paddingVertical={10}
+            borderBottomWidth={index === items.length - 1 ? 0 : 1}
             borderColor="#F3F4F6"
           >
-            <Text style={{ color: "#374151", flex: 1 }}>
-              {item.quantity}x {item.productName}
-            </Text>
-            <Text style={{ color: "#111827", fontWeight: "500" }}>
+            <YStack flex={1} marginRight={12}>
+              <Text style={{ color: "#111827", fontWeight: "600" }}>{item.productName}</Text>
+              <Text variant="muted" size="xs" style={{ marginTop: 2 }}>
+                Qty {item.quantity}
+              </Text>
+            </YStack>
+            <Text style={{ color: "#111827", fontWeight: "600" }}>
               {formatCurrency(item.lineTotal)}
             </Text>
           </XStack>

@@ -58,7 +58,7 @@ export const DiscountModal = ({
 
   const availableItems = items.filter((item) => {
     const discountedQty = discountedQtyByItem.get(item._id) ?? 0;
-    return discountedQty < item.quantity;
+    return discountedQty === 0;
   });
 
   const allSelected =

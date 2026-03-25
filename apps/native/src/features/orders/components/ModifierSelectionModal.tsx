@@ -74,8 +74,15 @@ export const ModifierSelectionModal = ({
   const [selections, setSelections] = useState<Record<string, Set<string>>>({});
 
   useEffect(() => {
-    if (visible) setCustomPriceText("");
-  }, [visible]);
+    if (!visible) return;
+
+    if (product?.isOpenPrice) {
+      setCustomPriceText(String(product.minPrice ?? ""));
+      return;
+    }
+
+    setCustomPriceText("");
+  }, [visible, product]);
 
   const customPrice = parseFloat(customPriceText) || 0;
   const isOpenPrice = product?.isOpenPrice ?? false;

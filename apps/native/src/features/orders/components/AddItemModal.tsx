@@ -52,8 +52,15 @@ export const AddItemModal = ({
   const [customPriceText, setCustomPriceText] = useState("");
 
   useEffect(() => {
-    if (visible) setCustomPriceText("");
-  }, [visible]);
+    if (!visible) return;
+
+    if (product?.isOpenPrice) {
+      setCustomPriceText(String(product.minPrice ?? ""));
+      return;
+    }
+
+    setCustomPriceText("");
+  }, [visible, product]);
 
   if (!product) return null;
 

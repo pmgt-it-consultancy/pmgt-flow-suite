@@ -125,7 +125,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   const availableItemIds = useMemo(() => {
     return activeItems
-      .filter((item) => (discountedQtyByItem.get(item._id) ?? 0) < item.quantity)
+      .filter((item) => (discountedQtyByItem.get(item._id) ?? 0) === 0)
       .map((item) => item._id);
   }, [activeItems, discountedQtyByItem]);
 
@@ -402,7 +402,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         backgroundColor="#FFFFFF"
         alignItems="center"
         paddingHorizontal={16}
-        paddingVertical={12}
+        paddingVertical={14}
         borderBottomWidth={1}
         borderColor="#E5E7EB"
       >
@@ -417,13 +417,17 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
             Checkout
           </Text>
           <Text variant="muted" size="sm">
-            {tableName ?? `Order #${order.orderNumber}`}
+            {tableName ?? `Order #${order.orderNumber}`} · {activeItems.length} line
+            {activeItems.length === 1 ? "" : "s"}
           </Text>
         </YStack>
         <SystemStatusBar />
       </XStack>
 
-      <KeyboardAwareScrollView style={{ flex: 1 }}>
+      <KeyboardAwareScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingVertical: 8, paddingBottom: 120 }}
+      >
         <OrderSummary items={activeItems} />
 
         <DiscountSection
@@ -459,6 +463,32 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
       {/* Footer */}
       <YStack padding={16} backgroundColor="#FFFFFF" borderTopWidth={1} borderColor="#E5E7EB">
+        <XStack justifyContent="space-between" alignItems="center" marginBottom={12}>
+          <YStack>
+            <Text variant="muted" size="xs">
+              Amount Due
+            </Text>
+            <Text style={{ color: "#0F172A", fontWeight: "700", fontSize: 22 }}>
+              {formatCurrency(order.netSales)}
+            </Text>
+          </YStack>
+          <YStack
+            backgroundColor={paymentMethod === "cash" ? "#EFF6FF" : "#F3F4F6"}
+            borderRadius={999}
+            paddingHorizontal={12}
+            paddingVertical={6}
+          >
+            <Text
+              style={{
+                color: paymentMethod === "cash" ? "#0D87E1" : "#6B7280",
+                fontWeight: "700",
+                fontSize: 12,
+              }}
+            >
+              {paymentMethod === "cash" ? "Cash" : "Card/E-Wallet"}
+            </Text>
+          </YStack>
+        </XStack>
         <Button
           variant="success"
           size="lg"
@@ -469,7 +499,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           <XStack alignItems="center">
             <Ionicons name="checkmark-circle" size={24} color="#FFF" />
             <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
-              Complete Payment - {formatCurrency(order.netSales)}
+              Complete Payment
             </Text>
           </XStack>
         </Button>
