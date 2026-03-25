@@ -87,16 +87,16 @@ export function Header({ onMenuClick }: HeaderProps) {
               disabled={!canChangeStore || isLoading}
             >
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select store">
+                <SelectValue placeholder="Select store" className="overflow-hidden">
                   {selectedStore ? (
-                    <span className="flex items-center gap-2">
+                    <div className="flex items-center justify-start overflow-hidden gap-2 ">
                       {selectedStore.parentId ? (
-                        <Building className="h-3 w-3 text-gray-400" />
+                        <Building className="h-3 w-3 text-gray-400 shrink-0" />
                       ) : (
-                        <Store className="h-3 w-3 text-primary" />
+                        <Store className="h-3 w-3 text-primary shrink-0" />
                       )}
-                      {selectedStore.name}
-                    </span>
+                      <span className="line-clamp-1 text-start">{selectedStore.name}</span>
+                    </div>
                   ) : (
                     "Select store"
                   )}

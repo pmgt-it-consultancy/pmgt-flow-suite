@@ -11,7 +11,7 @@ const montserrat = Montserrat({ subsets: ["latin"] });
 const lato = Lato({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PMGT POS Admin",
+  title: "PMGT Flow Suite Admin",
   description: "Multi-store Point of Sale Administration System",
 };
 

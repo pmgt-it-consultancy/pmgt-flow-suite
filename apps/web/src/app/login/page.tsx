@@ -61,7 +61,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">PMGT POS Admin</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">PMGT Flow Suite Admin</CardTitle>
           <CardDescription className="text-center">
             Enter your credentials to access the admin dashboard
           </CardDescription>
@@ -101,11 +101,6 @@ export default function LoginPage() {
               {isSubmitting ? "Signing in..." : "Sign In"}
             </Button>
           </form>
-
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Default credentials:</p>
-            <p className="font-mono text-xs mt-1">superadmin@pmgt.com / superadmin123</p>
-          </div>
         </CardContent>
       </Card>
     </div>

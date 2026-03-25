@@ -110,7 +110,7 @@ export function Sidebar() {
         <div className="flex h-16 items-center border-b px-6">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Store className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">PMGT POS</span>
+            <span className="text-xl font-bold">PMGT Flow Suite</span>
           </Link>
         </div>
 
