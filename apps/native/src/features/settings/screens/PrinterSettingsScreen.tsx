@@ -41,14 +41,18 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
   };
 
   const handleRemove = (printer: PrinterConfig) => {
-    Alert.alert("Remove Printer", `Are you sure you want to remove "${printer.name}"?`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Remove",
-        style: "destructive",
-        onPress: () => removePrinter(printer.id),
-      },
-    ]);
+    Alert.alert(
+      "Remove Printer",
+      `Remove "${printer.name}" from the app and unpair it from this device?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove & Unpair",
+          style: "destructive",
+          onPress: () => removePrinter(printer.id),
+        },
+      ],
+    );
   };
 
   const handleReconnect = async (printer: PrinterConfig) => {

@@ -9,6 +9,7 @@ import {
   getPairedDevices,
   openCashDrawer as openCashDrawerCommand,
   scanDevices,
+  unpairDevice,
 } from "../services/bluetoothPrinter";
 import type { KitchenTicketData } from "../services/escposFormatter";
 import { printKitchenTicketToThermal, printReceiptToThermal } from "../services/escposFormatter";
@@ -167,6 +168,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   addPrinter: async (device, role, paperWidth, onProgress) => {
     const { printers } = get();
     const hasDefaultForRole = printers.some((p) => p.role === role && p.isDefault);
+    const existingPrinter = printers.find((p) => p.id === device.address);
 
     const config: PrinterConfig = {
       id: device.address,
@@ -174,14 +176,20 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
       deviceName: device.name,
       role,
       paperWidth,
-      isDefault: !hasDefaultForRole,
+      isDefault: existingPrinter?.isDefault ?? !hasDefaultForRole,
     };
 
     onProgress?.("saving");
-    await storageAddPrinter(config);
+    if (existingPrinter) {
+      await storageUpdatePrinter(device.address, config);
+    } else {
+      await storageAddPrinter(config);
+    }
 
     set((state) => ({
-      printers: [...state.printers, config],
+      printers: existingPrinter
+        ? state.printers.map((printer) => (printer.id === device.address ? config : printer))
+        : [...state.printers, config],
       connectionStatus: {
         ...state.connectionStatus,
         [device.address]: "reconnecting",
@@ -203,11 +211,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
 
   removePrinter: async (id: string) => {
     const { connectionStatus } = get();
-    if (connectionStatus[id] === "connected") {
-      await disconnectDevice();
-    }
-
-    await storageRemovePrinter(id);
+    const wasConnected = connectionStatus[id] === "connected";
 
     set((state) => {
       const { [id]: _, ...remainingStatus } = state.connectionStatus;
@@ -216,6 +220,18 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
         connectionStatus: remainingStatus,
       };
     });
+
+    if (wasConnected) {
+      await disconnectDevice(id);
+    }
+
+    try {
+      await unpairDevice(id);
+    } catch {
+      // Continue local cleanup even if Android unpairing fails.
+    }
+
+    await storageRemovePrinter(id);
   },
 
   updatePrinter: async (id, updates) => {

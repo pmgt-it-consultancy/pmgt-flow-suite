@@ -1,9 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, TouchableOpacity } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Alert } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { Button, Modal, Text } from "../../shared/components/ui";
-import type { BluetoothDevice } from "../services/bluetoothPrinter";
+import {
+  addScanCompletedListener,
+  addScanDeviceFoundListener,
+  addScanPairedDevicesListener,
+  type BluetoothDevice,
+} from "../services/bluetoothPrinter";
 import type { PrinterAddProgress } from "../stores/usePrinterStore";
 import { usePrinterStore } from "../stores/usePrinterStore";
 
@@ -26,6 +31,7 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
   const [addFeedback, setAddFeedback] = useState<AddFeedbackState | null>(null);
   const successCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scanSubscriptionsRef = useRef<Array<{ remove: () => void }>>([]);
   const { isScanning, printers, scanForDevices, fetchPairedDevices, addPrinter } =
     usePrinterStore();
 
@@ -48,8 +54,23 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
     return Array.from(map.values());
   };
 
-  const startScan = async () => {
+  const startScan = useCallback(async () => {
     const savedAddresses = new Set(printers.map((p) => p.id));
+
+    scanSubscriptionsRef.current.forEach((subscription) => {
+      subscription.remove();
+    });
+    scanSubscriptionsRef.current = [
+      addScanPairedDevicesListener((pairedDevices) => {
+        setDevices((prev) => mergeDevices(prev, pairedDevices, savedAddresses));
+      }),
+      addScanDeviceFoundListener((device) => {
+        setDevices((prev) => mergeDevices(prev, [device], savedAddresses));
+      }),
+      addScanCompletedListener(() => {
+        // No-op for now; keeping the listener ensures we stay subscribed until scan finishes.
+      }),
+    ];
 
     // Phase 1: show paired/bonded devices instantly
     const paired = await fetchPairedDevices();
@@ -58,7 +79,7 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
     // Phase 2: full discovery scan (slow, ~12s)
     const found = await scanForDevices();
     setDevices((prev) => mergeDevices(prev, found, savedAddresses));
-  };
+  }, [printers, scanForDevices, fetchPairedDevices]);
 
   useEffect(() => {
     if (visible) {
@@ -67,12 +88,16 @@ export const ScanPrintersModal = ({ visible, onClose }: ScanPrintersModalProps) 
       startScan();
     }
     return () => {
+      scanSubscriptionsRef.current.forEach((subscription) => {
+        subscription.remove();
+      });
+      scanSubscriptionsRef.current = [];
       if (successCloseTimeoutRef.current) {
         clearTimeout(successCloseTimeoutRef.current);
         successCloseTimeoutRef.current = null;
       }
     };
-  }, [visible]);
+  }, [visible, startScan]);
 
   const closeWithReset = () => {
     if (successCloseTimeoutRef.current) {

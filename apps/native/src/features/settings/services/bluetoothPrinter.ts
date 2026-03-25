@@ -2,7 +2,17 @@ import {
   BluetoothEscposPrinter,
   BluetoothManager,
 } from "@vardrz/react-native-bluetooth-escpos-printer";
-import { PermissionsAndroid, Platform } from "react-native";
+import {
+  DeviceEventEmitter,
+  type EmitterSubscription,
+  PermissionsAndroid,
+  Platform,
+} from "react-native";
+
+const UNPAIR_POLL_INTERVAL_MS = 300;
+const UNPAIR_TIMEOUT_MS = 5000;
+const CONNECT_TIMEOUT_MS = 3500;
+const CONNECT_RETRY_DELAY_MS = 800;
 
 export interface BluetoothDevice {
   name: string;
@@ -31,6 +41,86 @@ async function requestBluetoothPermissions(): Promise<boolean> {
   }
 }
 
+async function listEnabledBluetoothDevices(): Promise<BluetoothDevice[]> {
+  const result = await BluetoothManager.enableBluetooth();
+  const list: unknown[] = Array.isArray(result) ? result : [];
+
+  return list
+    .map((d) => {
+      const device = d as { name?: string; address?: string };
+      return device.address ? { name: device.name || "Unknown", address: device.address } : null;
+    })
+    .filter((d): d is BluetoothDevice => d !== null);
+}
+
+function parseBluetoothDevice(raw: unknown): BluetoothDevice | null {
+  if (!raw) return null;
+
+  const parsed =
+    typeof raw === "string" ? (JSON.parse(raw) as { name?: string; address?: string }) : raw;
+  const device = parsed as { name?: string; address?: string };
+  if (!device.address) return null;
+
+  return {
+    name: device.name || "Unknown",
+    address: device.address,
+  };
+}
+
+function parseBluetoothDeviceList(raw: unknown): BluetoothDevice[] {
+  if (!raw) return [];
+
+  const parsed = typeof raw === "string" ? (JSON.parse(raw) as unknown[]) : raw;
+  const list = Array.isArray(parsed) ? parsed : [];
+  return list
+    .map(parseBluetoothDevice)
+    .filter((device): device is BluetoothDevice => device !== null);
+}
+
+async function delay(ms: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function isTargetDeviceConnected(address: string): Promise<boolean> {
+  try {
+    const bluetoothManager = BluetoothManager as typeof BluetoothManager & {
+      getConnectedDeviceAddress?: () => Promise<string | null>;
+      isDeviceConnected?: () => Promise<boolean>;
+    };
+
+    const [isConnected, connectedAddress] = await Promise.all([
+      typeof bluetoothManager.isDeviceConnected === "function"
+        ? bluetoothManager.isDeviceConnected()
+        : Promise.resolve(false),
+      typeof bluetoothManager.getConnectedDeviceAddress === "function"
+        ? bluetoothManager.getConnectedDeviceAddress()
+        : Promise.resolve(null),
+    ]);
+
+    return isConnected === true && connectedAddress === address;
+  } catch {
+    return false;
+  }
+}
+
+async function attemptConnect(address: string): Promise<boolean> {
+  try {
+    await Promise.race([
+      BluetoothManager.connect(address),
+      (async () => {
+        await delay(CONNECT_TIMEOUT_MS);
+        if (await isTargetDeviceConnected(address)) {
+          return;
+        }
+        throw new Error("Connection timed out");
+      })(),
+    ]);
+    return true;
+  } catch {
+    return isTargetDeviceConnected(address);
+  }
+}
+
 export async function isBluetoothEnabled(): Promise<boolean> {
   try {
     const enabled = await BluetoothManager.isBluetoothEnabled();
@@ -54,15 +144,7 @@ export async function getPairedDevices(): Promise<BluetoothDevice[]> {
   const granted = await requestBluetoothPermissions();
   if (!granted) return [];
   try {
-    const result = await BluetoothManager.enableBluetooth();
-    const list: unknown[] = Array.isArray(result) ? result : [];
-
-    return list
-      .map((d) => {
-        const device = d as { name?: string; address?: string };
-        return device.address ? { name: device.name || "Unknown", address: device.address } : null;
-      })
-      .filter((d): d is BluetoothDevice => d !== null);
+    return await listEnabledBluetoothDevices();
   } catch {
     return [];
   }
@@ -115,19 +197,66 @@ export async function connectToDevice(address: string): Promise<boolean> {
   }
   const granted = await requestBluetoothPermissions();
   if (!granted) return false;
+  const connected = await attemptConnect(address);
+  if (connected) return true;
+
   try {
-    await BluetoothManager.connect(address);
-    return true;
+    const pairedDevices = await listEnabledBluetoothDevices();
+    const isPaired = pairedDevices.some((device) => device.address === address);
+    if (!isPaired) {
+      return false;
+    }
   } catch {
     return false;
   }
+
+  await delay(CONNECT_RETRY_DELAY_MS);
+  return attemptConnect(address);
 }
 
-export async function disconnectDevice(): Promise<void> {
+export async function disconnectDevice(address?: string): Promise<void> {
   try {
-    await BluetoothManager.disconnect();
+    const bluetoothManager = BluetoothManager as typeof BluetoothManager & {
+      disconnect: (deviceAddress?: string) => Promise<void>;
+    };
+    await bluetoothManager.disconnect(address);
   } catch {
     // silently fail
+  }
+}
+
+export async function unpairDevice(address: string): Promise<void> {
+  if (Platform.OS !== "android") return;
+  const granted = await requestBluetoothPermissions();
+  if (!granted) return;
+
+  try {
+    const bluetoothManager = BluetoothManager as typeof BluetoothManager & {
+      unpair?: (deviceAddress: string) => Promise<void>;
+      unpaire?: (deviceAddress: string) => Promise<void>;
+    };
+
+    if (typeof bluetoothManager.unpair === "function") {
+      await bluetoothManager.unpair(address);
+      return;
+    }
+
+    if (typeof bluetoothManager.unpaire === "function") {
+      await bluetoothManager.unpaire(address);
+    }
+
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < UNPAIR_TIMEOUT_MS) {
+      const pairedDevices = await listEnabledBluetoothDevices();
+      if (!pairedDevices.some((device) => device.address === address)) {
+        return;
+      }
+
+      await delay(UNPAIR_POLL_INTERVAL_MS);
+    }
+  } catch (error) {
+    console.warn("Failed to unpair device:", error);
+    throw error;
   }
 }
 
@@ -139,6 +268,32 @@ export async function openCashDrawer(pin = 0, onTime = 25, offTime = 250): Promi
     console.warn("Failed to open cash drawer:", error);
     throw error;
   }
+}
+
+export function addScanDeviceFoundListener(
+  listener: (device: BluetoothDevice) => void,
+): EmitterSubscription {
+  return DeviceEventEmitter.addListener("EVENT_DEVICE_FOUND", (event?: { device?: string }) => {
+    const device = parseBluetoothDevice(event?.device);
+    if (device) {
+      listener(device);
+    }
+  });
+}
+
+export function addScanPairedDevicesListener(
+  listener: (devices: BluetoothDevice[]) => void,
+): EmitterSubscription {
+  return DeviceEventEmitter.addListener(
+    "EVENT_DEVICE_ALREADY_PAIRED",
+    (event?: { devices?: string }) => {
+      listener(parseBluetoothDeviceList(event?.devices));
+    },
+  );
+}
+
+export function addScanCompletedListener(listener: () => void): EmitterSubscription {
+  return DeviceEventEmitter.addListener("EVENT_DEVICE_DISCOVER_DONE", listener);
 }
 
 export { BluetoothEscposPrinter } from "@vardrz/react-native-bluetooth-escpos-printer";
