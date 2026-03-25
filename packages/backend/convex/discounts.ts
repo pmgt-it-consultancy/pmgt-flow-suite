@@ -87,6 +87,10 @@ export const applyScPwdDiscount = mutation({
     const vatRate = store?.vatRate ?? 0.12;
 
     // Calculate effective price including modifiers
+    const product = await ctx.db.get(orderItem.productId);
+    if (!product) throw new Error("Product not found");
+
+    // Calculate effective price including modifiers
     const modifiers = await ctx.db
       .query("orderItemModifiers")
       .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", args.orderItemId))
@@ -95,7 +99,7 @@ export const applyScPwdDiscount = mutation({
     const effectivePrice = orderItem.productPrice + modifierTotal;
 
     // Calculate SC/PWD discount on full price (product + modifiers)
-    const scPwd = calculateScPwdDiscount(effectivePrice, vatRate);
+    const scPwd = calculateScPwdDiscount(effectivePrice, product.isVatable ? vatRate : 0);
     const discountAmount = scPwd.discountAmount * args.quantityApplied;
     const vatExemptAmount = scPwd.vatExemptAmount * args.quantityApplied;
 
@@ -174,6 +178,9 @@ export const applyBulkScPwdDiscount = mutation({
         throw new Error(`Discount quantity exceeds item quantity for ${orderItem.productName}`);
       }
 
+      const product = await ctx.db.get(orderItem.productId);
+      if (!product) throw new Error(`Product not found for ${orderItem.productName}`);
+
       // Check existing discounts on this item
       const existingDiscounts = await ctx.db
         .query("orderDiscounts")
@@ -199,7 +206,7 @@ export const applyBulkScPwdDiscount = mutation({
       const modifierTotal = modifiers.reduce((sum: number, m: any) => sum + m.priceAdjustment, 0);
       const effectivePrice = orderItem.productPrice + modifierTotal;
 
-      const scPwd = calculateScPwdDiscount(effectivePrice, vatRate);
+      const scPwd = calculateScPwdDiscount(effectivePrice, product.isVatable ? vatRate : 0);
       const discountAmount = scPwd.discountAmount * item.quantityApplied;
       const vatExemptAmount = scPwd.vatExemptAmount * item.quantityApplied;
 

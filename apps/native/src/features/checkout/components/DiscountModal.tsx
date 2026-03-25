@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { XStack } from "tamagui";
-import { Chip, Modal, Text } from "../../shared/components/ui";
+import { Badge, Chip, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 type DiscountType = "senior_citizen" | "pwd" | null;
@@ -16,6 +16,7 @@ type DiscountType = "senior_citizen" | "pwd" | null;
 interface OrderItem {
   _id: Id<"orderItems">;
   productName: string;
+  isVatable: boolean;
   quantity: number;
   lineTotal: number;
 }
@@ -151,9 +152,12 @@ export const DiscountModal = ({
                 color={isSelected ? "#0D87E1" : "#9CA3AF"}
                 style={{ marginRight: 12 }}
               />
-              <Text style={{ flex: 1, color: "#374151", fontSize: 15 }}>
-                {item.quantity}x {item.productName}
-              </Text>
+              <XStack flex={1} alignItems="center" gap={8} flexWrap="wrap">
+                <Text style={{ color: "#374151", fontSize: 15 }}>
+                  {item.quantity}x {item.productName}
+                </Text>
+                {!item.isVatable && <Badge variant="warning">NON-VAT</Badge>}
+              </XStack>
               <Text style={{ color: "#111827", fontWeight: "600", fontSize: 15 }}>
                 {formatCurrency(item.lineTotal)}
               </Text>

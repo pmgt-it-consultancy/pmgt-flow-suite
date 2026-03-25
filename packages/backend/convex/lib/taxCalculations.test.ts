@@ -5,16 +5,16 @@ import {
   calculateItemTotals,
   calculateScPwdDiscount,
   calculateVatBreakdown,
-  formatPeso,
+  formatPhpCurrency,
   SC_PWD_DISCOUNT_RATE,
   VAT_RATE,
 } from "./taxCalculations";
 
 describe("calculateVatBreakdown", () => {
   it("should split vatable price into VAT-exclusive and VAT amount", () => {
-    // 11200 centavos (₱112.00) VAT-inclusive
+    // ₱11,200.00 VAT-inclusive
     const result = calculateVatBreakdown(11200, true);
-    // base = 11200 / 1.12 = 10000
+    // base = 11200 / 1.12 = 10000.00
     expect(result.vatExclusive).toBe(10000);
     expect(result.vatAmount).toBe(1200);
   });
@@ -26,10 +26,10 @@ describe("calculateVatBreakdown", () => {
   });
 
   it("should handle rounding for non-round amounts", () => {
-    // 10000 / 1.12 = 8928.571... → rounds to 8929
+    // 10000 / 1.12 = 8928.571... → rounds to 8928.57
     const result = calculateVatBreakdown(10000, true);
-    expect(result.vatExclusive).toBe(8929);
-    expect(result.vatAmount).toBe(10000 - 8929);
+    expect(result.vatExclusive).toBe(8928.57);
+    expect(result.vatAmount).toBe(1071.43);
   });
 
   it("should handle zero", () => {
@@ -40,7 +40,7 @@ describe("calculateVatBreakdown", () => {
 
   // NON-VAT store tests (vatRate = 0)
   it("should return zero VAT when vatRate is 0 (NON-VAT store)", () => {
-    // 10000 centavos, vatable item, but NON-VAT store
+    // ₱10,000.00, vatable item, but NON-VAT store
     const result = calculateVatBreakdown(10000, true, 0);
     expect(result.vatExclusive).toBe(10000); // No VAT extracted
     expect(result.vatAmount).toBe(0);
@@ -55,10 +55,10 @@ describe("calculateVatBreakdown", () => {
 
 describe("calculateScPwdDiscount", () => {
   it("should apply 20% discount on VAT-exclusive price", () => {
-    // ₱112.00 (11200 centavos) VAT-inclusive
-    // VAT-exclusive = 11200 / 1.12 = 10000
-    // 20% discount = 2000
-    // Discounted = 10000 - 2000 = 8000
+    // ₱11,200.00 VAT-inclusive
+    // VAT-exclusive = 11200 / 1.12 = 10000.00
+    // 20% discount = 2000.00
+    // Discounted = 10000.00 - 2000.00 = 8000.00
     const result = calculateScPwdDiscount(11200);
     expect(result.discountedPrice).toBe(8000);
     expect(result.discountAmount).toBe(2000);
@@ -66,20 +66,20 @@ describe("calculateScPwdDiscount", () => {
   });
 
   it("should handle small amounts with rounding", () => {
-    // 100 centavos → VAT-exclusive = round(100/1.12) = 89
-    // discount = round(89 * 0.2) = 18
-    // discounted = 89 - 18 = 71
+    // ₱100.00 → VAT-exclusive = 89.29
+    // discount = 17.86
+    // discounted = 71.43
     const result = calculateScPwdDiscount(100);
-    expect(result.vatExemptAmount).toBe(89);
-    expect(result.discountAmount).toBe(18);
-    expect(result.discountedPrice).toBe(71);
+    expect(result.vatExemptAmount).toBe(89.29);
+    expect(result.discountAmount).toBe(17.86);
+    expect(result.discountedPrice).toBe(71.43);
   });
 
   // NON-VAT store tests (vatRate = 0)
   it("should apply 20% discount directly to price for NON-VAT store", () => {
-    // 10000 centavos (₱100.00), NON-VAT store
-    // 20% discount = 2000
-    // Discounted = 10000 - 2000 = 8000
+    // ₱10,000.00, NON-VAT store
+    // 20% discount = 2000.00
+    // Discounted = 8000.00
     const result = calculateScPwdDiscount(10000, 0);
     expect(result.discountedPrice).toBe(8000);
     expect(result.discountAmount).toBe(2000);
@@ -87,13 +87,20 @@ describe("calculateScPwdDiscount", () => {
   });
 
   it("should handle rounding in NON-VAT store SC/PWD discount", () => {
-    // 11200 centavos, NON-VAT store
-    // 20% discount = round(11200 * 0.2) = 2240
-    // Discounted = 11200 - 2240 = 8960
+    // ₱11,200.00, NON-VAT store
+    // 20% discount = 2240.00
+    // Discounted = 8960.00
     const result = calculateScPwdDiscount(11200, 0);
     expect(result.discountAmount).toBe(2240);
     expect(result.discountedPrice).toBe(8960);
     expect(result.vatExemptAmount).toBe(0);
+  });
+
+  it("should keep centavo precision for peso inputs", () => {
+    const result = calculateScPwdDiscount(1000, 0.12);
+    expect(result.vatExemptAmount).toBe(892.86);
+    expect(result.discountAmount).toBe(178.57);
+    expect(result.discountedPrice).toBe(714.29);
   });
 });
 
@@ -134,6 +141,26 @@ describe("calculateItemTotals", () => {
     const result = calculateItemTotals(11200, 0, true, 0);
     expect(result.grossAmount).toBe(0);
     expect(result.netAmount).toBe(0);
+  });
+
+  it("should apply SC/PWD as a direct 20% discount for non-vatable items", () => {
+    const result = calculateItemTotals(10000, 1, false, 1);
+    expect(result.grossAmount).toBe(10000);
+    expect(result.vatableAmount).toBe(0);
+    expect(result.vatAmount).toBe(0);
+    expect(result.vatExemptAmount).toBe(0);
+    expect(result.discountAmount).toBe(2000);
+    expect(result.netAmount).toBe(8000);
+  });
+
+  it("should normalize whole-number VAT percentages when calculating discounted totals", () => {
+    const result = calculateItemTotals(1000, 1, true, 1, 12);
+    expect(result.grossAmount).toBe(1000);
+    expect(result.vatableAmount).toBe(0);
+    expect(result.vatAmount).toBe(0);
+    expect(result.vatExemptAmount).toBe(892.86);
+    expect(result.discountAmount).toBe(178.57);
+    expect(result.netAmount).toBe(714.29);
   });
 
   // NON-VAT store tests (vatRate = 0)
@@ -235,15 +262,14 @@ describe("calculateChange", () => {
   });
 });
 
-describe("formatPeso", () => {
-  it("should format centavos to PHP currency string", () => {
-    const result = formatPeso(15000);
-    // Intl format for PHP: ₱150.00
-    expect(result).toContain("150.00");
+describe("formatPhpCurrency", () => {
+  it("should format a peso amount to PHP currency string", () => {
+    const result = formatPhpCurrency(15000);
+    expect(result).toContain("15,000.00");
   });
 
   it("should format zero", () => {
-    const result = formatPeso(0);
+    const result = formatPhpCurrency(0);
     expect(result).toContain("0.00");
   });
 });

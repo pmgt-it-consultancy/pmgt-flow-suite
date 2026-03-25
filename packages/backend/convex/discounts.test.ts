@@ -11,7 +11,11 @@ import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
 
-async function setupDiscountTestData(t: any) {
+async function setupDiscountTestData(
+  t: any,
+  options: { vatRate?: number; productPrice?: number; isVatable?: boolean } = {},
+) {
+  const { vatRate = 0.12, productPrice = 11200, isVatable = true } = options;
   const roleId = await t.run(async (ctx: any) => {
     return await ctx.db.insert("roles", {
       name: "Manager",
@@ -33,7 +37,7 @@ async function setupDiscountTestData(t: any) {
       address1: "123 Test St",
       tin: "123-456-789-000",
       min: "MIN-000001",
-      vatRate: 0.12,
+      vatRate,
       isActive: true,
       createdAt: Date.now(),
     });
@@ -64,8 +68,8 @@ async function setupDiscountTestData(t: any) {
       storeId,
       name: "Adobo",
       categoryId,
-      price: 11200, // ₱112.00 (nice for VAT: 11200/1.12 = 10000 exact)
-      isVatable: true,
+      price: productPrice, // Default: ₱112.00 (nice for VAT: 11200/1.12 = 10000 exact)
+      isVatable,
       isActive: true,
       sortOrder: 1,
       createdAt: Date.now(),
@@ -82,21 +86,23 @@ async function createOrderWithItem(
   userId: any,
   productId: any,
   quantity: number,
+  options: { unitPrice?: number; productName?: string; orderType?: "dine_in" | "take_out" } = {},
 ) {
+  const { unitPrice = 11200, productName = "Adobo", orderType = "dine_in" } = options;
   const orderId = await t.run(async (ctx: any) => {
     return await ctx.db.insert("orders", {
       storeId,
       orderNumber: "D-001",
-      orderType: "dine_in" as const,
-      orderChannel: "walk_in_dine_in" as const,
+      orderType,
+      orderChannel: orderType === "take_out" ? ("takeout" as const) : ("walk_in_dine_in" as const),
       status: "open" as const,
-      grossSales: 11200 * quantity,
+      grossSales: unitPrice * quantity,
       vatableSales: 10000 * quantity,
       vatAmount: 1200 * quantity,
       vatExemptSales: 0,
       nonVatSales: 0,
       discountAmount: 0,
-      netSales: 11200 * quantity,
+      netSales: unitPrice * quantity,
       createdBy: userId,
       createdAt: Date.now(),
     });
@@ -106,8 +112,8 @@ async function createOrderWithItem(
     return await ctx.db.insert("orderItems", {
       orderId,
       productId,
-      productName: "Adobo",
-      productPrice: 11200,
+      productName,
+      productPrice: unitPrice,
       quantity,
       isVoided: false,
       isSentToKitchen: false,
@@ -199,6 +205,39 @@ describe("discounts — SC/PWD discount", () => {
     ).rejects.toThrowError("Item already has an SC/PWD discount");
   });
 
+  it("should apply a full 20% SC/PWD discount to non-vatable items even when store VAT is saved as 12", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupDiscountTestData(t, {
+      vatRate: 12,
+      productPrice: 1000,
+      isVatable: false,
+    });
+    const { orderId, itemId } = await createOrderWithItem(t, storeId, userId, productId, 1, {
+      unitPrice: 1000,
+      productName: "Product A",
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+
+    const discountId = await authed.mutation(api.discounts.applyScPwdDiscount, {
+      orderId,
+      orderItemId: itemId,
+      discountType: "senior_citizen",
+      customerName: "Test Customer",
+      customerId: "SC-0001",
+      quantityApplied: 1,
+      managerId: userId,
+    });
+
+    const discount = await t.run(async (ctx: any) => ctx.db.get(discountId));
+    const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+
+    expect(discount.discountAmount).toBe(200);
+    expect(discount.vatExemptAmount).toBe(0);
+    expect(order.discountAmount).toBe(200);
+    expect(order.netSales).toBe(800);
+  });
+
   it("should recalculate order totals with SC/PWD discount", async () => {
     const t = convexTest(schema, modules);
     const { storeId, userId, productId } = await setupDiscountTestData(t);
@@ -280,7 +319,7 @@ describe("discounts — order-level discount", () => {
     const { storeId, userId, productId } = await setupDiscountTestData(t);
     const { orderId } = await createOrderWithItem(t, storeId, userId, productId, 2);
 
-    // Apply ₱50 promo discount (5000 centavos)
+    // Apply a ₱5,000.00 promo discount
     const discountId = await t.run(async (ctx: any) => {
       return await ctx.db.insert("orderDiscounts", {
         orderId,

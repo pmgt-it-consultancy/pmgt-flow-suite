@@ -168,7 +168,7 @@ describe("orders — add/remove items with total recalculation", () => {
     });
 
     const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
-    // 2 × ₱150 = ₱300 = 30000 centavos
+    // 2 × ₱150 = ₱300
     expect(order.grossSales).toBe(30000);
     expect(order.netSales).toBe(30000);
     expect(order.vatableSales).toBeGreaterThan(0);

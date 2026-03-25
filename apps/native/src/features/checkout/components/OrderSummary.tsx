@@ -1,10 +1,11 @@
 import { XStack, YStack } from "tamagui";
-import { Card, Text } from "../../shared/components/ui";
+import { Badge, Card, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface OrderItem {
   _id: string;
   productName: string;
+  isVatable: boolean;
   quantity: number;
   lineTotal: number;
 }
@@ -51,7 +52,10 @@ export const OrderSummary = ({ items }: OrderSummaryProps) => {
             borderColor="#F3F4F6"
           >
             <YStack flex={1} marginRight={12}>
-              <Text style={{ color: "#111827", fontWeight: "600" }}>{item.productName}</Text>
+              <XStack alignItems="center" gap={8} flexWrap="wrap">
+                <Text style={{ color: "#111827", fontWeight: "600" }}>{item.productName}</Text>
+                {!item.isVatable && <Badge variant="warning">NON-VAT</Badge>}
+              </XStack>
               <Text variant="muted" size="xs" style={{ marginTop: 2 }}>
                 Qty {item.quantity}
               </Text>

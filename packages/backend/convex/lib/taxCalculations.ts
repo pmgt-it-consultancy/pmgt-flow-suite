@@ -6,12 +6,21 @@
  * - All prices are VAT-inclusive (for VAT-registered stores)
  * - SC/PWD discounts: 20% on VAT-exclusive price + VAT exemption
  *
- * Amounts are stored in centavos (smallest currency unit) to avoid
- * floating point precision issues.
+ * Amounts are stored as peso values and rounded to centavo precision
+ * whenever tax or discount calculations produce fractions.
  */
 
 export const VAT_RATE = 0.12;
 export const SC_PWD_DISCOUNT_RATE = 0.2;
+
+function normalizeVatRate(vatRate: number): number {
+  if (vatRate <= 0) return 0;
+  return vatRate > 1 ? vatRate / 100 : vatRate;
+}
+
+function roundMoney(amount: number): number {
+  return Math.round((amount + Number.EPSILON) * 100) / 100;
+}
 
 /**
  * Calculate VAT breakdown from a VAT-inclusive price
@@ -29,8 +38,10 @@ export function calculateVatBreakdown(
   vatExclusive: number;
   vatAmount: number;
 } {
+  const normalizedVatRate = normalizeVatRate(vatRate);
+
   // If non-vatable item OR zero VAT rate (NON-VAT store), no VAT extraction
-  if (!isVatable || vatRate === 0) {
+  if (!isVatable || normalizedVatRate === 0) {
     return {
       vatExclusive: vatInclusivePrice,
       vatAmount: 0,
@@ -39,8 +50,8 @@ export function calculateVatBreakdown(
 
   // VAT-inclusive formula: price = base + (base * vatRate) = base * (1 + vatRate)
   // So base = price / (1 + vatRate)
-  const vatExclusive = Math.round(vatInclusivePrice / (1 + vatRate));
-  const vatAmount = vatInclusivePrice - vatExclusive;
+  const vatExclusive = roundMoney(vatInclusivePrice / (1 + normalizedVatRate));
+  const vatAmount = roundMoney(vatInclusivePrice - vatExclusive);
 
   return {
     vatExclusive,
@@ -65,10 +76,12 @@ export function calculateScPwdDiscount(
   discountAmount: number;
   vatExemptAmount: number;
 } {
+  const normalizedVatRate = normalizeVatRate(vatRate);
+
   // For NON-VAT stores, apply 20% discount directly to the price
-  if (vatRate === 0) {
-    const discountAmount = Math.round(vatInclusivePrice * SC_PWD_DISCOUNT_RATE);
-    const discountedPrice = vatInclusivePrice - discountAmount;
+  if (normalizedVatRate === 0) {
+    const discountAmount = roundMoney(vatInclusivePrice * SC_PWD_DISCOUNT_RATE);
+    const discountedPrice = roundMoney(vatInclusivePrice - discountAmount);
     return {
       discountedPrice,
       discountAmount,
@@ -77,11 +90,11 @@ export function calculateScPwdDiscount(
   }
 
   // Remove VAT first
-  const vatExclusive = Math.round(vatInclusivePrice / (1 + vatRate));
+  const vatExclusive = roundMoney(vatInclusivePrice / (1 + normalizedVatRate));
 
   // Apply 20% discount on VAT-exclusive price
-  const discountAmount = Math.round(vatExclusive * SC_PWD_DISCOUNT_RATE);
-  const discountedPrice = vatExclusive - discountAmount;
+  const discountAmount = roundMoney(vatExclusive * SC_PWD_DISCOUNT_RATE);
+  const discountedPrice = roundMoney(vatExclusive - discountAmount);
 
   return {
     discountedPrice,
@@ -120,16 +133,17 @@ export function calculateItemTotals(
   scPwdQuantity: number = 0,
   vatRate: number = VAT_RATE,
 ): ItemCalculation {
-  const grossAmount = unitPrice * quantity;
+  const normalizedVatRate = normalizeVatRate(vatRate);
+  const grossAmount = roundMoney(unitPrice * quantity);
   const regularQuantity = quantity - scPwdQuantity;
 
   // Calculate regular (non-discounted) portion
-  const regularGross = unitPrice * regularQuantity;
+  const regularGross = roundMoney(unitPrice * regularQuantity);
 
   // For NON-VAT stores (vatRate = 0), treat all items as non-vatable for VAT purposes
-  const effectivelyVatable = isVatable && vatRate > 0;
+  const effectivelyVatable = isVatable && normalizedVatRate > 0;
   const regularVat = effectivelyVatable
-    ? calculateVatBreakdown(regularGross, true, vatRate)
+    ? calculateVatBreakdown(regularGross, true, normalizedVatRate)
     : { vatExclusive: regularGross, vatAmount: 0 };
 
   // Calculate SC/PWD portion
@@ -140,10 +154,10 @@ export function calculateItemTotals(
 
   if (scPwdQuantity > 0) {
     _scPwdGross = unitPrice * scPwdQuantity;
-    const scPwd = calculateScPwdDiscount(unitPrice, vatRate);
-    scPwdDiscount = scPwd.discountAmount * scPwdQuantity;
-    scPwdVatExempt = scPwd.vatExemptAmount * scPwdQuantity;
-    scPwdNet = scPwd.discountedPrice * scPwdQuantity;
+    const scPwd = calculateScPwdDiscount(unitPrice, isVatable ? normalizedVatRate : 0);
+    scPwdDiscount = roundMoney(scPwd.discountAmount * scPwdQuantity);
+    scPwdVatExempt = roundMoney(scPwd.vatExemptAmount * scPwdQuantity);
+    scPwdNet = roundMoney(scPwd.discountedPrice * scPwdQuantity);
   }
 
   // Combine calculations
@@ -156,8 +170,8 @@ export function calculateItemTotals(
   const discountAmount = scPwdDiscount;
 
   // Net = regular portion + SC/PWD discounted portion
-  const regularNet = regularGross;
-  const netAmount = regularNet + scPwdNet;
+  const regularNet = roundMoney(regularGross);
+  const netAmount = roundMoney(regularNet + scPwdNet);
 
   return {
     grossAmount,
@@ -189,13 +203,13 @@ export interface OrderTotals {
 export function aggregateOrderTotals(items: ItemCalculation[]): OrderTotals {
   return items.reduce(
     (totals, item) => ({
-      grossSales: totals.grossSales + item.grossAmount,
-      vatableSales: totals.vatableSales + item.vatableAmount,
-      vatAmount: totals.vatAmount + item.vatAmount,
-      vatExemptSales: totals.vatExemptSales + item.vatExemptAmount,
-      nonVatSales: totals.nonVatSales + item.nonVatAmount,
-      discountAmount: totals.discountAmount + item.discountAmount,
-      netSales: totals.netSales + item.netAmount,
+      grossSales: roundMoney(totals.grossSales + item.grossAmount),
+      vatableSales: roundMoney(totals.vatableSales + item.vatableAmount),
+      vatAmount: roundMoney(totals.vatAmount + item.vatAmount),
+      vatExemptSales: roundMoney(totals.vatExemptSales + item.vatExemptAmount),
+      nonVatSales: roundMoney(totals.nonVatSales + item.nonVatAmount),
+      discountAmount: roundMoney(totals.discountAmount + item.discountAmount),
+      netSales: roundMoney(totals.netSales + item.netAmount),
     }),
     {
       grossSales: 0,
@@ -213,16 +227,15 @@ export function aggregateOrderTotals(items: ItemCalculation[]): OrderTotals {
  * Calculate change for cash payment
  */
 export function calculateChange(netSales: number, cashReceived: number): number {
-  return cashReceived - netSales;
+  return roundMoney(cashReceived - netSales);
 }
 
 /**
- * Format amount from centavos to peso string
+ * Format a peso amount as a PHP currency string
  */
-export function formatPeso(centavos: number): string {
-  const pesos = centavos / 100;
+export function formatPhpCurrency(amount: number): string {
   return new Intl.NumberFormat("en-PH", {
     style: "currency",
     currency: "PHP",
-  }).format(pesos);
+  }).format(amount);
 }
