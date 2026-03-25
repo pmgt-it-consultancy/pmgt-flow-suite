@@ -16,6 +16,7 @@ interface Product {
   price: number;
   categoryId: Id<"categories">;
   isActive: boolean;
+  isVatable?: boolean;
   hasModifiers: boolean;
   isOpenPrice?: boolean;
   minPrice?: number;
@@ -182,6 +183,7 @@ export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGri
           id={item.product._id}
           name={item.product.name}
           price={item.product.price}
+          isVatable={item.product.isVatable ?? true}
           hasModifiers={item.product.hasModifiers}
           isOpenPrice={item.product.isOpenPrice ?? false}
           minPrice={item.product.minPrice}

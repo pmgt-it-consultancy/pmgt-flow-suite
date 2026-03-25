@@ -437,6 +437,7 @@ export const get = query({
           productId: v.id("products"),
           productName: v.string(),
           productPrice: v.number(),
+          isVatable: v.boolean(),
           quantity: v.number(),
           notes: v.optional(v.string()),
           isVoided: v.boolean(),
@@ -506,6 +507,8 @@ export const get = query({
 
     const itemsWithTotals = await Promise.all(
       items.map(async (item) => {
+        const product = await ctx.db.get(item.productId);
+
         // Fetch modifier snapshots
         const modifiers = await ctx.db
           .query("orderItemModifiers")
@@ -519,6 +522,7 @@ export const get = query({
           productId: item.productId,
           productName: item.productName,
           productPrice: item.productPrice,
+          isVatable: product?.isVatable ?? true,
           quantity: item.quantity,
           notes: item.notes,
           isVoided: item.isVoided,

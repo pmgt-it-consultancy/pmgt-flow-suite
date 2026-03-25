@@ -1,13 +1,14 @@
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { Text } from "../../shared/components/ui";
+import { Badge, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface ProductCardProps {
   id: Id<"products">;
   name: string;
   price: number;
+  isVatable?: boolean;
   hasModifiers?: boolean;
   isOpenPrice?: boolean;
   minPrice?: number;
@@ -27,6 +28,7 @@ export const ProductCard = ({
   id,
   name,
   price,
+  isVatable = true,
   hasModifiers,
   isOpenPrice,
   minPrice,
@@ -62,12 +64,16 @@ export const ProductCard = ({
       }
       activeOpacity={0.7}
     >
-      <Text
-        style={{ color: "#111827", fontWeight: "600", fontSize: 16, marginBottom: 12 }}
-        numberOfLines={2}
-      >
-        {name}
-      </Text>
+      <YStack marginBottom={12} gap={8}>
+        <Text style={{ color: "#111827", fontWeight: "600", fontSize: 16 }} numberOfLines={2}>
+          {name}
+        </Text>
+        {!isVatable && (
+          <Badge variant="warning" style={{ alignSelf: "flex-start" }}>
+            NON-VAT
+          </Badge>
+        )}
+      </YStack>
       <XStack alignItems="center">
         <YStack
           alignSelf="flex-start"
