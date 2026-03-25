@@ -38,6 +38,9 @@ export const generateDailyReport = mutation({
         generatedBy: currentUser._id,
       });
 
+      // Regenerate product sales breakdown
+      await generateProductSalesBreakdown(ctx, args.storeId, args.reportDate);
+
       // Clean up expired draft orders
       await cleanupExpiredDraftOrders(ctx, args.storeId);
 
