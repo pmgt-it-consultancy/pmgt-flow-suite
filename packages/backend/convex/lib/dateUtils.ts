@@ -47,6 +47,39 @@ export function getPHTDayBoundariesForDate(dateStr: string): {
 }
 
 /**
+ * Converts a YYYY-MM-DD date string + optional "HH:mm" time strings
+ * to PHT time boundaries (UTC milliseconds).
+ *
+ * If startTime/endTime are omitted, defaults to full day (00:00-23:59:59).
+ *
+ * Example: "2026-03-13", "06:00", "14:00"
+ *  → start = 2026-03-13 06:00 PHT = 2026-03-12 22:00 UTC
+ *  → end   = 2026-03-13 14:00 PHT = 2026-03-13 06:00 UTC
+ */
+export function getPHTTimeBoundariesForDate(
+  dateStr: string,
+  startTime?: string,
+  endTime?: string,
+): { start: number; end: number } {
+  const midnightUTC = new Date(dateStr).getTime();
+  const midnightPHT = midnightUTC - PHT_OFFSET_MS;
+
+  if (!startTime && !endTime) {
+    return { start: midnightPHT, end: midnightPHT + 24 * 60 * 60 * 1000 };
+  }
+
+  const parseTime = (time: string): number => {
+    const [h, m] = time.split(":").map(Number);
+    return (h * 60 + m) * 60 * 1000;
+  };
+
+  const start = midnightPHT + (startTime ? parseTime(startTime) : 0);
+  const end = midnightPHT + (endTime ? parseTime(endTime) : 24 * 60 * 60 * 1000 - 1000);
+
+  return { start, end };
+}
+
+/**
  * Returns the PHT hour (0-23) for a UTC timestamp.
  */
 export function getPHTHour(utcTimestamp: number): number {

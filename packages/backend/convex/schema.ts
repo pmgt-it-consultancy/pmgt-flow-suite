@@ -307,6 +307,8 @@ export default defineSchema({
     cardEwalletTotal: v.number(),
     transactionCount: v.number(),
     averageTicket: v.number(),
+    startTime: v.optional(v.string()), // "HH:mm" in PHT, e.g. "06:00"
+    endTime: v.optional(v.string()), // "HH:mm" in PHT, e.g. "22:00"
     generatedAt: v.number(),
     generatedBy: v.id("users"),
     isPrinted: v.boolean(),
