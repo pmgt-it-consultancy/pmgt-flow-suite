@@ -1,4 +1,5 @@
 ## What's New
 
-- POS dashboard workflow improvements — refined home screen layout and navigation clarity
-- Day closing label fix — clarified action button text for end-of-day flow
+- Discount precision fix — corrected rounding for discount calculations at checkout
+- Non-VAT item visibility — non-vat items now properly surfaced in checkout summary
+- CI improvements — resolved artifact storage issues in release pipeline
