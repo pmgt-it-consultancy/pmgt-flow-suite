@@ -99,7 +99,7 @@ export const HomeHeader = ({
       <XStack gap={8} alignItems="center">
         <HeaderActionButton label="Past Orders" onPress={onOrderHistory} />
         <HeaderActionButton label="Settings" onPress={onSettings} />
-        {onDayClosing && <HeaderActionButton label="End Day" onPress={onDayClosing} />}
+        {onDayClosing && <HeaderActionButton label="Day Closing" onPress={onDayClosing} />}
         {showLockButton && onLock && <HeaderActionButton label="Lock" onPress={onLock} />}
         <HeaderActionButton label="Logout" onPress={handleLogoutPress} destructive />
       </XStack>
