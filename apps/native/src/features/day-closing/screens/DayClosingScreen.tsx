@@ -9,6 +9,7 @@ import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Text } from "../../shared/components/ui";
 import { DateNavigationBar } from "../components/DateNavigationBar";
 import { ItemBreakdownCard } from "../components/ItemBreakdownCard";
+import { TimeRangeSelector } from "../components/TimeRangeSelector";
 import { ZReportSummary } from "../components/ZReportSummary";
 import { printZReportToThermal } from "../utils/zReportFormatter";
 
@@ -27,6 +28,8 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isPrintingZReport, setIsPrintingZReport] = useState(false);
+  const [startTime, setStartTime] = useState<string | undefined>(undefined);
+  const [endTime, setEndTime] = useState<string | undefined>(undefined);
 
   const storeId = user?.storeId;
   const reportDate = formatDateKey(selectedDate);
@@ -49,16 +52,24 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     return receipt?.paperWidth === 80 ? 48 : 32;
   });
 
+  const handleTimeRangeChange = useCallback(
+    (newStart: string | undefined, newEnd: string | undefined) => {
+      setStartTime(newStart);
+      setEndTime(newEnd);
+    },
+    [],
+  );
+
   // Generate report + log closing
   const handleGenerateReport = useCallback(async () => {
     if (!storeId) return;
     try {
-      await generateReport({ storeId, reportDate });
+      await generateReport({ storeId, reportDate, startTime, endTime });
       await logDayClosing({ storeId, reportDate });
     } catch (_error) {
       Alert.alert("Error", "Failed to generate report.");
     }
-  }, [storeId, reportDate, generateReport, logDayClosing]);
+  }, [storeId, reportDate, startTime, endTime, generateReport, logDayClosing]);
 
   // Print Z-Report to thermal printer
   const handlePrintZReport = useCallback(async () => {
@@ -132,6 +143,13 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
 
         {/* Date Navigation */}
         <DateNavigationBar selectedDate={selectedDate} onDateChange={setSelectedDate} />
+
+        {/* Time Range */}
+        <TimeRangeSelector
+          startTime={startTime}
+          endTime={endTime}
+          onTimeRangeChange={handleTimeRangeChange}
+        />
 
         {/* Scrollable Content — single ScrollView, no nested scrollables */}
         <ScrollView contentContainerStyle={styles.scrollContent}>
