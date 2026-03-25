@@ -2,7 +2,12 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
-import { getPHTDayBoundaries, getPHTDayBoundariesForDate, getPHTHour } from "./lib/dateUtils";
+import {
+  getPHTDayBoundaries,
+  getPHTDayBoundariesForDate,
+  getPHTHour,
+  getPHTTimeBoundariesForDate,
+} from "./lib/dateUtils";
 import { requirePermission } from "./lib/permissions";
 import { cleanupExpiredDraftOrders } from "./orders";
 
@@ -11,6 +16,8 @@ export const generateDailyReport = mutation({
   args: {
     storeId: v.id("stores"),
     reportDate: v.string(), // YYYY-MM-DD format
+    startTime: v.optional(v.string()), // "HH:mm" in PHT, e.g. "06:00"
+    endTime: v.optional(v.string()), // "HH:mm" in PHT, e.g. "22:00"
   },
   returns: v.id("dailyReports"),
   handler: async (ctx, args) => {
@@ -30,16 +37,30 @@ export const generateDailyReport = mutation({
 
     if (existingReport) {
       // Return existing report, but regenerate the data
-      const reportData = await aggregateDailyData(ctx, args.storeId, args.reportDate);
+      const reportData = await aggregateDailyData(
+        ctx,
+        args.storeId,
+        args.reportDate,
+        args.startTime,
+        args.endTime,
+      );
 
       await ctx.db.patch(existingReport._id, {
         ...reportData,
+        startTime: args.startTime,
+        endTime: args.endTime,
         generatedAt: Date.now(),
         generatedBy: currentUser._id,
       });
 
       // Regenerate product sales breakdown
-      await generateProductSalesBreakdown(ctx, args.storeId, args.reportDate);
+      await generateProductSalesBreakdown(
+        ctx,
+        args.storeId,
+        args.reportDate,
+        args.startTime,
+        args.endTime,
+      );
 
       // Clean up expired draft orders
       await cleanupExpiredDraftOrders(ctx, args.storeId);
@@ -48,12 +69,20 @@ export const generateDailyReport = mutation({
     }
 
     // Aggregate data
-    const reportData = await aggregateDailyData(ctx, args.storeId, args.reportDate);
+    const reportData = await aggregateDailyData(
+      ctx,
+      args.storeId,
+      args.reportDate,
+      args.startTime,
+      args.endTime,
+    );
 
     // Create report
     const reportId = await ctx.db.insert("dailyReports", {
       storeId: args.storeId,
       reportDate: args.reportDate,
+      startTime: args.startTime,
+      endTime: args.endTime,
       ...reportData,
       generatedAt: Date.now(),
       generatedBy: currentUser._id,
@@ -62,7 +91,13 @@ export const generateDailyReport = mutation({
     });
 
     // Also generate product sales breakdown
-    await generateProductSalesBreakdown(ctx, args.storeId, args.reportDate);
+    await generateProductSalesBreakdown(
+      ctx,
+      args.storeId,
+      args.reportDate,
+      args.startTime,
+      args.endTime,
+    );
 
     // Clean up expired draft orders (created before today's PHT boundary)
     await cleanupExpiredDraftOrders(ctx, args.storeId);
@@ -76,6 +111,8 @@ async function aggregateDailyData(
   ctx: { db: any },
   storeId: Id<"stores">,
   reportDate: string,
+  startTime?: string,
+  endTime?: string,
 ): Promise<{
   grossSales: number;
   vatableSales: number;
@@ -95,8 +132,12 @@ async function aggregateDailyData(
   transactionCount: number;
   averageTicket: number;
 }> {
-  // Parse date range (PHT boundaries)
-  const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(reportDate);
+  // Parse date range (PHT boundaries, with optional time range)
+  const { start: startOfDay, end: endOfDay } = getPHTTimeBoundariesForDate(
+    reportDate,
+    startTime,
+    endTime,
+  );
 
   // Get all orders for the day
   const orders = await ctx.db
@@ -224,9 +265,15 @@ async function generateProductSalesBreakdown(
   ctx: { db: any },
   storeId: Id<"stores">,
   reportDate: string,
+  startTime?: string,
+  endTime?: string,
 ): Promise<void> {
-  // Parse date range (PHT boundaries)
-  const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(reportDate);
+  // Parse date range (PHT boundaries, with optional time range)
+  const { start: startOfDay, end: endOfDay } = getPHTTimeBoundariesForDate(
+    reportDate,
+    startTime,
+    endTime,
+  );
 
   // Delete existing product sales for this date
   const existingProductSales = await ctx.db
@@ -357,6 +404,8 @@ export const getDailyReport = query({
     v.object({
       _id: v.id("dailyReports"),
       reportDate: v.string(),
+      startTime: v.optional(v.string()),
+      endTime: v.optional(v.string()),
       grossSales: v.number(),
       vatableSales: v.number(),
       vatAmount: v.number(),
@@ -404,6 +453,8 @@ export const getDailyReport = query({
     return {
       _id: report._id,
       reportDate: report.reportDate,
+      startTime: report.startTime,
+      endTime: report.endTime,
       grossSales: report.grossSales,
       vatableSales: report.vatableSales,
       vatAmount: report.vatAmount,
@@ -707,6 +758,8 @@ export const getHourlySales = query({
   args: {
     storeId: v.id("stores"),
     reportDate: v.string(),
+    startTime: v.optional(v.string()),
+    endTime: v.optional(v.string()),
   },
   returns: v.array(
     v.object({
@@ -722,8 +775,12 @@ export const getHourlySales = query({
       throw new Error("Authentication required");
     }
 
-    // Parse date range (PHT boundaries)
-    const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(args.reportDate);
+    // Parse date range (PHT boundaries, with optional time range)
+    const { start: startOfDay, end: endOfDay } = getPHTTimeBoundariesForDate(
+      args.reportDate,
+      args.startTime,
+      args.endTime,
+    );
 
     // Get all paid orders for the day
     const orders = await ctx.db
