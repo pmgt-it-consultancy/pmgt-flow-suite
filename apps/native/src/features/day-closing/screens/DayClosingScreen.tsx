@@ -55,7 +55,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     try {
       await generateReport({ storeId, reportDate });
       await logDayClosing({ storeId, reportDate });
-    } catch (error) {
+    } catch (_error) {
       Alert.alert("Error", "Failed to generate report.");
     }
   }, [storeId, reportDate, generateReport, logDayClosing]);
@@ -96,7 +96,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
         productSales ?? [],
       );
       Alert.alert("Success", "Z-Report printed successfully.");
-    } catch (error) {
+    } catch (_error) {
       Alert.alert("Error", "Failed to print Z-Report. Check printer connection.");
     } finally {
       setIsPrintingZReport(false);

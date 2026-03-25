@@ -74,7 +74,7 @@ const fmt = (amount: number): string =>
   `PHP ${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
 
 const fmtDate = (dateStr: string): string => {
-  const d = new Date(dateStr + "T00:00:00");
+  const d = new Date(`${dateStr}T00:00:00`);
   return d.toLocaleDateString("en-PH", {
     weekday: "long",
     year: "numeric",
@@ -288,7 +288,7 @@ export const ReportPdfDocument = ({
               <Text style={[s.thText, { flex: 1.5, textAlign: "right" }]}>Void Amt</Text>
             </View>
             {productSales.map((p, i) => (
-              <View key={p.productId} style={[s.tableRow, i % 2 === 1 && s.tableRowAlt]}>
+              <View key={p.productId} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
                 <Text style={[s.tdText, { flex: 3 }]}>{p.productName}</Text>
                 <Text style={[s.tdText, { flex: 2 }]}>{p.categoryName}</Text>
                 <Text style={[s.tdRight, { flex: 1 }]}>{p.quantitySold}</Text>
@@ -315,7 +315,7 @@ export const ReportPdfDocument = ({
               <Text style={[s.thText, { flex: 2, textAlign: "right" }]}>Total Amount</Text>
             </View>
             {categorySales.map((c, i) => (
-              <View key={c.categoryId} style={[s.tableRow, i % 2 === 1 && s.tableRowAlt]}>
+              <View key={c.categoryId} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
                 <Text style={[s.tdText, { flex: 3 }]}>{c.categoryName}</Text>
                 <Text style={[s.tdRight, { flex: 1 }]}>{c.productCount}</Text>
                 <Text style={[s.tdRight, { flex: 1 }]}>{c.totalQuantitySold}</Text>
@@ -336,7 +336,7 @@ export const ReportPdfDocument = ({
                 <Text style={[s.thText, { flex: 2, textAlign: "right" }]}>Net Sales</Text>
               </View>
               {activeHours.map((h, i) => (
-                <View key={h.hour} style={[s.tableRow, i % 2 === 1 && s.tableRowAlt]}>
+                <View key={h.hour} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
                   <Text style={[s.tdText, { flex: 2 }]}>{fmtHour(h.hour)}</Text>
                   <Text style={[s.tdRight, { flex: 1 }]}>{h.transactionCount}</Text>
                   <Text style={[s.tdRight, { flex: 2 }]}>{fmt(h.netSales)}</Text>
