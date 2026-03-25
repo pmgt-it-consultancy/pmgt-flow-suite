@@ -72,6 +72,8 @@ export default function ProductsPage() {
   const [formData, setFormData] = useState<ProductFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<Id<"categories"> | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("active");
   const [selectedModifierGroupId, setSelectedModifierGroupId] = useState<Id<"modifierGroups"> | "">(
     "",
   );
@@ -105,10 +107,13 @@ export default function ProductsPage() {
   const assignModifier = useMutation(api.modifierAssignments.assign);
   const unassignModifier = useMutation(api.modifierAssignments.unassign);
 
-  // Filter products by search query
-  const filteredProducts = products?.filter((p) =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  // Filter products by status, category, and search query
+  const filteredProducts = products?.filter((p) => {
+    if (statusFilter !== "all" && p.isActive !== (statusFilter === "active")) return false;
+    if (categoryFilter !== "all" && p.categoryId !== categoryFilter) return false;
+    if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
 
   const handleOpenCreate = () => {
     setEditingProduct(null);
