@@ -20,6 +20,10 @@ export default function DashboardPage() {
   const now = new Date();
   const todayDateStr = formatDateString(now);
 
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayDateStr = formatDateString(yesterday);
+
   // Use the globally selected store for dashboard data
   const primaryStoreId = selectedStoreId;
 
@@ -30,6 +34,16 @@ export default function DashboardPage() {
       ? {
           storeId: primaryStoreId,
           reportDate: todayDateStr,
+        }
+      : "skip",
+  );
+
+  const yesterdaySummary = useQuery(
+    api.reports.getDashboardSummary,
+    primaryStoreId
+      ? {
+          storeId: primaryStoreId,
+          reportDate: yesterdayDateStr,
         }
       : "skip",
   );
@@ -52,6 +66,11 @@ export default function DashboardPage() {
   const avgOrderValue = todayOrders > 0 ? todaySales / todayOrders : 0;
   const totalDiscounts = dashboardSummary?.totalDiscounts ?? 0;
 
+  const yesterdaySales = yesterdaySummary?.netSales ?? 0;
+  const yesterdayOrders = yesterdaySummary?.transactionCount ?? 0;
+  const yesterdayAvgOrderValue = yesterdayOrders > 0 ? yesterdaySales / yesterdayOrders : 0;
+  const yesterdayDiscounts = yesterdaySummary?.totalDiscounts ?? 0;
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -69,25 +88,44 @@ export default function DashboardPage() {
           value={formatCurrency(todaySales)}
           description="Total net sales for today"
           icon={<DollarSign className="h-5 w-5" />}
-          trend={dashboardSummary ? "+12% from yesterday" : undefined}
+          trend={
+            dashboardSummary && yesterdaySummary
+              ? computeTrend(todaySales, yesterdaySales)
+              : undefined
+          }
         />
         <SummaryCard
           title="Orders"
           value={todayOrders.toString()}
           description="Total transactions today"
           icon={<ShoppingCart className="h-5 w-5" />}
+          trend={
+            dashboardSummary && yesterdaySummary
+              ? computeTrend(todayOrders, yesterdayOrders)
+              : undefined
+          }
         />
         <SummaryCard
           title="Avg Order Value"
           value={formatCurrency(avgOrderValue)}
           description="Average per transaction"
           icon={<TrendingUp className="h-5 w-5" />}
+          trend={
+            dashboardSummary && yesterdaySummary
+              ? computeTrend(avgOrderValue, yesterdayAvgOrderValue)
+              : undefined
+          }
         />
         <SummaryCard
           title="Discounts Given"
           value={formatCurrency(totalDiscounts)}
           description="SC/PWD + other discounts"
           icon={<Users className="h-5 w-5" />}
+          trend={
+            dashboardSummary && yesterdaySummary
+              ? computeTrend(totalDiscounts, yesterdayDiscounts)
+              : undefined
+          }
         />
       </div>
 
@@ -248,7 +286,7 @@ function SummaryCard({
   value: string;
   description: string;
   icon: React.ReactNode;
-  trend?: string;
+  trend?: { value: string; direction: "up" | "down" };
 }) {
   return (
     <Card>
@@ -259,7 +297,13 @@ function SummaryCard({
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-gray-500">{description}</p>
-        {trend && <p className="text-xs text-green-600 mt-1">{trend}</p>}
+        {trend && (
+          <p
+            className={`text-xs mt-1 ${trend.direction === "up" ? "text-green-600" : "text-red-600"}`}
+          >
+            {trend.value}
+          </p>
+        )}
       </CardContent>
     </Card>
   );
@@ -322,4 +366,17 @@ function formatDateString(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function computeTrend(
+  today: number,
+  yesterday: number,
+): { value: string; direction: "up" | "down" } | undefined {
+  if (yesterday === 0 || today === 0) return undefined;
+  const change = Math.round(((today - yesterday) / yesterday) * 100);
+  if (change === 0) return undefined;
+  return {
+    value: `${change > 0 ? "+" : ""}${change}% from yesterday`,
+    direction: change > 0 ? "up" : "down",
+  };
 }
