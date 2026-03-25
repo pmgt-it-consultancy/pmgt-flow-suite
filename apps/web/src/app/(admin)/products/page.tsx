@@ -204,7 +204,7 @@ export default function ProductsPage() {
       {/* Filters */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row w-full items-stretch md:items-center gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
@@ -218,7 +218,7 @@ export default function ProductsPage() {
               value={categoryFilter}
               onValueChange={(value) => setCategoryFilter(value as Id<"categories"> | "all")}
             >
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full md:w-50">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -235,7 +235,7 @@ export default function ProductsPage() {
               value={statusFilter}
               onValueChange={(value) => setStatusFilter(value as "all" | "active" | "inactive")}
             >
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-full md:w-35">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
