@@ -5,6 +5,8 @@ export interface ZReportData {
   storeAddress?: string;
   storeTin?: string;
   reportDate: string;
+  startTime?: string; // "HH:mm" or undefined for full day
+  endTime?: string;
   grossSales: number;
   netSales: number;
   vatableSales: number;
@@ -85,6 +87,16 @@ export async function printZReportToThermal(
 
   // Report date
   await p.printText(`${data.reportDate}\n`, bold());
+
+  if (data.startTime && data.endTime) {
+    const formatTime = (t: string): string => {
+      const [h, m] = t.split(":").map(Number);
+      const suffix = h >= 12 ? "PM" : "AM";
+      const hour = h % 12 || 12;
+      return `${hour}:${m.toString().padStart(2, "0")} ${suffix}`;
+    };
+    await p.printText(`${formatTime(data.startTime)} - ${formatTime(data.endTime)}\n`, normal());
+  }
 
   await p.printerAlign(ALIGN.LEFT);
   await p.printText(`${line("=", w)}\n`, normal());
