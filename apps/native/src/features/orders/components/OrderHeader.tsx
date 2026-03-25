@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
-import { IconButton, Text } from "../../shared/components/ui";
+import { Button, IconButton, Text } from "../../shared/components/ui";
 
 interface OrderHeaderProps {
   title: string;
@@ -43,29 +43,15 @@ export const OrderHeader = ({
       borderBottomColor="#E5E7EB"
     >
       <IconButton icon="arrow-back" variant="ghost" onPress={onBack} style={{ marginRight: 4 }} />
-      <XStack flex={1} alignItems="center">
-        <Text variant="heading" size="lg">
-          {title}
-        </Text>
-        <YStack
-          marginHorizontal={8}
-          width={4}
-          height={4}
-          borderRadius={2}
-          backgroundColor="#9CA3AF"
-        />
-        <Text variant="muted" size="sm">
-          {subtitle}
-        </Text>
-        {tabNumber && tabName && (
-          <>
-            <YStack
-              marginHorizontal={8}
-              width={4}
-              height={4}
-              borderRadius={2}
-              backgroundColor="#9CA3AF"
-            />
+      <YStack flex={1}>
+        <XStack flexWrap="wrap" alignItems="center" gap={8}>
+          <Text variant="heading" size="lg" numberOfLines={1}>
+            {title}
+          </Text>
+          <Text variant="muted" size="sm" numberOfLines={1}>
+            {subtitle}
+          </Text>
+          {tabNumber && tabName && (
             <TouchableOpacity
               onPress={onEditTabName}
               disabled={!onEditTabName}
@@ -76,54 +62,49 @@ export const OrderHeader = ({
                 paddingVertical: 4,
                 paddingHorizontal: 8,
                 backgroundColor: onEditTabName ? "#F3F4F6" : "transparent",
-                borderRadius: 6,
+                borderRadius: 999,
+                borderWidth: 1,
+                borderColor: onEditTabName ? "#E5E7EB" : "transparent",
               }}
             >
-              <Text variant="muted" size="sm">
+              <Text variant="muted" size="sm" numberOfLines={1}>
                 {tabName}
               </Text>
-              {onEditTabName && (
+              {onEditTabName ? (
                 <Ionicons
                   name="create-outline"
                   size={14}
                   color="#6B7280"
                   style={{ marginLeft: 4 }}
                 />
-              )}
+              ) : null}
             </TouchableOpacity>
-          </>
-        )}
+          )}
+        </XStack>
+      </YStack>
+      <XStack alignItems="center" gap={8} flexWrap="wrap" justifyContent="flex-end">
+        {onViewOrders ? (
+          <Button variant="outline" size="sm" onPress={onViewOrders}>
+            Orders
+          </Button>
+        ) : null}
+        <SystemStatusBar />
+        {onUpdatePax ? (
+          <Button variant="outline" size="sm" onPress={onUpdatePax} disabled={disableUpdatePax}>
+            Update Pax
+          </Button>
+        ) : null}
+        {onTransferTable ? (
+          <Button variant="outline" size="sm" onPress={onTransferTable}>
+            Transfer
+          </Button>
+        ) : null}
+        {onAddNewTab ? (
+          <Button variant="outline" size="sm" onPress={onAddNewTab} disabled={disableAddNewTab}>
+            New Tab
+          </Button>
+        ) : null}
       </XStack>
-      {onViewOrders && (
-        <IconButton icon="list" variant="ghost" onPress={onViewOrders} iconColor="#6B7280" />
-      )}
-      <SystemStatusBar />
-      {onUpdatePax && (
-        <IconButton
-          icon="people"
-          variant="ghost"
-          onPress={onUpdatePax}
-          iconColor="#6B7280"
-          disabled={disableUpdatePax}
-        />
-      )}
-      {onTransferTable && (
-        <IconButton
-          icon="swap-horizontal"
-          variant="ghost"
-          onPress={onTransferTable}
-          iconColor="#6B7280"
-        />
-      )}
-      {onAddNewTab && (
-        <IconButton
-          icon="add-circle-outline"
-          variant="ghost"
-          onPress={onAddNewTab}
-          iconColor="#0D87E1"
-          disabled={disableAddNewTab}
-        />
-      )}
     </XStack>
   );
 };

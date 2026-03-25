@@ -5,12 +5,11 @@ import { useAction, useMutation, useQuery } from "convex/react";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, TextInput } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { useAuth } from "../../auth/context";
 import { ManagerPinModal } from "../../checkout/components";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import type { ReceiptData } from "../../shared";
-import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
-import { Badge, Button, IconButton, Modal, Text } from "../../shared/components/ui";
+import { PageHeader } from "../../shared/components/PageHeader";
+import { Badge, Button, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface OrderDetailScreenProps {
@@ -24,7 +23,6 @@ interface OrderDetailScreenProps {
 
 export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps) => {
   const { orderId } = route.params;
-  const { user } = useAuth();
   const formatCurrency = useFormatCurrency();
 
   const [isReprinting, setIsReprinting] = useState(false);
@@ -175,36 +173,24 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">
-      {/* Header */}
-      <XStack
-        backgroundColor="#FFFFFF"
-        alignItems="center"
-        paddingHorizontal={16}
-        paddingVertical={12}
-        borderBottomWidth={1}
-        borderColor="#E5E7EB"
-      >
-        <IconButton
-          icon="arrow-back"
-          variant="ghost"
-          onPress={handleBack}
-          style={{ marginRight: 8 }}
-        />
-        <YStack flex={1}>
-          <XStack alignItems="center" gap={8}>
-            <Text variant="heading" size="lg">
-              Order #{order.orderNumber}
+      <PageHeader
+        onBack={handleBack}
+        titleContent={
+          <YStack width="100%">
+            <XStack alignItems="center" gap={8}>
+              <Text variant="heading" size="lg" numberOfLines={1}>
+                Order #{order.orderNumber}
+              </Text>
+              <Badge variant={statusVariant}>
+                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+              </Badge>
+            </XStack>
+            <Text variant="muted" size="sm" numberOfLines={1}>
+              {orderTypeLabel}
             </Text>
-            <Badge variant={statusVariant}>
-              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-            </Badge>
-          </XStack>
-          <Text variant="muted" size="sm">
-            {orderTypeLabel}
-          </Text>
-        </YStack>
-        <SystemStatusBar />
-      </XStack>
+          </YStack>
+        }
+      />
 
       <ScrollView style={{ flex: 1 }}>
         {/* Order Info */}

@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, RefreshControl } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
-import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
+import { PageHeader } from "../../shared/components/PageHeader";
 import { Button, IconButton, Text } from "../../shared/components/ui";
 import { DraftOrderCard, TakeoutOrderCard, TakeoutOrderDetailModal } from "../components";
 
@@ -232,37 +232,19 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">
-      {/* Header */}
-      <XStack
-        backgroundColor="#FFFFFF"
-        paddingHorizontal={16}
-        paddingVertical={16}
-        justifyContent="space-between"
-        alignItems="center"
-        borderBottomWidth={1}
-        borderColor="#E5E7EB"
-      >
-        <XStack alignItems="center" gap={12}>
-          <IconButton icon="arrow-back" onPress={() => navigation.goBack()} />
-          <YStack>
-            <Text variant="heading" size="lg">
-              Takeout Orders
-            </Text>
-            <Text variant="muted" size="sm">
-              {formatDateLabel(selectedDate)}'s takeout orders
-            </Text>
-          </YStack>
-        </XStack>
-        <XStack alignItems="center" gap={8}>
-          <SystemStatusBar />
+      <PageHeader
+        title="Takeout Orders"
+        subtitle={`${formatDateLabel(selectedDate)}'s takeout orders`}
+        onBack={() => navigation.goBack()}
+        rightContent={
           <Button size="md" onPress={handleNewOrder} disabled={isCreating}>
             <XStack alignItems="center" gap={6}>
-              <Ionicons name="add" size={20} color="#fff" />
+              <Ionicons name="add" size={20} color="#FFFFFF" />
               <Text style={{ color: "#FFFFFF", fontWeight: "600" }}>New Order</Text>
             </XStack>
           </Button>
-        </XStack>
-      </XStack>
+        }
+      />
 
       {/* Date Navigation */}
       <XStack

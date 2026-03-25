@@ -3,10 +3,11 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAction } from "convex/react";
 import Constants from "expo-constants";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import type { RootStackParamList } from "../../../navigation/Navigation";
+import { PageHeader } from "../../shared/components/PageHeader";
 import { useUpdateStore } from "../stores/useUpdateStore";
 
 type Props = NativeStackScreenProps<RootStackParamList, "UpdatesScreen">;
@@ -39,20 +40,7 @@ export function UpdatesScreen({ navigation }: Props) {
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">
-      {/* Header */}
-      <XStack
-        backgroundColor="#FFFFFF"
-        paddingHorizontal={16}
-        paddingVertical={16}
-        borderBottomWidth={1}
-        borderColor="#E5E7EB"
-        alignItems="center"
-      >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12 }}>
-          <Ionicons name="arrow-back" size={24} color="#111" />
-        </TouchableOpacity>
-        <Text style={{ fontSize: 20, fontWeight: "700", flex: 1 }}>Software Update</Text>
-      </XStack>
+      <PageHeader title="Software Update" onBack={() => navigation.goBack()} />
 
       <ScrollView style={{ flex: 1, padding: 16 }}>
         {/* Current Version Card */}

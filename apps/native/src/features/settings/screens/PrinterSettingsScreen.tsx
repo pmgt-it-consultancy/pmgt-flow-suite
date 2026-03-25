@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Alert, ScrollView, Switch, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
+import { PageHeader } from "../../shared/components/PageHeader";
 import { Button } from "../../shared/components/ui/Button";
 import { Text } from "../../shared/components/ui/Text";
 import { EditPrinterModal } from "../components/EditPrinterModal";
@@ -71,23 +71,7 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">
-      {/* Header */}
-      <XStack
-        backgroundColor="#FFFFFF"
-        paddingHorizontal={16}
-        paddingVertical={16}
-        borderBottomWidth={1}
-        borderColor="#E5E7EB"
-        alignItems="center"
-      >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12 }}>
-          <Ionicons name="arrow-back" size={24} color="#111827" />
-        </TouchableOpacity>
-        <Text variant="heading" size="lg" style={{ flex: 1 }}>
-          Printers
-        </Text>
-        <SystemStatusBar />
-      </XStack>
+      <PageHeader title="Printers" onBack={() => navigation.goBack()} />
 
       <ScrollView style={{ flex: 1 }}>
         {/* Kitchen Printing Toggle */}

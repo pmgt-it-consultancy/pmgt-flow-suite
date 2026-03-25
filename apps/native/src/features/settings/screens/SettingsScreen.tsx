@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import Constants from "expo-constants";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -11,10 +11,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { XStack, YStack } from "tamagui";
+import { YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
-import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
-import { IconButton, Text } from "../../shared/components/ui";
+import { PageHeader } from "../../shared/components/PageHeader";
+import { Text } from "../../shared/components/ui";
 import { usePrinterStore } from "../stores/usePrinterStore";
 
 interface SettingsScreenProps {
@@ -80,19 +80,7 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">
-      {/* Header */}
-      <XStack
-        backgroundColor="#FFFFFF"
-        paddingHorizontal={16}
-        paddingVertical={16}
-        borderBottomWidth={1}
-        borderColor="#E5E7EB"
-        alignItems="center"
-      >
-        <IconButton icon="arrow-back" variant="ghost" onPress={() => navigation.goBack()} />
-        <Text style={{ fontSize: 20, fontWeight: "700", marginLeft: 12, flex: 1 }}>Settings</Text>
-        <SystemStatusBar />
-      </XStack>
+      <PageHeader title="Settings" onBack={() => navigation.goBack()} />
 
       {/* Settings List */}
       <ScrollView>

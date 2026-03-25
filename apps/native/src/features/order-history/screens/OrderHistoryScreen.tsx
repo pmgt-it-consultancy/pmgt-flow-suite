@@ -13,8 +13,8 @@ import {
 } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
-import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
-import { Badge, Chip, IconButton, Text } from "../../shared/components/ui";
+import { PageHeader } from "../../shared/components/PageHeader";
+import { Badge, Chip, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 type DatePreset = "today" | "yesterday" | "7d" | "30d";
@@ -191,28 +191,7 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">
-      {/* Header */}
-      <XStack
-        backgroundColor="#FFFFFF"
-        alignItems="center"
-        paddingHorizontal={16}
-        paddingVertical={12}
-        borderBottomWidth={1}
-        borderColor="#E5E7EB"
-      >
-        <IconButton
-          icon="arrow-back"
-          variant="ghost"
-          onPress={handleBack}
-          style={{ marginRight: 8 }}
-        />
-        <YStack flex={1}>
-          <Text variant="heading" size="lg">
-            Order History
-          </Text>
-        </YStack>
-        <SystemStatusBar />
-      </XStack>
+      <PageHeader title="Order History" onBack={handleBack} />
 
       {/* Date Presets */}
       <XStack

@@ -1,4 +1,3 @@
-import { Alert } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { IconButton, Text } from "../../shared/components/ui";
@@ -6,23 +5,9 @@ import { IconButton, Text } from "../../shared/components/ui";
 interface HeaderProps {
   userName: string;
   onBack?: () => void;
-  onLogout: () => void;
-  onSettings: () => void;
-  onOrderHistory: () => void;
 }
 
-export const Header = ({ userName, onBack, onLogout, onSettings, onOrderHistory }: HeaderProps) => {
-  const handleLogoutPress = () => {
-    Alert.alert("Logout", "Are you sure you want to logout?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Logout",
-        style: "destructive",
-        onPress: onLogout,
-      },
-    ]);
-  };
-
+export const Header = ({ userName, onBack }: HeaderProps) => {
   return (
     <XStack
       backgroundColor="#FFFFFF"
@@ -37,19 +22,14 @@ export const Header = ({ userName, onBack, onLogout, onSettings, onOrderHistory 
         {onBack ? <IconButton icon="arrow-back" onPress={onBack} /> : null}
         <YStack>
           <Text variant="heading" size="xl">
-            Hello, {userName}
+            Dine-In Tables
           </Text>
           <Text variant="muted" size="sm" style={{ marginTop: 4 }}>
-            Select a table to get started
+            {userName}
           </Text>
         </YStack>
       </XStack>
-      <XStack gap={8} alignItems="center">
-        <SystemStatusBar />
-        <IconButton icon="receipt-outline" onPress={onOrderHistory} />
-        <IconButton icon="settings-outline" onPress={onSettings} />
-        <IconButton icon="log-out-outline" variant="destructive" onPress={handleLogoutPress} />
-      </XStack>
+      <SystemStatusBar />
     </XStack>
   );
 };

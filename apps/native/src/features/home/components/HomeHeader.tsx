@@ -1,5 +1,6 @@
 import { Alert, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
+import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Text } from "../../shared/components/ui";
 
 interface HomeHeaderProps {
@@ -97,6 +98,7 @@ export const HomeHeader = ({
       </XStack>
 
       <XStack gap={8} alignItems="center">
+        <SystemStatusBar />
         <HeaderActionButton label="Past Orders" onPress={onOrderHistory} />
         <HeaderActionButton label="Settings" onPress={onSettings} />
         {onDayClosing && <HeaderActionButton label="Day Closing" onPress={onDayClosing} />}

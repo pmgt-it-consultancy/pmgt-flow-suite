@@ -23,7 +23,7 @@ interface TablesScreenProps {
 }
 
 export const TablesScreen = ({ navigation }: TablesScreenProps) => {
-  const { user, signOut, isLoading, isAuthenticated } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
   const [showPaxModal, setShowPaxModal] = useState(false);
   const [paxInput, setPaxInput] = useState("");
@@ -58,14 +58,6 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     await new Promise((resolve) => setTimeout(resolve, 500));
     setRefreshing(false);
   }, []);
-
-  const handleLogout = useCallback(async () => {
-    await signOut();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "LoginScreen" }],
-    });
-  }, [signOut, navigation]);
 
   const getTableInfo = useCallback(
     (tableId: Id<"tables">) => {
@@ -226,13 +218,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">
-      <Header
-        userName={user?.name ?? "User"}
-        onBack={() => navigation.goBack()}
-        onLogout={handleLogout}
-        onSettings={() => navigation.navigate("SettingsScreen")}
-        onOrderHistory={() => navigation.navigate("OrderHistoryScreen")}
-      />
+      <Header userName={user?.name ?? "User"} onBack={() => navigation.goBack()} />
 
       {tablesWithOrders === undefined ? (
         <YStack flex={1} justifyContent="center" alignItems="center">

@@ -10,8 +10,8 @@ import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { type ReceiptData, useFormatCurrency } from "../../shared";
-import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
-import { Button, IconButton, Text } from "../../shared/components/ui";
+import { PageHeader } from "../../shared/components/PageHeader";
+import { Button, Text } from "../../shared/components/ui";
 import {
   CardPaymentDetails,
   CashInput,
@@ -40,7 +40,7 @@ type PaymentMethod = "cash" | "card_ewallet";
 type DiscountType = "senior_citizen" | "pwd" | null;
 
 export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
-  const { orderId, tableId, tableName, orderType } = route.params;
+  const { orderId, tableName, orderType } = route.params;
   const isTakeout = orderType === "takeout";
   const { user, isLoading, isAuthenticated } = useAuth();
   const formatCurrency = useFormatCurrency();
@@ -379,6 +379,9 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     paymentMethod,
     cardPaymentType,
     cardReferenceNumber,
+    activeItems,
+    isTakeout,
+    tableName,
     processCashPayment,
     processCardPayment,
     orderId,
@@ -397,32 +400,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">
-      {/* Header */}
-      <XStack
-        backgroundColor="#FFFFFF"
-        alignItems="center"
-        paddingHorizontal={16}
-        paddingVertical={14}
-        borderBottomWidth={1}
-        borderColor="#E5E7EB"
-      >
-        <IconButton
-          icon="arrow-back"
-          variant="ghost"
-          onPress={handleBack}
-          style={{ marginRight: 8 }}
-        />
-        <YStack flex={1}>
-          <Text variant="heading" size="lg">
-            Checkout
-          </Text>
-          <Text variant="muted" size="sm">
-            {tableName ?? `Order #${order.orderNumber}`} · {activeItems.length} line
-            {activeItems.length === 1 ? "" : "s"}
-          </Text>
-        </YStack>
-        <SystemStatusBar />
-      </XStack>
+      <PageHeader
+        title="Checkout"
+        subtitle={`${tableName ?? `Order #${order.orderNumber}`} · ${activeItems.length} line${
+          activeItems.length === 1 ? "" : "s"
+        }`}
+        onBack={handleBack}
+      />
 
       <KeyboardAwareScrollView
         style={{ flex: 1 }}

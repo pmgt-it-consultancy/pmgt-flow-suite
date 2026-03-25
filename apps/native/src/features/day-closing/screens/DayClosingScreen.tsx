@@ -3,10 +3,11 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useState } from "react";
 import { Alert, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import { XStack, YStack } from "tamagui";
+import { YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
-import { Text } from "../../shared/components/ui";
+import { PageHeader } from "../../shared/components/PageHeader";
+import { Button, Text } from "../../shared/components/ui";
 import { DateNavigationBar } from "../components/DateNavigationBar";
 import { ItemBreakdownCard } from "../components/ItemBreakdownCard";
 import { TimeRangeSelector } from "../components/TimeRangeSelector";
@@ -121,27 +122,16 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <YStack flex={1} backgroundColor="$gray100">
-        {/* Header */}
-        <XStack
-          backgroundColor="$white"
-          paddingHorizontal={16}
-          paddingVertical={14}
-          alignItems="center"
-          borderBottomWidth={1}
-          borderColor="$gray200"
-        >
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#374151" />
-          </TouchableOpacity>
-          <YStack flex={1} alignItems="center">
-            <Text variant="heading" size="lg">
-              Day Closing
-            </Text>
-          </YStack>
-          <TouchableOpacity onPress={handleGenerateReport} style={styles.refreshButton}>
-            <Ionicons name="refresh" size={22} color="#0D87E1" />
-          </TouchableOpacity>
-        </XStack>
+        <PageHeader
+          title="Day Closing"
+          onBack={() => navigation.goBack()}
+          centerTitle
+          rightContent={
+            <Button variant="outline" size="sm" onPress={handleGenerateReport}>
+              Refresh Report
+            </Button>
+          }
+        />
 
         {/* Date Navigation */}
         <DateNavigationBar selectedDate={selectedDate} onDateChange={setSelectedDate} />
@@ -193,15 +183,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-  },
-  backButton: {
-    padding: 8,
-    borderRadius: 8,
-  },
-  refreshButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: "#EFF6FF",
   },
   scrollContent: {
     padding: 16,

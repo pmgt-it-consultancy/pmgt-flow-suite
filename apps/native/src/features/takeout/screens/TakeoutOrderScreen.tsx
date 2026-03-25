@@ -15,8 +15,8 @@ import {
   ModifierSelectionModal,
   VoidItemModal,
 } from "../../orders/components";
-import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
-import { IconButton, Text } from "../../shared/components/ui";
+import { PageHeader } from "../../shared/components/PageHeader";
+import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface TakeoutOrderScreenProps {
@@ -177,10 +177,6 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
       ],
     );
   }, [cancelOrderMutation, discardDraftMutation, navigation, order?.status, orderId]);
-
-  const handleViewOrders = useCallback(() => {
-    navigation.navigate("TakeoutListScreen");
-  }, [navigation]);
 
   const handleAddProduct = useCallback((product: SelectedProduct) => {
     setSelectedProduct(product);
@@ -370,67 +366,36 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
   return (
     <YStack flex={1} backgroundColor="#F1F5F9">
-      {/* Enhanced Header */}
-      <YStack
-        backgroundColor="#FFFFFF"
-        paddingHorizontal={16}
-        paddingVertical={12}
-        borderBottomWidth={1}
-        borderBottomColor="#E2E8F0"
-        shadowColor="#000"
-        shadowOffset={{ width: 0, height: 1 }}
-        shadowOpacity={0.05}
-        shadowRadius={4}
-        elevation={2}
-      >
-        <XStack alignItems="center" justifyContent="space-between">
-          <XStack alignItems="center" flex={1}>
-            <IconButton
-              icon="arrow-back"
-              variant="ghost"
-              onPress={handleBack}
-              style={{ marginRight: 8 }}
-            />
-            <YStack flex={1}>
-              <XStack alignItems="center">
-                <Text variant="heading" size="xl" numberOfLines={1}>
-                  {customerName.trim() || "Takeout Order"}
-                </Text>
-                <YStack
-                  marginLeft={10}
-                  backgroundColor="#FFF7ED"
-                  borderRadius={6}
-                  paddingHorizontal={10}
-                  paddingVertical={4}
-                  borderWidth={1}
-                  borderColor="#FDBA74"
-                >
-                  <XStack alignItems="center">
-                    <Ionicons name="bag-handle" size={14} color="#EA580C" />
-                    <Text
-                      style={{ color: "#EA580C", fontWeight: "700", fontSize: 12, marginLeft: 4 }}
-                    >
-                      TAKEOUT
-                    </Text>
-                  </XStack>
-                </YStack>
-              </XStack>
-              <Text variant="muted" size="sm" style={{ marginTop: 2 }}>
-                {order?.status === "draft" ? "Draft — add items to continue" : "Order in progress"}
+      <PageHeader
+        onBack={handleBack}
+        titleContent={
+          <YStack width="100%">
+            <XStack alignItems="center" gap={10}>
+              <Text variant="heading" size="xl" numberOfLines={1}>
+                {customerName.trim() || "Takeout Order"}
               </Text>
-            </YStack>
-          </XStack>
-          <XStack alignItems="center" gap={4}>
-            <SystemStatusBar />
-            <IconButton
-              icon="list"
-              variant="ghost"
-              onPress={handleViewOrders}
-              iconColor="#64748B"
-            />
-          </XStack>
-        </XStack>
-      </YStack>
+              <YStack
+                backgroundColor="#FFF7ED"
+                borderRadius={999}
+                paddingHorizontal={10}
+                paddingVertical={4}
+                borderWidth={1}
+                borderColor="#FDBA74"
+              >
+                <Text
+                  numberOfLines={1}
+                  style={{ color: "#EA580C", fontWeight: "700", fontSize: 12 }}
+                >
+                  Takeout
+                </Text>
+              </YStack>
+            </XStack>
+            <Text variant="muted" size="sm" style={{ marginTop: 2 }} numberOfLines={1}>
+              {order?.status === "draft" ? "Draft order" : "Order in progress"}
+            </Text>
+          </YStack>
+        }
+      />
 
       <XStack flex={1}>
         {/* Menu Section */}
