@@ -40,9 +40,21 @@ The screen uses a single `ScrollView` as the only scrollable container. The item
 - `PrintProgressModal.tsx` — Batch reprint progress modal (removed feature)
 - `useBatchPrint.ts` — Batch reprint hook (removed feature)
 
-### New Query Usage
+### Query Changes
 
-- Add `getDailyProductSales` query to fetch per-product breakdown for the selected date
+- **Add:** `getDailyProductSales` subscription — fetches per-product breakdown for the selected date
+- **Remove:** `getOrderHistory` subscription — was used for the order list/batch reprint, no longer needed
+- **Retain:** `getDailyReport`, `stores.get`, `generateDailyReport` — still used
+- **Retain:** `logDayClosing` mutation — still called after report generation for audit trail
+
+### Component Changes
+
+- `ZReportSummary` loses `onPrintZReport` and `isPrintingZReport` props — becomes a pure display component
+- The sticky footer's "Print Z-Report" button replaces the old "Reprint N Selected Receipts" button entirely
+- `DayClosingScreen.handlePrintZReport` must pass product sales data to `printZReportToThermal` alongside the report data
+- `useFormatCurrency` is retained for formatting amounts in the item breakdown
+- Date navigation arrows must meet 48px minimum touch target per CLAUDE.md guidelines
+- Calendar picker remains `@react-native-community/datetimepicker`
 
 ## POS Native App — Z-Report Thermal Print Update
 
@@ -106,12 +118,24 @@ Add "Download PDF" button to the reports page, next to "Mark as Printed". Uses d
 
 ### Data Sources
 
-All queries already exist — no backend changes needed:
-- `getDailyReport` — Financial summary
-- `getDailyProductSales` — Product breakdown
-- `getHourlySales` — Hourly data
-- `getCategorySales` — Category aggregates
-- `stores.get` — Store info for header
+All backend queries already exist — no backend code changes needed. However, the reports page must add new client-side query subscriptions:
+- `getDailyReport` — Financial summary (already subscribed)
+- `getDailyProductSales` — Product breakdown (already subscribed)
+- `getHourlySales` — Hourly data (already subscribed)
+- `getCategorySales` — Category aggregates (already subscribed)
+- `stores.get` — **New subscription needed** on reports page for store header in PDF
+
+### Bundle Considerations
+
+`@react-pdf/renderer` is a heavy client-only library (~500KB+). Use `next/dynamic` with `ssr: false` for the `DownloadPdfButton` component to avoid impacting initial page load for users who never download PDFs.
+
+### Store Header Fields
+
+The PDF header shows non-null store fields in this order: store name (required), address (address1 + address2), TIN, contactNumber, telephone, email, website. Only render fields that have values.
+
+### Hourly Filtering
+
+The `getHourlySales` query returns all 24 hours. Zero-activity hour filtering is done client-side in the PDF component — no backend change needed.
 
 ## Approach
 
