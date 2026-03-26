@@ -10,6 +10,7 @@ import { PageHeader } from "../../shared/components/PageHeader";
 import { Button, Text } from "../../shared/components/ui";
 import { DateNavigationBar } from "../components/DateNavigationBar";
 import { ItemBreakdownCard } from "../components/ItemBreakdownCard";
+import { PaymentTransactionsCard } from "../components/PaymentTransactionsCard";
 import { TimeRangeSelector } from "../components/TimeRangeSelector";
 import { ZReportSummary } from "../components/ZReportSummary";
 import { printZReportToThermal } from "../utils/zReportFormatter";
@@ -42,6 +43,10 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     storeId ? { storeId, reportDate } : "skip",
   );
   const store = useQuery(api.stores.get, storeId ? { storeId } : "skip");
+  const paymentTransactions = useQuery(
+    api.reports.getDailyPaymentTransactions,
+    storeId ? { storeId, reportDate } : "skip",
+  );
 
   // Mutations
   const generateReport = useMutation(api.reports.generateDailyReport);
@@ -108,6 +113,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
         },
         charsPerLine,
         productSales ?? [],
+        paymentTransactions ?? [],
       );
       Alert.alert("Success", "Z-Report printed successfully.");
     } catch (_error) {
@@ -115,7 +121,17 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     } finally {
       setIsPrintingZReport(false);
     }
-  }, [report, storeId, store, reportDate, charsPerLine, productSales, startTime, endTime]);
+  }, [
+    report,
+    storeId,
+    store,
+    reportDate,
+    charsPerLine,
+    productSales,
+    paymentTransactions,
+    startTime,
+    endTime,
+  ]);
 
   const canPrint = !!report && !isPrintingZReport;
 
@@ -150,6 +166,10 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
             <ItemBreakdownCard
               productSales={productSales ?? undefined}
               isLoading={productSales === undefined}
+            />
+            <PaymentTransactionsCard
+              paymentGroups={paymentTransactions ?? undefined}
+              isLoading={paymentTransactions === undefined}
             />
           </YStack>
         </ScrollView>

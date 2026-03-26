@@ -31,6 +31,19 @@ export interface ProductSaleItem {
   productName: string;
   quantitySold: number;
   grossAmount: number;
+  categoryName: string;
+}
+
+export interface PaymentTransaction {
+  orderNumber: string;
+  referenceNumber: string;
+  amount: number;
+}
+
+export interface PaymentTransactionGroup {
+  paymentType: string;
+  transactions: PaymentTransaction[];
+  subtotal: number;
 }
 
 const line = (char: string, width: number): string => char.repeat(width);
@@ -68,6 +81,7 @@ export async function printZReportToThermal(
   data: ZReportData,
   charsPerLine: number,
   productSales: ProductSaleItem[] = [],
+  paymentTransactions: PaymentTransactionGroup[] = [],
 ): Promise<void> {
   const w = charsPerLine;
   const p = BluetoothEscposPrinter;
@@ -186,7 +200,7 @@ export async function printZReportToThermal(
 
   await p.printText(`${line("=", w)}\n`, normal());
 
-  // Items sold breakdown
+  // Items sold breakdown (category-grouped)
   if (productSales.length > 0) {
     await p.printText("\n", normal());
     await p.printerAlign(ALIGN.CENTER);
@@ -204,32 +218,104 @@ export async function printZReportToThermal(
     const hdrQty = "Qty".padStart(qtyCol);
     const hdrAmt = "Amt".padStart(amtCol);
     await p.printText(`${hdrName} ${hdrQty} ${hdrAmt}\n`, normal());
-    await p.printText(`${line("-", w)}\n`, normal());
 
-    // Sort by quantity descending
-    const sorted = [...productSales].sort((a, b) => b.quantitySold - a.quantitySold);
-
-    let totalQty = 0;
-    let totalAmt = 0;
-
-    for (const item of sorted) {
-      totalQty += item.quantitySold;
-      totalAmt += item.grossAmount;
-
-      const name =
-        item.productName.length > nameCol
-          ? item.productName.slice(0, nameCol)
-          : item.productName.padEnd(nameCol);
-      const qty = String(item.quantitySold).padStart(qtyCol);
-      const amt = formatCurrency(item.grossAmount).padStart(amtCol);
-      await p.printText(`${name} ${qty} ${amt}\n`, normal());
+    // Group products by categoryName
+    const categoryMap = new Map<string, ProductSaleItem[]>();
+    for (const item of productSales) {
+      const cat = item.categoryName || "Uncategorized";
+      const existing = categoryMap.get(cat);
+      if (existing) {
+        existing.push(item);
+      } else {
+        categoryMap.set(cat, [item]);
+      }
     }
 
+    // Sort categories alphabetically
+    const sortedCategories = [...categoryMap.keys()].sort((a, b) => a.localeCompare(b));
+
+    let grandTotalQty = 0;
+    let grandTotalAmt = 0;
+
+    for (const categoryName of sortedCategories) {
+      const items = categoryMap.get(categoryName)!;
+
+      // Category header: "-- CategoryName --------" bold, padded with dashes to fill line width
+      const catPrefix = "-- ";
+      const catSuffix = " ";
+      const catLabel = `${catPrefix}${categoryName}${catSuffix}`;
+      const remainingDashes = Math.max(0, w - catLabel.length);
+      const catHeader = `${catLabel}${line("-", remainingDashes)}`;
+      await p.printText(`${catHeader}\n`, bold());
+
+      // Sort products within category by qty desc
+      const sortedItems = [...items].sort((a, b) => b.quantitySold - a.quantitySold);
+
+      let catQty = 0;
+      let catAmt = 0;
+
+      for (const item of sortedItems) {
+        catQty += item.quantitySold;
+        catAmt += item.grossAmount;
+
+        const name =
+          item.productName.length > nameCol
+            ? item.productName.slice(0, nameCol)
+            : item.productName.padEnd(nameCol);
+        const qty = String(item.quantitySold).padStart(qtyCol);
+        const amt = formatCurrency(item.grossAmount).padStart(amtCol);
+        await p.printText(`${name} ${qty} ${amt}\n`, normal());
+      }
+
+      // Category subtotal
+      await p.printText(`${line("-", w)}\n`, normal());
+      const catSubLabel = "Subtotal".padEnd(nameCol);
+      const catSubQty = String(catQty).padStart(qtyCol);
+      const catSubAmt = formatCurrency(catAmt).padStart(amtCol);
+      await p.printText(`${catSubLabel} ${catSubQty} ${catSubAmt}\n`, bold());
+      await p.printText("\n", normal());
+
+      grandTotalQty += catQty;
+      grandTotalAmt += catAmt;
+    }
+
+    // Grand total
     await p.printText(`${line("-", w)}\n`, normal());
     const totalLabel = "Total".padEnd(nameCol);
-    const totalQtyStr = String(totalQty).padStart(qtyCol);
-    const totalAmtStr = formatCurrency(totalAmt).padStart(amtCol);
+    const totalQtyStr = String(grandTotalQty).padStart(qtyCol);
+    const totalAmtStr = formatCurrency(grandTotalAmt).padStart(amtCol);
     await p.printText(`${totalLabel} ${totalQtyStr} ${totalAmtStr}\n`, bold());
+    await p.printText(`${line("=", w)}\n`, normal());
+  }
+
+  // Payment transactions breakdown
+  if (paymentTransactions.length > 0) {
+    await p.printText("\n", normal());
+    await p.printerAlign(ALIGN.CENTER);
+    await p.printText("PAYMENT TRANSACTIONS\n", bold());
+    await p.printerAlign(ALIGN.LEFT);
+
+    for (const group of paymentTransactions) {
+      // Group header: "-- PaymentType --------" bold
+      const grpPrefix = "-- ";
+      const grpSuffix = " ";
+      const grpLabel = `${grpPrefix}${group.paymentType}${grpSuffix}`;
+      const grpRemainingDashes = Math.max(0, w - grpLabel.length);
+      const grpHeader = `${grpLabel}${line("-", grpRemainingDashes)}`;
+      await p.printText(`${grpHeader}\n`, bold());
+
+      for (const txn of group.transactions) {
+        const left = `#${txn.orderNumber}  ${txn.referenceNumber}`;
+        const right = formatCurrency(txn.amount);
+        await p.printText(`${formatRow(left, right, w)}\n`, normal());
+      }
+
+      // Subtotal per group
+      await p.printText(`${line("-", w)}\n`, normal());
+      await p.printText(`${formatRow("Subtotal", formatCurrency(group.subtotal), w)}\n`, bold());
+      await p.printText("\n", normal());
+    }
+
     await p.printText(`${line("=", w)}\n`, normal());
   }
 

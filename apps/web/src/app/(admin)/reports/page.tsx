@@ -83,6 +83,10 @@ export default function ReportsPage() {
       ? { storeId: selectedStoreId, startDate: dateRangeStart, endDate: dateRangeEnd }
       : "skip",
   );
+  const paymentTransactions = useQuery(
+    api.reports.getDailyPaymentTransactions,
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId, reportDate } : "skip",
+  );
   const store = useQuery(
     api.stores.get,
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
@@ -261,52 +265,57 @@ export default function ReportsPage() {
                           Mark as Printed
                         </Button>
                       )}
-                      {store && productSales && categorySales && hourlySales && (
-                        <DownloadPdfButton
-                          reportDate={reportDate}
-                          storeName={store.name}
-                          disabled={false}
-                          data={{
-                            store: {
-                              name: store.name,
-                              address1: store.address1,
-                              address2: store.address2,
-                              tin: store.tin,
-                              contactNumber: store.contactNumber,
-                              telephone: store.telephone,
-                              email: store.email,
-                              website: store.website,
-                            },
-                            reportDate,
-                            startTime: dailyReport.startTime,
-                            endTime: dailyReport.endTime,
-                            report: {
-                              grossSales: dailyReport.grossSales,
-                              netSales: dailyReport.netSales,
-                              vatableSales: dailyReport.vatableSales,
-                              vatAmount: dailyReport.vatAmount,
-                              vatExemptSales: dailyReport.vatExemptSales,
-                              nonVatSales: dailyReport.nonVatSales,
-                              seniorDiscounts: dailyReport.seniorDiscounts,
-                              pwdDiscounts: dailyReport.pwdDiscounts,
-                              promoDiscounts: dailyReport.promoDiscounts,
-                              manualDiscounts: dailyReport.manualDiscounts,
-                              totalDiscounts: dailyReport.totalDiscounts,
-                              voidCount: dailyReport.voidCount,
-                              voidAmount: dailyReport.voidAmount,
-                              cashTotal: dailyReport.cashTotal,
-                              cardEwalletTotal: dailyReport.cardEwalletTotal,
-                              transactionCount: dailyReport.transactionCount,
-                              averageTicket: dailyReport.averageTicket,
-                              generatedByName: dailyReport.generatedByName,
-                              generatedAt: dailyReport.generatedAt,
-                            },
-                            productSales,
-                            categorySales,
-                            hourlySales,
-                          }}
-                        />
-                      )}
+                      {store &&
+                        productSales &&
+                        categorySales &&
+                        hourlySales &&
+                        paymentTransactions && (
+                          <DownloadPdfButton
+                            reportDate={reportDate}
+                            storeName={store.name}
+                            disabled={false}
+                            data={{
+                              store: {
+                                name: store.name,
+                                address1: store.address1,
+                                address2: store.address2,
+                                tin: store.tin,
+                                contactNumber: store.contactNumber,
+                                telephone: store.telephone,
+                                email: store.email,
+                                website: store.website,
+                              },
+                              reportDate,
+                              startTime: dailyReport.startTime,
+                              endTime: dailyReport.endTime,
+                              report: {
+                                grossSales: dailyReport.grossSales,
+                                netSales: dailyReport.netSales,
+                                vatableSales: dailyReport.vatableSales,
+                                vatAmount: dailyReport.vatAmount,
+                                vatExemptSales: dailyReport.vatExemptSales,
+                                nonVatSales: dailyReport.nonVatSales,
+                                seniorDiscounts: dailyReport.seniorDiscounts,
+                                pwdDiscounts: dailyReport.pwdDiscounts,
+                                promoDiscounts: dailyReport.promoDiscounts,
+                                manualDiscounts: dailyReport.manualDiscounts,
+                                totalDiscounts: dailyReport.totalDiscounts,
+                                voidCount: dailyReport.voidCount,
+                                voidAmount: dailyReport.voidAmount,
+                                cashTotal: dailyReport.cashTotal,
+                                cardEwalletTotal: dailyReport.cardEwalletTotal,
+                                transactionCount: dailyReport.transactionCount,
+                                averageTicket: dailyReport.averageTicket,
+                                generatedByName: dailyReport.generatedByName,
+                                generatedAt: dailyReport.generatedAt,
+                              },
+                              productSales,
+                              categorySales,
+                              hourlySales,
+                              paymentTransactions,
+                            }}
+                          />
+                        )}
                     </div>
                   </div>
                 </CardHeader>
@@ -415,6 +424,60 @@ export default function ReportsPage() {
                     <div className="border-t pt-3">
                       <DetailRow label="Total" value={formatCurrency(dailyReport.netSales)} bold />
                     </div>
+                    {paymentTransactions && paymentTransactions.length > 0 && (
+                      <div className="border-t pt-3 space-y-4">
+                        <p className="text-sm font-semibold text-gray-700">Transaction Details</p>
+                        {paymentTransactions.map((group) => (
+                          <div key={group.paymentType}>
+                            <div className="flex justify-between items-center bg-green-50 px-3 py-1.5 rounded-t">
+                              <span className="text-sm font-semibold text-green-800">
+                                {group.paymentType}
+                              </span>
+                              <span className="text-xs text-green-700">
+                                {group.transactions.length} txn(s)
+                              </span>
+                            </div>
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead className="text-xs py-1.5">Order #</TableHead>
+                                  <TableHead className="text-xs py-1.5">Reference #</TableHead>
+                                  <TableHead className="text-right text-xs py-1.5">
+                                    Amount
+                                  </TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {group.transactions.map((tx) => (
+                                  <TableRow key={tx.orderId}>
+                                    <TableCell className="text-xs py-1.5">
+                                      #{tx.orderNumber}
+                                    </TableCell>
+                                    <TableCell className="text-xs py-1.5 font-mono">
+                                      {tx.referenceNumber || "-"}
+                                    </TableCell>
+                                    <TableCell className="text-right text-xs py-1.5">
+                                      {formatCurrency(tx.amount)}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                                <TableRow className="bg-green-50/50">
+                                  <TableCell
+                                    colSpan={2}
+                                    className="text-xs py-1.5 font-semibold text-green-800"
+                                  >
+                                    Subtotal
+                                  </TableCell>
+                                  <TableCell className="text-right text-xs py-1.5 font-semibold text-green-800">
+                                    {formatCurrency(group.subtotal)}
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -466,38 +529,103 @@ export default function ReportsPage() {
                   <p>No product sales for this date.</p>
                 </div>
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead className="text-right">Qty Sold</TableHead>
-                      <TableHead className="text-right">Gross Amount</TableHead>
-                      <TableHead className="text-right">Voided</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {productSales.map((product) => (
-                      <TableRow key={product.productId}>
-                        <TableCell className="font-medium">{product.productName}</TableCell>
-                        <TableCell>{product.categoryName}</TableCell>
-                        <TableCell className="text-right">{product.quantitySold}</TableCell>
-                        <TableCell className="text-right">
-                          {formatCurrency(product.grossAmount)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {product.voidedQuantity > 0 ? (
-                            <span className="text-red-600">
-                              {product.voidedQuantity} ({formatCurrency(product.voidedAmount)})
-                            </span>
-                          ) : (
-                            "-"
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                (() => {
+                  // Group products by category
+                  const categoryMap = new Map<
+                    string,
+                    {
+                      products: typeof productSales;
+                      totalQty: number;
+                      totalGross: number;
+                      totalVoidedQty: number;
+                    }
+                  >();
+                  for (const product of productSales) {
+                    const key = product.categoryName ?? "Uncategorized";
+                    if (!categoryMap.has(key)) {
+                      categoryMap.set(key, {
+                        products: [],
+                        totalQty: 0,
+                        totalGross: 0,
+                        totalVoidedQty: 0,
+                      });
+                    }
+                    const group = categoryMap.get(key)!;
+                    group.products.push(product);
+                    group.totalQty += product.quantitySold;
+                    group.totalGross += product.grossAmount;
+                    group.totalVoidedQty += product.voidedQuantity;
+                  }
+                  // Sort categories alphabetically
+                  const sortedCategories = Array.from(categoryMap.entries()).sort(([a], [b]) =>
+                    a.localeCompare(b),
+                  );
+                  // Sort products within each category by qty descending
+                  for (const [, group] of sortedCategories) {
+                    group.products.sort((a, b) => b.quantitySold - a.quantitySold);
+                  }
+                  return (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Product</TableHead>
+                          <TableHead className="text-right">Qty Sold</TableHead>
+                          <TableHead className="text-right">Gross Amount</TableHead>
+                          <TableHead className="text-right">Voided</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {sortedCategories.map(([categoryName, group]) => (
+                          <>
+                            {/* Category header row */}
+                            <TableRow key={`cat-${categoryName}`} className="bg-blue-50/50">
+                              <TableCell colSpan={4} className="font-bold text-blue-900 py-2">
+                                {categoryName}
+                              </TableCell>
+                            </TableRow>
+                            {/* Product rows */}
+                            {group.products.map((product) => (
+                              <TableRow key={product.productId}>
+                                <TableCell className="pl-8 font-medium">
+                                  {product.productName}
+                                </TableCell>
+                                <TableCell className="text-right">{product.quantitySold}</TableCell>
+                                <TableCell className="text-right">
+                                  {formatCurrency(product.grossAmount)}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  {product.voidedQuantity > 0 ? (
+                                    <span className="text-red-600">
+                                      {product.voidedQuantity} (
+                                      {formatCurrency(product.voidedAmount)})
+                                    </span>
+                                  ) : (
+                                    "-"
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                            {/* Category subtotal row */}
+                            <TableRow key={`subtotal-${categoryName}`} className="bg-sky-50/50">
+                              <TableCell className="pl-8 text-sky-800 font-semibold text-sm">
+                                Subtotal
+                              </TableCell>
+                              <TableCell className="text-right text-sky-800 font-semibold text-sm">
+                                {group.totalQty}
+                              </TableCell>
+                              <TableCell className="text-right text-sky-800 font-semibold text-sm">
+                                {formatCurrency(group.totalGross)}
+                              </TableCell>
+                              <TableCell className="text-right text-sky-800 font-semibold text-sm">
+                                {group.totalVoidedQty > 0 ? group.totalVoidedQty : "-"}
+                              </TableCell>
+                            </TableRow>
+                          </>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  );
+                })()
               )}
             </CardContent>
           </Card>

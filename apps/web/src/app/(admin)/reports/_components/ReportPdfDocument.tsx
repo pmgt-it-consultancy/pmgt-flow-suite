@@ -59,6 +59,20 @@ interface HourlySaleRow {
   netSales: number;
 }
 
+interface PaymentTransactionRow {
+  orderId: string;
+  orderNumber: string;
+  referenceNumber: string;
+  amount: number;
+  paidAt: number;
+}
+
+interface PaymentTransactionGroup {
+  paymentType: string;
+  transactions: PaymentTransactionRow[];
+  subtotal: number;
+}
+
 export interface ReportPdfDocumentProps {
   store: StoreInfo;
   reportDate: string;
@@ -68,6 +82,7 @@ export interface ReportPdfDocumentProps {
   productSales: ProductSaleRow[];
   categorySales: CategorySaleRow[];
   hourlySales: HourlySaleRow[];
+  paymentTransactions: PaymentTransactionGroup[];
 }
 
 // ── Helpers ────────────────────────────────────────────────────
@@ -202,9 +217,31 @@ export const ReportPdfDocument = ({
   productSales,
   categorySales,
   hourlySales,
+  paymentTransactions,
 }: ReportPdfDocumentProps) => {
   const address = [store.address1, store.address2].filter(Boolean).join(", ");
   const activeHours = hourlySales.filter((h) => h.transactionCount > 0 || h.netSales > 0);
+
+  // Build category-grouped product sales
+  const productsByCategory = productSales.reduce<
+    Record<string, { products: ProductSaleRow[]; totalQty: number; totalGross: number }>
+  >((acc, p) => {
+    if (!acc[p.categoryName]) {
+      acc[p.categoryName] = { products: [], totalQty: 0, totalGross: 0 };
+    }
+    acc[p.categoryName].products.push(p);
+    acc[p.categoryName].totalQty += p.quantitySold;
+    acc[p.categoryName].totalGross += p.grossAmount;
+    return acc;
+  }, {});
+  const sortedCategories = Object.entries(productsByCategory)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([categoryName, data]) => ({
+      categoryName,
+      products: [...data.products].sort((a, b) => b.quantitySold - a.quantitySold),
+      totalQty: data.totalQty,
+      totalGross: data.totalGross,
+    }));
 
   return (
     <Document>
@@ -285,6 +322,73 @@ export const ReportPdfDocument = ({
           <DetailRow label="Card/E-Wallet" value={fmt(report.cardEwalletTotal)} />
         </View>
 
+        {/* Payment Transaction Details */}
+        {paymentTransactions.length > 0 && (
+          <View style={s.section}>
+            <Text style={s.sectionTitle}>Payment Transaction Details</Text>
+            <View style={s.table}>
+              <View style={s.tableHeader}>
+                <Text style={[s.thText, { flex: 1.5 }]}>Order #</Text>
+                <Text style={[s.thText, { flex: 2.5 }]}>Reference #</Text>
+                <Text style={[s.thText, { flex: 1.5, textAlign: "right" }]}>Amount</Text>
+              </View>
+              {paymentTransactions.map((group) => (
+                <View key={group.paymentType}>
+                  {/* Payment type header row */}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      backgroundColor: "#F0FDF4",
+                      paddingVertical: 5,
+                      paddingHorizontal: 8,
+                      borderBottomWidth: 0.5,
+                      borderBottomColor: "#BBF7D0",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        flex: 3.5,
+                        fontSize: 8,
+                        fontFamily: "Helvetica-Bold",
+                        color: "#166534",
+                      }}
+                    >
+                      {group.paymentType} ({group.transactions.length})
+                    </Text>
+                    <Text
+                      style={{
+                        flex: 1.5,
+                        fontSize: 8,
+                        fontFamily: "Helvetica-Bold",
+                        color: "#166534",
+                        textAlign: "right",
+                      }}
+                    >
+                      {fmt(group.subtotal)}
+                    </Text>
+                  </View>
+                  {/* Transaction detail rows */}
+                  {group.transactions.map((t, i) => (
+                    <View key={t.orderId} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
+                      <Text style={[s.tdText, { flex: 1.5 }]}>{t.orderNumber}</Text>
+                      <Text
+                        style={{
+                          flex: 2.5,
+                          fontSize: 8,
+                          fontFamily: "Courier",
+                        }}
+                      >
+                        {t.referenceNumber}
+                      </Text>
+                      <Text style={[s.tdRight, { flex: 1.5 }]}>{fmt(t.amount)}</Text>
+                    </View>
+                  ))}
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
         {/* Product Sales Breakdown */}
         <View style={s.section}>
           <Text style={s.sectionTitle}>
@@ -293,24 +397,95 @@ export const ReportPdfDocument = ({
           <View style={s.table}>
             <View style={s.tableHeader}>
               <Text style={[s.thText, { flex: 3 }]}>Product</Text>
-              <Text style={[s.thText, { flex: 2 }]}>Category</Text>
               <Text style={[s.thText, { flex: 1, textAlign: "right" }]}>Qty</Text>
               <Text style={[s.thText, { flex: 1.5, textAlign: "right" }]}>Gross</Text>
               <Text style={[s.thText, { flex: 1, textAlign: "right" }]}>Void Qty</Text>
               <Text style={[s.thText, { flex: 1.5, textAlign: "right" }]}>Void Amt</Text>
             </View>
-            {productSales.map((p, i) => (
-              <View key={p.productId} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
-                <Text style={[s.tdText, { flex: 3 }]}>{p.productName}</Text>
-                <Text style={[s.tdText, { flex: 2 }]}>{p.categoryName}</Text>
-                <Text style={[s.tdRight, { flex: 1 }]}>{p.quantitySold}</Text>
-                <Text style={[s.tdRight, { flex: 1.5 }]}>{fmt(p.grossAmount)}</Text>
-                <Text style={[p.voidedQuantity > 0 ? s.tdRed : s.tdRight, { flex: 1 }]}>
-                  {p.voidedQuantity > 0 ? p.voidedQuantity : "-"}
-                </Text>
-                <Text style={[p.voidedAmount > 0 ? s.tdRed : s.tdRight, { flex: 1.5 }]}>
-                  {p.voidedAmount > 0 ? fmt(p.voidedAmount) : "-"}
-                </Text>
+            {sortedCategories.map((cat) => (
+              <View key={cat.categoryName}>
+                {/* Category header row */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    backgroundColor: "#EFF6FF",
+                    paddingVertical: 5,
+                    paddingHorizontal: 8,
+                    borderBottomWidth: 0.5,
+                    borderBottomColor: "#BFDBFE",
+                  }}
+                >
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontSize: 8,
+                      fontFamily: "Helvetica-Bold",
+                      color: "#1E40AF",
+                    }}
+                  >
+                    {cat.categoryName}
+                  </Text>
+                </View>
+                {/* Product rows */}
+                {cat.products.map((p, i) => (
+                  <View key={p.productId} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
+                    <Text style={[s.tdText, { flex: 3, paddingLeft: 8 }]}>{p.productName}</Text>
+                    <Text style={[s.tdRight, { flex: 1 }]}>{p.quantitySold}</Text>
+                    <Text style={[s.tdRight, { flex: 1.5 }]}>{fmt(p.grossAmount)}</Text>
+                    <Text style={[p.voidedQuantity > 0 ? s.tdRed : s.tdRight, { flex: 1 }]}>
+                      {p.voidedQuantity > 0 ? p.voidedQuantity : "-"}
+                    </Text>
+                    <Text style={[p.voidedAmount > 0 ? s.tdRed : s.tdRight, { flex: 1.5 }]}>
+                      {p.voidedAmount > 0 ? fmt(p.voidedAmount) : "-"}
+                    </Text>
+                  </View>
+                ))}
+                {/* Category subtotal row */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    backgroundColor: "#F0F9FF",
+                    paddingVertical: 5,
+                    paddingHorizontal: 8,
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#BAE6FD",
+                  }}
+                >
+                  <Text
+                    style={{
+                      flex: 3,
+                      fontSize: 8,
+                      fontFamily: "Helvetica-Bold",
+                      color: "#0369A1",
+                    }}
+                  >
+                    Subtotal
+                  </Text>
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontSize: 8,
+                      fontFamily: "Helvetica-Bold",
+                      color: "#0369A1",
+                      textAlign: "right",
+                    }}
+                  >
+                    {cat.totalQty}
+                  </Text>
+                  <Text
+                    style={{
+                      flex: 1.5,
+                      fontSize: 8,
+                      fontFamily: "Helvetica-Bold",
+                      color: "#0369A1",
+                      textAlign: "right",
+                    }}
+                  >
+                    {fmt(cat.totalGross)}
+                  </Text>
+                  <Text style={{ flex: 1 }} />
+                  <Text style={{ flex: 1.5 }} />
+                </View>
               </View>
             ))}
           </View>

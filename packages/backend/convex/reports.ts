@@ -62,6 +62,15 @@ export const generateDailyReport = mutation({
         args.endTime,
       );
 
+      // Regenerate payment transactions breakdown
+      await generatePaymentTransactionsBreakdown(
+        ctx,
+        args.storeId,
+        args.reportDate,
+        args.startTime,
+        args.endTime,
+      );
+
       // Clean up expired draft orders
       await cleanupExpiredDraftOrders(ctx, args.storeId);
 
@@ -92,6 +101,15 @@ export const generateDailyReport = mutation({
 
     // Also generate product sales breakdown
     await generateProductSalesBreakdown(
+      ctx,
+      args.storeId,
+      args.reportDate,
+      args.startTime,
+      args.endTime,
+    );
+
+    // Also generate payment transactions breakdown
+    await generatePaymentTransactionsBreakdown(
       ctx,
       args.storeId,
       args.reportDate,
@@ -394,6 +412,59 @@ async function generateProductSalesBreakdown(
   }
 }
 
+// Helper: Generate payment transactions breakdown for non-cash orders
+async function generatePaymentTransactionsBreakdown(
+  ctx: { db: any },
+  storeId: Id<"stores">,
+  reportDate: string,
+  startTime?: string,
+  endTime?: string,
+): Promise<void> {
+  // Delete existing payment transactions for this date
+  const existingTransactions = await ctx.db
+    .query("dailyPaymentTransactions")
+    .withIndex("by_store_date", (q: any) => q.eq("storeId", storeId).eq("reportDate", reportDate))
+    .collect();
+
+  for (const tx of existingTransactions) {
+    await ctx.db.delete(tx._id);
+  }
+
+  // Parse date range (PHT boundaries, with optional time range)
+  const { start: startOfDay, end: endOfDay } = getPHTTimeBoundariesForDate(
+    reportDate,
+    startTime,
+    endTime,
+  );
+
+  // Get all orders for the day
+  const orders = await ctx.db
+    .query("orders")
+    .withIndex("by_store_createdAt", (q: any) =>
+      q.eq("storeId", storeId).gte("createdAt", startOfDay).lt("createdAt", endOfDay),
+    )
+    .collect();
+
+  // Filter to paid card/e-wallet orders
+  const cardOrders = orders.filter(
+    (o: any) => o.status === "paid" && o.paymentMethod === "card_ewallet",
+  );
+
+  // Insert one row per non-cash transaction
+  for (const order of cardOrders) {
+    await ctx.db.insert("dailyPaymentTransactions", {
+      storeId,
+      reportDate,
+      orderId: order._id,
+      orderNumber: order.orderNumber ?? "",
+      paymentType: order.cardPaymentType ?? "Unknown",
+      referenceNumber: order.cardReferenceNumber ?? "",
+      amount: order.netSales,
+      paidAt: order.paidAt ?? order._creationTime,
+    });
+  }
+}
+
 // Get daily report
 export const getDailyReport = query({
   args: {
@@ -540,6 +611,98 @@ export const getDailyProductSales = query({
       voidedQuantity: ps.voidedQuantity,
       voidedAmount: ps.voidedAmount,
     }));
+  },
+});
+
+// Get payment transactions for a day (non-cash only, grouped by payment type)
+export const getDailyPaymentTransactions = query({
+  args: {
+    storeId: v.id("stores"),
+    reportDate: v.string(),
+  },
+  returns: v.array(
+    v.object({
+      paymentType: v.string(),
+      transactions: v.array(
+        v.object({
+          orderId: v.id("orders"),
+          orderNumber: v.string(),
+          referenceNumber: v.string(),
+          amount: v.number(),
+          paidAt: v.number(),
+        }),
+      ),
+      subtotal: v.number(),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
+    }
+
+    const transactions = await ctx.db
+      .query("dailyPaymentTransactions")
+      .withIndex("by_store_date", (q) =>
+        q.eq("storeId", args.storeId).eq("reportDate", args.reportDate),
+      )
+      .collect();
+
+    // Group by paymentType
+    const groupMap = new Map<
+      string,
+      {
+        paymentType: string;
+        transactions: {
+          orderId: Id<"orders">;
+          orderNumber: string;
+          referenceNumber: string;
+          amount: number;
+          paidAt: number;
+        }[];
+        subtotal: number;
+      }
+    >();
+
+    for (const tx of transactions) {
+      const existing = groupMap.get(tx.paymentType);
+      if (existing) {
+        existing.transactions.push({
+          orderId: tx.orderId,
+          orderNumber: tx.orderNumber,
+          referenceNumber: tx.referenceNumber,
+          amount: tx.amount,
+          paidAt: tx.paidAt,
+        });
+        existing.subtotal += tx.amount;
+      } else {
+        groupMap.set(tx.paymentType, {
+          paymentType: tx.paymentType,
+          transactions: [
+            {
+              orderId: tx.orderId,
+              orderNumber: tx.orderNumber,
+              referenceNumber: tx.referenceNumber,
+              amount: tx.amount,
+              paidAt: tx.paidAt,
+            },
+          ],
+          subtotal: tx.amount,
+        });
+      }
+    }
+
+    // Sort transactions within each group by paidAt
+    const results = Array.from(groupMap.values());
+    for (const group of results) {
+      group.transactions.sort((a, b) => a.paidAt - b.paidAt);
+      group.subtotal = roundToTwo(group.subtotal);
+    }
+
+    // Sort groups alphabetically by paymentType
+    results.sort((a, b) => a.paymentType.localeCompare(b.paymentType));
+
+    return results;
   },
 });
 

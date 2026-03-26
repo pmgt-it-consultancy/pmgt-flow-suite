@@ -331,6 +331,17 @@ export default defineSchema({
     .index("by_store_date", ["storeId", "reportDate"])
     .index("by_store_date_category", ["storeId", "reportDate", "categoryId"]),
 
+  dailyPaymentTransactions: defineTable({
+    storeId: v.id("stores"),
+    reportDate: v.string(),
+    orderId: v.id("orders"),
+    orderNumber: v.string(),
+    paymentType: v.string(),
+    referenceNumber: v.string(),
+    amount: v.number(),
+    paidAt: v.number(),
+  }).index("by_store_date", ["storeId", "reportDate"]),
+
   // ===== SETTINGS =====
   settings: defineTable({
     storeId: v.optional(v.id("stores")),
