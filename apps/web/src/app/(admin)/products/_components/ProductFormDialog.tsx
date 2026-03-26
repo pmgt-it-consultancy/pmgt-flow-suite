@@ -30,6 +30,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency } from "@/lib/format";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { QuickCreateModifierGroupDialog } from "../../_shared/QuickCreateModifierGroupDialog";
 import { useProductMutations } from "../_hooks";
 import { type ProductFormValues, productDefaults, productSchema } from "../_schemas";
 import { QuickCreateCategoryDialog } from "./QuickCreateCategoryDialog";
@@ -62,6 +63,7 @@ export function ProductFormDialog({
   const saveAndCreateAnotherRef = useRef(false);
 
   const [showQuickCreateCategory, setShowQuickCreateCategory] = useState(false);
+  const [showQuickCreateModifier, setShowQuickCreateModifier] = useState(false);
   const [selectedModifierGroupId, setSelectedModifierGroupId] = useState<Id<"modifierGroups"> | "">(
     "",
   );
@@ -474,7 +476,13 @@ export function ProductFormDialog({
                 <div className="flex gap-2">
                   <Select
                     value={selectedModifierGroupId as string}
-                    onValueChange={(v) => setSelectedModifierGroupId(v as Id<"modifierGroups">)}
+                    onValueChange={(v) => {
+                      if (v === "__quick_create_modifier__") {
+                        setShowQuickCreateModifier(true);
+                        return;
+                      }
+                      setSelectedModifierGroupId(v as Id<"modifierGroups">);
+                    }}
                   >
                     <SelectTrigger className="flex-1">
                       <SelectValue placeholder="Add modifier group..." />
@@ -489,6 +497,13 @@ export function ProductFormDialog({
                             {g.name}
                           </SelectItem>
                         ))}
+                      <Separator className="my-1" />
+                      <SelectItem value="__quick_create_modifier__">
+                        <span className="flex items-center gap-1">
+                          <Plus className="h-3 w-3" />
+                          Create New Modifier Group
+                        </span>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <Button
@@ -583,6 +598,26 @@ export function ProductFormDialog({
         open={showQuickCreateCategory}
         onOpenChange={setShowQuickCreateCategory}
         onCreated={handleQuickCategoryCreated}
+      />
+
+      {/* Quick Create Modifier Group (stacked dialog) */}
+      <QuickCreateModifierGroupDialog
+        open={showQuickCreateModifier}
+        onOpenChange={setShowQuickCreateModifier}
+        onCreated={async (groupId) => {
+          if (!selectedStoreId || !editingId) return;
+          try {
+            await assignModifier({
+              storeId: selectedStoreId,
+              modifierGroupId: groupId as Id<"modifierGroups">,
+              productId: editingId,
+            });
+            setSelectedModifierGroupId("");
+            toast.success("Modifier group created and assigned");
+          } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to assign modifier");
+          }
+        }}
       />
     </>
   );

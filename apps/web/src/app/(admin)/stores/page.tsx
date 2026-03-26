@@ -35,6 +35,12 @@ export default function StoresPage() {
     setIsFormOpen(true);
   }, []);
 
+  const handleDuplicate = useCallback((data: StoreFormValues) => {
+    setEditingId(null);
+    setFormInitialValues(data);
+    setIsFormOpen(true);
+  }, []);
+
   const handleSaveAndCreateAnother = useCallback((): StoreFormValues => {
     return { ...storeDefaults };
   }, []);
@@ -54,7 +60,7 @@ export default function StoresPage() {
       </div>
 
       {/* Stores Table */}
-      <StoresTable stores={stores} onEdit={handleOpenEdit} />
+      <StoresTable stores={stores} onEdit={handleOpenEdit} onDuplicate={handleDuplicate} />
 
       {/* Create/Edit Dialog */}
       <StoreFormDialog

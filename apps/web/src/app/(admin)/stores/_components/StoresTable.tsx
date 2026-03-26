@@ -1,10 +1,16 @@
 "use client";
 
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { Building, Pencil, Store } from "lucide-react";
+import { Building, Copy, MoreHorizontal, Pencil, Store } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -38,25 +44,35 @@ interface StoreData {
 interface StoresTableProps {
   stores: StoreData[] | undefined;
   onEdit: (storeId: Id<"stores">, data: StoreFormValues) => void;
+  onDuplicate: (data: StoreFormValues) => void;
 }
 
-export function StoresTable({ stores, onEdit }: StoresTableProps) {
+export function StoresTable({ stores, onEdit, onDuplicate }: StoresTableProps) {
+  const toFormValues = (store: StoreData): StoreFormValues => ({
+    name: store.name,
+    parentId: store.parentId,
+    address1: store.address1,
+    address2: store.address2 ?? "",
+    tin: store.tin,
+    min: store.min,
+    vatRate: store.vatRate,
+    contactNumber: store.contactNumber ?? "",
+    telephone: store.telephone ?? "",
+    email: store.email ?? "",
+    website: store.website ?? "",
+    socials: store.socials ?? [],
+    footer: store.footer ?? "",
+    isActive: store.isActive,
+  });
+
   const handleEdit = (store: StoreData) => {
-    onEdit(store._id, {
-      name: store.name,
-      parentId: store.parentId,
-      address1: store.address1,
-      address2: store.address2 ?? "",
-      tin: store.tin,
-      min: store.min,
-      vatRate: store.vatRate,
-      contactNumber: store.contactNumber ?? "",
-      telephone: store.telephone ?? "",
-      email: store.email ?? "",
-      website: store.website ?? "",
-      socials: store.socials ?? [],
-      footer: store.footer ?? "",
-      isActive: store.isActive,
+    onEdit(store._id, toFormValues(store));
+  };
+
+  const handleDuplicate = (store: StoreData) => {
+    onDuplicate({
+      ...toFormValues(store),
+      name: `${store.name} (Copy)`,
     });
   };
 
@@ -116,9 +132,23 @@ export function StoresTable({ stores, onEdit }: StoresTableProps) {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" onClick={() => handleEdit(store)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEdit(store)}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDuplicate(store)}>
+                          <Copy className="mr-2 h-4 w-4" />
+                          Duplicate
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
