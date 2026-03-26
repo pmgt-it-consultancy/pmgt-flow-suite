@@ -1,28 +1,43 @@
 "use client";
 
 import { api } from "@packages/backend/convex/_generated/api";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Plus } from "lucide-react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { StoreFormDialog, StoresTable } from "./_components";
-import { useStoreMutations } from "./_hooks";
-import { useStoreFormStore } from "./_stores/useStoreFormStore";
+import { type StoreFormValues, storeDefaults } from "./_schemas";
 
 export default function StoresPage() {
   const { isAuthenticated } = useAuth();
 
-  // Zustand store actions
-  const { openCreateDialog, openEditDialog } = useStoreFormStore();
-
-  // Mutations hook
-  const { handleSubmit } = useStoreMutations();
+  // Local dialog state
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState<Id<"stores"> | null>(null);
+  const [formInitialValues, setFormInitialValues] = useState<StoreFormValues | undefined>(
+    undefined,
+  );
 
   // Queries
   const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
 
-  // Get parent stores (for branch creation dropdown)
-  const parentStores = stores?.filter((s) => !s.parentId) ?? [];
+  const handleOpenCreate = useCallback(() => {
+    setEditingId(null);
+    setFormInitialValues(undefined);
+    setIsFormOpen(true);
+  }, []);
+
+  const handleOpenEdit = useCallback((storeId: Id<"stores">, data: StoreFormValues) => {
+    setEditingId(storeId);
+    setFormInitialValues(data);
+    setIsFormOpen(true);
+  }, []);
+
+  const handleSaveAndCreateAnother = useCallback((): StoreFormValues => {
+    return { ...storeDefaults };
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -32,17 +47,23 @@ export default function StoresPage() {
           <h1 className="text-3xl font-bold tracking-tight">Stores</h1>
           <p className="text-gray-500">Manage your stores and branches</p>
         </div>
-        <Button onClick={openCreateDialog}>
+        <Button onClick={handleOpenCreate}>
           <Plus className="mr-2 h-4 w-4" />
           Add Store
         </Button>
       </div>
 
       {/* Stores Table */}
-      <StoresTable stores={stores} onEdit={openEditDialog} />
+      <StoresTable stores={stores} onEdit={handleOpenEdit} />
 
       {/* Create/Edit Dialog */}
-      <StoreFormDialog parentStores={parentStores} onSubmit={handleSubmit} />
+      <StoreFormDialog
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        editingId={editingId}
+        initialValues={formInitialValues}
+        onSaveAndCreateAnother={handleSaveAndCreateAnother}
+      />
     </div>
   );
 }

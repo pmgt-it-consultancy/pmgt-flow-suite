@@ -1,8 +1,13 @@
 "use client";
 
 import { useMaskito } from "@maskito/react";
+import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useForm } from "@tanstack/react-form";
+import { useQuery } from "convex/react";
 import { Plus, Trash2 } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,8 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -21,30 +26,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useStoreFormStore } from "../_stores/useStoreFormStore";
-
-interface ParentStore {
-  _id: Id<"stores">;
-  name: string;
-}
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/useAuth";
+import { useStoreMutations } from "../_hooks";
+import { type StoreFormValues, storeDefaults, storeSchema } from "../_schemas";
 
 interface StoreFormDialogProps {
-  parentStores: ParentStore[];
-  onSubmit: () => Promise<void>;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  editingId: Id<"stores"> | null;
+  initialValues?: StoreFormValues;
+  onSaveAndCreateAnother?: () => StoreFormValues;
 }
 
-export function StoreFormDialog({ parentStores, onSubmit }: StoreFormDialogProps) {
-  const {
-    isDialogOpen,
-    editingStoreId,
-    formData,
-    isSubmitting,
-    closeDialog,
-    setFormData,
-    addSocial,
-    removeSocial,
-    updateSocial,
-  } = useStoreFormStore();
+/** Map TanStack Form errors to the shape FieldError expects. */
+function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
+  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
+}
+
+export function StoreFormDialog({
+  open,
+  onOpenChange,
+  editingId,
+  initialValues,
+  onSaveAndCreateAnother,
+}: StoreFormDialogProps) {
+  const { isAuthenticated } = useAuth();
+  const { handleCreate, handleUpdate } = useStoreMutations();
+  const saveAndCreateAnotherRef = useRef(false);
+
+  const isEditing = editingId !== null;
+  const defaults = initialValues ?? storeDefaults;
+
+  // Fetch parent stores for the dropdown
+  const stores = useQuery(api.stores.list, isAuthenticated ? {} : "skip");
+  const parentStores = stores?.filter((s) => !s.parentId) ?? [];
 
   // TIN input mask (format: 000-000-000-000)
   const tinMaskRef = useMaskito({
@@ -54,7 +70,6 @@ export function StoreFormDialog({ parentStores, onSubmit }: StoreFormDialogProps
   });
 
   // Philippine mobile number mask
-  // Supports: 09260385084, +639260385084, 639260385084
   const contactNumberMaskRef = useMaskito({
     options: {
       mask: ({ value }) => {
@@ -106,268 +121,500 @@ export function StoreFormDialog({ parentStores, onSubmit }: StoreFormDialogProps
     },
   });
 
+  const form = useForm({
+    defaultValues: defaults,
+    validators: {
+      onBlur: storeSchema,
+      onSubmit: storeSchema,
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        if (isEditing) {
+          await handleUpdate(value, editingId);
+        } else {
+          await handleCreate(value);
+        }
+
+        if (saveAndCreateAnotherRef.current) {
+          saveAndCreateAnotherRef.current = false;
+          const freshDefaults = onSaveAndCreateAnother?.() ?? storeDefaults;
+          form.reset(freshDefaults);
+        } else {
+          onOpenChange(false);
+        }
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Failed to save store");
+      }
+    },
+  });
+
+  // Reset form when dialog opens with new values
+  useEffect(() => {
+    if (open) {
+      form.reset(defaults);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   return (
-    <Dialog open={isDialogOpen} onOpenChange={(open) => !open && closeDialog()}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{editingStoreId ? "Edit Store" : "Create Store"}</DialogTitle>
+          <DialogTitle>{isEditing ? "Edit Store" : "Create Store"}</DialogTitle>
           <DialogDescription>
-            {editingStoreId
+            {isEditing
               ? "Update the store details below."
               : "Fill in the details to create a new store."}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          {/* Basic Info */}
-          <div className="grid gap-2">
-            <Label htmlFor="name">Store Name</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ name: e.target.value })}
-              placeholder="Enter store name"
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
+          <FieldGroup className="py-4">
+            {/* Store Name */}
+            <form.Field
+              name="name"
+              children={(field) => {
+                const hasErrors = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                return (
+                  <Field data-invalid={hasErrors || undefined}>
+                    <FieldLabel htmlFor="store-name">Store Name</FieldLabel>
+                    <Input
+                      id="store-name"
+                      autoFocus
+                      aria-invalid={hasErrors || undefined}
+                      placeholder="Enter store name"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                    <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+                  </Field>
+                );
+              }}
             />
-          </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="parent">Parent Store (Optional)</Label>
-            <Select
-              value={formData.parentId ?? "none"}
-              onValueChange={(value) =>
-                setFormData({ parentId: value === "none" ? undefined : (value as Id<"stores">) })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select parent store" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">No Parent (Main Store)</SelectItem>
-                {parentStores
-                  .filter((s) => s._id !== editingStoreId)
-                  .map((store) => (
-                    <SelectItem key={store._id} value={store._id}>
-                      {store.name}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-gray-500">
-              Select a parent store to create this as a branch.
-            </p>
-          </div>
-
-          {/* Address */}
-          <div className="grid gap-2">
-            <Label htmlFor="address1">Address Line 1</Label>
-            <Input
-              id="address1"
-              value={formData.address1}
-              onChange={(e) => setFormData({ address1: e.target.value })}
-              placeholder="Street address"
+            {/* Parent Store */}
+            <form.Field
+              name="parentId"
+              children={(field) => (
+                <Field>
+                  <FieldLabel htmlFor="store-parentId">Parent Store (Optional)</FieldLabel>
+                  <Select
+                    value={field.state.value ?? "none"}
+                    onValueChange={(value) =>
+                      field.handleChange(value === "none" ? undefined : value)
+                    }
+                  >
+                    <SelectTrigger id="store-parentId">
+                      <SelectValue placeholder="Select parent store" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No Parent (Main Store)</SelectItem>
+                      {parentStores
+                        .filter((s) => s._id !== editingId)
+                        .map((store) => (
+                          <SelectItem key={store._id} value={store._id}>
+                            {store.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-gray-500">
+                    Select a parent store to create this as a branch.
+                  </p>
+                </Field>
+              )}
             />
-          </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="address2">Address Line 2 (Optional)</Label>
-            <Input
-              id="address2"
-              value={formData.address2}
-              onChange={(e) => setFormData({ address2: e.target.value })}
-              placeholder="Building, floor, etc."
+            {/* Address Line 1 */}
+            <form.Field
+              name="address1"
+              children={(field) => {
+                const hasErrors = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                return (
+                  <Field data-invalid={hasErrors || undefined}>
+                    <FieldLabel htmlFor="store-address1">Address Line 1</FieldLabel>
+                    <Input
+                      id="store-address1"
+                      aria-invalid={hasErrors || undefined}
+                      placeholder="Street address"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                    <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+                  </Field>
+                );
+              }}
             />
-          </div>
 
-          {/* TIN & MIN */}
-          <div className="grid grid-cols-2 gap-4 items-start">
-            <div className="grid gap-2">
-              <Label htmlFor="tin">TIN (Tax ID)</Label>
-              <Input
-                id="tin"
-                ref={tinMaskRef}
-                value={formData.tin}
-                onInput={(e) => setFormData({ tin: e.currentTarget.value })}
-                placeholder="000-000-000-000"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="min">MIN (Machine ID)</Label>
-              <Input
-                id="min"
-                value={formData.min}
-                onChange={(e) => setFormData({ min: e.target.value })}
-                placeholder="Auto-generated if empty"
-              />
-              <p className="text-xs text-gray-500">
-                Leave blank to auto-generate. Update when BIR-registered.
-              </p>
-            </div>
-          </div>
+            {/* Address Line 2 */}
+            <form.Field
+              name="address2"
+              children={(field) => (
+                <Field>
+                  <FieldLabel htmlFor="store-address2">Address Line 2 (Optional)</FieldLabel>
+                  <Input
+                    id="store-address2"
+                    placeholder="Building, floor, etc."
+                    value={field.state.value ?? ""}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                  />
+                </Field>
+              )}
+            />
 
-          {/* VAT Rate & Status */}
-          <div className="grid grid-cols-2 gap-4 justify-start">
-            <div className="grid gap-2">
-              <Label htmlFor="vatRate">VAT Rate (%)</Label>
-              <Input
-                id="vatRate"
-                type="number"
-                value={formData.vatRate}
-                onChange={(e) => setFormData({ vatRate: parseFloat(e.target.value) || 0 })}
-              />
-            </div>
-            {editingStoreId && (
-              <div className="grid gap-2">
-                <Label htmlFor="isActive">Status</Label>
-                <Select
-                  value={formData.isActive ? "active" : "inactive"}
-                  onValueChange={(value) => setFormData({ isActive: value === "active" })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
-
-          {/* Contact Information */}
-          <div className="border-t pt-4 mt-2">
-            <p className="text-sm font-medium text-gray-700 mb-3">
-              Contact Information (for receipts)
-            </p>
-
+            {/* TIN & MIN side by side */}
             <div className="grid grid-cols-2 gap-4 items-start">
-              <div className="grid gap-2">
-                <Label htmlFor="contactNumber">Contact Number</Label>
-                <Input
-                  id="contactNumber"
-                  ref={contactNumberMaskRef}
-                  value={formData.contactNumber}
-                  onInput={(e) => setFormData({ contactNumber: e.currentTarget.value })}
-                  placeholder="0917-123-4567"
-                />
-                <p className="text-xs text-gray-500">
-                  Formats: 0917-123-4567, +63-917-123-4567, 63-917-123-4567
-                </p>
-              </div>
-              <div className="grid gap-2 ">
-                <Label htmlFor="telephone">Telephone</Label>
-                <Input
-                  id="telephone"
-                  value={formData.telephone}
-                  onChange={(e) => setFormData({ telephone: e.target.value })}
-                  placeholder="e.g., (02) 8xxx-xxxx"
-                />
-              </div>
+              <form.Field
+                name="tin"
+                children={(field) => {
+                  const hasErrors =
+                    field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                  return (
+                    <Field data-invalid={hasErrors || undefined}>
+                      <FieldLabel htmlFor="store-tin">TIN (Tax ID)</FieldLabel>
+                      <Input
+                        id="store-tin"
+                        ref={tinMaskRef}
+                        aria-invalid={hasErrors || undefined}
+                        placeholder="000-000-000-000"
+                        value={field.state.value}
+                        onInput={(e) => field.handleChange(e.currentTarget.value)}
+                        onBlur={field.handleBlur}
+                      />
+                      <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+                    </Field>
+                  );
+                }}
+              />
+
+              <form.Field
+                name="min"
+                children={(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="store-min">MIN (Machine ID)</FieldLabel>
+                    <Input
+                      id="store-min"
+                      placeholder="Auto-generated if empty"
+                      value={field.state.value ?? ""}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                    <p className="text-xs text-gray-500">
+                      Leave blank to auto-generate. Update when BIR-registered.
+                    </p>
+                  </Field>
+                )}
+              />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ email: e.target.value })}
-                  placeholder="store@example.com"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="website">Website</Label>
-                <Input
-                  id="website"
-                  value={formData.website}
-                  onChange={(e) => setFormData({ website: e.target.value })}
-                  placeholder="www.example.com"
-                />
-              </div>
-            </div>
+            {/* VAT Rate & Status side by side */}
+            <div className="grid grid-cols-2 gap-4 justify-start">
+              <form.Field
+                name="vatRate"
+                children={(field) => {
+                  const hasErrors =
+                    field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                  return (
+                    <Field data-invalid={hasErrors || undefined}>
+                      <FieldLabel htmlFor="store-vatRate">VAT Rate (%)</FieldLabel>
+                      <Input
+                        id="store-vatRate"
+                        type="number"
+                        min={0}
+                        aria-invalid={hasErrors || undefined}
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(Number.parseFloat(e.target.value) || 0)}
+                        onBlur={field.handleBlur}
+                      />
+                      <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+                    </Field>
+                  );
+                }}
+              />
 
-            {/* Social Links */}
-            <div className="grid gap-3 mt-4">
-              <div className="flex items-center justify-between">
-                <Label>Social Links</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addSocial}>
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add Social
-                </Button>
-              </div>
-              {formData.socials.length === 0 ? (
-                <p className="text-xs text-gray-500">No social links added yet.</p>
-              ) : (
-                <div className="space-y-2">
-                  {formData.socials.map((social, index) => (
-                    <div key={index} className="flex gap-2 items-start">
+              {/* Status (edit mode only) */}
+              {isEditing && (
+                <form.Field
+                  name="isActive"
+                  children={(field) => (
+                    <Field>
+                      <FieldLabel htmlFor="store-isActive">Status</FieldLabel>
                       <Select
-                        value={social.platform}
-                        onValueChange={(value) => updateSocial(index, "platform", value)}
+                        value={field.state.value ? "active" : "inactive"}
+                        onValueChange={(value) => field.handleChange(value === "active")}
                       >
-                        <SelectTrigger className="w-[140px]">
-                          <SelectValue placeholder="Platform" />
+                        <SelectTrigger id="store-isActive">
+                          <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Facebook">Facebook</SelectItem>
-                          <SelectItem value="Instagram">Instagram</SelectItem>
-                          <SelectItem value="TikTok">TikTok</SelectItem>
-                          <SelectItem value="Twitter">Twitter/X</SelectItem>
-                          <SelectItem value="YouTube">YouTube</SelectItem>
-                          <SelectItem value="LinkedIn">LinkedIn</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
                         </SelectContent>
                       </Select>
-                      <Input
-                        className="flex-1"
-                        value={social.url}
-                        onChange={(e) => updateSocial(index, "url", e.target.value)}
-                        placeholder="https://..."
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                        onClick={() => removeSocial(index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                    </Field>
+                  )}
+                />
               )}
             </div>
 
-            {/* Receipt Footer */}
-            <div className="grid gap-2 mt-4">
-              <Label htmlFor="footer">Receipt Footer</Label>
-              <textarea
-                id="footer"
-                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={formData.footer}
-                onChange={(e) => setFormData({ footer: e.target.value })}
-                placeholder="Custom message to display at the bottom of receipts"
-              />
-              <p className="text-xs text-gray-500">
-                Leave blank to use default: "Thank you for your patronage!"
-              </p>
-            </div>
-          </div>
-        </div>
+            <FieldSeparator>Contact Information</FieldSeparator>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={closeDialog} disabled={isSubmitting}>
-            Cancel
-          </Button>
-          <Button
-            onClick={onSubmit}
-            disabled={isSubmitting || !formData.name || !formData.address1 || !formData.tin}
-          >
-            {isSubmitting ? "Saving..." : editingStoreId ? "Update" : "Create"}
-          </Button>
-        </DialogFooter>
+            {/* Contact Number & Telephone side by side */}
+            <div className="grid grid-cols-2 gap-4 items-start">
+              <form.Field
+                name="contactNumber"
+                children={(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="store-contactNumber">Contact Number</FieldLabel>
+                    <Input
+                      id="store-contactNumber"
+                      ref={contactNumberMaskRef}
+                      placeholder="0917-123-4567"
+                      value={field.state.value ?? ""}
+                      onInput={(e) => field.handleChange(e.currentTarget.value)}
+                      onBlur={field.handleBlur}
+                    />
+                    <p className="text-xs text-gray-500">
+                      Formats: 0917-123-4567, +63-917-123-4567, 63-917-123-4567
+                    </p>
+                  </Field>
+                )}
+              />
+
+              <form.Field
+                name="telephone"
+                children={(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="store-telephone">Telephone</FieldLabel>
+                    <Input
+                      id="store-telephone"
+                      placeholder="e.g., (02) 8xxx-xxxx"
+                      value={field.state.value ?? ""}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </Field>
+                )}
+              />
+            </div>
+
+            {/* Email & Website side by side */}
+            <div className="grid grid-cols-2 gap-4">
+              <form.Field
+                name="email"
+                children={(field) => {
+                  const hasErrors =
+                    field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                  return (
+                    <Field data-invalid={hasErrors || undefined}>
+                      <FieldLabel htmlFor="store-email">Email</FieldLabel>
+                      <Input
+                        id="store-email"
+                        type="email"
+                        aria-invalid={hasErrors || undefined}
+                        placeholder="store@example.com"
+                        value={field.state.value ?? ""}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        onBlur={field.handleBlur}
+                      />
+                      <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+                    </Field>
+                  );
+                }}
+              />
+
+              <form.Field
+                name="website"
+                children={(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="store-website">Website</FieldLabel>
+                    <Input
+                      id="store-website"
+                      placeholder="www.example.com"
+                      value={field.state.value ?? ""}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </Field>
+                )}
+              />
+            </div>
+
+            <FieldSeparator>Social Links</FieldSeparator>
+
+            {/* Social links array */}
+            <form.Field
+              name="socials"
+              mode="array"
+              children={(field) => (
+                <div className="flex flex-col gap-4">
+                  <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+
+                  {field.state.value.length === 0 ? (
+                    <p className="text-xs text-gray-500">No social links added yet.</p>
+                  ) : (
+                    field.state.value.map((_, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        {/* Platform Select */}
+                        <form.Field
+                          name={`socials[${index}].platform`}
+                          children={(subField) => {
+                            const hasErrors =
+                              subField.state.meta.isTouched &&
+                              subField.state.meta.errors.length > 0;
+                            return (
+                              <Field data-invalid={hasErrors || undefined} className="w-[140px]">
+                                {index === 0 && (
+                                  <FieldLabel htmlFor={`social-platform-${index}`}>
+                                    Platform
+                                  </FieldLabel>
+                                )}
+                                <Select
+                                  value={subField.state.value}
+                                  onValueChange={(value) => subField.handleChange(value)}
+                                >
+                                  <SelectTrigger id={`social-platform-${index}`}>
+                                    <SelectValue placeholder="Platform" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Facebook">Facebook</SelectItem>
+                                    <SelectItem value="Instagram">Instagram</SelectItem>
+                                    <SelectItem value="TikTok">TikTok</SelectItem>
+                                    <SelectItem value="Twitter">Twitter/X</SelectItem>
+                                    <SelectItem value="YouTube">YouTube</SelectItem>
+                                    <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+                                    <SelectItem value="Other">Other</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FieldError errors={normalizeErrors(subField.state.meta.errors)} />
+                              </Field>
+                            );
+                          }}
+                        />
+
+                        {/* URL Input */}
+                        <form.Field
+                          name={`socials[${index}].url`}
+                          children={(subField) => {
+                            const hasErrors =
+                              subField.state.meta.isTouched &&
+                              subField.state.meta.errors.length > 0;
+                            return (
+                              <Field data-invalid={hasErrors || undefined} className="flex-1">
+                                {index === 0 && (
+                                  <FieldLabel htmlFor={`social-url-${index}`}>URL</FieldLabel>
+                                )}
+                                <Input
+                                  id={`social-url-${index}`}
+                                  aria-invalid={hasErrors || undefined}
+                                  placeholder="https://..."
+                                  value={subField.state.value}
+                                  onChange={(e) => subField.handleChange(e.target.value)}
+                                  onBlur={subField.handleBlur}
+                                />
+                                <FieldError errors={normalizeErrors(subField.state.meta.errors)} />
+                              </Field>
+                            );
+                          }}
+                        />
+
+                        {/* Remove Button */}
+                        <div className="flex flex-col items-center gap-1">
+                          {index === 0 && (
+                            <span className="text-sm font-medium leading-snug invisible">X</span>
+                          )}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => field.removeValue(index)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-fit"
+                    onClick={() => field.pushValue({ platform: "", url: "" })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Social
+                  </Button>
+                </div>
+              )}
+            />
+
+            <FieldSeparator>Receipt</FieldSeparator>
+
+            {/* Receipt Footer */}
+            <form.Field
+              name="footer"
+              children={(field) => (
+                <Field>
+                  <FieldLabel htmlFor="store-footer">Receipt Footer</FieldLabel>
+                  <Textarea
+                    id="store-footer"
+                    placeholder="Custom message to display at the bottom of receipts"
+                    value={field.state.value ?? ""}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                  />
+                  <p className="text-xs text-gray-500">
+                    Leave blank to use default: "Thank you for your patronage!"
+                  </p>
+                </Field>
+              )}
+            />
+          </FieldGroup>
+
+          <DialogFooter className="gap-2 sm:gap-0 mt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={form.state.isSubmitting}
+            >
+              Cancel
+            </Button>
+            {!isEditing && (
+              <Button
+                type="submit"
+                variant="outline"
+                disabled={form.state.isSubmitting}
+                onClick={() => {
+                  saveAndCreateAnotherRef.current = true;
+                }}
+              >
+                {form.state.isSubmitting ? "Saving..." : "Save & Create Another"}
+              </Button>
+            )}
+            <Button
+              type="submit"
+              disabled={form.state.isSubmitting}
+              onClick={() => {
+                saveAndCreateAnotherRef.current = false;
+              }}
+            >
+              {form.state.isSubmitting ? "Saving..." : isEditing ? "Update" : "Create"}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

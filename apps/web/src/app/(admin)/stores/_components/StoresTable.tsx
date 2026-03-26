@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { StoreFormData } from "../_stores/useStoreFormStore";
+import type { StoreFormValues } from "../_schemas";
 
 interface StoreData {
   _id: Id<"stores">;
@@ -37,7 +37,7 @@ interface StoreData {
 
 interface StoresTableProps {
   stores: StoreData[] | undefined;
-  onEdit: (storeId: Id<"stores">, data: StoreFormData) => void;
+  onEdit: (storeId: Id<"stores">, data: StoreFormValues) => void;
 }
 
 export function StoresTable({ stores, onEdit }: StoresTableProps) {
