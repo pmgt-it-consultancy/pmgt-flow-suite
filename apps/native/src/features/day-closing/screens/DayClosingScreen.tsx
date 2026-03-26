@@ -2,7 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useState } from "react";
-import { Alert, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -147,14 +154,13 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
           onBack={() => navigation.goBack()}
           centerTitle
           rightContent={
-            <Button
-              variant="outline"
-              size="sm"
-              onPress={handleGenerateReport}
-              disabled={isGenerating}
-            >
-              {isGenerating ? "Generating..." : "Refresh Report"}
-            </Button>
+            isGenerating ? (
+              <ActivityIndicator size="small" color="#0D87E1" />
+            ) : (
+              <Button variant="outline" size="sm" onPress={handleGenerateReport}>
+                Refresh Report
+              </Button>
+            )
           }
         />
 
