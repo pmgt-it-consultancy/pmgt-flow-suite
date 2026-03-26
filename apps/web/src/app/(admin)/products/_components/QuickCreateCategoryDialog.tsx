@@ -41,7 +41,6 @@ export function QuickCreateCategoryDialog({
   const form = useForm({
     defaultValues: { name: "" },
     validators: {
-      onBlur: quickCategorySchema,
       onSubmit: quickCategorySchema,
     },
     onSubmit: async ({ value }) => {

@@ -31,7 +31,6 @@ export function ResetPasswordDialog({ open, onOpenChange, userId }: ResetPasswor
   const form = useForm({
     defaultValues: { password: "" },
     validators: {
-      onBlur: resetPasswordSchema,
       onSubmit: resetPasswordSchema,
     },
     onSubmit: async ({ value }) => {

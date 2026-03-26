@@ -65,7 +65,6 @@ export function QuickCreateModifierGroupDialog({
   const form = useForm({
     defaultValues: quickDefaults,
     validators: {
-      onBlur: quickModifierGroupSchema,
       onSubmit: quickModifierGroupSchema,
     },
     onSubmit: async ({ value }) => {

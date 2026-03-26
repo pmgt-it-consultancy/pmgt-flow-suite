@@ -120,7 +120,6 @@ export function StoreFormDialog({
   const form = useForm({
     defaultValues: defaults,
     validators: {
-      onBlur: storeSchema,
       onSubmit: storeSchema,
     },
     onSubmit: async ({ value }) => {

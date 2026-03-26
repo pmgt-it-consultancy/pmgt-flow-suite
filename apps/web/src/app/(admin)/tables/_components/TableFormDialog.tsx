@@ -46,7 +46,6 @@ export function TableFormDialog({
   const form = useForm({
     defaultValues: defaults,
     validators: {
-      onBlur: tableSchema,
       onSubmit: tableSchema,
     },
     onSubmit: async ({ value }) => {

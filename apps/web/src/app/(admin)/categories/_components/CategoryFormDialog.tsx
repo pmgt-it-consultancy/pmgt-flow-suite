@@ -84,7 +84,6 @@ export function CategoryFormDialog({
   const form = useForm({
     defaultValues: defaults,
     validators: {
-      onBlur: categorySchema,
       onSubmit: categorySchema,
     },
     onSubmit: async ({ value }) => {

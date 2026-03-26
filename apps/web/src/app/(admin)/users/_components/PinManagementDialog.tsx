@@ -40,7 +40,6 @@ export function PinManagementDialog({
   const form = useForm({
     defaultValues: { pin: "" },
     validators: {
-      onBlur: pinSchema,
       onSubmit: pinSchema,
     },
     onSubmit: async ({ value }) => {

@@ -61,7 +61,6 @@ export function ModifierGroupFormDialog({
   const form = useForm({
     defaultValues: defaults,
     validators: {
-      onBlur: modifierGroupSchema,
       onSubmit: modifierGroupSchema,
     },
     onSubmit: async ({ value }) => {

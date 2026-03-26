@@ -77,7 +77,6 @@ export function RoleFormDialog({
   const form = useForm({
     defaultValues: defaults,
     validators: {
-      onBlur: roleSchema,
       onSubmit: roleSchema,
     },
     onSubmit: async ({ value }) => {

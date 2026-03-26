@@ -49,7 +49,6 @@ export function QuickCreateRoleDialog({
   const form = useForm({
     defaultValues: { name: "", scopeLevel: "branch" },
     validators: {
-      onBlur: quickRoleSchema,
       onSubmit: quickRoleSchema,
     },
     onSubmit: async ({ value }) => {

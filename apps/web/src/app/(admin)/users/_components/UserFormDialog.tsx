@@ -60,7 +60,6 @@ export function UserFormDialog({
   const form = useForm({
     defaultValues: defaults,
     validators: {
-      onBlur: userSchema,
       onSubmit: userSchema,
     },
     onSubmit: async ({ value }) => {
