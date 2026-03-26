@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { normalizeErrors } from "./normalizeErrors";
 
 const quickOptionSchema = z.object({
   name: z.string().min(1, "Option name is required"),
@@ -50,11 +51,6 @@ interface QuickCreateModifierGroupDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreated: (groupId: string) => void;
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function QuickCreateModifierGroupDialog({

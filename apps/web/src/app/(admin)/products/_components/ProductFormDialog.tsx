@@ -7,7 +7,6 @@ import { useMutation, useQuery } from "convex/react";
 import { Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,6 +29,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency } from "@/lib/format";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 import { QuickCreateModifierGroupDialog } from "../../_shared/QuickCreateModifierGroupDialog";
 import { useProductMutations } from "../_hooks";
 import { type ProductFormValues, productDefaults, productSchema } from "../_schemas";
@@ -41,11 +41,6 @@ interface ProductFormDialogProps {
   editingId: Id<"products"> | null;
   initialValues?: ProductFormValues;
   onSaveAndCreateAnother?: () => ProductFormValues;
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 const QUICK_CREATE_CATEGORY_VALUE = "__quick_create__";

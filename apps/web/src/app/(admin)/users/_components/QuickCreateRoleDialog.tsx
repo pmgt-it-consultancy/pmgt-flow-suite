@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 
 const quickRoleSchema = z.object({
   name: z.string().min(1, "Role name is required"),
@@ -36,11 +37,6 @@ interface QuickCreateRoleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreated: (roleId: string) => void;
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function QuickCreateRoleDialog({

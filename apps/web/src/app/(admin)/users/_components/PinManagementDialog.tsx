@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 import { useUserMutations } from "../_hooks";
 import { pinSchema } from "../_schemas";
 
@@ -25,11 +26,6 @@ interface PinManagementDialogProps {
   userId: Id<"users"> | null;
   userName: string;
   hasPin: boolean;
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function PinManagementDialog({

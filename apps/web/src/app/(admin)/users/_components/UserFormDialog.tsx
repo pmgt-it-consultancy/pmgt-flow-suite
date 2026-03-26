@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 import { useUserMutations } from "../_hooks";
 import { type UserFormValues, userDefaults, userSchema } from "../_schemas";
 import { QuickCreateRoleDialog } from "./QuickCreateRoleDialog";
@@ -36,11 +37,6 @@ interface UserFormDialogProps {
   editingId: Id<"users"> | null;
   initialValues?: UserFormValues;
   onSaveAndCreateAnother?: () => UserFormValues;
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function UserFormDialog({

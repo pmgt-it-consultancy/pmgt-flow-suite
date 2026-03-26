@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 import { QuickCreateModifierGroupDialog } from "../../_shared/QuickCreateModifierGroupDialog";
 import { useCategoryMutations } from "../_hooks";
 import { type CategoryFormValues, categoryDefaults, categorySchema } from "../_schemas";
@@ -38,11 +39,6 @@ interface CategoryFormDialogProps {
   editingId: Id<"categories"> | null;
   initialValues?: CategoryFormValues;
   onSaveAndCreateAnother?: () => CategoryFormValues;
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function CategoryFormDialog({

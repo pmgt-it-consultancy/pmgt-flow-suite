@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 import { useStoreMutations } from "../_hooks";
 import { type StoreFormValues, storeDefaults, storeSchema } from "../_schemas";
 
@@ -37,11 +38,6 @@ interface StoreFormDialogProps {
   editingId: Id<"stores"> | null;
   initialValues?: StoreFormValues;
   onSaveAndCreateAnother?: () => StoreFormValues;
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function StoreFormDialog({

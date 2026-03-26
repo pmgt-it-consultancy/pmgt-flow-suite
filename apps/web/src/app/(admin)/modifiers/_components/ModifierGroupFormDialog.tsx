@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 import { useModifierMutations } from "../_hooks";
 import {
   type ModifierGroupFormValues,
@@ -40,11 +41,6 @@ interface ModifierGroupFormDialogProps {
   initialValues?: ModifierGroupFormValues;
   onSaveAndCreateAnother?: () => ModifierGroupFormValues;
   originalOptionIds?: string[];
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function ModifierGroupFormDialog({

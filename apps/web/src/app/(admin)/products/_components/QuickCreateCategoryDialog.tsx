@@ -3,6 +3,7 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "convex/react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 
 const quickCategorySchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -26,11 +28,6 @@ interface QuickCreateCategoryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreated: (categoryId: string) => void;
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function QuickCreateCategoryDialog({
@@ -63,6 +60,12 @@ export function QuickCreateCategoryDialog({
       }
     },
   });
+
+  useEffect(() => {
+    if (open) {
+      form.reset();
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

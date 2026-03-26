@@ -17,6 +17,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 import { useTableMutations } from "../_hooks";
 import { type TableFormValues, tableDefaults, tableSchema } from "../_schemas";
 
@@ -26,11 +27,6 @@ interface TableFormDialogProps {
   editingId: Id<"tables"> | null;
   initialValues?: TableFormValues;
   onSaveAndCreateAnother?: () => TableFormValues;
-}
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function TableFormDialog({

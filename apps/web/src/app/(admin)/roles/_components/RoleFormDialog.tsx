@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { normalizeErrors } from "../../_shared/normalizeErrors";
 import { useRoleMutations } from "../_hooks";
 import { type RoleFormValues, roleDefaults, roleSchema } from "../_schemas";
 
@@ -57,11 +58,6 @@ const categoryLabels: Record<string, string> = {
   stores: "Stores",
   system: "System",
 };
-
-/** Map TanStack Form errors to the shape FieldError expects. */
-function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
-  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
-}
 
 export function RoleFormDialog({
   open,
