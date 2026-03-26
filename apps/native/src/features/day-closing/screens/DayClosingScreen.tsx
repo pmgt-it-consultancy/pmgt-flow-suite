@@ -30,6 +30,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isPrintingZReport, setIsPrintingZReport] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [startTime, setStartTime] = useState<string | undefined>(undefined);
   const [endTime, setEndTime] = useState<string | undefined>(undefined);
 
@@ -69,11 +70,14 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   // Generate report + log closing
   const handleGenerateReport = useCallback(async () => {
     if (!storeId) return;
+    setIsGenerating(true);
     try {
       await generateReport({ storeId, reportDate, startTime, endTime });
       await logDayClosing({ storeId, reportDate });
     } catch (_error) {
       Alert.alert("Error", "Failed to generate report.");
+    } finally {
+      setIsGenerating(false);
     }
   }, [storeId, reportDate, startTime, endTime, generateReport, logDayClosing]);
 
@@ -143,8 +147,13 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
           onBack={() => navigation.goBack()}
           centerTitle
           rightContent={
-            <Button variant="outline" size="sm" onPress={handleGenerateReport}>
-              Refresh Report
+            <Button
+              variant="outline"
+              size="sm"
+              onPress={handleGenerateReport}
+              disabled={isGenerating}
+            >
+              {isGenerating ? "Generating..." : "Refresh Report"}
             </Button>
           }
         />
