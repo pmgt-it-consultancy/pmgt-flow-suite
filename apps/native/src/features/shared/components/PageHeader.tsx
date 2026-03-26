@@ -20,6 +20,21 @@ export const PageHeader = ({
   rightContent,
   centerTitle = false,
 }: PageHeaderProps) => {
+  const titleElement = titleContent ?? (
+    <>
+      {title ? (
+        <Text variant="heading" size="lg" numberOfLines={1}>
+          {title}
+        </Text>
+      ) : null}
+      {subtitle ? (
+        <Text variant="muted" size="sm" numberOfLines={1}>
+          {subtitle}
+        </Text>
+      ) : null}
+    </>
+  );
+
   return (
     <XStack
       backgroundColor="#FFFFFF"
@@ -29,24 +44,30 @@ export const PageHeader = ({
       borderBottomWidth={1}
       borderColor="#E5E7EB"
       gap={12}
+      position="relative"
     >
       {onBack ? <IconButton icon="arrow-back" variant="ghost" onPress={onBack} /> : null}
-      <YStack flex={1} alignItems={centerTitle ? "center" : "flex-start"}>
-        {titleContent ?? (
-          <>
-            {title ? (
-              <Text variant="heading" size="lg" numberOfLines={1}>
-                {title}
-              </Text>
-            ) : null}
-            {subtitle ? (
-              <Text variant="muted" size="sm" numberOfLines={1}>
-                {subtitle}
-              </Text>
-            ) : null}
-          </>
-        )}
-      </YStack>
+      {centerTitle ? (
+        <>
+          {/* Absolute-centered title — immune to left/right content size changes */}
+          <YStack
+            position="absolute"
+            left={0}
+            right={0}
+            top={0}
+            bottom={0}
+            alignItems="center"
+            justifyContent="center"
+            pointerEvents="none"
+          >
+            {titleElement}
+          </YStack>
+          {/* Spacer to push rightContent to the end */}
+          <YStack flex={1} />
+        </>
+      ) : (
+        <YStack flex={1}>{titleElement}</YStack>
+      )}
       <XStack alignItems="center" gap={8}>
         {rightContent}
         <SystemStatusBar />
