@@ -1,0 +1,1 @@
+export { useTableMutations } from "./useTableMutations";
