@@ -25,6 +25,12 @@ interface TableFormDialogProps {
   onOpenChange: (open: boolean) => void;
   editingId: Id<"tables"> | null;
   initialValues?: TableFormValues;
+  onSaveAndCreateAnother?: () => TableFormValues;
+}
+
+/** Map TanStack Form errors to the shape FieldError expects. */
+function normalizeErrors(errors: unknown[]): Array<{ message?: string } | undefined> {
+  return errors.map((e) => (typeof e === "string" ? { message: e } : (e as { message?: string })));
 }
 
 export function TableFormDialog({
@@ -32,6 +38,7 @@ export function TableFormDialog({
   onOpenChange,
   editingId,
   initialValues,
+  onSaveAndCreateAnother,
 }: TableFormDialogProps) {
   const { selectedStoreId } = useAdminStore();
   const { handleCreate, handleUpdate } = useTableMutations();
@@ -56,7 +63,8 @@ export function TableFormDialog({
 
         if (saveAndCreateAnotherRef.current) {
           saveAndCreateAnotherRef.current = false;
-          form.reset();
+          const freshDefaults = onSaveAndCreateAnother?.() ?? defaults;
+          form.reset(freshDefaults);
         } else {
           onOpenChange(false);
         }
@@ -111,7 +119,7 @@ export function TableFormDialog({
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                     />
-                    <FieldError errors={field.state.meta.errors} />
+                    <FieldError errors={normalizeErrors(field.state.meta.errors)} />
                   </Field>
                 );
               }}
@@ -138,7 +146,7 @@ export function TableFormDialog({
                         }
                         onBlur={field.handleBlur}
                       />
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={normalizeErrors(field.state.meta.errors)} />
                     </Field>
                   );
                 }}
@@ -163,7 +171,7 @@ export function TableFormDialog({
                         }
                         onBlur={field.handleBlur}
                       />
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError errors={normalizeErrors(field.state.meta.errors)} />
                     </Field>
                   );
                 }}

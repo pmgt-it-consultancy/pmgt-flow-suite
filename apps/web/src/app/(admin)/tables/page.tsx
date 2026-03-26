@@ -125,6 +125,10 @@ export default function TablesPage() {
         onOpenChange={setIsFormOpen}
         editingId={editingId}
         initialValues={formInitialValues}
+        onSaveAndCreateAnother={() => ({
+          ...tableDefaults,
+          sortOrder: getNextSortOrder(),
+        })}
       />
 
       {/* Edit Tab Name Dialog */}
