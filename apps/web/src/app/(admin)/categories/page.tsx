@@ -2,67 +2,23 @@
 
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
-import { Folder, Pencil, Plus, SlidersHorizontal, Tag, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
+import { useQuery } from "convex/react";
+import { Plus } from "lucide-react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminStore } from "@/stores/useAdminStore";
-
-interface CategoryFormData {
-  name: string;
-  storeId: Id<"stores"> | undefined;
-  parentId: Id<"categories"> | undefined;
-  sortOrder: number;
-  isActive: boolean;
-}
-
-const initialFormData: CategoryFormData = {
-  name: "",
-  storeId: undefined,
-  parentId: undefined,
-  sortOrder: 0,
-  isActive: true,
-};
+import { CategoriesDataTable, CategoryFormDialog } from "./_components";
+import { type CategoryFormValues, categoryDefaults } from "./_schemas";
 
 export default function CategoriesPage() {
   const { isAuthenticated } = useAuth();
   const { selectedStoreId } = useAdminStore();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Id<"categories"> | null>(null);
-  const [formData, setFormData] = useState<CategoryFormData>(initialFormData);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedModifierGroupId, setSelectedModifierGroupId] = useState<Id<"modifierGroups"> | "">(
-    "",
-  );
+
+  // Dialog state
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState<Id<"categories"> | null>(null);
+  const [formInitialValues, setFormInitialValues] = useState<CategoryFormValues | undefined>();
 
   // Queries
   const categories = useQuery(
@@ -70,80 +26,56 @@ export default function CategoriesPage() {
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
 
-  const modifierGroups = useQuery(
-    api.modifierGroups.list,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
-  );
-  const categoryAssignments = useQuery(
-    api.modifierAssignments.listForCategory,
-    editingCategory ? { categoryId: editingCategory } : "skip",
-  );
+  // Calculate next sort order from current data
+  const getNextSortOrder = useCallback(() => {
+    return (categories?.reduce((max, c) => Math.max(max, c.sortOrder), -1) ?? -1) + 1;
+  }, [categories]);
 
-  // Mutations
-  const createCategory = useMutation(api.categories.create);
-  const updateCategory = useMutation(api.categories.update);
-  const assignModifier = useMutation(api.modifierAssignments.assign);
-  const unassignModifier = useMutation(api.modifierAssignments.unassign);
-
-  // Get parent categories (top-level only)
-  const parentCategories = categories?.filter((c) => !c.parentId) ?? [];
-
-  const handleOpenCreate = () => {
-    setEditingCategory(null);
-    setFormData({
-      ...initialFormData,
-      storeId: selectedStoreId ?? undefined,
+  const handleOpenCreate = useCallback(() => {
+    setEditingId(null);
+    setFormInitialValues({
+      ...categoryDefaults,
+      sortOrder: getNextSortOrder(),
     });
-    setIsDialogOpen(true);
-  };
+    setIsFormOpen(true);
+  }, [getNextSortOrder]);
 
-  const handleOpenEdit = (category: NonNullable<typeof categories>[number]) => {
-    setEditingCategory(category._id);
-    setFormData({
-      name: category.name,
-      storeId: category.storeId,
-      parentId: category.parentId,
-      sortOrder: category.sortOrder,
-      isActive: category.isActive,
-    });
-    setIsDialogOpen(true);
-  };
+  const handleOpenEdit = useCallback(
+    (category: {
+      _id: Id<"categories">;
+      name: string;
+      parentId?: Id<"categories">;
+      sortOrder: number;
+      isActive: boolean;
+    }) => {
+      setEditingId(category._id);
+      setFormInitialValues({
+        name: category.name,
+        parentId: category.parentId,
+        sortOrder: category.sortOrder,
+        isActive: category.isActive,
+      });
+      setIsFormOpen(true);
+    },
+    [],
+  );
 
-  const handleSubmit = async () => {
-    if (!isAuthenticated || !formData.storeId) return;
-
-    setIsSubmitting(true);
-    try {
-      if (editingCategory) {
-        await updateCategory({
-          categoryId: editingCategory,
-          name: formData.name,
-          parentId: formData.parentId,
-          sortOrder: formData.sortOrder,
-          isActive: formData.isActive,
-        });
-        toast.success("Category updated successfully");
-      } else {
-        await createCategory({
-          storeId: formData.storeId,
-          name: formData.name,
-          parentId: formData.parentId,
-          sortOrder: formData.sortOrder,
-        });
-        toast.success("Category created successfully");
-      }
-      setIsDialogOpen(false);
-      setFormData(initialFormData);
-      setEditingCategory(null);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save category");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const handleDuplicate = useCallback(
+    (category: { name: string; parentId?: Id<"categories">; sortOrder: number }) => {
+      setEditingId(null);
+      setFormInitialValues({
+        name: `${category.name} (Copy)`,
+        parentId: category.parentId,
+        sortOrder: getNextSortOrder(),
+        isActive: true,
+      });
+      setIsFormOpen(true);
+    },
+    [getNextSortOrder],
+  );
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -157,274 +89,24 @@ export default function CategoriesPage() {
       </div>
 
       {/* Categories Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Categories</CardTitle>
-          <CardDescription>{categories?.length ?? 0} category(ies) in total</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {!selectedStoreId ? (
-            <div className="flex flex-col items-center justify-center h-32 text-gray-500">
-              <Tag className="h-8 w-8 mb-2" />
-              <p>Please select a store to view categories.</p>
-            </div>
-          ) : !categories ? (
-            <div className="flex items-center justify-center h-32">
-              <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
-            </div>
-          ) : categories.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-32 text-gray-500">
-              <Tag className="h-8 w-8 mb-2" />
-              <p>No categories found. Create your first category.</p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Parent</TableHead>
-                  <TableHead>Products</TableHead>
-                  <TableHead>Sort Order</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {categories.map((category) => (
-                  <TableRow key={category._id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        {category.parentId ? (
-                          <Tag className="h-4 w-4 text-gray-400" />
-                        ) : (
-                          <Folder className="h-4 w-4 text-primary" />
-                        )}
-                        {category.name}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={category.parentId ? "secondary" : "default"}>
-                        {category.parentId ? "Sub-category" : "Main"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {category.parentId
-                        ? (categories.find((c) => c._id === category.parentId)?.name ?? "-")
-                        : "-"}
-                    </TableCell>
-                    <TableCell>{category.productCount}</TableCell>
-                    <TableCell>{category.sortOrder}</TableCell>
-                    <TableCell>
-                      <Badge variant={category.isActive ? "default" : "destructive"}>
-                        {category.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(category)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      <CategoriesDataTable
+        categories={categories}
+        selectedStoreId={selectedStoreId}
+        onEdit={handleOpenEdit}
+        onDuplicate={handleDuplicate}
+      />
 
-      {/* Create/Edit Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>{editingCategory ? "Edit Category" : "Create Category"}</DialogTitle>
-            <DialogDescription>
-              {editingCategory
-                ? "Update the category details below."
-                : "Fill in the details to create a new category."}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Category Name</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Enter category name"
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="parent">Parent Category (Optional)</Label>
-              <Select
-                value={formData.parentId ?? "none"}
-                onValueChange={(value) =>
-                  setFormData({
-                    ...formData,
-                    parentId: value === "none" ? undefined : (value as Id<"categories">),
-                  })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select parent category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No Parent (Main Category)</SelectItem>
-                  {parentCategories
-                    .filter((c) => c._id !== editingCategory)
-                    .map((category) => (
-                      <SelectItem key={category._id} value={category._id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="sortOrder">Sort Order</Label>
-              <Input
-                id="sortOrder"
-                type="number"
-                value={formData.sortOrder}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    sortOrder: parseInt(e.target.value, 10) || 0,
-                  })
-                }
-              />
-              <p className="text-xs text-gray-500">Lower numbers appear first.</p>
-            </div>
-
-            {/* Modifier Assignments (edit mode only) */}
-            {editingCategory && (
-              <div className="grid gap-2">
-                <Label className="flex items-center gap-1">
-                  <SlidersHorizontal className="h-4 w-4" />
-                  Modifier Groups
-                </Label>
-                {categoryAssignments && categoryAssignments.length > 0 ? (
-                  <div className="space-y-1">
-                    {categoryAssignments.map((a) => (
-                      <div
-                        key={a._id}
-                        className="flex items-center justify-between bg-gray-50 rounded px-3 py-1.5 text-sm"
-                      >
-                        <span>{a.groupName}</span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={async () => {
-                            try {
-                              await unassignModifier({ assignmentId: a._id });
-                              toast.success("Modifier removed");
-                            } catch {
-                              toast.error("Failed to remove modifier");
-                            }
-                          }}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-500">
-                    No modifiers assigned. Products in this category will inherit these.
-                  </p>
-                )}
-                <div className="flex gap-2">
-                  <Select
-                    value={selectedModifierGroupId as string}
-                    onValueChange={(v) => setSelectedModifierGroupId(v as Id<"modifierGroups">)}
-                  >
-                    <SelectTrigger className="flex-1">
-                      <SelectValue placeholder="Add modifier group..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {modifierGroups
-                        ?.filter(
-                          (g) => !categoryAssignments?.some((a) => a.modifierGroupId === g._id),
-                        )
-                        .map((g) => (
-                          <SelectItem key={g._id} value={g._id}>
-                            {g.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={!selectedModifierGroupId}
-                    onClick={async () => {
-                      if (!selectedModifierGroupId || !selectedStoreId || !editingCategory) return;
-                      try {
-                        await assignModifier({
-                          storeId: selectedStoreId,
-                          modifierGroupId: selectedModifierGroupId as Id<"modifierGroups">,
-                          categoryId: editingCategory,
-                        });
-                        setSelectedModifierGroupId("");
-                        toast.success("Modifier assigned");
-                      } catch (error) {
-                        toast.error(
-                          error instanceof Error ? error.message : "Failed to assign modifier",
-                        );
-                      }
-                    }}
-                  >
-                    Add
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {editingCategory && (
-              <div className="grid gap-2">
-                <Label htmlFor="isActive">Status</Label>
-                <Select
-                  value={formData.isActive ? "active" : "inactive"}
-                  onValueChange={(value) =>
-                    setFormData({
-                      ...formData,
-                      isActive: value === "active",
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDialogOpen(false)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || !formData.name || !formData.storeId}
-            >
-              {isSubmitting ? "Saving..." : editingCategory ? "Update" : "Create"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Create/Edit Category Dialog */}
+      <CategoryFormDialog
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        editingId={editingId}
+        initialValues={formInitialValues}
+        onSaveAndCreateAnother={() => ({
+          ...categoryDefaults,
+          sortOrder: getNextSortOrder(),
+        })}
+      />
     </div>
   );
 }
