@@ -422,7 +422,9 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
         <PaymentMethodSelector selected={paymentMethod} onSelect={setPaymentMethod} />
 
-        {paymentMethod === "cash" && <CashInput value={cashReceived} onChange={setCashReceived} />}
+        {paymentMethod === "cash" && (
+          <CashInput value={cashReceived} totalAmount={order.netSales} onChange={setCashReceived} />
+        )}
 
         {paymentMethod === "card_ewallet" && (
           <CardPaymentDetails
