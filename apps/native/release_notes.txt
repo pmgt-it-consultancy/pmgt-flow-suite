@@ -1,6 +1,6 @@
 ## What's New
 
-- EOD report category grouping — products are now grouped by category with subtotals in the Z-report, thermal print, web page, and PDF
-- Payment transaction breakdown — non-cash payments now show individual transactions with reference numbers for easier verification
-- Refresh Report feedback — spinner indicator while report is generating
-- Header stability — fixed layout shift on centered page headers
+- Cash payment UX — quick amounts now add to the current value instead of replacing it, added ₱50 preset, exact amount button, clear button, and green feedback when amount covers the total
+- Admin forms migration — all admin pages (tables, roles, categories, modifiers, stores, products, users) migrated to TanStack Form with inline creation and colocated architecture
+- Shared modifier groups — inline creation of modifier groups from the products form
+- Form validation fix — removed form-level onBlur validators that caused validation on mount

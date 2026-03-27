@@ -92,8 +92,8 @@ android {
         applicationId 'com.pmgtitconsultancy.pmgtflow.stg'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 31400
-        versionName "3.14.0"
+        versionCode 31500
+        versionName "3.15.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }
