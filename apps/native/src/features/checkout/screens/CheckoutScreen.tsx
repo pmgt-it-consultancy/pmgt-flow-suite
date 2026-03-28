@@ -169,7 +169,22 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   }, []);
 
   const updatePaymentLine = useCallback((id: string, updates: Partial<PaymentLine>) => {
-    setPaymentLines((prev) => prev.map((l) => (l.id === id ? { ...l, ...updates } : l)));
+    setPaymentLines((prev) =>
+      prev.map((l) => {
+        if (l.id !== id) return l;
+        const updated = { ...l, ...updates };
+        // For cash lines: when cashReceived is set and less than amount, auto-adjust amount
+        // This enables the split payment flow: cashier types 500 cash → amount becomes 500 → remaining shows correctly
+        if (updated.paymentMethod === "cash" && updates.cashReceived !== undefined) {
+          const received = parseFloat(updated.cashReceived) || 0;
+          const currentAmount = parseFloat(updated.amount) || 0;
+          if (received > 0 && received < currentAmount) {
+            updated.amount = received.toString();
+          }
+        }
+        return updated;
+      }),
+    );
   }, []);
 
   // Discount handlers

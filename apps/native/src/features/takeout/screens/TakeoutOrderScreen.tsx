@@ -521,7 +521,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
               {/* Table Marker — prominent input */}
               <YStack flex={0} width={120}>
                 <Text
-                  style={{ fontSize: 13, fontWeight: "600", color: "#374151", marginBottom: 6 }}
+                  style={{ fontSize: 13, fontWeight: "700", color: "#EA580C", marginBottom: 6 }}
                 >
                   Table Marker
                 </Text>
@@ -530,18 +530,18 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                   onChangeText={setTableMarker}
                   onBlur={handleTableMarkerBlur}
                   placeholder="e.g. 15"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor="#C2956B"
                   style={{
-                    backgroundColor: tableMarker ? "#FFF7ED" : "#FFFFFF",
+                    backgroundColor: "#FFF7ED",
                     borderWidth: 2,
-                    borderColor: tableMarker ? "#F97316" : "#D1D5DB",
+                    borderColor: "#F97316",
                     borderRadius: 12,
                     paddingHorizontal: 14,
                     height: 52,
                     fontSize: 20,
                     fontWeight: "700",
                     textAlign: "center",
-                    color: "#111827",
+                    color: "#9A3412",
                   }}
                 />
               </YStack>
@@ -549,7 +549,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
               {/* Customer Name — flex fill */}
               <YStack flex={1}>
                 <Text
-                  style={{ fontSize: 13, fontWeight: "600", color: "#374151", marginBottom: 6 }}
+                  style={{ fontSize: 13, fontWeight: "700", color: "#EA580C", marginBottom: 6 }}
                 >
                   Customer Name
                 </Text>
@@ -558,17 +558,17 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                   value={customerName}
                   onChangeText={setCustomerName}
                   onBlur={handleCustomerNameBlur}
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor="#C2956B"
                   style={{
-                    backgroundColor: "#FFFFFF",
+                    backgroundColor: "#FFF7ED",
                     borderWidth: 2,
-                    borderColor: customerName ? "#F97316" : "#D1D5DB",
+                    borderColor: "#F97316",
                     borderRadius: 12,
                     paddingHorizontal: 14,
                     height: 52,
                     fontSize: 16,
                     fontWeight: "600",
-                    color: "#111827",
+                    color: "#9A3412",
                   }}
                 />
               </YStack>
