@@ -438,6 +438,7 @@ export const get = query({
           notes: v.optional(v.string()),
           isVoided: v.boolean(),
           isSentToKitchen: v.optional(v.boolean()),
+          serviceType: v.optional(v.union(v.literal("dine_in"), v.literal("takeout"))),
           lineTotal: v.number(),
           modifiers: v.array(
             v.object({
@@ -523,6 +524,7 @@ export const get = query({
           notes: item.notes,
           isVoided: item.isVoided,
           isSentToKitchen: item.isSentToKitchen,
+          serviceType: item.serviceType,
           lineTotal: item.isVoided ? 0 : (item.productPrice + modifierTotal) * item.quantity,
           modifiers: modifiers.map((m) => ({
             groupName: m.modifierGroupName,
