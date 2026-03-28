@@ -1,12 +1,6 @@
 ## What's New
 
-- Item-level Dine-In / Takeout — toggle individual items between Dine-In and Takeout within the same order using the DINE IN / TAKEOUT switch on each cart item
-- Kitchen ticket grouping — mixed orders print items grouped under DINE IN and TAKEOUT headers so the kitchen knows what to pack
-- Service type badges — checkout, order details, and receipt preview show Dine-In or Takeout labels on every item
-- Customer receipts — exception items (items that differ from the order type) are subtly tagged on printed and shared receipts
-
-## Notes
-
-- Service type is locked once an item is sent to kitchen — void and re-add to change
-- Switching the order category (Dine-In / Takeout toggle) only affects new items; existing cart items keep their current designation
-- Historical orders created before this update will not show service type labels
+- Service type on all receipts — printed and shared receipts now show Dine-In or Takeout label on every item
+- Refund preserves service type — replacement orders created from refunds retain each item's dine-in/takeout designation
+- Kitchen ticket service type — dine-in order screen now passes service type into kitchen ticket data for correct grouping
+- Stronger validation — service type changes are blocked on voided items and closed orders
