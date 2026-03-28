@@ -92,6 +92,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const discardDraftMutation = useMutation(api.orders.discardDraft);
   const submitDraftMutation = useMutation(api.orders.submitDraft);
   const updateCustomerNameMutation = useMutation(api.orders.updateCustomerName);
+  const updateItemServiceTypeMutation = useMutation(api.orders.updateItemServiceType);
+  const bulkUpdateItemServiceTypeMutation = useMutation(api.orders.bulkUpdateItemServiceType);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -124,9 +126,21 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
           orderId,
           orderCategory: category,
         });
+        await bulkUpdateItemServiceTypeMutation({ orderId, serviceType: category });
       }
     },
-    [orderId, updateCustomerNameMutation],
+    [orderId, updateCustomerNameMutation, bulkUpdateItemServiceTypeMutation],
+  );
+
+  const handleServiceTypeChange = useCallback(
+    async (itemId: Id<"orderItems">, serviceType: "dine_in" | "takeout") => {
+      try {
+        await updateItemServiceTypeMutation({ orderItemId: itemId, serviceType });
+      } catch (error) {
+        console.error("Failed to update service type:", error);
+      }
+    },
+    [updateItemServiceTypeMutation],
   );
 
   const handleTableMarkerBlur = useCallback(async () => {
@@ -643,6 +657,9 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 notes={item.notes}
                 modifiers={item.modifiers}
                 isSentToKitchen={item.isSentToKitchen}
+                serviceType={item.serviceType}
+                orderDefaultServiceType={orderCategory}
+                onServiceTypeChange={handleServiceTypeChange}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
                 onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
