@@ -1,6 +1,12 @@
 ## What's New
 
-- Cash payment UX — quick amounts now add to the current value instead of replacing it, added ₱50 preset, exact amount button, clear button, and green feedback when amount covers the total
-- Admin forms migration — all admin pages (tables, roles, categories, modifiers, stores, products, users) migrated to TanStack Form with inline creation and colocated architecture
-- Shared modifier groups — inline creation of modifier groups from the products form
-- Form validation fix — removed form-level onBlur validators that caused validation on mount
+- Split payment — customers can now pay with multiple methods on a single order (e.g., cash + GCash), with automatic remaining balance computation
+- Counter ordering category — takeout screen now lets the cashier select Dine-in or Takeout per order, shown on kitchen and customer receipts
+- Table marker — free text field for tent card or table marker numbers, displayed prominently on kitchen tickets and appended to receipt numbers
+- Daily order number reset — T-xxx and D-xxx order numbers now reset to 001 at the start of each day
+- Kitchen receipt fix — order type (DINE-IN / TAKEOUT) always displays correctly, even when a customer name is set
+
+## Notes
+
+- Existing paid orders are unaffected — receipt queries fall back to legacy payment fields automatically
+- The old single-payment checkout flow works identically for orders with one payment method
