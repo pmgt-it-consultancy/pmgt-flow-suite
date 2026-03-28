@@ -3,7 +3,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, TextInput, TouchableOpacity } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
@@ -11,15 +11,12 @@ import type { KitchenTicketData } from "../../settings/services/escposFormatter"
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { type ReceiptData, useFormatCurrency } from "../../shared";
 import { PageHeader } from "../../shared/components/PageHeader";
-import { Button, Text } from "../../shared/components/ui";
+import { Button, Card, Text } from "../../shared/components/ui";
 import {
-  CardPaymentDetails,
-  CashInput,
   DiscountModal,
   DiscountSection,
   ManagerPinModal,
   OrderSummary,
-  PaymentMethodSelector,
   ReceiptPreviewModal,
   TotalsSummary,
 } from "../components";
@@ -36,8 +33,20 @@ interface CheckoutScreenProps {
   };
 }
 
-type PaymentMethod = "cash" | "card_ewallet";
 type DiscountType = "senior_citizen" | "pwd" | null;
+
+interface PaymentLine {
+  id: string;
+  paymentMethod: "cash" | "card_ewallet";
+  amount: string;
+  cashReceived: string;
+  cardPaymentType: string;
+  cardReferenceNumber: string;
+  customPaymentType: string;
+}
+
+const PAYMENT_TYPES = ["Credit/Debit Card", "GCash", "Maya", "Bank Transfer", "Other"] as const;
+const QUICK_AMOUNTS = [50, 100, 200, 500, 1000, 2000];
 
 export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const { orderId, tableName, orderType } = route.params;
@@ -45,12 +54,18 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const { user, isLoading, isAuthenticated } = useAuth();
   const formatCurrency = useFormatCurrency();
 
-  // UI State
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
-  const [cashReceived, setCashReceived] = useState("");
-  const [cardPaymentType, setCardPaymentType] = useState("");
-  const [cardReferenceNumber, setCardReferenceNumber] = useState("");
-  const [customPaymentType, setCustomPaymentType] = useState("");
+  // Payment Lines State
+  const [paymentLines, setPaymentLines] = useState<PaymentLine[]>([
+    {
+      id: "1",
+      paymentMethod: "cash",
+      amount: "",
+      cashReceived: "",
+      cardPaymentType: "",
+      cardReferenceNumber: "",
+      customPaymentType: "",
+    },
+  ]);
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Receipt Preview State
@@ -79,8 +94,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const discounts = useQuery(api.discounts.getOrderDiscounts, { orderId });
 
   // Mutations
-  const processCashPayment = useMutation(api.checkout.processCashPayment);
-  const processCardPayment = useMutation(api.checkout.processCardPayment);
+  const processPaymentMutation = useMutation(api.checkout.processPayment);
   const applyBulkScPwdDiscount = useMutation(api.discounts.applyBulkScPwdDiscount);
   const removeDiscount = useMutation(api.discounts.removeDiscount);
 
@@ -95,12 +109,49 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     }
     return map;
   }, [discounts]);
-  const change = useMemo(() => {
-    if (paymentMethod !== "cash" || !cashReceived) return 0;
-    return Math.max(0, parseFloat(cashReceived) - (order?.netSales ?? 0));
-  }, [paymentMethod, cashReceived, order?.netSales]);
+
+  // Payment calculations
+  const totalPayments = useMemo(
+    () => paymentLines.reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0),
+    [paymentLines],
+  );
+  const remaining = useMemo(
+    () => (order?.netSales ?? 0) - totalPayments,
+    [order?.netSales, totalPayments],
+  );
+
+  // For single cash line: compute change (cash received minus total amount due)
+  const firstCashLine = paymentLines.find((l) => l.paymentMethod === "cash");
+  const cashChange = useMemo(() => {
+    if (!firstCashLine || !firstCashLine.cashReceived) return 0;
+    return Math.max(0, parseFloat(firstCashLine.cashReceived) - (order?.netSales ?? 0));
+  }, [firstCashLine, order?.netSales]);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
+
+  // Payment line helpers
+  const addPaymentLine = useCallback(() => {
+    setPaymentLines((prev) => [
+      ...prev,
+      {
+        id: String(Date.now()),
+        paymentMethod: "card_ewallet",
+        amount: "",
+        cashReceived: "",
+        cardPaymentType: "",
+        cardReferenceNumber: "",
+        customPaymentType: "",
+      },
+    ]);
+  }, []);
+
+  const removePaymentLine = useCallback((id: string) => {
+    setPaymentLines((prev) => prev.filter((l) => l.id !== id));
+  }, []);
+
+  const updatePaymentLine = useCallback((id: string, updates: Partial<PaymentLine>) => {
+    setPaymentLines((prev) => prev.map((l) => (l.id === id ? { ...l, ...updates } : l)));
+  }, []);
 
   // Discount handlers
   const handleOpenDiscountModal = useCallback(() => {
@@ -218,126 +269,147 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   );
 
   // Receipt helpers
-  const createReceiptData = useCallback(
-    (changeAmount: number, cashAmount?: number): ReceiptData => {
-      const discountsList = (discounts ?? []).map((d) => ({
-        type:
-          d.discountType === "senior_citizen"
-            ? ("sc" as const)
-            : d.discountType === "pwd"
-              ? ("pwd" as const)
-              : ("custom" as const),
-        customerName: d.customerName,
-        customerId: d.customerId,
-        itemName: d.itemName ?? "Order",
-        amount: d.discountAmount,
-      }));
+  const createReceiptData = useCallback((): ReceiptData => {
+    const discountsList = (discounts ?? []).map((d) => ({
+      type:
+        d.discountType === "senior_citizen"
+          ? ("sc" as const)
+          : d.discountType === "pwd"
+            ? ("pwd" as const)
+            : ("custom" as const),
+      customerName: d.customerName,
+      customerId: d.customerId,
+      itemName: d.itemName ?? "Order",
+      amount: d.discountAmount,
+    }));
 
-      const storeAddress = store
-        ? [store.address1, store.address2].filter(Boolean).join(", ")
+    const storeAddress = store
+      ? [store.address1, store.address2].filter(Boolean).join(", ")
+      : undefined;
+
+    // For receipt compatibility: use first cash line's tendered/change, or first line's method
+    const primaryLine = paymentLines[0];
+    const cashTendered =
+      primaryLine?.paymentMethod === "cash" && primaryLine.cashReceived
+        ? parseFloat(primaryLine.cashReceived)
         : undefined;
+    const changeAmount =
+      primaryLine?.paymentMethod === "cash" && cashTendered
+        ? Math.max(0, cashTendered - (order?.netSales ?? 0))
+        : 0;
 
-      return {
-        storeName: store?.name ?? "Store",
-        storeAddress,
-        storeTin: store?.tin,
-        storeContactNumber: store?.contactNumber,
-        storeTelephone: store?.telephone,
-        storeEmail: store?.email,
-        storeWebsite: store?.website,
-        storeSocials: store?.socials,
-        storeFooter: store?.footer,
-        orderNumber: order?.orderNumber ?? "",
-        tableName,
-        tableMarker: order?.tableMarker,
-        orderCategory: order?.orderCategory,
-        pax: order?.pax,
-        orderType: (order?.orderType as "dine_in" | "take_out" | "delivery") ?? "dine_in",
-        cashierName: user?.name ?? "Cashier",
-        items: activeItems.map((item) => ({
-          name: item.productName,
-          quantity: item.quantity,
-          price: item.productPrice,
-          total: item.lineTotal,
-          modifiers: item.modifiers?.map((m) => ({
-            optionName: m.optionName,
-            priceAdjustment: m.priceAdjustment,
-          })),
-        })),
-        subtotal: order?.grossSales ?? 0,
-        discounts: discountsList,
-        vatableSales: order?.vatableSales ?? 0,
-        vatAmount: order?.vatAmount ?? 0,
-        vatExemptSales: order?.vatExemptSales ?? 0,
-        total: order?.netSales ?? 0,
-        paymentMethod: paymentMethod === "cash" ? "cash" : "card_ewallet",
-        amountTendered: cashAmount,
-        change: changeAmount,
-        cardPaymentType: paymentMethod === "card_ewallet" ? cardPaymentType : undefined,
-        cardReferenceNumber: paymentMethod === "card_ewallet" ? cardReferenceNumber : undefined,
-        transactionDate: new Date(),
-        receiptNumber: order?.orderNumber,
-      };
-    },
-    [
-      discounts,
-      store,
-      order,
+    return {
+      storeName: store?.name ?? "Store",
+      storeAddress,
+      storeTin: store?.tin,
+      storeContactNumber: store?.contactNumber,
+      storeTelephone: store?.telephone,
+      storeEmail: store?.email,
+      storeWebsite: store?.website,
+      storeSocials: store?.socials,
+      storeFooter: store?.footer,
+      orderNumber: order?.orderNumber ?? "",
       tableName,
-      user?.name,
-      activeItems,
-      paymentMethod,
-      cardPaymentType,
-      cardReferenceNumber,
-    ],
-  );
+      tableMarker: order?.tableMarker,
+      orderCategory: order?.orderCategory,
+      pax: order?.pax,
+      orderType: (order?.orderType as "dine_in" | "take_out" | "delivery") ?? "dine_in",
+      cashierName: user?.name ?? "Cashier",
+      items: activeItems.map((item) => ({
+        name: item.productName,
+        quantity: item.quantity,
+        price: item.productPrice,
+        total: item.lineTotal,
+        modifiers: item.modifiers?.map((m) => ({
+          optionName: m.optionName,
+          priceAdjustment: m.priceAdjustment,
+        })),
+      })),
+      subtotal: order?.grossSales ?? 0,
+      discounts: discountsList,
+      vatableSales: order?.vatableSales ?? 0,
+      vatAmount: order?.vatAmount ?? 0,
+      vatExemptSales: order?.vatExemptSales ?? 0,
+      total: order?.netSales ?? 0,
+      paymentMethod:
+        paymentLines.length === 1 && primaryLine?.paymentMethod === "card_ewallet"
+          ? "card_ewallet"
+          : "cash",
+      amountTendered: cashTendered,
+      change: changeAmount,
+      cardPaymentType:
+        primaryLine?.paymentMethod === "card_ewallet"
+          ? primaryLine.cardPaymentType || undefined
+          : undefined,
+      cardReferenceNumber:
+        primaryLine?.paymentMethod === "card_ewallet"
+          ? primaryLine.cardReferenceNumber || undefined
+          : undefined,
+      transactionDate: new Date(),
+      receiptNumber: order?.orderNumber,
+    };
+  }, [discounts, store, order, tableName, user?.name, activeItems, paymentLines]);
 
   const handleProcessPayment = useCallback(async () => {
     if (!order) return;
 
-    const cashAmount = parseFloat(cashReceived);
-
-    if (paymentMethod === "cash") {
-      if (!cashReceived || Number.isNaN(cashAmount)) {
-        Alert.alert("Error", "Please enter cash received amount");
+    // Validate each payment line
+    for (const line of paymentLines) {
+      const lineAmount = parseFloat(line.amount) || 0;
+      if (lineAmount <= 0) {
+        Alert.alert("Error", "Each payment line must have an amount greater than zero");
         return;
       }
-      if (cashAmount < order.netSales) {
-        Alert.alert("Error", "Cash received is less than the total amount");
-        return;
+      if (line.paymentMethod === "cash") {
+        const cashAmt = parseFloat(line.cashReceived) || 0;
+        if (!line.cashReceived || Number.isNaN(cashAmt)) {
+          Alert.alert("Error", "Please enter cash received amount");
+          return;
+        }
+        if (cashAmt < lineAmount) {
+          Alert.alert("Error", "Cash received cannot be less than the cash payment amount");
+          return;
+        }
+      }
+      if (line.paymentMethod === "card_ewallet") {
+        if (!line.cardPaymentType || line.cardPaymentType === "Other") {
+          Alert.alert("Error", "Please select a payment type for card/e-wallet");
+          return;
+        }
+        if (!line.cardReferenceNumber.trim()) {
+          Alert.alert("Error", "Please enter a reference number for card/e-wallet");
+          return;
+        }
       }
     }
 
-    if (paymentMethod === "card_ewallet") {
-      if (!cardPaymentType || cardPaymentType === "Other") {
-        Alert.alert("Error", "Please select a payment type");
-        return;
-      }
-      if (!cardReferenceNumber.trim()) {
-        Alert.alert("Error", "Please enter a reference number");
-        return;
-      }
+    if (remaining > 0.005) {
+      Alert.alert(
+        "Error",
+        `Payment is short by ${formatCurrency(remaining)}. Please add more payment.`,
+      );
+      return;
     }
 
     setIsProcessing(true);
     try {
-      let finalChange = 0;
+      const payments = paymentLines.map((line) => ({
+        paymentMethod: line.paymentMethod,
+        amount: parseFloat(line.amount) || 0,
+        cashReceived:
+          line.paymentMethod === "cash" ? parseFloat(line.cashReceived) || undefined : undefined,
+        cardPaymentType:
+          line.paymentMethod === "card_ewallet"
+            ? (line.cardPaymentType === "Other" ? line.customPaymentType : line.cardPaymentType) ||
+              undefined
+            : undefined,
+        cardReferenceNumber:
+          line.paymentMethod === "card_ewallet" ? line.cardReferenceNumber || undefined : undefined,
+      }));
 
-      if (paymentMethod === "cash") {
-        const result = await processCashPayment({ orderId, cashReceived: cashAmount });
-        finalChange = result.changeGiven;
-      } else {
-        await processCardPayment({
-          orderId,
-          paymentType: cardPaymentType,
-          referenceNumber: cardReferenceNumber.trim(),
-        });
-      }
+      await processPaymentMutation({ orderId, payments });
 
-      const receiptData = createReceiptData(
-        finalChange,
-        paymentMethod === "cash" ? cashAmount : undefined,
-      );
+      const receiptData = createReceiptData();
       setCompletedReceiptData(receiptData);
 
       // Build kitchen ticket data for printing from the receipt modal
@@ -379,19 +451,16 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     }
   }, [
     order,
-    cashReceived,
-    paymentMethod,
-    cardPaymentType,
-    cardReferenceNumber,
+    paymentLines,
+    remaining,
     activeItems,
     isTakeout,
-    tableName,
-    processCashPayment,
-    processCardPayment,
+    processPaymentMutation,
     orderId,
     createReceiptData,
     cashDrawerEnabled,
     openCashDrawer,
+    formatCurrency,
   ]);
 
   if (isLoading || !isAuthenticated || !order) {
@@ -424,30 +493,90 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           onRemoveDiscount={handleRemoveDiscount}
         />
 
-        <PaymentMethodSelector selected={paymentMethod} onSelect={setPaymentMethod} />
+        {/* Payment Lines */}
+        <YStack paddingHorizontal={16} paddingVertical={12}>
+          <Text variant="heading" style={{ marginBottom: 12 }}>
+            Payment
+          </Text>
 
-        {paymentMethod === "cash" && (
-          <CashInput value={cashReceived} totalAmount={order.netSales} onChange={setCashReceived} />
-        )}
+          {paymentLines.map((line, index) => (
+            <PaymentLineCard
+              key={line.id}
+              line={line}
+              lineIndex={index}
+              totalLines={paymentLines.length}
+              orderNetSales={order.netSales}
+              onUpdate={(updates) => updatePaymentLine(line.id, updates)}
+              onRemove={() => removePaymentLine(line.id)}
+            />
+          ))}
 
-        {paymentMethod === "card_ewallet" && (
-          <CardPaymentDetails
-            paymentType={cardPaymentType}
-            referenceNumber={cardReferenceNumber}
-            customPaymentType={customPaymentType}
-            onPaymentTypeChange={setCardPaymentType}
-            onReferenceNumberChange={setCardReferenceNumber}
-            onCustomPaymentTypeChange={setCustomPaymentType}
-          />
-        )}
+          {/* Remaining Balance */}
+          {paymentLines.length > 1 && (
+            <XStack
+              justifyContent="space-between"
+              alignItems="center"
+              backgroundColor={remaining <= 0 ? "#DCFCE7" : "#FEF3C7"}
+              borderRadius={12}
+              paddingHorizontal={16}
+              paddingVertical={12}
+              marginBottom={12}
+            >
+              <Text
+                style={{
+                  fontWeight: "600",
+                  color: remaining <= 0 ? "#16A34A" : "#92400E",
+                  fontSize: 15,
+                }}
+              >
+                {remaining <= 0 ? "Fully Covered" : "Remaining"}
+              </Text>
+              <Text
+                style={{
+                  fontWeight: "700",
+                  fontSize: 18,
+                  color: remaining <= 0 ? "#16A34A" : "#B45309",
+                }}
+              >
+                {remaining <= 0 ? formatCurrency(0) : formatCurrency(remaining)}
+              </Text>
+            </XStack>
+          )}
+
+          {/* Add Payment Method Button */}
+          <TouchableOpacity
+            onPress={addPaymentLine}
+            activeOpacity={0.7}
+            style={{
+              borderWidth: 1.5,
+              borderColor: "#0D87E1",
+              borderStyle: "dashed",
+              borderRadius: 12,
+              paddingVertical: 14,
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+              gap: 8,
+            }}
+          >
+            <Ionicons name="add-circle-outline" size={20} color="#0D87E1" />
+            <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 15 }}>
+              Add Payment Method
+            </Text>
+          </TouchableOpacity>
+        </YStack>
 
         <TotalsSummary
           grossSales={order.grossSales}
           vatAmount={order.vatAmount}
           discountAmount={order.discountAmount}
           netSales={order.netSales}
-          change={change}
-          showChange={paymentMethod === "cash" && !!cashReceived}
+          change={cashChange}
+          showChange={
+            paymentLines.length === 1 &&
+            paymentLines[0].paymentMethod === "cash" &&
+            !!paymentLines[0].cashReceived
+          }
         />
       </KeyboardAwareScrollView>
 
@@ -462,28 +591,41 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
               {formatCurrency(order.netSales)}
             </Text>
           </YStack>
-          <YStack
-            backgroundColor={paymentMethod === "cash" ? "#EFF6FF" : "#F3F4F6"}
-            borderRadius={999}
-            paddingHorizontal={12}
-            paddingVertical={6}
-          >
-            <Text
-              style={{
-                color: paymentMethod === "cash" ? "#0D87E1" : "#6B7280",
-                fontWeight: "700",
-                fontSize: 12,
-              }}
+          {paymentLines.length === 1 ? (
+            <YStack
+              backgroundColor={paymentLines[0].paymentMethod === "cash" ? "#EFF6FF" : "#F3F4F6"}
+              borderRadius={999}
+              paddingHorizontal={12}
+              paddingVertical={6}
             >
-              {paymentMethod === "cash" ? "Cash" : "Card/E-Wallet"}
-            </Text>
-          </YStack>
+              <Text
+                style={{
+                  color: paymentLines[0].paymentMethod === "cash" ? "#0D87E1" : "#6B7280",
+                  fontWeight: "700",
+                  fontSize: 12,
+                }}
+              >
+                {paymentLines[0].paymentMethod === "cash" ? "Cash" : "Card/E-Wallet"}
+              </Text>
+            </YStack>
+          ) : (
+            <YStack
+              backgroundColor="#EFF6FF"
+              borderRadius={999}
+              paddingHorizontal={12}
+              paddingVertical={6}
+            >
+              <Text style={{ color: "#0D87E1", fontWeight: "700", fontSize: 12 }}>
+                Split Payment
+              </Text>
+            </YStack>
+          )}
         </XStack>
         <Button
           variant="success"
           size="lg"
           loading={isProcessing}
-          disabled={isProcessing}
+          disabled={isProcessing || remaining > 0.005}
           onPress={handleProcessPayment}
         >
           <XStack alignItems="center">
@@ -547,6 +689,363 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         }}
       />
     </YStack>
+  );
+};
+
+// ─── PaymentLineCard ────────────────────────────────────────────────────────
+
+interface PaymentLineCardProps {
+  line: PaymentLine;
+  lineIndex: number;
+  totalLines: number;
+  orderNetSales: number;
+  onUpdate: (updates: Partial<PaymentLine>) => void;
+  onRemove: () => void;
+}
+
+const PaymentLineCard = ({
+  line,
+  lineIndex,
+  totalLines,
+  orderNetSales,
+  onUpdate,
+  onRemove,
+}: PaymentLineCardProps) => {
+  const amountValue = parseFloat(line.amount) || 0;
+  const cashReceivedValue = parseFloat(line.cashReceived) || 0;
+  const selectedCardType = PAYMENT_TYPES.includes(line.cardPaymentType as any)
+    ? line.cardPaymentType
+    : "Other";
+
+  const handleQuickAdd = (amount: number) => {
+    const newValue = cashReceivedValue + amount;
+    onUpdate({ cashReceived: newValue.toString() });
+  };
+
+  const handleExactAmount = () => {
+    onUpdate({
+      cashReceived:
+        amountValue > 0
+          ? amountValue.toFixed(2).replace(/\.00$/, "")
+          : orderNetSales.toFixed(2).replace(/\.00$/, ""),
+    });
+  };
+
+  return (
+    <Card variant="outlined" style={{ marginBottom: 12 }}>
+      {/* Line Header: label + remove button */}
+      <XStack justifyContent="space-between" alignItems="center" marginBottom={12}>
+        <Text style={{ fontWeight: "700", color: "#374151", fontSize: 15 }}>
+          {totalLines > 1 ? `Payment ${lineIndex + 1}` : "Payment Method"}
+        </Text>
+        {totalLines > 1 && (
+          <TouchableOpacity
+            onPress={onRemove}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={{
+              backgroundColor: "#FEE2E2",
+              borderRadius: 8,
+              padding: 6,
+            }}
+          >
+            <Ionicons name="close" size={18} color="#DC2626" />
+          </TouchableOpacity>
+        )}
+      </XStack>
+
+      {/* Payment Method Toggle */}
+      <Text variant="muted" size="xs" style={{ marginBottom: 10 }}>
+        Choose how the customer will settle this portion
+      </Text>
+      <XStack gap={12} marginBottom={14}>
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            backgroundColor: line.paymentMethod === "cash" ? "#EFF6FF" : "#FFFFFF",
+            borderRadius: 12,
+            paddingVertical: 14,
+            paddingHorizontal: 12,
+            alignItems: "center",
+            borderWidth: 1.5,
+            borderColor: line.paymentMethod === "cash" ? "#0D87E1" : "#E5E7EB",
+            minHeight: 68,
+            justifyContent: "center",
+          }}
+          onPress={() => onUpdate({ paymentMethod: "cash" })}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name="cash-outline"
+            size={20}
+            color={line.paymentMethod === "cash" ? "#0D87E1" : "#6B7280"}
+          />
+          <Text
+            style={{
+              marginTop: 6,
+              fontWeight: "600",
+              fontSize: 13,
+              color: line.paymentMethod === "cash" ? "#0D87E1" : "#374151",
+            }}
+          >
+            Cash
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            backgroundColor: line.paymentMethod === "card_ewallet" ? "#EFF6FF" : "#FFFFFF",
+            borderRadius: 12,
+            paddingVertical: 14,
+            paddingHorizontal: 12,
+            alignItems: "center",
+            borderWidth: 1.5,
+            borderColor: line.paymentMethod === "card_ewallet" ? "#0D87E1" : "#E5E7EB",
+            minHeight: 68,
+            justifyContent: "center",
+          }}
+          onPress={() => onUpdate({ paymentMethod: "card_ewallet" })}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name="card-outline"
+            size={20}
+            color={line.paymentMethod === "card_ewallet" ? "#0D87E1" : "#6B7280"}
+          />
+          <Text
+            style={{
+              marginTop: 6,
+              fontWeight: "600",
+              fontSize: 13,
+              color: line.paymentMethod === "card_ewallet" ? "#0D87E1" : "#374151",
+            }}
+          >
+            Card/E-Wallet
+          </Text>
+        </TouchableOpacity>
+      </XStack>
+
+      {/* Amount Input */}
+      <Text variant="muted" size="sm" style={{ marginBottom: 8 }}>
+        Amount
+      </Text>
+      <XStack
+        alignItems="center"
+        backgroundColor="#F9FAFB"
+        borderRadius={12}
+        paddingHorizontal={14}
+        borderWidth={1}
+        borderColor={amountValue > 0 ? "#0D87E1" : "#E5E7EB"}
+        marginBottom={14}
+      >
+        <Text style={{ color: "#6B7280", fontWeight: "600", fontSize: 20 }}>₱</Text>
+        <TextInput
+          style={{
+            flex: 1,
+            padding: 14,
+            fontWeight: "700",
+            fontSize: 20,
+            color: "#111827",
+          }}
+          placeholder="0.00"
+          placeholderTextColor="#9CA3AF"
+          value={line.amount}
+          onChangeText={(val) => onUpdate({ amount: val })}
+          keyboardType="numeric"
+        />
+      </XStack>
+
+      {/* Cash-specific: Cash Received + Quick Amounts */}
+      {line.paymentMethod === "cash" && (
+        <>
+          <Text variant="muted" size="sm" style={{ marginBottom: 8 }}>
+            Cash Received
+          </Text>
+          <XStack
+            alignItems="center"
+            backgroundColor="#F9FAFB"
+            borderRadius={12}
+            paddingHorizontal={14}
+            borderWidth={1}
+            borderColor={
+              cashReceivedValue >= amountValue && cashReceivedValue > 0 ? "#22C55E" : "#E5E7EB"
+            }
+            marginBottom={10}
+          >
+            <Text style={{ color: "#6B7280", fontWeight: "600", fontSize: 20 }}>₱</Text>
+            <TextInput
+              style={{
+                flex: 1,
+                padding: 14,
+                fontWeight: "700",
+                fontSize: 20,
+                color:
+                  cashReceivedValue >= amountValue && cashReceivedValue > 0 ? "#16A34A" : "#111827",
+              }}
+              placeholder="0.00"
+              placeholderTextColor="#9CA3AF"
+              value={line.cashReceived}
+              onChangeText={(val) => onUpdate({ cashReceived: val })}
+              keyboardType="numeric"
+            />
+            {line.cashReceived !== "" && (
+              <TouchableOpacity
+                onPress={() => onUpdate({ cashReceived: "" })}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                activeOpacity={0.6}
+              >
+                <Ionicons name="close-circle" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
+            )}
+          </XStack>
+
+          {/* Exact Amount shortcut */}
+          <TouchableOpacity
+            style={{
+              backgroundColor:
+                cashReceivedValue === amountValue && amountValue > 0 ? "#DCFCE7" : "#F0FDF4",
+              paddingVertical: 12,
+              borderRadius: 10,
+              borderWidth: 1.5,
+              borderColor:
+                cashReceivedValue === amountValue && amountValue > 0 ? "#22C55E" : "#BBF7D0",
+              minHeight: 44,
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 10,
+            }}
+            onPress={handleExactAmount}
+            activeOpacity={0.7}
+          >
+            <Text style={{ color: "#16A34A", fontWeight: "700", fontSize: 13 }}>Exact Amount</Text>
+          </TouchableOpacity>
+
+          {/* Quick add buttons */}
+          <XStack flexWrap="wrap" gap={8}>
+            {QUICK_AMOUNTS.map((amount) => (
+              <TouchableOpacity
+                key={amount}
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  borderRadius: 10,
+                  borderWidth: 1.5,
+                  borderColor: "#E5E7EB",
+                  minHeight: 44,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={() => handleQuickAdd(amount)}
+                activeOpacity={0.7}
+              >
+                <Text style={{ color: "#374151", fontWeight: "600", fontSize: 14 }}>
+                  +₱{amount.toLocaleString()}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </XStack>
+        </>
+      )}
+
+      {/* Card/E-Wallet specific: payment type + reference */}
+      {line.paymentMethod === "card_ewallet" && (
+        <>
+          <Text variant="muted" size="sm" style={{ marginBottom: 10 }}>
+            Payment Type
+          </Text>
+          <XStack flexWrap="wrap" gap={8} marginBottom={12}>
+            {PAYMENT_TYPES.map((type) => {
+              const isOtherSelected =
+                type === "Other" &&
+                !PAYMENT_TYPES.slice(0, -1).includes(line.cardPaymentType as any) &&
+                line.cardPaymentType !== "";
+              const active = type === line.cardPaymentType || isOtherSelected;
+              return (
+                <TouchableOpacity
+                  key={type}
+                  onPress={() => {
+                    if (type === "Other") {
+                      onUpdate({ cardPaymentType: line.customPaymentType || "Other" });
+                    } else {
+                      onUpdate({ cardPaymentType: type });
+                    }
+                  }}
+                  activeOpacity={0.7}
+                  style={{
+                    paddingHorizontal: 14,
+                    paddingVertical: 10,
+                    borderRadius: 9999,
+                    borderWidth: 1.5,
+                    backgroundColor: active ? "#EFF6FF" : "#FFFFFF",
+                    borderColor: active ? "#0D87E1" : "#D1D5DB",
+                    minHeight: 44,
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text
+                    size="sm"
+                    style={{
+                      color: active ? "#0D87E1" : "#374151",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {type}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </XStack>
+
+          {selectedCardType === "Other" &&
+            !PAYMENT_TYPES.slice(0, -1).includes(line.cardPaymentType as any) && (
+              <TextInput
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#D1D5DB",
+                  borderRadius: 10,
+                  paddingHorizontal: 14,
+                  paddingVertical: 12,
+                  marginBottom: 12,
+                  fontSize: 16,
+                  minHeight: 48,
+                  backgroundColor: "#F9FAFB",
+                }}
+                placeholder="Enter payment type..."
+                value={line.customPaymentType}
+                onChangeText={(text) => {
+                  onUpdate({
+                    customPaymentType: text,
+                    cardPaymentType: text || "Other",
+                  });
+                }}
+                autoCapitalize="words"
+              />
+            )}
+
+          <Text variant="muted" size="sm" style={{ marginBottom: 8 }}>
+            Reference Number
+          </Text>
+          <TextInput
+            style={{
+              borderWidth: 1,
+              borderColor: "#D1D5DB",
+              borderRadius: 10,
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+              fontSize: 16,
+              minHeight: 48,
+              backgroundColor: "#F9FAFB",
+            }}
+            placeholder="Enter reference number..."
+            value={line.cardReferenceNumber}
+            onChangeText={(val) => onUpdate({ cardReferenceNumber: val })}
+            autoCapitalize="characters"
+          />
+        </>
+      )}
+    </Card>
   );
 };
 
