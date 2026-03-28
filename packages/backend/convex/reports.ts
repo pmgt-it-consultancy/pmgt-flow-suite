@@ -230,7 +230,20 @@ async function aggregateDailyData(
   let voidCount = voidedOrders.length;
 
   for (const order of voidedOrders) {
-    voidAmount += order.netSales;
+    // Check if this was a refund void (has replacement order)
+    const voids = await ctx.db
+      .query("orderVoids")
+      .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
+      .collect();
+    const refundVoid = voids.find((v: any) => v.voidType === "refund");
+
+    if (refundVoid) {
+      // For refund voids, use the recorded refund amount (the difference only)
+      voidAmount += refundVoid.amount;
+    } else {
+      // For regular voids, use the full order netSales
+      voidAmount += order.netSales;
+    }
   }
 
   // Also get item-level voids from paid orders
