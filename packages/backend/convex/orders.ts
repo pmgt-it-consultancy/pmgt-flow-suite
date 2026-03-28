@@ -158,6 +158,8 @@ export const createDraftOrder = mutation({
   args: {
     storeId: v.id("stores"),
     requestId: v.string(),
+    orderCategory: v.optional(v.union(v.literal("dine_in"), v.literal("takeout"))),
+    tableMarker: v.optional(v.string()),
   },
   returns: v.id("orders"),
   handler: async (ctx, args) => {
@@ -209,6 +211,8 @@ export const createDraftOrder = mutation({
       status: "draft",
       draftLabel,
       requestId: args.requestId,
+      orderCategory: args.orderCategory,
+      tableMarker: args.tableMarker,
       grossSales: 0,
       vatableSales: 0,
       vatAmount: 0,
@@ -1082,6 +1086,8 @@ export const updateCustomerName = mutation({
   args: {
     orderId: v.id("orders"),
     customerName: v.optional(v.string()),
+    tableMarker: v.optional(v.string()),
+    orderCategory: v.optional(v.union(v.literal("dine_in"), v.literal("takeout"))),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
@@ -1094,7 +1100,11 @@ export const updateCustomerName = mutation({
       throw new Error("Cannot modify a closed order");
     }
 
-    await ctx.db.patch(args.orderId, { customerName: args.customerName });
+    const updates: Record<string, unknown> = {};
+    if (args.customerName !== undefined) updates.customerName = args.customerName;
+    if (args.tableMarker !== undefined) updates.tableMarker = args.tableMarker;
+    if (args.orderCategory !== undefined) updates.orderCategory = args.orderCategory;
+    await ctx.db.patch(args.orderId, updates);
     return null;
   },
 });
