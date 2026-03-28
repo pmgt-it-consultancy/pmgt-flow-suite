@@ -246,6 +246,10 @@ export const CartItem = ({
                 style={{
                   paddingVertical: 6,
                   paddingHorizontal: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: 52,
+                  minHeight: 24,
                   backgroundColor:
                     currentServiceType === "dine_in"
                       ? isOverridden
@@ -255,7 +259,7 @@ export const CartItem = ({
                 }}
               >
                 {isUpdatingServiceType && currentServiceType !== "dine_in" ? (
-                  <ActivityIndicator size={12} color="#0D87E1" />
+                  <ActivityIndicator size="small" color="#0D87E1" />
                 ) : (
                   <Text
                     style={{
@@ -280,6 +284,10 @@ export const CartItem = ({
                 style={{
                   paddingVertical: 6,
                   paddingHorizontal: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: 62,
+                  minHeight: 24,
                   borderLeftWidth: 1,
                   borderLeftColor: "#E5E7EB",
                   backgroundColor:
@@ -291,7 +299,7 @@ export const CartItem = ({
                 }}
               >
                 {isUpdatingServiceType && currentServiceType !== "takeout" ? (
-                  <ActivityIndicator size={12} color="#0D87E1" />
+                  <ActivityIndicator size="small" color="#0D87E1" />
                 ) : (
                   <Text
                     style={{
