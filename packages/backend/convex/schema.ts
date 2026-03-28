@@ -197,6 +197,8 @@ export default defineSchema({
     changeGiven: v.optional(v.number()),
     cardPaymentType: v.optional(v.string()),
     cardReferenceNumber: v.optional(v.string()),
+    orderCategory: v.optional(v.union(v.literal("dine_in"), v.literal("takeout"))),
+    tableMarker: v.optional(v.string()),
     createdBy: v.id("users"),
     createdAt: v.number(),
     paidAt: v.optional(v.number()),
@@ -359,4 +361,21 @@ export default defineSchema({
   })
     .index("by_key", ["key"])
     .index("by_store_key", ["storeId", "key"]),
+
+  // ===== ORDER PAYMENTS =====
+  orderPayments: defineTable({
+    orderId: v.id("orders"),
+    storeId: v.id("stores"),
+    paymentMethod: v.union(v.literal("cash"), v.literal("card_ewallet")),
+    amount: v.number(),
+    cashReceived: v.optional(v.number()),
+    changeGiven: v.optional(v.number()),
+    cardPaymentType: v.optional(v.string()),
+    cardReferenceNumber: v.optional(v.string()),
+    createdAt: v.number(),
+    createdBy: v.id("users"),
+  })
+    .index("by_order", ["orderId"])
+    .index("by_store", ["storeId"])
+    .index("by_store_and_method", ["storeId", "paymentMethod"]),
 });
