@@ -226,36 +226,55 @@ export const ReceiptPreviewModal = ({
             </XStack>
 
             {/* Items */}
-            {receiptData.items.map((item, index) => (
-              <YStack key={index}>
-                <XStack marginBottom={4}>
-                  <Text size="xs" style={{ flex: 1 }} numberOfLines={1}>
-                    {item.name}
-                  </Text>
-                  <Text size="xs" style={{ width: 24, textAlign: "center" }}>
-                    {item.quantity}
-                  </Text>
-                  <Text size="xs" style={{ width: 56, textAlign: "right" }}>
-                    {formatCurrency(item.price)}
-                  </Text>
-                  <Text size="xs" style={{ width: 56, textAlign: "right" }}>
-                    {formatCurrency(item.total)}
-                  </Text>
-                </XStack>
-                {item.modifiers?.map((mod, modIndex) => (
-                  <XStack key={modIndex} marginBottom={2} paddingLeft={12}>
-                    <Text size="xs" variant="muted" style={{ flex: 1 }}>
-                      + {mod.optionName}
+            {receiptData.items.map((item, index) => {
+              const orderDefault =
+                receiptData.orderDefaultServiceType ??
+                (receiptData.orderCategory
+                  ? receiptData.orderCategory === "dine_in"
+                    ? "dine_in"
+                    : "takeout"
+                  : receiptData.orderType === "dine_in"
+                    ? "dine_in"
+                    : "takeout");
+              const itemType = item.serviceType ?? orderDefault;
+              const isException = itemType !== orderDefault;
+              const tag = isException ? (itemType === "takeout" ? " (TAKEOUT)" : " (DINE IN)") : "";
+              return (
+                <YStack key={index}>
+                  <XStack marginBottom={4}>
+                    <Text size="xs" style={{ flex: 1 }} numberOfLines={1}>
+                      {item.name}
+                      {tag && (
+                        <Text size="xs" style={{ color: "#D97706", fontWeight: "600" }}>
+                          {tag}
+                        </Text>
+                      )}
                     </Text>
-                    {mod.priceAdjustment > 0 && (
-                      <Text size="xs" variant="muted" style={{ width: 56, textAlign: "right" }}>
-                        +{formatCurrency(mod.priceAdjustment)}
-                      </Text>
-                    )}
+                    <Text size="xs" style={{ width: 24, textAlign: "center" }}>
+                      {item.quantity}
+                    </Text>
+                    <Text size="xs" style={{ width: 56, textAlign: "right" }}>
+                      {formatCurrency(item.price)}
+                    </Text>
+                    <Text size="xs" style={{ width: 56, textAlign: "right" }}>
+                      {formatCurrency(item.total)}
+                    </Text>
                   </XStack>
-                ))}
-              </YStack>
-            ))}
+                  {item.modifiers?.map((mod, modIndex) => (
+                    <XStack key={modIndex} marginBottom={2} paddingLeft={12}>
+                      <Text size="xs" variant="muted" style={{ flex: 1 }}>
+                        + {mod.optionName}
+                      </Text>
+                      {mod.priceAdjustment > 0 && (
+                        <Text size="xs" variant="muted" style={{ width: 56, textAlign: "right" }}>
+                          +{formatCurrency(mod.priceAdjustment)}
+                        </Text>
+                      )}
+                    </XStack>
+                  ))}
+                </YStack>
+              );
+            })}
 
             <DashedSeparator />
 
