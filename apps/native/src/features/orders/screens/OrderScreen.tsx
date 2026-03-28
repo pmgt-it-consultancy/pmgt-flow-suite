@@ -143,6 +143,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const createOrderMutation = useMutation(api.orders.create);
   const updatePaxMutation = useMutation(api.orders.updatePax);
   const updateTabNameMutation = useMutation(api.orders.updateTabName);
+  const updateItemServiceType = useMutation(api.orders.updateItemServiceType);
 
   // Printer
   const { printKitchenTicket } = usePrinterStore();
@@ -404,6 +405,17 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       setVoidingItem(null);
     },
     [voidingItem, removeItemMutation],
+  );
+
+  const handleServiceTypeChange = useCallback(
+    async (itemId: Id<"orderItems">, serviceType: "dine_in" | "takeout") => {
+      try {
+        await updateItemServiceType({ orderItemId: itemId, serviceType });
+      } catch (error) {
+        console.error("Failed to update service type:", error);
+      }
+    },
+    [updateItemServiceType],
   );
 
   const executeSendToKitchen = useCallback(
@@ -806,6 +818,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
                 notes={item.notes}
                 modifiers={item.modifiers}
                 isSentToKitchen={item.isSentToKitchen}
+                serviceType={item.serviceType}
+                orderDefaultServiceType="dine_in"
+                onServiceTypeChange={handleServiceTypeChange}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
                 onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
