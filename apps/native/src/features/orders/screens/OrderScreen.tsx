@@ -490,6 +490,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             name: d.productName,
             quantity: d.quantity,
             notes: d.notes,
+            serviceType: "dine_in" as const,
             modifiers: d.modifiers?.map((m) => ({
               optionName: m.modifierOptionName,
               priceAdjustment: m.priceAdjustment,
@@ -518,6 +519,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             name: i.productName,
             quantity: i.quantity,
             notes: i.notes,
+            serviceType: i.serviceType ?? ("dine_in" as const),
             modifiers: i.modifiers?.map((m) => ({
               optionName: m.optionName,
               priceAdjustment: m.priceAdjustment,
@@ -529,6 +531,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         const kitchenData: KitchenTicketData = {
           orderNumber,
           orderType: "dine_in",
+          orderDefaultServiceType: "dine_in",
           tableMarker: currentTableName,
           customerName: order?.customerName,
           orderCategory: order?.orderCategory as "dine_in" | "takeout" | undefined,
