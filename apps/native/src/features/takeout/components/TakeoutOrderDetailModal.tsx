@@ -60,8 +60,10 @@ export const TakeoutOrderDetailModal = ({
     if (!order?.orderNumber || !isPaid) return null;
     return {
       orderNumber: order.orderNumber,
-      tableName: order.customerName || "Takeout",
       orderType: "take_out" as const,
+      tableMarker: order.tableMarker,
+      customerName: order.customerName,
+      orderCategory: order.orderCategory as "dine_in" | "takeout" | undefined,
       items: activeItems.map((i) => ({
         name: i.productName,
         quantity: i.quantity,

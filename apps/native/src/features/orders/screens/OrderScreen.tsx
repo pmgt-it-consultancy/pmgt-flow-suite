@@ -517,6 +517,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           orderNumber,
           orderType: "dine_in",
           tableMarker: currentTableName,
+          customerName: order?.customerName,
+          orderCategory: order?.orderCategory as "dine_in" | "takeout" | undefined,
           items: sentItemNames,
           timestamp: new Date(),
         };
