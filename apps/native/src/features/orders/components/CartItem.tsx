@@ -51,9 +51,6 @@ export const CartItem = ({
   const formatCurrency = useFormatCurrency();
   const [isUpdatingServiceType, setIsUpdatingServiceType] = useState(false);
   const currentServiceType = serviceType ?? orderDefaultServiceType ?? "dine_in";
-  const isOverridden = orderDefaultServiceType
-    ? currentServiceType !== orderDefaultServiceType
-    : false;
 
   const handleServiceTypePress = async (newType: "dine_in" | "takeout") => {
     if (isUpdatingServiceType || currentServiceType === newType) return;
@@ -71,9 +68,6 @@ export const CartItem = ({
       paddingVertical={12}
       borderBottomWidth={1}
       borderBottomColor="#F3F4F6"
-      backgroundColor={isOverridden ? "#FFFBEB" : "transparent"}
-      borderLeftWidth={isOverridden ? 3 : 0}
-      borderLeftColor={isOverridden ? "#F59E0B" : "transparent"}
     >
       <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={8}>
         <YStack flex={1} marginRight={12}>
@@ -109,11 +103,6 @@ export const CartItem = ({
               numberOfLines={1}
             >
               {notes}
-            </Text>
-          )}
-          {isOverridden && !isSentToKitchen && (
-            <Text style={{ color: "#D97706", fontSize: 11, marginTop: 4, fontWeight: "500" }}>
-              {currentServiceType === "takeout" ? "Packed for takeout" : "Dine-in override"}
             </Text>
           )}
         </YStack>
@@ -166,10 +155,18 @@ export const CartItem = ({
                 style={{
                   paddingVertical: 6,
                   paddingHorizontal: 10,
-                  backgroundColor: currentServiceType === "dine_in" ? "#F3F4F6" : "white",
+                  backgroundColor: currentServiceType === "dine_in" ? "#DBEAFE" : "white",
                 }}
               >
-                <Text style={{ fontSize: 10, fontWeight: "600", color: "#9CA3AF" }}>DINE IN</Text>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: "600",
+                    color: currentServiceType === "dine_in" ? "#0D87E1" : "#9CA3AF",
+                  }}
+                >
+                  DINE IN
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled
@@ -179,10 +176,18 @@ export const CartItem = ({
                   paddingHorizontal: 10,
                   borderLeftWidth: 1,
                   borderLeftColor: "#E5E7EB",
-                  backgroundColor: currentServiceType === "takeout" ? "#F3F4F6" : "white",
+                  backgroundColor: currentServiceType === "takeout" ? "#DBEAFE" : "white",
                 }}
               >
-                <Text style={{ fontSize: 10, fontWeight: "600", color: "#9CA3AF" }}>TAKEOUT</Text>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: "600",
+                    color: currentServiceType === "takeout" ? "#0D87E1" : "#9CA3AF",
+                  }}
+                >
+                  TAKEOUT
+                </Text>
               </TouchableOpacity>
             </XStack>
           </>
@@ -250,12 +255,7 @@ export const CartItem = ({
                   justifyContent: "center",
                   minWidth: 52,
                   minHeight: 24,
-                  backgroundColor:
-                    currentServiceType === "dine_in"
-                      ? isOverridden
-                        ? "#FEF3C7"
-                        : "#DBEAFE"
-                      : "white",
+                  backgroundColor: currentServiceType === "dine_in" ? "#DBEAFE" : "white",
                 }}
               >
                 {isUpdatingServiceType && currentServiceType !== "dine_in" ? (
@@ -265,12 +265,7 @@ export const CartItem = ({
                     style={{
                       fontSize: 10,
                       fontWeight: "600",
-                      color:
-                        currentServiceType === "dine_in"
-                          ? isOverridden
-                            ? "#D97706"
-                            : "#0D87E1"
-                          : "#9CA3AF",
+                      color: currentServiceType === "dine_in" ? "#0D87E1" : "#9CA3AF",
                     }}
                   >
                     DINE IN
@@ -290,12 +285,7 @@ export const CartItem = ({
                   minHeight: 24,
                   borderLeftWidth: 1,
                   borderLeftColor: "#E5E7EB",
-                  backgroundColor:
-                    currentServiceType === "takeout"
-                      ? isOverridden
-                        ? "#FEF3C7"
-                        : "#DBEAFE"
-                      : "white",
+                  backgroundColor: currentServiceType === "takeout" ? "#DBEAFE" : "white",
                 }}
               >
                 {isUpdatingServiceType && currentServiceType !== "takeout" ? (
@@ -305,12 +295,7 @@ export const CartItem = ({
                     style={{
                       fontSize: 10,
                       fontWeight: "600",
-                      color:
-                        currentServiceType === "takeout"
-                          ? isOverridden
-                            ? "#D97706"
-                            : "#0D87E1"
-                          : "#9CA3AF",
+                      color: currentServiceType === "takeout" ? "#0D87E1" : "#9CA3AF",
                     }}
                   >
                     TAKEOUT
