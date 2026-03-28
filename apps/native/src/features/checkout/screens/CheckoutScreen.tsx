@@ -351,7 +351,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         quantity: item.quantity,
         price: item.productPrice,
         total: item.lineTotal,
-        serviceType: item.serviceType,
+        serviceType: item.serviceType ?? (isTakeout ? "takeout" : "dine_in"),
         modifiers: item.modifiers?.map((m) => ({
           optionName: m.optionName,
           priceAdjustment: m.priceAdjustment,
@@ -496,7 +496,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
             name: i.productName,
             quantity: i.quantity,
             notes: i.notes,
-            serviceType: i.serviceType,
+            serviceType: i.serviceType ?? (isTakeout ? "takeout" : "dine_in"),
             modifiers: i.modifiers?.map((m) => ({
               optionName: m.optionName,
               priceAdjustment: m.priceAdjustment,
