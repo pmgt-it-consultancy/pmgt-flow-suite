@@ -7,6 +7,7 @@ import { Alert, FlatList, TextInput } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { ManagerPinModal, ReceiptPreviewModal } from "../../checkout/components";
+import { RefundItemModal } from "../../order-history/components/RefundItemModal";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Badge, Button, LoadingState, Modal, Separator, Text } from "../../shared/components/ui";
@@ -46,6 +47,13 @@ export const TakeoutOrderDetailModal = ({
   const [showVoidReasonModal, setShowVoidReasonModal] = useState(false);
   const [showManagerPinModal, setShowManagerPinModal] = useState(false);
   const [voidReason, setVoidReason] = useState("");
+  const [showRefundModal, setShowRefundModal] = useState(false);
+  const [refundData, setRefundData] = useState<{
+    itemIds: Id<"orderItems">[];
+    reason: string;
+    refundMethod: "cash" | "card_ewallet";
+  } | null>(null);
+  const [showRefundPinModal, setShowRefundPinModal] = useState(false);
 
   const order = useQuery(api.orders.get, orderId ? { orderId } : "skip");
   const receipt = useQuery(
@@ -55,6 +63,7 @@ export const TakeoutOrderDetailModal = ({
   const store = useQuery(api.stores.get, order?.storeId ? { storeId: order.storeId } : "skip");
   const discounts = useQuery(api.discounts.getOrderDiscounts, orderId ? { orderId } : "skip");
   const voidOrderAction = useAction(api.voids.voidOrder);
+  const voidPaidOrderAction = useAction(api.voids.voidPaidOrder);
 
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
   const takeoutStatus = (order?.takeoutStatus as TakeoutStatus | undefined) ?? "pending";
@@ -177,6 +186,57 @@ export const TakeoutOrderDetailModal = ({
       }
     },
     [voidOrderAction, orderId, voidReason, onClose],
+  );
+
+  const handleRefundConfirm = useCallback(
+    async (itemIds: Id<"orderItems">[], reason: string, refundMethod: "cash" | "card_ewallet") => {
+      setRefundData({ itemIds, reason, refundMethod });
+      setShowRefundModal(false);
+      setShowRefundPinModal(true);
+    },
+    [],
+  );
+
+  const handleRefundPinSuccess = useCallback(
+    async (managerId: Id<"users">, pin: string) => {
+      if (!refundData || !orderId) return;
+      setShowRefundPinModal(false);
+      try {
+        const result = await voidPaidOrderAction({
+          orderId,
+          refundedItemIds: refundData.itemIds,
+          reason: refundData.reason,
+          refundMethod: refundData.refundMethod,
+          managerId,
+          managerPin: pin,
+        });
+
+        if (result.success) {
+          const successResult = result as {
+            success: true;
+            refundAmount: number;
+            replacementOrderId?: Id<"orders">;
+          };
+          Alert.alert(
+            "Refund Processed",
+            `Refund of ${formatCurrency(successResult.refundAmount)} has been processed.${
+              successResult.replacementOrderId
+                ? " A new order has been created with the remaining items."
+                : ""
+            }`,
+            [{ text: "OK", onPress: onClose }],
+          );
+        } else {
+          const errorResult = result as { success: false; error: string };
+          Alert.alert("Error", errorResult.error);
+        }
+      } catch (error: any) {
+        Alert.alert("Error", error.message || "Failed to process refund");
+      } finally {
+        setRefundData(null);
+      }
+    },
+    [voidPaidOrderAction, orderId, refundData, formatCurrency, onClose],
   );
 
   if (!order) {
@@ -381,14 +441,24 @@ export const TakeoutOrderDetailModal = ({
         {/* Actions */}
         <YStack marginTop={16} gap={8}>
           {isPaid && (
-            <Button variant="primary" onPress={handleReceiptPreview}>
-              <XStack alignItems="center" justifyContent="center">
-                <Ionicons name="receipt-outline" size={18} color="#fff" />
-                <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
-                  Receipt Preview / Print
-                </Text>
-              </XStack>
-            </Button>
+            <>
+              <Button variant="primary" onPress={handleReceiptPreview}>
+                <XStack alignItems="center" justifyContent="center">
+                  <Ionicons name="receipt-outline" size={18} color="#fff" />
+                  <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
+                    Receipt Preview / Print
+                  </Text>
+                </XStack>
+              </Button>
+              <Button variant="outline" onPress={() => setShowRefundModal(true)}>
+                <XStack alignItems="center" justifyContent="center">
+                  <Ionicons name="return-down-back-outline" size={18} color="#0D87E1" />
+                  <Text style={{ color: "#0D87E1", fontWeight: "600", marginLeft: 8 }}>
+                    Refund Item
+                  </Text>
+                </XStack>
+              </Button>
+            </>
           )}
           {!isPaid && order.status !== "voided" && (
             <Button variant="destructive" onPress={handleVoidPress}>
@@ -467,6 +537,32 @@ export const TakeoutOrderDetailModal = ({
           setReceiptData(null);
           onClose();
         }}
+      />
+
+      {/* Refund Item Modal */}
+      <RefundItemModal
+        visible={showRefundModal}
+        items={activeItems.map((i) => ({
+          _id: i._id,
+          productName: i.productName,
+          productPrice: i.productPrice,
+          quantity: i.quantity,
+          lineTotal: i.lineTotal,
+        }))}
+        onConfirm={handleRefundConfirm}
+        onClose={() => setShowRefundModal(false)}
+      />
+
+      {/* Refund Manager PIN Modal */}
+      <ManagerPinModal
+        visible={showRefundPinModal}
+        title="Approve Refund"
+        description="Manager PIN required to process this refund"
+        onClose={() => {
+          setShowRefundPinModal(false);
+          setRefundData(null);
+        }}
+        onSuccess={handleRefundPinSuccess}
       />
     </>
   );
