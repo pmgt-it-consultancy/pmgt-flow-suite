@@ -66,6 +66,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       customPaymentType: "",
     },
   ]);
+
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Receipt Preview State
@@ -111,6 +112,19 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   }, [discounts]);
 
   // Payment calculations
+  const netSales = order?.netSales ?? 0;
+
+  // Auto-fill the first payment line amount when order loads
+  useEffect(() => {
+    if (netSales > 0 && paymentLines.length === 1 && !paymentLines[0].amount) {
+      setPaymentLines((prev) =>
+        prev.map((l, i) =>
+          i === 0 ? { ...l, amount: netSales.toFixed(2).replace(/\.00$/, "") } : l,
+        ),
+      );
+    }
+  }, [netSales]);
+
   const totalPayments = useMemo(
     () => paymentLines.reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0),
     [paymentLines],
@@ -131,19 +145,24 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   // Payment line helpers
   const addPaymentLine = useCallback(() => {
-    setPaymentLines((prev) => [
-      ...prev,
-      {
-        id: String(Date.now()),
-        paymentMethod: "card_ewallet",
-        amount: "",
-        cashReceived: "",
-        cardPaymentType: "",
-        cardReferenceNumber: "",
-        customPaymentType: "",
-      },
-    ]);
-  }, []);
+    setPaymentLines((prev) => {
+      const currentTotal = prev.reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
+      const rem = Math.max(0, netSales - currentTotal);
+      const remStr = rem > 0 ? rem.toFixed(2).replace(/\.00$/, "") : "";
+      return [
+        ...prev,
+        {
+          id: String(Date.now()),
+          paymentMethod: "card_ewallet",
+          amount: remStr,
+          cashReceived: "",
+          cardPaymentType: "",
+          cardReferenceNumber: "",
+          customPaymentType: "",
+        },
+      ];
+    });
+  }, [netSales]);
 
   const removePaymentLine = useCallback((id: string) => {
     setPaymentLines((prev) => prev.filter((l) => l.id !== id));
