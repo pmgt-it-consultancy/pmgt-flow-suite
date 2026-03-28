@@ -436,7 +436,7 @@ export const ReceiptPreviewModal = ({
             {/* Separator */}
             <YStack height={1} backgroundColor="#E5E7EB" marginVertical={8} />
 
-            {/* Change Due (cash only) */}
+            {/* Change Due (cash only, only when change > 0) */}
             {(() => {
               let changeDue: number | null = null;
               if (receiptData.payments && receiptData.payments.length > 0) {
@@ -449,7 +449,7 @@ export const ReceiptPreviewModal = ({
               } else if (receiptData.paymentMethod === "cash") {
                 changeDue = receiptData.change || 0;
               }
-              if (changeDue === null) return null;
+              if (changeDue === null || changeDue <= 0) return null;
               return (
                 <>
                   <YStack marginVertical={12}>
