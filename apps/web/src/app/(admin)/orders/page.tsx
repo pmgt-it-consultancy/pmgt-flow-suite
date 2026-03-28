@@ -2,7 +2,7 @@
 
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { Eye, Receipt, Search, ShoppingBag, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +35,12 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency } from "@/lib/format";
 import { useAdminStore } from "@/stores/useAdminStore";
-import { BulkVoidConfirmDialog, BulkVoidFooter, ManagerPinDialog } from "./_components";
+import {
+  BulkVoidConfirmDialog,
+  BulkVoidFooter,
+  ManagerPinDialog,
+  RefundItemDialog,
+} from "./_components";
 import { useBulkVoid } from "./_hooks";
 
 type OrderStatus = "open" | "paid" | "voided";
@@ -47,6 +52,17 @@ export default function OrdersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState<Id<"orders"> | null>(null);
   const bulkVoid = useBulkVoid();
+
+  // Refund state
+  const [showRefundDialog, setShowRefundDialog] = useState(false);
+  const [refundData, setRefundData] = useState<{
+    itemIds: Id<"orderItems">[];
+    reason: string;
+    refundMethod: "cash" | "card_ewallet";
+  } | null>(null);
+  const [showRefundPinDialog, setShowRefundPinDialog] = useState(false);
+  const [isRefunding, setIsRefunding] = useState(false);
+  const voidPaidOrderAction = useAction(api.voids.voidPaidOrder);
 
   // Queries
   const orders = useQuery(
@@ -83,7 +99,10 @@ export default function OrdersPage() {
     );
   });
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, voids?: Array<{ voidType: string }>) => {
+    if (status === "voided" && voids?.some((v) => v.voidType === "refund")) {
+      return <Badge variant="destructive">Refund</Badge>;
+    }
     switch (status) {
       case "open":
         return <Badge variant="secondary">Open</Badge>;
@@ -103,6 +122,44 @@ export default function OrdersPage() {
       hour: "numeric",
       minute: "2-digit",
     }).format(new Date(timestamp));
+  };
+
+  const handleRefundConfirm = (
+    itemIds: Id<"orderItems">[],
+    reason: string,
+    refundMethod: "cash" | "card_ewallet",
+  ) => {
+    setRefundData({ itemIds, reason, refundMethod });
+    setShowRefundDialog(false);
+    setShowRefundPinDialog(true);
+  };
+
+  const handleRefundPinSubmit = async (managerId: Id<"users">, pin: string) => {
+    if (!refundData || !selectedOrderId) return;
+    setIsRefunding(true);
+    try {
+      const result = await voidPaidOrderAction({
+        orderId: selectedOrderId,
+        refundedItemIds: refundData.itemIds,
+        reason: refundData.reason,
+        refundMethod: refundData.refundMethod,
+        managerId,
+        managerPin: pin,
+      });
+
+      if (result.success) {
+        setShowRefundPinDialog(false);
+        setSelectedOrderId(null);
+        setRefundData(null);
+      } else {
+        const errorResult = result as { success: false; error: string };
+        alert(errorResult.error);
+      }
+    } catch (error: any) {
+      alert(error.message || "Failed to process refund");
+    } finally {
+      setIsRefunding(false);
+    }
   };
 
   return (
@@ -324,7 +381,7 @@ export default function OrdersPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               Order {orderDetails?.orderNumber}
-              {orderDetails && getStatusBadge(orderDetails.status)}
+              {orderDetails && getStatusBadge(orderDetails.status, orderDetails.voids)}
             </DialogTitle>
             <DialogDescription>
               {orderDetails && formatDate(orderDetails.createdAt)}
@@ -403,43 +460,43 @@ export default function OrdersPage() {
                     const isException = itemType !== orderDefault;
 
                     return (
-                    <div
-                      key={index}
-                      className={`px-3 py-2 text-sm ${
-                        item.isVoided ? "line-through text-gray-400" : ""
-                      }`}
-                    >
-                      <div className="flex justify-between">
-                        <span>
-                          {item.quantity}x {item.productName}
-                          {isException && (
-                            <span className="ml-2 inline-flex items-center rounded-md bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
-                              {itemType === "takeout" ? "TAKEOUT" : "DINE IN"}
-                            </span>
-                          )}
-                        </span>
-                        <span>{formatCurrency(item.lineTotal)}</span>
+                      <div
+                        key={index}
+                        className={`px-3 py-2 text-sm ${
+                          item.isVoided ? "line-through text-gray-400" : ""
+                        }`}
+                      >
+                        <div className="flex justify-between">
+                          <span>
+                            {item.quantity}x {item.productName}
+                            {isException && (
+                              <span className="ml-2 inline-flex items-center rounded-md bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
+                                {itemType === "takeout" ? "TAKEOUT" : "DINE IN"}
+                              </span>
+                            )}
+                          </span>
+                          <span>{formatCurrency(item.lineTotal)}</span>
+                        </div>
+                        {item.modifiers.length > 0 && (
+                          <div className="mt-0.5 space-y-0.5">
+                            {item.modifiers.map((mod, modIdx) => (
+                              <div key={modIdx} className="text-xs text-gray-500 pl-4">
+                                + {mod.optionName}
+                                {mod.priceAdjustment > 0 && (
+                                  <span className="ml-1">
+                                    ({formatCurrency(mod.priceAdjustment)})
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {item.notes && (
+                          <div className="text-xs text-gray-500 pl-4 italic mt-0.5">
+                            Note: {item.notes}
+                          </div>
+                        )}
                       </div>
-                      {item.modifiers.length > 0 && (
-                        <div className="mt-0.5 space-y-0.5">
-                          {item.modifiers.map((mod, modIdx) => (
-                            <div key={modIdx} className="text-xs text-gray-500 pl-4">
-                              + {mod.optionName}
-                              {mod.priceAdjustment > 0 && (
-                                <span className="ml-1">
-                                  ({formatCurrency(mod.priceAdjustment)})
-                                </span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {item.notes && (
-                        <div className="text-xs text-gray-500 pl-4 italic mt-0.5">
-                          Note: {item.notes}
-                        </div>
-                      )}
-                    </div>
                     );
                   })}
                 </div>
@@ -636,10 +693,52 @@ export default function OrdersPage() {
                   </div>
                 </div>
               ) : null}
+
+              {/* Refund action for paid orders */}
+              {orderDetails?.status === "paid" && (
+                <Button
+                  variant="destructive"
+                  className="w-full"
+                  onClick={() => setShowRefundDialog(true)}
+                >
+                  Refund Item
+                </Button>
+              )}
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Refund Item Dialog */}
+      {orderDetails && (
+        <RefundItemDialog
+          open={showRefundDialog}
+          onOpenChange={setShowRefundDialog}
+          items={orderDetails.items.map((i) => ({
+            _id: i._id,
+            productName: i.productName,
+            productPrice: i.productPrice,
+            quantity: i.quantity,
+            lineTotal: i.lineTotal,
+            isVoided: i.isVoided,
+          }))}
+          onConfirm={handleRefundConfirm}
+        />
+      )}
+
+      {/* Refund Manager PIN Dialog */}
+      {selectedStoreId && (
+        <ManagerPinDialog
+          open={showRefundPinDialog}
+          onOpenChange={(open) => {
+            setShowRefundPinDialog(open);
+            if (!open) setRefundData(null);
+          }}
+          storeId={selectedStoreId}
+          onSubmit={handleRefundPinSubmit}
+          isSubmitting={isRefunding}
+        />
+      )}
     </div>
   );
 }
