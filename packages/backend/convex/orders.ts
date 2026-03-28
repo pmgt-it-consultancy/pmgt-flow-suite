@@ -730,6 +730,7 @@ export const getOrderHistory = query({
       itemCount: v.number(),
       createdAt: v.number(),
       paymentMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
+      refundedFromOrderId: v.optional(v.id("orders")),
     }),
   ),
   handler: async (ctx, args) => {
@@ -793,6 +794,7 @@ export const getOrderHistory = query({
           itemCount,
           createdAt: order.createdAt,
           paymentMethod: order.paymentMethod,
+          refundedFromOrderId: order.refundedFromOrderId,
         };
       }),
     );
@@ -1278,6 +1280,7 @@ export const getTakeoutOrders = query({
       netSales: v.number(),
       itemCount: v.number(),
       createdAt: v.number(),
+      refundedFromOrderId: v.optional(v.id("orders")),
     }),
   ),
   handler: async (ctx, args) => {
@@ -1318,6 +1321,7 @@ export const getTakeoutOrders = query({
           netSales: order.netSales,
           itemCount,
           createdAt: order.createdAt,
+          refundedFromOrderId: order.refundedFromOrderId,
         };
       }),
     );

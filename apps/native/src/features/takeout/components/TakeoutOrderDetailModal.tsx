@@ -291,9 +291,16 @@ export const TakeoutOrderDetailModal = ({
               {orderTime} · {order.createdByName}
             </Text>
           </YStack>
-          <Badge variant={config.variant} size="md">
-            {config.label}
-          </Badge>
+          <YStack gap={6} alignItems="flex-end">
+            <Badge variant={config.variant} size="md">
+              {config.label}
+            </Badge>
+            {order.refundedFromOrderId && (
+              <Badge variant="warning" size="sm">
+                Refunded Order
+              </Badge>
+            )}
+          </YStack>
         </XStack>
 
         <Separator style={{ marginBottom: 12 }} />

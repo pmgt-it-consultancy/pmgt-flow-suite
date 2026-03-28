@@ -345,6 +345,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
                   netSales={item.netSales}
                   itemCount={item.itemCount}
                   createdAt={item.createdAt}
+                  refundedFromOrderId={item.refundedFromOrderId}
                   onAdvanceStatus={handleAdvanceStatus}
                   onPress={(orderId) => handleOpenTakeoutOrder(orderId, item.status)}
                   disableAdvance={

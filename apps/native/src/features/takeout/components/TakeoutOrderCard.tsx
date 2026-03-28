@@ -16,6 +16,7 @@ interface TakeoutOrderCardProps {
   netSales: number;
   itemCount: number;
   createdAt: number;
+  refundedFromOrderId?: Id<"orders">;
   onAdvanceStatus: (orderId: Id<"orders">, currentStatus: TakeoutStatus) => void;
   onPress?: (orderId: Id<"orders">) => void;
   disableAdvance?: boolean;
@@ -65,6 +66,7 @@ export const TakeoutOrderCard = ({
   netSales,
   itemCount,
   createdAt,
+  refundedFromOrderId,
   onAdvanceStatus,
   onPress,
   disableAdvance = false,
@@ -120,7 +122,12 @@ export const TakeoutOrderCard = ({
           <Badge variant={isVoided ? "error" : config.variant} size="md">
             {isVoided ? "Voided" : config.label}
           </Badge>
-          {!isVoided && (
+          {refundedFromOrderId && (
+            <Badge variant="warning" size="sm">
+              Refunded
+            </Badge>
+          )}
+          {!isVoided && !refundedFromOrderId && (
             <Badge variant={paymentBadge.variant} size="sm">
               {paymentBadge.label}
             </Badge>

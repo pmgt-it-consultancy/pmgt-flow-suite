@@ -247,6 +247,7 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
               <Badge variant={statusVariant}>
                 {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
               </Badge>
+              {order.refundedFromOrderId && <Badge variant="warning">Refunded</Badge>}
             </XStack>
             <Text variant="muted" size="sm" numberOfLines={1}>
               {orderTypeLabel}
