@@ -29,6 +29,8 @@ export interface ReceiptData {
   storeFooter?: string;
   orderNumber: string;
   tableName?: string;
+  tableMarker?: string;
+  orderCategory?: "dine_in" | "takeout";
   pax?: number;
   orderType: "dine_in" | "take_out" | "delivery";
   cashierName: string;
@@ -74,12 +76,19 @@ const formatDate = (date: Date): string => {
 };
 
 export const generateReceiptHtml = (data: ReceiptData): string => {
-  const orderTypeLabel =
-    data.orderType === "dine_in"
+  const orderTypeLabel = data.orderCategory
+    ? data.orderCategory === "dine_in"
+      ? "Dine-In"
+      : "Takeout"
+    : data.orderType === "dine_in"
       ? "Dine-In"
       : data.orderType === "take_out"
         ? "Take-Out"
         : "Delivery";
+
+  const receiptDisplayNumber = data.tableMarker
+    ? `${data.receiptNumber ?? data.orderNumber} | ${data.tableMarker}`
+    : (data.receiptNumber ?? data.orderNumber);
 
   const itemsHtml = data.items
     .map((item) => {
@@ -307,7 +316,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
       <div class="divider"></div>
 
       <div class="order-info">
-        <div><span>Receipt #:</span><span>${data.receiptNumber || data.orderNumber}</span></div>
+        <div><span>Receipt #:</span><span>${receiptDisplayNumber}</span></div>
         <div><span>Date:</span><span>${formatDate(data.transactionDate)}</span></div>
         <div><span>Order Type:</span><span>${orderTypeLabel}</span></div>
         ${data.tableName ? `<div><span>Table:</span><span>${data.tableName}</span></div>` : ""}

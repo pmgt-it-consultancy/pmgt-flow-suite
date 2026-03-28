@@ -249,6 +249,8 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         storeFooter: store?.footer,
         orderNumber: order?.orderNumber ?? "",
         tableName,
+        tableMarker: order?.tableMarker,
+        orderCategory: order?.orderCategory,
         pax: order?.pax,
         orderType: (order?.orderType as "dine_in" | "take_out" | "delivery") ?? "dine_in",
         cashierName: user?.name ?? "Cashier",
@@ -342,8 +344,10 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       if (order?.orderNumber) {
         const kitchenData: KitchenTicketData = {
           orderNumber: order.orderNumber,
-          tableName: isTakeout ? order.customerName || "Takeout" : tableName || "",
           orderType: isTakeout ? "take_out" : "dine_in",
+          tableMarker: order.tableMarker,
+          customerName: order.customerName,
+          orderCategory: order.orderCategory,
           items: activeItems.map((i) => ({
             name: i.productName,
             quantity: i.quantity,

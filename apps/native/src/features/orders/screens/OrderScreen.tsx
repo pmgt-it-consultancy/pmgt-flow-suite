@@ -515,8 +515,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         // Print kitchen ticket with only the newly sent items
         const kitchenData: KitchenTicketData = {
           orderNumber,
-          tableName: currentTableName,
           orderType: "dine_in",
+          tableMarker: currentTableName,
           items: sentItemNames,
           timestamp: new Date(),
         };

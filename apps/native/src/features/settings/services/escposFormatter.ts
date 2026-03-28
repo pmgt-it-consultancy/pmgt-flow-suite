@@ -10,8 +10,10 @@ export interface KitchenTicketItem {
 
 export interface KitchenTicketData {
   orderNumber: string;
-  tableName?: string;
   orderType: "dine_in" | "take_out" | "delivery";
+  orderCategory?: "dine_in" | "takeout";
+  tableMarker?: string;
+  customerName?: string;
   items: KitchenTicketItem[];
   timestamp: Date;
 }
@@ -76,9 +78,17 @@ export async function printReceiptToThermal(
 
   // Order info
   await p.printerAlign(ALIGN.LEFT);
-  if (data.receiptNumber) await p.printText(`Receipt #: ${data.receiptNumber}\n`, normal());
+  const receiptNumber = data.tableMarker
+    ? `${data.receiptNumber ?? data.orderNumber} | ${data.tableMarker}`
+    : data.receiptNumber;
+  if (receiptNumber) await p.printText(`Receipt #: ${receiptNumber}\n`, normal());
   await p.printText(`Date: ${formatDate(data.transactionDate)}\n`, normal());
-  await p.printText(`Order Type: ${orderTypeLabel(data.orderType)}\n`, normal());
+  const typeLabel = data.orderCategory
+    ? data.orderCategory === "dine_in"
+      ? "Dine-In"
+      : "Takeout"
+    : orderTypeLabel(data.orderType);
+  await p.printText(`Type: ${typeLabel}\n`, normal());
   if (data.tableName) await p.printText(`Table: ${data.tableName}\n`, normal());
   if (data.pax) await p.printText(`Pax: ${data.pax}\n`, normal());
   await p.printText(`Cashier: ${data.cashierName}\n`, normal());
@@ -196,12 +206,26 @@ export async function printKitchenTicketToThermal(
   await p.printText(`#${data.orderNumber}\n`, large());
   await p.printText("\n", normal());
 
-  // Table or order type
-  if (data.tableName) {
-    await p.printText(`${data.tableName.toUpperCase()}\n`, bold());
-  } else {
-    await p.printText(`${orderTypeLabel(data.orderType).toUpperCase()}\n`, bold());
+  // Table marker — prominent, centered, between separators
+  if (data.tableMarker) {
+    await p.printText(`==================\n`, normal());
+    await p.printText(`${data.tableMarker}\n`, large());
+    await p.printText(`==================\n`, normal());
   }
+
+  // Order category or type — always shown
+  const categoryLabel = data.orderCategory
+    ? data.orderCategory === "dine_in"
+      ? "DINE-IN"
+      : "TAKEOUT"
+    : orderTypeLabel(data.orderType).toUpperCase();
+  await p.printText(`${categoryLabel}\n`, bold());
+
+  // Customer name — if set
+  if (data.customerName) {
+    await p.printText(`Customer: ${data.customerName}\n`, normal());
+  }
+
   await p.printText("\n", normal());
 
   // Timestamp
