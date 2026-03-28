@@ -208,6 +208,7 @@ export default defineSchema({
     tabNumber: v.optional(v.number()), // Auto-assigned: 1, 2, 3... per table
     tabName: v.optional(v.string()), // Default "Tab 1", editable to guest name
     requestId: v.optional(v.string()), // Idempotency key to prevent duplicate orders
+    refundedFromOrderId: v.optional(v.id("orders")),
   })
     .index("by_store", ["storeId"])
     .index("by_status", ["status"])
@@ -263,13 +264,15 @@ export default defineSchema({
 
   orderVoids: defineTable({
     orderId: v.id("orders"),
-    voidType: v.union(v.literal("full_order"), v.literal("item")),
+    voidType: v.union(v.literal("full_order"), v.literal("item"), v.literal("refund")),
     orderItemId: v.optional(v.id("orderItems")),
     reason: v.string(),
     approvedBy: v.id("users"),
     requestedBy: v.id("users"),
     amount: v.number(),
     createdAt: v.number(),
+    refundMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
+    replacementOrderId: v.optional(v.id("orders")),
   })
     .index("by_order", ["orderId"])
     .index("by_createdAt", ["createdAt"]),
