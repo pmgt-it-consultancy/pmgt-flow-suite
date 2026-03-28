@@ -1007,6 +1007,28 @@ export const updateItemServiceType = mutation({
   },
 });
 
+// Bulk update service type for all unsent, non-voided items on an order
+export const bulkUpdateItemServiceType = mutation({
+  args: {
+    orderId: v.id("orders"),
+    serviceType: v.union(v.literal("dine_in"), v.literal("takeout")),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const items = await ctx.db
+      .query("orderItems")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .collect();
+
+    for (const item of items) {
+      if (!item.isSentToKitchen && !item.isVoided) {
+        await ctx.db.patch(item._id, { serviceType: args.serviceType });
+      }
+    }
+    return null;
+  },
+});
+
 // Remove item from order (decreases quantity or removes entirely)
 export const removeItem = mutation({
   args: {

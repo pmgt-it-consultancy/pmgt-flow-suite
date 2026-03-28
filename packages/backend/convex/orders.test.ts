@@ -1190,3 +1190,76 @@ describe("orders.updateItemServiceType", () => {
     ).rejects.toThrowError("Cannot modify service type of kitchen-sent items");
   });
 });
+
+describe("orders.bulkUpdateItemServiceType", () => {
+  it("should update unsent items and skip sent-to-kitchen items", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-030",
+        orderType: "dine_in" as const,
+        orderChannel: "walk_in_dine_in" as const,
+        status: "open" as const,
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const { unsentItemId, sentItemId, voidedItemId } = await t.run(async (ctx: any) => {
+      const unsentItemId = await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        serviceType: "dine_in",
+        isVoided: false,
+        isSentToKitchen: false,
+      });
+      const sentItemId = await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        serviceType: "dine_in",
+        isVoided: false,
+        isSentToKitchen: true,
+      });
+      const voidedItemId = await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        serviceType: "dine_in",
+        isVoided: true,
+        isSentToKitchen: false,
+      });
+      return { unsentItemId, sentItemId, voidedItemId };
+    });
+
+    await t.mutation(api.orders.bulkUpdateItemServiceType, {
+      orderId,
+      serviceType: "takeout",
+    });
+
+    const unsentItem = await t.run(async (ctx: any) => ctx.db.get(unsentItemId));
+    const sentItem = await t.run(async (ctx: any) => ctx.db.get(sentItemId));
+    const voidedItem = await t.run(async (ctx: any) => ctx.db.get(voidedItemId));
+
+    expect(unsentItem.serviceType).toBe("takeout");
+    expect(sentItem.serviceType).toBe("dine_in"); // unchanged — sent to kitchen
+    expect(voidedItem.serviceType).toBe("dine_in"); // unchanged — voided
+  });
+});
