@@ -66,6 +66,12 @@ export default function OrdersPage() {
     selectedOrderId ? { orderId: selectedOrderId } : "skip",
   );
 
+  // Get receipt (payments array) when a paid order is selected
+  const receipt = useQuery(
+    api.checkout.getReceipt,
+    selectedOrderId && orderDetails?.status === "paid" ? { orderId: selectedOrderId } : "skip",
+  );
+
   // Filter orders by search query
   const filteredOrders = orders?.filter((order) => {
     if (!searchQuery) return true;
@@ -363,6 +369,17 @@ export default function OrdersPage() {
                     <span className="text-gray-500">Customer:</span> {orderDetails.customerName}
                   </div>
                 )}
+                {orderDetails.tableMarker && (
+                  <div>
+                    <span className="text-gray-500">Table Marker:</span> {orderDetails.tableMarker}
+                  </div>
+                )}
+                {orderDetails.orderCategory && (
+                  <div>
+                    <span className="text-gray-500">Category:</span>{" "}
+                    {orderDetails.orderCategory === "dine_in" ? "Dine-in" : "Takeout"}
+                  </div>
+                )}
                 {orderDetails.paidAt && (
                   <div>
                     <span className="text-gray-500">Paid:</span> {formatDate(orderDetails.paidAt)}
@@ -512,40 +529,96 @@ export default function OrdersPage() {
               )}
 
               {/* Payment Info */}
-              {orderDetails.paymentMethod && (
+              {receipt?.payments?.length || orderDetails.paymentMethod ? (
                 <div className="border rounded-lg">
                   <div className="bg-gray-50 px-3 py-2 border-b font-medium text-sm">Payment</div>
                   <div className="px-3 py-2 space-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Method</span>
-                      <span>
-                        {orderDetails.paymentMethod === "cash"
-                          ? "Cash"
-                          : orderDetails.cardPaymentType || "Card/E-Wallet"}
-                      </span>
-                    </div>
-                    {orderDetails.paymentMethod === "cash" && orderDetails.cashReceived != null && (
+                    {receipt?.payments?.length ? (
+                      <>
+                        {receipt.payments.map((payment, index) => (
+                          <div key={index} className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">
+                              {payment.paymentMethod === "cash"
+                                ? "Cash"
+                                : payment.cardPaymentType || "Card/E-Wallet"}
+                            </span>
+                            <span>₱{payment.amount.toFixed(2)}</span>
+                          </div>
+                        ))}
+                        {receipt.payments.some(
+                          (p) => p.paymentMethod === "cash" && p.cashReceived,
+                        ) && (
+                          <>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">Amount Tendered</span>
+                              <span>
+                                ₱
+                                {receipt.payments
+                                  .filter((p) => p.paymentMethod === "cash")
+                                  .reduce((sum, p) => sum + (p.cashReceived ?? 0), 0)
+                                  .toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">Change</span>
+                              <span>
+                                ₱
+                                {receipt.payments
+                                  .filter((p) => p.paymentMethod === "cash")
+                                  .reduce((sum, p) => sum + (p.changeGiven ?? 0), 0)
+                                  .toFixed(2)}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                        {receipt.payments
+                          .filter(
+                            (p) => p.paymentMethod === "card_ewallet" && p.cardReferenceNumber,
+                          )
+                          .map((payment, index) => (
+                            <div key={`ref-${index}`} className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">
+                                Ref # ({payment.cardPaymentType})
+                              </span>
+                              <span className="font-mono">{payment.cardReferenceNumber}</span>
+                            </div>
+                          ))}
+                      </>
+                    ) : (
                       <>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Cash Received</span>
-                          <span>{formatCurrency(orderDetails.cashReceived)}</span>
+                          <span className="text-gray-500">Method</span>
+                          <span>
+                            {orderDetails.paymentMethod === "cash"
+                              ? "Cash"
+                              : orderDetails.cardPaymentType || "Card/E-Wallet"}
+                          </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Change</span>
-                          <span>{formatCurrency(orderDetails.changeGiven ?? 0)}</span>
-                        </div>
+                        {orderDetails.paymentMethod === "cash" &&
+                          orderDetails.cashReceived != null && (
+                            <>
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Cash Received</span>
+                                <span>{formatCurrency(orderDetails.cashReceived)}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Change</span>
+                                <span>{formatCurrency(orderDetails.changeGiven ?? 0)}</span>
+                              </div>
+                            </>
+                          )}
+                        {orderDetails.paymentMethod === "card_ewallet" &&
+                          orderDetails.cardReferenceNumber && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Reference #</span>
+                              <span className="font-mono">{orderDetails.cardReferenceNumber}</span>
+                            </div>
+                          )}
                       </>
                     )}
-                    {orderDetails.paymentMethod === "card_ewallet" &&
-                      orderDetails.cardReferenceNumber && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Reference #</span>
-                          <span className="font-mono">{orderDetails.cardReferenceNumber}</span>
-                        </div>
-                      )}
                   </div>
                 </div>
-              )}
+              ) : null}
             </div>
           )}
         </DialogContent>
