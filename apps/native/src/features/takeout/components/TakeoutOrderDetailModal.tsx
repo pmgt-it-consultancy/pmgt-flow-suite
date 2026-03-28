@@ -130,8 +130,11 @@ export const TakeoutOrderDetailModal = ({
       cardPaymentType: order?.cardPaymentType,
       cardReferenceNumber: order?.cardReferenceNumber,
       customerName: order?.customerName,
+      tableMarker: order?.tableMarker,
+      orderCategory: order?.orderCategory as "dine_in" | "takeout" | undefined,
+      payments: receipt?.payments,
     };
-  }, [order, store, discounts, activeItems, user?.name]);
+  }, [order, store, discounts, activeItems, user?.name, receipt]);
 
   const handleReceiptPreview = useCallback(() => {
     setReceiptData(buildReceiptData());

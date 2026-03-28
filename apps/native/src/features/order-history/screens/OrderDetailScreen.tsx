@@ -92,6 +92,9 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
         change: receipt.changeGiven ?? 0,
         cardPaymentType: receipt.cardPaymentType,
         cardReferenceNumber: receipt.cardReferenceNumber,
+        tableMarker: receipt.tableMarker,
+        orderCategory: receipt.orderCategory,
+        payments: receipt.payments,
         transactionDate: new Date(receipt.paidAt ?? receipt.createdAt),
         receiptNumber: receipt.orderNumber,
       };
