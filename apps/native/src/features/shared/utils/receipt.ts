@@ -47,6 +47,14 @@ export interface ReceiptData {
   cardLastFour?: string;
   cardPaymentType?: string;
   cardReferenceNumber?: string;
+  payments?: Array<{
+    paymentMethod: "cash" | "card_ewallet";
+    amount: number;
+    cashReceived?: number;
+    changeGiven?: number;
+    cardPaymentType?: string;
+    cardReferenceNumber?: string;
+  }>;
   transactionDate: Date;
   receiptNumber?: string;
   customerName?: string;
@@ -139,8 +147,37 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
   const paymentMethodLabel =
     data.paymentMethod === "cash" ? "Cash" : data.cardPaymentType || "Card/E-Wallet";
 
-  const paymentDetailsHtml =
-    data.paymentMethod === "cash"
+  const paymentDetailsHtml = (() => {
+    if (data.payments && data.payments.length > 0) {
+      // Multi-payment display
+      let html = "";
+      let totalCashReceived = 0;
+      let totalChangeGiven = 0;
+      for (const payment of data.payments) {
+        if (payment.paymentMethod === "cash") {
+          html += `<div class="payment-row"><span>Cash:</span><span>${formatCurrency(payment.amount)}</span></div>`;
+          if (payment.cashReceived !== undefined) {
+            totalCashReceived += payment.cashReceived;
+          }
+          if (payment.changeGiven !== undefined) {
+            totalChangeGiven += payment.changeGiven;
+          }
+        } else {
+          const label = payment.cardPaymentType || "Card/E-Wallet";
+          html += `<div class="payment-row"><span>${label}:</span><span>${formatCurrency(payment.amount)}</span></div>`;
+          if (payment.cardReferenceNumber) {
+            html += `<div class="payment-row"><span>Ref #:</span><span>${payment.cardReferenceNumber}</span></div>`;
+          }
+        }
+      }
+      if (totalCashReceived > 0) {
+        html += `<div class="payment-row"><span>Amount Tendered:</span><span>${formatCurrency(totalCashReceived)}</span></div>`;
+        html += `<div class="payment-row"><span>Change:</span><span>${formatCurrency(totalChangeGiven)}</span></div>`;
+      }
+      return html;
+    }
+    // Backward-compat single-payment display
+    return data.paymentMethod === "cash"
       ? `
         <div class="payment-row">
           <span>Amount Tendered:</span>
@@ -161,6 +198,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
             : ""
         }
       `;
+  })();
 
   const customerInfoHtml =
     data.customerName || data.customerId || data.customerAddress || data.customerTin
@@ -369,10 +407,11 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
 
       <div class="payment-method">
         <div class="section-title">PAYMENT</div>
-        <div class="payment-row">
-          <span>Method:</span>
-          <span>${paymentMethodLabel}</span>
-        </div>
+        ${
+          !(data.payments && data.payments.length > 0)
+            ? `<div class="payment-row"><span>Method:</span><span>${paymentMethodLabel}</span></div>`
+            : ""
+        }
         ${paymentDetailsHtml}
       </div>
 

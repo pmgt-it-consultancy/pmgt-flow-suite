@@ -345,6 +345,23 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         primaryLine?.paymentMethod === "card_ewallet"
           ? primaryLine.cardReferenceNumber || undefined
           : undefined,
+      payments: paymentLines.map((line) => ({
+        paymentMethod: line.paymentMethod as "cash" | "card_ewallet",
+        amount: parseFloat(line.amount) || 0,
+        cashReceived:
+          line.paymentMethod === "cash" ? parseFloat(line.cashReceived) || undefined : undefined,
+        changeGiven:
+          line.paymentMethod === "cash" && parseFloat(line.cashReceived) > parseFloat(line.amount)
+            ? parseFloat(line.cashReceived) - parseFloat(line.amount)
+            : undefined,
+        cardPaymentType:
+          line.paymentMethod === "card_ewallet"
+            ? (line.cardPaymentType === "Other" ? line.customPaymentType : line.cardPaymentType) ||
+              undefined
+            : undefined,
+        cardReferenceNumber:
+          line.paymentMethod === "card_ewallet" ? line.cardReferenceNumber || undefined : undefined,
+      })),
       transactionDate: new Date(),
       receiptNumber: order?.orderNumber,
     };

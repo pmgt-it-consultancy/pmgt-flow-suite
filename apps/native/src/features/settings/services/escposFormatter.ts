@@ -164,19 +164,50 @@ export async function printReceiptToThermal(
   await p.printText(`${line("-", w)}\n`, normal());
 
   // Payment
-  const paymentLabel =
-    data.paymentMethod === "cash" ? "Cash" : data.cardPaymentType || "Card/E-Wallet";
-  await p.printText(`${formatRow("Payment Method", paymentLabel, w)}\n`, normal());
-
-  if (data.paymentMethod === "cash") {
-    await p.printText(
-      `${formatRow("Amount Tendered", formatCurrency(data.amountTendered ?? 0), w)}\n`,
-      normal(),
-    );
-    await p.printText(`${formatRow("Change", formatCurrency(data.change ?? 0), w)}\n`, normal());
+  if (data.payments && data.payments.length > 0) {
+    // Multi-payment display
+    let totalCashReceived = 0;
+    let totalChangeGiven = 0;
+    for (const payment of data.payments) {
+      if (payment.paymentMethod === "cash") {
+        await p.printText(`${formatRow("Cash", formatCurrency(payment.amount), w)}\n`, normal());
+        if (payment.cashReceived !== undefined) {
+          totalCashReceived += payment.cashReceived;
+        }
+        if (payment.changeGiven !== undefined) {
+          totalChangeGiven += payment.changeGiven;
+        }
+      } else {
+        const label = payment.cardPaymentType || "Card/E-Wallet";
+        await p.printText(`${formatRow(label, formatCurrency(payment.amount), w)}\n`, normal());
+        if (payment.cardReferenceNumber) {
+          await p.printText(`Ref: ${payment.cardReferenceNumber}\n`, normal());
+        }
+      }
+    }
+    if (totalCashReceived > 0) {
+      await p.printText(
+        `${formatRow("Amount Tendered", formatCurrency(totalCashReceived), w)}\n`,
+        normal(),
+      );
+      await p.printText(`${formatRow("Change", formatCurrency(totalChangeGiven), w)}\n`, normal());
+    }
   } else {
-    if (data.cardReferenceNumber) {
-      await p.printText(`${formatRow("Ref #", data.cardReferenceNumber, w)}\n`, normal());
+    // Single-payment display (backward compat)
+    const paymentLabel =
+      data.paymentMethod === "cash" ? "Cash" : data.cardPaymentType || "Card/E-Wallet";
+    await p.printText(`${formatRow("Payment Method", paymentLabel, w)}\n`, normal());
+
+    if (data.paymentMethod === "cash") {
+      await p.printText(
+        `${formatRow("Amount Tendered", formatCurrency(data.amountTendered ?? 0), w)}\n`,
+        normal(),
+      );
+      await p.printText(`${formatRow("Change", formatCurrency(data.change ?? 0), w)}\n`, normal());
+    } else {
+      if (data.cardReferenceNumber) {
+        await p.printText(`${formatRow("Ref #", data.cardReferenceNumber, w)}\n`, normal());
+      }
     }
   }
 

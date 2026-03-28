@@ -311,27 +311,69 @@ export const ReceiptPreviewModal = ({
             </Text>
 
             {/* Payment */}
-            <InfoRow
-              label="Method"
-              value={
-                receiptData.paymentMethod === "cash"
-                  ? "Cash"
-                  : receiptData.cardPaymentType || "Card/E-Wallet"
-              }
-            />
-            {receiptData.paymentMethod === "cash" ? (
-              <>
-                <InfoRow
-                  label="Amount Tendered"
-                  value={formatCurrency(receiptData.amountTendered || 0)}
-                />
-                <InfoRow label="Change" value={formatCurrency(receiptData.change || 0)} />
-              </>
+            {receiptData.payments && receiptData.payments.length > 0 ? (
+              (() => {
+                let totalCashReceived = 0;
+                let totalChangeGiven = 0;
+                return (
+                  <>
+                    {receiptData.payments.map((payment, i) => {
+                      if (payment.paymentMethod === "cash") {
+                        if (payment.cashReceived !== undefined)
+                          totalCashReceived += payment.cashReceived;
+                        if (payment.changeGiven !== undefined)
+                          totalChangeGiven += payment.changeGiven;
+                        return (
+                          <InfoRow key={i} label="Cash" value={formatCurrency(payment.amount)} />
+                        );
+                      }
+                      const label = payment.cardPaymentType || "Card/E-Wallet";
+                      return (
+                        <YStack key={i}>
+                          <InfoRow label={label} value={formatCurrency(payment.amount)} />
+                          {payment.cardReferenceNumber ? (
+                            <InfoRow label="Ref #" value={payment.cardReferenceNumber} />
+                          ) : null}
+                        </YStack>
+                      );
+                    })}
+                    {totalCashReceived > 0 && (
+                      <>
+                        <InfoRow
+                          label="Amount Tendered"
+                          value={formatCurrency(totalCashReceived)}
+                        />
+                        <InfoRow label="Change" value={formatCurrency(totalChangeGiven)} />
+                      </>
+                    )}
+                  </>
+                );
+              })()
             ) : (
               <>
-                {receiptData.cardReferenceNumber ? (
-                  <InfoRow label="Ref #" value={receiptData.cardReferenceNumber} />
-                ) : null}
+                <InfoRow
+                  label="Method"
+                  value={
+                    receiptData.paymentMethod === "cash"
+                      ? "Cash"
+                      : receiptData.cardPaymentType || "Card/E-Wallet"
+                  }
+                />
+                {receiptData.paymentMethod === "cash" ? (
+                  <>
+                    <InfoRow
+                      label="Amount Tendered"
+                      value={formatCurrency(receiptData.amountTendered || 0)}
+                    />
+                    <InfoRow label="Change" value={formatCurrency(receiptData.change || 0)} />
+                  </>
+                ) : (
+                  <>
+                    {receiptData.cardReferenceNumber ? (
+                      <InfoRow label="Ref #" value={receiptData.cardReferenceNumber} />
+                    ) : null}
+                  </>
+                )}
               </>
             )}
 
@@ -395,19 +437,33 @@ export const ReceiptPreviewModal = ({
             <YStack height={1} backgroundColor="#E5E7EB" marginVertical={8} />
 
             {/* Change Due (cash only) */}
-            {receiptData.paymentMethod === "cash" && (
-              <>
-                <YStack marginVertical={12}>
-                  <Text variant="muted" size="xs">
-                    Change Due
-                  </Text>
-                  <Text size="2xl" style={{ fontWeight: "700", color: "#16A34A" }}>
-                    {formatCurrency(receiptData.change || 0)}
-                  </Text>
-                </YStack>
-                <YStack height={1} backgroundColor="#E5E7EB" marginVertical={8} />
-              </>
-            )}
+            {(() => {
+              let changeDue: number | null = null;
+              if (receiptData.payments && receiptData.payments.length > 0) {
+                const totalChange = receiptData.payments.reduce(
+                  (sum, p) => sum + (p.changeGiven ?? 0),
+                  0,
+                );
+                const hasCash = receiptData.payments.some((p) => p.paymentMethod === "cash");
+                if (hasCash) changeDue = totalChange;
+              } else if (receiptData.paymentMethod === "cash") {
+                changeDue = receiptData.change || 0;
+              }
+              if (changeDue === null) return null;
+              return (
+                <>
+                  <YStack marginVertical={12}>
+                    <Text variant="muted" size="xs">
+                      Change Due
+                    </Text>
+                    <Text size="2xl" style={{ fontWeight: "700", color: "#16A34A" }}>
+                      {formatCurrency(changeDue)}
+                    </Text>
+                  </YStack>
+                  <YStack height={1} backgroundColor="#E5E7EB" marginVertical={8} />
+                </>
+              );
+            })()}
           </YStack>
 
           {/* Print Feedback */}
