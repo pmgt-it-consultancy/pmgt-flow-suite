@@ -266,16 +266,52 @@ export async function printKitchenTicketToThermal(
   await p.printText(`${formatDate(data.timestamp)}\n`, normal());
   await p.printText(`${line("-", w)}\n`, normal());
 
-  // Items
-  for (const item of data.items) {
-    await p.printText(`  ${item.quantity}x ${item.name}\n`, bold());
-    if (item.modifiers && item.modifiers.length > 0) {
-      for (const mod of item.modifiers) {
-        await p.printText(`     > ${mod.optionName}\n`, normal());
+  // Items — group by service type for mixed orders
+  const itemsWithServiceType = data.items.map((item) => ({
+    ...item,
+    resolvedServiceType:
+      item.serviceType ??
+      data.orderDefaultServiceType ??
+      (data.orderType === "dine_in" ? "dine_in" : "takeout"),
+  }));
+
+  const serviceTypes = new Set(itemsWithServiceType.map((i) => i.resolvedServiceType));
+  const isMixed = serviceTypes.size > 1;
+
+  if (isMixed) {
+    // Group: DINE IN first, then TAKEOUT
+    for (const groupType of ["dine_in", "takeout"] as const) {
+      const groupItems = itemsWithServiceType.filter((i) => i.resolvedServiceType === groupType);
+      if (groupItems.length === 0) continue;
+
+      const label = groupType === "dine_in" ? "DINE IN" : "TAKEOUT";
+      await p.printText(`---- ${label} ----\n`, bold());
+
+      for (const item of groupItems) {
+        await p.printText(`  ${item.quantity}x ${item.name}\n`, bold());
+        if (item.modifiers && item.modifiers.length > 0) {
+          for (const mod of item.modifiers) {
+            await p.printText(`     > ${mod.optionName}\n`, normal());
+          }
+        }
+        if (item.notes) {
+          await p.printText(`     * ${item.notes}\n`, normal());
+        }
       }
+      await p.printText("\n", normal());
     }
-    if (item.notes) {
-      await p.printText(`     * ${item.notes}\n`, normal());
+  } else {
+    // Uniform order — print as before
+    for (const item of data.items) {
+      await p.printText(`  ${item.quantity}x ${item.name}\n`, bold());
+      if (item.modifiers && item.modifiers.length > 0) {
+        for (const mod of item.modifiers) {
+          await p.printText(`     > ${mod.optionName}\n`, normal());
+        }
+      }
+      if (item.notes) {
+        await p.printText(`     * ${item.notes}\n`, normal());
+      }
     }
   }
 
