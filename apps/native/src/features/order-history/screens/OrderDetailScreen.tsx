@@ -11,6 +11,7 @@ import type { ReceiptData } from "../../shared";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Badge, Button, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
+import { RefundItemModal } from "../components/RefundItemModal";
 
 interface OrderDetailScreenProps {
   navigation: any;
@@ -29,6 +30,13 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
   const [showManagerPinModal, setShowManagerPinModal] = useState(false);
   const [showVoidReasonModal, setShowVoidReasonModal] = useState(false);
   const [voidReason, setVoidReason] = useState("");
+  const [showRefundModal, setShowRefundModal] = useState(false);
+  const [refundData, setRefundData] = useState<{
+    itemIds: Id<"orderItems">[];
+    reason: string;
+    refundMethod: "cash" | "card_ewallet";
+  } | null>(null);
+  const [showRefundPinModal, setShowRefundPinModal] = useState(false);
 
   // Queries
   const order = useQuery(api.orders.get, { orderId });
@@ -38,6 +46,7 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
   // Mutations & Actions
   const logReprint = useMutation(api.checkout.logReceiptReprint);
   const voidOrderAction = useAction(api.voids.voidOrder);
+  const voidPaidOrderAction = useAction(api.voids.voidPaidOrder);
   const { printReceipt: printToThermal } = usePrinterStore();
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
@@ -147,6 +156,57 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
       }
     },
     [voidOrderAction, orderId, voidReason, navigation],
+  );
+
+  const handleRefundConfirm = useCallback(
+    async (itemIds: Id<"orderItems">[], reason: string, refundMethod: "cash" | "card_ewallet") => {
+      setRefundData({ itemIds, reason, refundMethod });
+      setShowRefundModal(false);
+      setShowRefundPinModal(true);
+    },
+    [],
+  );
+
+  const handleRefundPinSuccess = useCallback(
+    async (managerId: Id<"users">, pin: string) => {
+      if (!refundData) return;
+      setShowRefundPinModal(false);
+      try {
+        const result = await voidPaidOrderAction({
+          orderId,
+          refundedItemIds: refundData.itemIds,
+          reason: refundData.reason,
+          refundMethod: refundData.refundMethod,
+          managerId,
+          managerPin: pin,
+        });
+
+        if (result.success) {
+          const successResult = result as {
+            success: true;
+            refundAmount: number;
+            replacementOrderId?: Id<"orders">;
+          };
+          Alert.alert(
+            "Refund Processed",
+            `Refund of ${formatCurrency(successResult.refundAmount)} has been processed.${
+              successResult.replacementOrderId
+                ? " A new order has been created with the remaining items."
+                : ""
+            }`,
+            [{ text: "OK", onPress: () => navigation.goBack() }],
+          );
+        } else {
+          const errorResult = result as { success: false; error: string };
+          Alert.alert("Error", errorResult.error);
+        }
+      } catch (error: any) {
+        Alert.alert("Error", error.message || "Failed to process refund");
+      } finally {
+        setRefundData(null);
+      }
+    },
+    [voidPaidOrderAction, orderId, refundData, formatCurrency, navigation],
   );
 
   const formatDate = useCallback((timestamp: number) => {
@@ -437,8 +497,20 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
           >
             <XStack alignItems="center">
               <Ionicons name="print-outline" size={20} color="#FFF" />
-              <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>
-                Reprint Receipt
+              <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>Reprint</Text>
+            </XStack>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="lg"
+            style={{ flex: 1 }}
+            onPress={() => setShowRefundModal(true)}
+          >
+            <XStack alignItems="center">
+              <Ionicons name="return-down-back-outline" size={20} color="#0D87E1" />
+              <Text style={{ color: "#0D87E1", fontWeight: "600", marginLeft: 8 }}>
+                Refund Item
               </Text>
             </XStack>
           </Button>
@@ -446,7 +518,7 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
           <Button variant="destructive" size="lg" style={{ flex: 1 }} onPress={handleVoidPress}>
             <XStack alignItems="center">
               <Ionicons name="close-circle-outline" size={20} color="#FFF" />
-              <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>Void Order</Text>
+              <Text style={{ color: "#FFFFFF", fontWeight: "600", marginLeft: 8 }}>Void</Text>
             </XStack>
           </Button>
         </XStack>
@@ -500,6 +572,32 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
           setShowManagerPinModal(false);
         }}
         onSuccess={handleManagerPinSuccess}
+      />
+
+      {/* Refund Item Modal */}
+      <RefundItemModal
+        visible={showRefundModal}
+        items={activeItems.map((i) => ({
+          _id: i._id,
+          productName: i.productName,
+          productPrice: i.productPrice,
+          quantity: i.quantity,
+          lineTotal: i.lineTotal,
+        }))}
+        onConfirm={handleRefundConfirm}
+        onClose={() => setShowRefundModal(false)}
+      />
+
+      {/* Refund Manager PIN Modal */}
+      <ManagerPinModal
+        visible={showRefundPinModal}
+        title="Approve Refund"
+        description="Manager PIN required to process this refund"
+        onClose={() => {
+          setShowRefundPinModal(false);
+          setRefundData(null);
+        }}
+        onSuccess={handleRefundPinSuccess}
       />
     </YStack>
   );

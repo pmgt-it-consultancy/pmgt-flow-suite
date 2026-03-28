@@ -391,7 +391,18 @@ export default function OrdersPage() {
               <div className="border rounded-lg">
                 <div className="bg-gray-50 px-3 py-2 border-b font-medium text-sm">Items</div>
                 <div className="divide-y max-h-[250px] overflow-y-auto">
-                  {orderDetails.items.map((item, index) => (
+                  {orderDetails.items.map((item, index) => {
+                    const orderDefault = orderDetails.orderCategory
+                      ? orderDetails.orderCategory === "dine_in"
+                        ? "dine_in"
+                        : "takeout"
+                      : orderDetails.orderType === "dine_in"
+                        ? "dine_in"
+                        : "takeout";
+                    const itemType = item.serviceType ?? orderDefault;
+                    const isException = itemType !== orderDefault;
+
+                    return (
                     <div
                       key={index}
                       className={`px-3 py-2 text-sm ${
@@ -401,6 +412,11 @@ export default function OrdersPage() {
                       <div className="flex justify-between">
                         <span>
                           {item.quantity}x {item.productName}
+                          {isException && (
+                            <span className="ml-2 inline-flex items-center rounded-md bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
+                              {itemType === "takeout" ? "TAKEOUT" : "DINE IN"}
+                            </span>
+                          )}
                         </span>
                         <span>{formatCurrency(item.lineTotal)}</span>
                       </div>
@@ -424,7 +440,8 @@ export default function OrdersPage() {
                         </div>
                       )}
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
