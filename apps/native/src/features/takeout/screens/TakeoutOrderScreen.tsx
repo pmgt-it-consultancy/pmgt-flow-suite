@@ -93,7 +93,6 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const submitDraftMutation = useMutation(api.orders.submitDraft);
   const updateCustomerNameMutation = useMutation(api.orders.updateCustomerName);
   const updateItemServiceTypeMutation = useMutation(api.orders.updateItemServiceType);
-  const bulkUpdateItemServiceTypeMutation = useMutation(api.orders.bulkUpdateItemServiceType);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -126,10 +125,9 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
           orderId,
           orderCategory: category,
         });
-        await bulkUpdateItemServiceTypeMutation({ orderId, serviceType: category });
       }
     },
-    [orderId, updateCustomerNameMutation, bulkUpdateItemServiceTypeMutation],
+    [orderId, updateCustomerNameMutation],
   );
 
   const handleServiceTypeChange = useCallback(
