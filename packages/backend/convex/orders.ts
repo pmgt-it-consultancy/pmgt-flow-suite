@@ -1520,6 +1520,7 @@ export const createAndSendToKitchen = mutation({
         quantity: v.number(),
         notes: v.optional(v.string()),
         customPrice: v.optional(v.number()),
+        serviceType: v.optional(v.union(v.literal("dine_in"), v.literal("takeout"))),
         modifiers: v.optional(
           v.array(
             v.object({
@@ -1626,6 +1627,9 @@ export const createAndSendToKitchen = mutation({
         itemPrice = product.price;
       }
 
+      // Resolve per-item service type (default dine_in for table orders)
+      const itemServiceType = item.serviceType ?? "dine_in";
+
       const itemId = await ctx.db.insert("orderItems", {
         orderId,
         productId: item.productId,
@@ -1633,6 +1637,7 @@ export const createAndSendToKitchen = mutation({
         productPrice: itemPrice,
         quantity: item.quantity,
         notes: item.notes,
+        serviceType: itemServiceType,
         isVoided: false,
         isSentToKitchen: true,
         voidedBy: undefined,

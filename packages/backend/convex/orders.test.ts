@@ -1043,3 +1043,59 @@ describe("orders.addItem — serviceType", () => {
     expect(item.serviceType).toBe("dine_in");
   });
 });
+
+describe("orders.createAndSendToKitchen — serviceType", () => {
+  it("should default item serviceType to dine_in", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const tableId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("tables", {
+        storeId,
+        name: "Table 1",
+        status: "available",
+        sortOrder: 1,
+        isActive: true,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    const result = await authed.mutation(api.orders.createAndSendToKitchen, {
+      storeId,
+      tableId,
+      pax: 2,
+      items: [{ productId, quantity: 1 }],
+    });
+
+    const item = await t.run(async (ctx: any) => ctx.db.get(result.sentItemIds[0]));
+    expect(item.serviceType).toBe("dine_in");
+  });
+
+  it("should accept per-item serviceType override", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const tableId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("tables", {
+        storeId,
+        name: "Table 2",
+        status: "available",
+        sortOrder: 2,
+        isActive: true,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    const result = await authed.mutation(api.orders.createAndSendToKitchen, {
+      storeId,
+      tableId,
+      pax: 2,
+      items: [{ productId, quantity: 1, serviceType: "takeout" }],
+    });
+
+    const item = await t.run(async (ctx: any) => ctx.db.get(result.sentItemIds[0]));
+    expect(item.serviceType).toBe("takeout");
+  });
+});
