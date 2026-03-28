@@ -45,6 +45,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
   // Customer name local state (synced to backend on blur)
   const [customerName, setCustomerName] = useState("");
+  const [orderCategory, setOrderCategory] = useState<"dine_in" | "takeout">("takeout");
+  const [tableMarker, setTableMarker] = useState("");
 
   // Shared UI state
   const [isAddingItem, setIsAddingItem] = useState(false);
@@ -113,6 +115,35 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
       customerName: customerName.trim() || undefined,
     });
   }, [orderId, customerName, updateCustomerNameMutation]);
+
+  const handleCategoryChange = useCallback(
+    async (category: "dine_in" | "takeout") => {
+      setOrderCategory(category);
+      if (orderId) {
+        await updateCustomerNameMutation({
+          orderId,
+          orderCategory: category,
+        });
+      }
+    },
+    [orderId, updateCustomerNameMutation],
+  );
+
+  const handleTableMarkerBlur = useCallback(async () => {
+    if (orderId) {
+      await updateCustomerNameMutation({
+        orderId,
+        tableMarker: tableMarker || undefined,
+      });
+    }
+  }, [orderId, tableMarker, updateCustomerNameMutation]);
+
+  // Set default category on screen load
+  useEffect(() => {
+    if (orderId) {
+      updateCustomerNameMutation({ orderId, orderCategory: "takeout" });
+    }
+  }, [orderId]);
 
   // Cart data — always derived from order
   const activeItems = useMemo(() => {
@@ -326,6 +357,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
       navigation.navigate("CheckoutScreen", {
         orderId,
         orderType: "takeout",
+        orderCategory,
+        tableMarker: tableMarker || undefined,
       });
       shouldReleaseLock = false;
     } catch (error: any) {
@@ -402,33 +435,85 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         <YStack flex={2} borderRightWidth={1} borderRightColor="#E2E8F0">
           {/* Customer Name Input - Always visible for takeout orders */}
           <YStack
-            paddingHorizontal={16}
-            paddingVertical={12}
             backgroundColor="#FFFFFF"
             borderBottomWidth={1}
             borderBottomColor="#E2E8F0"
+            paddingBottom={12}
           >
-            <XStack alignItems="center">
-              <YStack
-                backgroundColor={customerName.trim() ? "#FFF7ED" : "#F8FAFC"}
-                borderRadius={8}
-                padding={10}
-                marginRight={12}
-                borderWidth={1}
-                borderColor={customerName.trim() ? "#FDBA74" : "#E2E8F0"}
+            {/* Order Category Toggle */}
+            <XStack gap={8} paddingHorizontal={16} paddingTop={12}>
+              <TouchableOpacity
+                onPress={() => handleCategoryChange("dine_in")}
+                style={{
+                  flex: 1,
+                  paddingVertical: 12,
+                  borderRadius: 10,
+                  backgroundColor: orderCategory === "dine_in" ? "#DBEAFE" : "#F3F4F6",
+                  borderWidth: 1.5,
+                  borderColor: orderCategory === "dine_in" ? "#0D87E1" : "#E5E7EB",
+                  alignItems: "center",
+                }}
               >
-                <Ionicons
-                  name="person"
-                  size={20}
-                  color={customerName.trim() ? "#EA580C" : "#94A3B8"}
+                <Text
+                  style={{
+                    fontWeight: "600",
+                    color: orderCategory === "dine_in" ? "#0D87E1" : "#6B7280",
+                  }}
+                >
+                  Dine-in
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleCategoryChange("takeout")}
+                style={{
+                  flex: 1,
+                  paddingVertical: 12,
+                  borderRadius: 10,
+                  backgroundColor: orderCategory === "takeout" ? "#DBEAFE" : "#F3F4F6",
+                  borderWidth: 1.5,
+                  borderColor: orderCategory === "takeout" ? "#0D87E1" : "#E5E7EB",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    fontWeight: "600",
+                    color: orderCategory === "takeout" ? "#0D87E1" : "#6B7280",
+                  }}
+                >
+                  Takeout
+                </Text>
+              </TouchableOpacity>
+            </XStack>
+
+            {/* Table Marker + Customer Name Row */}
+            <XStack gap={8} paddingHorizontal={16} paddingTop={8}>
+              {/* Table Marker — short input */}
+              <YStack flex={0} width={100}>
+                <Text style={{ fontSize: 12, color: "#6B7280", marginBottom: 4 }}>Marker</Text>
+                <TextInput
+                  value={tableMarker}
+                  onChangeText={setTableMarker}
+                  onBlur={handleTableMarkerBlur}
+                  placeholder="e.g. 15"
+                  placeholderTextColor="#9CA3AF"
+                  style={{
+                    backgroundColor: tableMarker ? "#FFF7ED" : "#F9FAFB",
+                    borderWidth: 1,
+                    borderColor: tableMarker ? "#FDBA74" : "#E5E7EB",
+                    borderRadius: 10,
+                    paddingHorizontal: 12,
+                    paddingVertical: 10,
+                    fontSize: 16,
+                    fontWeight: "600",
+                    textAlign: "center",
+                  }}
                 />
               </YStack>
+
+              {/* Customer Name — flex fill */}
               <YStack flex={1}>
-                <Text
-                  variant="muted"
-                  size="xs"
-                  style={{ marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}
-                >
+                <Text style={{ fontSize: 12, color: "#6B7280", marginBottom: 4 }}>
                   Customer Name
                 </Text>
                 <TextInput
