@@ -340,11 +340,20 @@ async function generateProductSalesBreakdown(
       const key = item.productId;
       const existing = productSalesMap.get(key);
 
+      // Include modifier price adjustments to match order grossSales calculation
+      const modifiers = await ctx.db
+        .query("orderItemModifiers")
+        .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", item._id))
+        .collect();
+      const modifierTotal = modifiers.reduce((sum: number, m: any) => sum + m.priceAdjustment, 0);
+      const effectivePrice = item.productPrice + modifierTotal;
+      const lineTotal = effectivePrice * item.quantity;
+
       if (item.isVoided) {
         // Track voided items
         if (existing) {
           existing.voidedQuantity += item.quantity;
-          existing.voidedAmount += item.productPrice * item.quantity;
+          existing.voidedAmount += lineTotal;
         } else {
           // Get product and category info
           const product = await ctx.db.get(item.productId);
@@ -364,14 +373,14 @@ async function generateProductSalesBreakdown(
             quantitySold: 0,
             grossAmount: 0,
             voidedQuantity: item.quantity,
-            voidedAmount: item.productPrice * item.quantity,
+            voidedAmount: lineTotal,
           });
         }
       } else {
         // Track sold items
         if (existing) {
           existing.quantitySold += item.quantity;
-          existing.grossAmount += item.productPrice * item.quantity;
+          existing.grossAmount += lineTotal;
         } else {
           // Get product and category info
           const product = await ctx.db.get(item.productId);
@@ -389,7 +398,7 @@ async function generateProductSalesBreakdown(
             categoryName: category?.name ?? "Unknown",
             parentCategoryName,
             quantitySold: item.quantity,
-            grossAmount: item.productPrice * item.quantity,
+            grossAmount: lineTotal,
             voidedQuantity: 0,
             voidedAmount: 0,
           });
