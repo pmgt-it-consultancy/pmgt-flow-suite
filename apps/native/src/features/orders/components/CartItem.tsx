@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -25,7 +26,10 @@ interface CartItemProps {
   onVoidItem?: (id: Id<"orderItems">) => void;
   serviceType?: "dine_in" | "takeout";
   orderDefaultServiceType?: "dine_in" | "takeout";
-  onServiceTypeChange?: (id: Id<"orderItems">, serviceType: "dine_in" | "takeout") => void;
+  onServiceTypeChange?: (
+    id: Id<"orderItems">,
+    serviceType: "dine_in" | "takeout",
+  ) => void | Promise<void>;
 }
 
 export const CartItem = ({
@@ -45,10 +49,21 @@ export const CartItem = ({
   onServiceTypeChange,
 }: CartItemProps) => {
   const formatCurrency = useFormatCurrency();
+  const [isUpdatingServiceType, setIsUpdatingServiceType] = useState(false);
   const currentServiceType = serviceType ?? orderDefaultServiceType ?? "dine_in";
   const isOverridden = orderDefaultServiceType
     ? currentServiceType !== orderDefaultServiceType
     : false;
+
+  const handleServiceTypePress = async (newType: "dine_in" | "takeout") => {
+    if (isUpdatingServiceType || currentServiceType === newType) return;
+    setIsUpdatingServiceType(true);
+    try {
+      await onServiceTypeChange?.(id, newType);
+    } finally {
+      setIsUpdatingServiceType(false);
+    }
+  };
 
   return (
     <YStack
@@ -217,9 +232,16 @@ export const CartItem = ({
                 <Ionicons name="add" size={22} color="#22C55E" />
               </TouchableOpacity>
             </XStack>
-            <XStack borderRadius={8} overflow="hidden" borderWidth={1} borderColor="#E5E7EB">
+            <XStack
+              borderRadius={8}
+              overflow="hidden"
+              borderWidth={1}
+              borderColor="#E5E7EB"
+              opacity={isUpdatingServiceType ? 0.6 : 1}
+            >
               <TouchableOpacity
-                onPress={() => onServiceTypeChange?.(id, "dine_in")}
+                onPress={() => handleServiceTypePress("dine_in")}
+                disabled={isUpdatingServiceType}
                 activeOpacity={0.7}
                 style={{
                   paddingVertical: 6,
@@ -232,23 +254,28 @@ export const CartItem = ({
                       : "white",
                 }}
               >
-                <Text
-                  style={{
-                    fontSize: 10,
-                    fontWeight: "600",
-                    color:
-                      currentServiceType === "dine_in"
-                        ? isOverridden
-                          ? "#D97706"
-                          : "#0D87E1"
-                        : "#9CA3AF",
-                  }}
-                >
-                  DINE IN
-                </Text>
+                {isUpdatingServiceType && currentServiceType !== "dine_in" ? (
+                  <ActivityIndicator size={12} color="#0D87E1" />
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      fontWeight: "600",
+                      color:
+                        currentServiceType === "dine_in"
+                          ? isOverridden
+                            ? "#D97706"
+                            : "#0D87E1"
+                          : "#9CA3AF",
+                    }}
+                  >
+                    DINE IN
+                  </Text>
+                )}
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => onServiceTypeChange?.(id, "takeout")}
+                onPress={() => handleServiceTypePress("takeout")}
+                disabled={isUpdatingServiceType}
                 activeOpacity={0.7}
                 style={{
                   paddingVertical: 6,
@@ -263,20 +290,24 @@ export const CartItem = ({
                       : "white",
                 }}
               >
-                <Text
-                  style={{
-                    fontSize: 10,
-                    fontWeight: "600",
-                    color:
-                      currentServiceType === "takeout"
-                        ? isOverridden
-                          ? "#D97706"
-                          : "#0D87E1"
-                        : "#9CA3AF",
-                  }}
-                >
-                  TAKEOUT
-                </Text>
+                {isUpdatingServiceType && currentServiceType !== "takeout" ? (
+                  <ActivityIndicator size={12} color="#0D87E1" />
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      fontWeight: "600",
+                      color:
+                        currentServiceType === "takeout"
+                          ? isOverridden
+                            ? "#D97706"
+                            : "#0D87E1"
+                          : "#9CA3AF",
+                    }}
+                  >
+                    TAKEOUT
+                  </Text>
+                )}
               </TouchableOpacity>
             </XStack>
           </>
