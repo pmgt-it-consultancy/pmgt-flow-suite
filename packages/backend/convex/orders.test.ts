@@ -1099,3 +1099,94 @@ describe("orders.createAndSendToKitchen — serviceType", () => {
     expect(item.serviceType).toBe("takeout");
   });
 });
+
+describe("orders.updateItemServiceType", () => {
+  it("should update serviceType on unsent item", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-020",
+        orderType: "dine_in" as const,
+        orderChannel: "walk_in_dine_in" as const,
+        status: "open" as const,
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const itemId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        serviceType: "dine_in",
+        isVoided: false,
+        isSentToKitchen: false,
+      });
+    });
+
+    await t.mutation(api.orders.updateItemServiceType, {
+      orderItemId: itemId,
+      serviceType: "takeout",
+    });
+
+    const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
+    expect(item.serviceType).toBe("takeout");
+  });
+
+  it("should throw when updating serviceType on kitchen-sent item", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-021",
+        orderType: "dine_in" as const,
+        orderChannel: "walk_in_dine_in" as const,
+        status: "open" as const,
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const itemId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        serviceType: "dine_in",
+        isVoided: false,
+        isSentToKitchen: true,
+      });
+    });
+
+    await expect(
+      t.mutation(api.orders.updateItemServiceType, {
+        orderItemId: itemId,
+        serviceType: "takeout",
+      }),
+    ).rejects.toThrowError("Cannot modify service type of kitchen-sent items");
+  });
+});

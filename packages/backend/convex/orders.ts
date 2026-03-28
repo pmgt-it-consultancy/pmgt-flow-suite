@@ -987,6 +987,26 @@ export const updateItemNotes = mutation({
   },
 });
 
+// Update item service type
+export const updateItemServiceType = mutation({
+  args: {
+    orderItemId: v.id("orderItems"),
+    serviceType: v.union(v.literal("dine_in"), v.literal("takeout")),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const item = await ctx.db.get(args.orderItemId);
+    if (!item) throw new Error("Order item not found");
+
+    if (item.isSentToKitchen) {
+      throw new Error("Cannot modify service type of kitchen-sent items");
+    }
+
+    await ctx.db.patch(args.orderItemId, { serviceType: args.serviceType });
+    return null;
+  },
+});
+
 // Remove item from order (decreases quantity or removes entirely)
 export const removeItem = mutation({
   args: {
