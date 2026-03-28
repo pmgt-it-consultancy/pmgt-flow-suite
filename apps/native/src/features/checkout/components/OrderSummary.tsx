@@ -8,13 +8,15 @@ interface OrderItem {
   isVatable: boolean;
   quantity: number;
   lineTotal: number;
+  serviceType?: "dine_in" | "takeout";
 }
 
 interface OrderSummaryProps {
   items: OrderItem[];
+  orderDefaultServiceType?: "dine_in" | "takeout";
 }
 
-export const OrderSummary = ({ items }: OrderSummaryProps) => {
+export const OrderSummary = ({ items, orderDefaultServiceType }: OrderSummaryProps) => {
   const formatCurrency = useFormatCurrency();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -55,6 +57,14 @@ export const OrderSummary = ({ items }: OrderSummaryProps) => {
               <XStack alignItems="center" gap={8} flexWrap="wrap">
                 <Text style={{ color: "#111827", fontWeight: "600" }}>{item.productName}</Text>
                 {!item.isVatable && <Badge variant="warning">NON-VAT</Badge>}
+                {(() => {
+                  const itemType = item.serviceType ?? orderDefaultServiceType;
+                  const isException =
+                    orderDefaultServiceType && itemType !== orderDefaultServiceType;
+                  if (!isException) return null;
+                  const label = itemType === "takeout" ? "TAKEOUT" : "DINE IN";
+                  return <Badge variant="warning">{label}</Badge>;
+                })()}
               </XStack>
               <Text variant="muted" size="xs" style={{ marginTop: 2 }}>
                 Qty {item.quantity}

@@ -558,7 +558,10 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingVertical: 8, paddingBottom: 120 }}
       >
-        <OrderSummary items={activeItems} />
+        <OrderSummary
+          items={activeItems}
+          orderDefaultServiceType={isTakeout ? "takeout" : "dine_in"}
+        />
 
         <DiscountSection
           discounts={discounts ?? []}
