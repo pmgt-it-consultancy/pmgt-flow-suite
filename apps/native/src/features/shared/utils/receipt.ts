@@ -114,7 +114,9 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
     .map((item) => {
       const itemServiceType = item.serviceType ?? orderDefault;
       const isException = itemServiceType !== orderDefault;
-      const tag = isException ? (itemServiceType === "takeout" ? " (TAKEOUT)" : " (DINE IN)") : "";
+      const tagHtml = isException
+        ? `<br/><span style="font-size:9px;color:#999;font-style:italic;">${itemServiceType === "takeout" ? "Takeout" : "Dine-In"}</span>`
+        : "";
       const modifiersHtml = item.modifiers?.length
         ? item.modifiers
             .map(
@@ -125,7 +127,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         : "";
       return `
       <tr>
-        <td>${item.name}${tag}</td>
+        <td>${item.name}${tagHtml}</td>
         <td class="center">${item.quantity}</td>
         <td class="right">${formatCurrency(item.price)}</td>
         <td class="right">${formatCurrency(item.total)}</td>

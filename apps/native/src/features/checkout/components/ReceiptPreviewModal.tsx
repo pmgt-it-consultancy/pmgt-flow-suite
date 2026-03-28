@@ -237,21 +237,12 @@ export const ReceiptPreviewModal = ({
                     ? "dine_in"
                     : "takeout");
               const itemType = item.serviceType ?? orderDefault;
-              const tag = itemType === "takeout" ? " (TAKEOUT)" : " (DINE IN)";
+              const isException = itemType !== orderDefault;
               return (
                 <YStack key={index}>
-                  <XStack marginBottom={4}>
+                  <XStack marginBottom={isException ? 0 : 4}>
                     <Text size="xs" style={{ flex: 1 }} numberOfLines={1}>
                       {item.name}
-                      <Text
-                        size="xs"
-                        style={{
-                          color: itemType === "takeout" ? "#D97706" : "#6B7280",
-                          fontWeight: "600",
-                        }}
-                      >
-                        {tag}
-                      </Text>
                     </Text>
                     <Text size="xs" style={{ width: 24, textAlign: "center" }}>
                       {item.quantity}
@@ -263,6 +254,20 @@ export const ReceiptPreviewModal = ({
                       {formatCurrency(item.total)}
                     </Text>
                   </XStack>
+                  {isException && (
+                    <Text
+                      size="xs"
+                      style={{
+                        color: "#9CA3AF",
+                        fontSize: 9,
+                        fontStyle: "italic",
+                        paddingLeft: 2,
+                        marginBottom: 4,
+                      }}
+                    >
+                      {itemType === "takeout" ? "Takeout" : "Dine-In"}
+                    </Text>
+                  )}
                   {item.modifiers?.map((mod, modIndex) => (
                     <XStack key={modIndex} marginBottom={2} paddingLeft={12}>
                       <Text size="xs" variant="muted" style={{ flex: 1 }}>
