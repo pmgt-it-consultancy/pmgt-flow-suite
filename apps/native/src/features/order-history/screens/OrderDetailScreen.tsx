@@ -219,18 +219,60 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
           {order.tableName ? <InfoRow label="Table" value={order.tableName} /> : null}
           {order.customerName ? <InfoRow label="Customer" value={order.customerName} /> : null}
           <InfoRow label="Cashier" value={order.createdByName} />
-          {order.paymentMethod ? (
-            <InfoRow
-              label="Payment"
-              value={order.paymentMethod === "cash" ? "Cash" : "Card / E-Wallet"}
-            />
-          ) : null}
-          {order.cashReceived ? (
-            <InfoRow label="Amount Tendered" value={formatCurrency(order.cashReceived)} />
-          ) : null}
-          {order.changeGiven ? (
-            <InfoRow label="Change" value={formatCurrency(order.changeGiven)} />
-          ) : null}
+          {/* Payment breakdown — supports split payments */}
+          {receipt?.payments && receipt.payments.length > 0 ? (
+            <>
+              {receipt.payments.map((p, i) => (
+                <InfoRow
+                  key={i}
+                  label={p.paymentMethod === "cash" ? "Cash" : p.cardPaymentType || "Card/E-Wallet"}
+                  value={formatCurrency(p.amount)}
+                />
+              ))}
+              {(() => {
+                const totalCashReceived = receipt.payments
+                  .filter((p) => p.paymentMethod === "cash")
+                  .reduce((sum, p) => sum + (p.cashReceived ?? 0), 0);
+                const totalChange = receipt.payments
+                  .filter((p) => p.paymentMethod === "cash")
+                  .reduce((sum, p) => sum + (p.changeGiven ?? 0), 0);
+                return (
+                  <>
+                    {totalCashReceived > 0 && (
+                      <InfoRow label="Cash Tendered" value={formatCurrency(totalCashReceived)} />
+                    )}
+                    {totalChange > 0 && (
+                      <InfoRow label="Change" value={formatCurrency(totalChange)} />
+                    )}
+                  </>
+                );
+              })()}
+              {receipt.payments
+                .filter((p) => p.paymentMethod === "card_ewallet" && p.cardReferenceNumber)
+                .map((p, i) => (
+                  <InfoRow
+                    key={`ref-${i}`}
+                    label={`Ref # (${p.cardPaymentType})`}
+                    value={p.cardReferenceNumber!}
+                  />
+                ))}
+            </>
+          ) : (
+            <>
+              {order.paymentMethod ? (
+                <InfoRow
+                  label="Payment"
+                  value={order.paymentMethod === "cash" ? "Cash" : "Card / E-Wallet"}
+                />
+              ) : null}
+              {order.cashReceived ? (
+                <InfoRow label="Amount Tendered" value={formatCurrency(order.cashReceived)} />
+              ) : null}
+              {order.changeGiven ? (
+                <InfoRow label="Change" value={formatCurrency(order.changeGiven)} />
+              ) : null}
+            </>
+          )}
           {order.paidAt ? <InfoRow label="Paid At" value={formatDate(order.paidAt)} /> : null}
         </YStack>
 

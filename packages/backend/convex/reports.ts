@@ -11,6 +11,43 @@ import {
 import { requirePermission } from "./lib/permissions";
 import { cleanupExpiredDraftOrders } from "./orders";
 
+// Helper: Calculate payment method totals for a set of paid orders
+// Queries orderPayments table first; falls back to legacy order.paymentMethod
+async function calculatePaymentTotals(
+  ctx: { db: any },
+  paidOrders: Array<{ _id: Id<"orders">; netSales: number; paymentMethod?: string }>,
+): Promise<{ cashTotal: number; cardEwalletTotal: number }> {
+  let cashTotal = 0;
+  let cardEwalletTotal = 0;
+
+  for (const order of paidOrders) {
+    const paymentRows = await ctx.db
+      .query("orderPayments")
+      .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
+      .collect();
+
+    if (paymentRows.length > 0) {
+      // Split payment: sum by method from orderPayments
+      for (const p of paymentRows) {
+        if (p.paymentMethod === "cash") {
+          cashTotal += p.amount;
+        } else if (p.paymentMethod === "card_ewallet") {
+          cardEwalletTotal += p.amount;
+        }
+      }
+    } else {
+      // Legacy single-payment: use order.paymentMethod
+      if (order.paymentMethod === "cash") {
+        cashTotal += order.netSales;
+      } else if (order.paymentMethod === "card_ewallet") {
+        cardEwalletTotal += order.netSales;
+      }
+    }
+  }
+
+  return { cashTotal, cardEwalletTotal };
+}
+
 // Generate or get daily report for a store
 export const generateDailyReport = mutation({
   args: {
@@ -176,9 +213,6 @@ async function aggregateDailyData(
   let vatExemptSales = 0;
   let nonVatSales = 0;
   let netSales = 0;
-  let cashTotal = 0;
-  let cardEwalletTotal = 0;
-
   for (const order of paidOrders) {
     grossSales += order.grossSales;
     vatableSales += order.vatableSales;
@@ -186,13 +220,10 @@ async function aggregateDailyData(
     vatExemptSales += order.vatExemptSales;
     nonVatSales += order.nonVatSales;
     netSales += order.netSales;
-
-    if (order.paymentMethod === "cash") {
-      cashTotal += order.netSales;
-    } else if (order.paymentMethod === "card_ewallet") {
-      cardEwalletTotal += order.netSales;
-    }
   }
+
+  // Calculate payment method totals (handles split payments via orderPayments table)
+  const { cashTotal, cardEwalletTotal } = await calculatePaymentTotals(ctx, paidOrders);
 
   // Calculate void amount from voided orders
   let voidAmount = 0;
@@ -454,23 +485,45 @@ async function generatePaymentTransactionsBreakdown(
     )
     .collect();
 
-  // Filter to paid card/e-wallet orders
-  const cardOrders = orders.filter(
-    (o: any) => o.status === "paid" && o.paymentMethod === "card_ewallet",
-  );
+  // Get all paid orders
+  const paidOrders = orders.filter((o: any) => o.status === "paid");
 
-  // Insert one row per non-cash transaction
-  for (const order of cardOrders) {
-    await ctx.db.insert("dailyPaymentTransactions", {
-      storeId,
-      reportDate,
-      orderId: order._id,
-      orderNumber: order.orderNumber ?? "",
-      paymentType: order.cardPaymentType ?? "Unknown",
-      referenceNumber: order.cardReferenceNumber ?? "",
-      amount: order.netSales,
-      paidAt: order.paidAt ?? order._creationTime,
-    });
+  // Insert one row per non-cash payment (handles split payments)
+  for (const order of paidOrders) {
+    const paymentRows = await ctx.db
+      .query("orderPayments")
+      .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
+      .collect();
+
+    if (paymentRows.length > 0) {
+      // New split-payment orders: insert a row per card/e-wallet payment
+      for (const p of paymentRows) {
+        if (p.paymentMethod === "card_ewallet") {
+          await ctx.db.insert("dailyPaymentTransactions", {
+            storeId,
+            reportDate,
+            orderId: order._id,
+            orderNumber: order.orderNumber ?? "",
+            paymentType: p.cardPaymentType ?? "Unknown",
+            referenceNumber: p.cardReferenceNumber ?? "",
+            amount: p.amount,
+            paidAt: order.paidAt ?? order._creationTime,
+          });
+        }
+      }
+    } else if (order.paymentMethod === "card_ewallet") {
+      // Legacy single-payment card orders
+      await ctx.db.insert("dailyPaymentTransactions", {
+        storeId,
+        reportDate,
+        orderId: order._id,
+        orderNumber: order.orderNumber ?? "",
+        paymentType: order.cardPaymentType ?? "Unknown",
+        referenceNumber: order.cardReferenceNumber ?? "",
+        amount: order.netSales,
+        paidAt: order.paidAt ?? order._creationTime,
+      });
+    }
   }
 }
 
@@ -1148,20 +1201,15 @@ export const getDashboardSummary = query({
     let grossSales = 0;
     let vatAmount = 0;
     let netSales = 0;
-    let cashTotal = 0;
-    let cardEwalletTotal = 0;
 
     for (const order of paidOrders) {
       grossSales += order.grossSales;
       vatAmount += order.vatAmount;
       netSales += order.netSales;
-
-      if (order.paymentMethod === "cash") {
-        cashTotal += order.netSales;
-      } else if (order.paymentMethod === "card_ewallet") {
-        cardEwalletTotal += order.netSales;
-      }
     }
+
+    // Calculate payment method totals (handles split payments via orderPayments table)
+    const { cashTotal, cardEwalletTotal } = await calculatePaymentTotals(ctx, paidOrders);
 
     // Calculate discounts
     let totalDiscounts = 0;

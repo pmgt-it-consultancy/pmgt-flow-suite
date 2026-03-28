@@ -48,6 +48,10 @@ export const TakeoutOrderDetailModal = ({
   const [voidReason, setVoidReason] = useState("");
 
   const order = useQuery(api.orders.get, orderId ? { orderId } : "skip");
+  const receipt = useQuery(
+    api.checkout.getReceipt,
+    orderId && order?.status === "paid" ? { orderId } : "skip",
+  );
   const store = useQuery(api.stores.get, order?.storeId ? { storeId: order.storeId } : "skip");
   const discounts = useQuery(api.discounts.getOrderDiscounts, orderId ? { orderId } : "skip");
   const voidOrderAction = useAction(api.voids.voidOrder);
@@ -295,31 +299,76 @@ export const TakeoutOrderDetailModal = ({
           </XStack>
         </YStack>
 
-        {/* Payment info for paid orders */}
-        {isPaid && order.paymentMethod && (
+        {/* Payment info for paid orders — supports split payments */}
+        {isPaid && (receipt?.payments || order.paymentMethod) && (
           <>
             <Separator style={{ marginVertical: 12 }} />
             <YStack gap={4}>
-              <XStack justifyContent="space-between">
-                <Text style={{ color: "#6B7280", fontSize: 14 }}>Payment</Text>
-                <Text style={{ color: "#374151", fontSize: 14 }}>
-                  {order.paymentMethod === "cash" ? "Cash" : "Card/E-Wallet"}
-                </Text>
-              </XStack>
-              {order.paymentMethod === "cash" && order.cashReceived != null && (
+              {receipt?.payments && receipt.payments.length > 0 ? (
+                <>
+                  {receipt.payments.map((p, i) => (
+                    <XStack key={i} justifyContent="space-between">
+                      <Text style={{ color: "#6B7280", fontSize: 14 }}>
+                        {p.paymentMethod === "cash" ? "Cash" : p.cardPaymentType || "Card/E-Wallet"}
+                      </Text>
+                      <Text style={{ color: "#374151", fontSize: 14 }}>
+                        {formatCurrency(p.amount)}
+                      </Text>
+                    </XStack>
+                  ))}
+                  {(() => {
+                    const totalCashReceived = receipt.payments
+                      .filter((p) => p.paymentMethod === "cash")
+                      .reduce((sum, p) => sum + (p.cashReceived ?? 0), 0);
+                    const totalChange = receipt.payments
+                      .filter((p) => p.paymentMethod === "cash")
+                      .reduce((sum, p) => sum + (p.changeGiven ?? 0), 0);
+                    return (
+                      <>
+                        {totalCashReceived > 0 && (
+                          <XStack justifyContent="space-between">
+                            <Text style={{ color: "#6B7280", fontSize: 14 }}>Cash Tendered</Text>
+                            <Text style={{ color: "#374151", fontSize: 14 }}>
+                              {formatCurrency(totalCashReceived)}
+                            </Text>
+                          </XStack>
+                        )}
+                        {totalChange > 0 && (
+                          <XStack justifyContent="space-between">
+                            <Text style={{ color: "#6B7280", fontSize: 14 }}>Change</Text>
+                            <Text style={{ color: "#16A34A", fontSize: 14 }}>
+                              {formatCurrency(totalChange)}
+                            </Text>
+                          </XStack>
+                        )}
+                      </>
+                    );
+                  })()}
+                </>
+              ) : (
                 <>
                   <XStack justifyContent="space-between">
-                    <Text style={{ color: "#6B7280", fontSize: 14 }}>Tendered</Text>
+                    <Text style={{ color: "#6B7280", fontSize: 14 }}>Payment</Text>
                     <Text style={{ color: "#374151", fontSize: 14 }}>
-                      {formatCurrency(order.cashReceived)}
+                      {order.paymentMethod === "cash" ? "Cash" : "Card/E-Wallet"}
                     </Text>
                   </XStack>
-                  <XStack justifyContent="space-between">
-                    <Text style={{ color: "#6B7280", fontSize: 14 }}>Change</Text>
-                    <Text style={{ color: "#16A34A", fontSize: 14 }}>
-                      {formatCurrency(order.changeGiven ?? 0)}
-                    </Text>
-                  </XStack>
+                  {order.paymentMethod === "cash" && order.cashReceived != null && (
+                    <>
+                      <XStack justifyContent="space-between">
+                        <Text style={{ color: "#6B7280", fontSize: 14 }}>Tendered</Text>
+                        <Text style={{ color: "#374151", fontSize: 14 }}>
+                          {formatCurrency(order.cashReceived)}
+                        </Text>
+                      </XStack>
+                      <XStack justifyContent="space-between">
+                        <Text style={{ color: "#6B7280", fontSize: 14 }}>Change</Text>
+                        <Text style={{ color: "#16A34A", fontSize: 14 }}>
+                          {formatCurrency(order.changeGiven ?? 0)}
+                        </Text>
+                      </XStack>
+                    </>
+                  )}
                 </>
               )}
             </YStack>
