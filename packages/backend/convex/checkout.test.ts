@@ -299,6 +299,92 @@ describe("checkout — cancelOrder", () => {
   });
 });
 
+describe("checkout — processPayment (split payments)", () => {
+  it("should process a single cash payment", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupAuthenticatedUser(t);
+    const orderId = await createOpenOrder(t, storeId, userId, 10000);
+
+    const asUser = t.withIdentity({ subject: userId });
+    const result = await asUser.mutation(api.checkout.processPayment, {
+      orderId,
+      payments: [
+        {
+          paymentMethod: "cash",
+          amount: 10000,
+          cashReceived: 12000,
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+
+    const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+    expect(order?.status).toBe("paid");
+    expect(order?.paidAt).toBeDefined();
+
+    const payments = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("orderPayments")
+        .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
+        .collect(),
+    );
+    expect(payments).toHaveLength(1);
+    expect(payments[0].paymentMethod).toBe("cash");
+    expect(payments[0].amount).toBe(10000);
+    expect(payments[0].cashReceived).toBe(12000);
+    expect(payments[0].changeGiven).toBe(2000);
+  });
+
+  it("should process split payment (cash + card)", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupAuthenticatedUser(t);
+    const orderId = await createOpenOrder(t, storeId, userId, 39000);
+
+    const asUser = t.withIdentity({ subject: userId });
+    const result = await asUser.mutation(api.checkout.processPayment, {
+      orderId,
+      payments: [
+        { paymentMethod: "cash", amount: 29000, cashReceived: 29000 },
+        {
+          paymentMethod: "card_ewallet",
+          amount: 10000,
+          cardPaymentType: "GCash",
+          cardReferenceNumber: "REF123456",
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+
+    const payments = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("orderPayments")
+        .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
+        .collect(),
+    );
+    expect(payments).toHaveLength(2);
+    expect(payments.find((p: any) => p.paymentMethod === "cash")?.amount).toBe(29000);
+    expect(payments.find((p: any) => p.paymentMethod === "card_ewallet")?.cardPaymentType).toBe(
+      "GCash",
+    );
+  });
+
+  it("should reject if total payments < netSales", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupAuthenticatedUser(t);
+    const orderId = await createOpenOrder(t, storeId, userId, 10000);
+
+    const asUser = t.withIdentity({ subject: userId });
+    await expect(
+      asUser.mutation(api.checkout.processPayment, {
+        orderId,
+        payments: [{ paymentMethod: "cash", amount: 5000, cashReceived: 5000 }],
+      }),
+    ).rejects.toThrow();
+  });
+});
+
 describe("checkout — payment idempotency", () => {
   it("processCashPayment should return success if order already paid with cash", async () => {
     const t = convexTest(schema, modules);

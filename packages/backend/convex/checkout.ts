@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
+import type { MutationCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
 import { calculateChange } from "./lib/taxCalculations";
@@ -30,6 +31,100 @@ async function releaseTableIfLastOrder(
   }
 }
 
+// Core split-payment logic shared by processPayment and legacy single-method mutations
+async function processPaymentCore(
+  ctx: MutationCtx,
+  orderId: Id<"orders">,
+  payments: Array<{
+    paymentMethod: "cash" | "card_ewallet";
+    amount: number;
+    cashReceived?: number;
+    cardPaymentType?: string;
+    cardReferenceNumber?: string;
+  }>,
+  userId: Id<"users">,
+): Promise<{ success: boolean; totalChange: number }> {
+  const order = await ctx.db.get(orderId);
+  if (!order) throw new Error("Order not found");
+
+  if (order.status === "paid") return { success: true, totalChange: 0 };
+  if (order.status !== "open") throw new Error("Order is not open");
+
+  const totalPayments = payments.reduce((sum, p) => sum + p.amount, 0);
+  if (totalPayments < order.netSales) throw new Error("Total payments insufficient");
+
+  for (const payment of payments) {
+    if (payment.amount <= 0) throw new Error("Payment amount must be positive");
+    if (payment.paymentMethod === "card_ewallet") {
+      if (!payment.cardPaymentType) throw new Error("Card payment type required");
+      if (!payment.cardReferenceNumber) throw new Error("Reference number required");
+    }
+  }
+
+  let totalChange = 0;
+  for (const payment of payments) {
+    let changeGiven: number | undefined;
+    if (payment.paymentMethod === "cash" && payment.cashReceived !== undefined) {
+      changeGiven = payment.cashReceived - payment.amount;
+      if (changeGiven > 0) totalChange += changeGiven;
+      if (changeGiven < 0) changeGiven = 0;
+    }
+
+    await ctx.db.insert("orderPayments", {
+      orderId,
+      storeId: order.storeId,
+      paymentMethod: payment.paymentMethod,
+      amount: payment.amount,
+      cashReceived: payment.cashReceived,
+      changeGiven,
+      cardPaymentType: payment.cardPaymentType,
+      cardReferenceNumber: payment.cardReferenceNumber,
+      createdAt: Date.now(),
+      createdBy: userId,
+    });
+  }
+
+  await ctx.db.patch(orderId, {
+    status: "paid",
+    paidAt: Date.now(),
+    paidBy: userId,
+  });
+
+  if (order.tableId) {
+    await releaseTableIfLastOrder(ctx, order.tableId, orderId);
+  }
+
+  if (order.orderType === "takeout" && order.takeoutStatus === "pending") {
+    await ctx.db.patch(orderId, { takeoutStatus: "preparing" });
+  }
+
+  return { success: true, totalChange };
+}
+
+// Process split or single payment (supports multiple payment methods)
+export const processPayment = mutation({
+  args: {
+    orderId: v.id("orders"),
+    payments: v.array(
+      v.object({
+        paymentMethod: v.union(v.literal("cash"), v.literal("card_ewallet")),
+        amount: v.number(),
+        cashReceived: v.optional(v.number()),
+        cardPaymentType: v.optional(v.string()),
+        cardReferenceNumber: v.optional(v.string()),
+      }),
+    ),
+  },
+  returns: v.object({ success: v.boolean(), totalChange: v.number() }),
+  handler: async (ctx, args) => {
+    const user = await getAuthenticatedUser(ctx);
+    if (!user) {
+      throw new Error("Authentication required");
+    }
+    return processPaymentCore(ctx, args.orderId, args.payments, user._id);
+  },
+});
+
 // Process cash payment
 export const processCashPayment = mutation({
   args: {
@@ -47,7 +142,7 @@ export const processCashPayment = mutation({
       throw new Error("Authentication required");
     }
 
-    // Get order
+    // Get order for idempotency and legacy-field checks before delegating
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
     if (order.status !== "open") {
@@ -62,29 +157,23 @@ export const processCashPayment = mutation({
       throw new Error("Insufficient cash received");
     }
 
-    // Calculate change
+    // Calculate change using existing helper
     const changeGiven = calculateChange(order.netSales, args.cashReceived);
 
-    // Update order
-    const now = Date.now();
+    // Delegate to shared core (inserts orderPayments row + patches status/paidAt/paidBy)
+    await processPaymentCore(
+      ctx,
+      args.orderId,
+      [{ paymentMethod: "cash", amount: order.netSales, cashReceived: args.cashReceived }],
+      user._id,
+    );
+
+    // Patch legacy order-level payment fields for backwards compatibility
     await ctx.db.patch(args.orderId, {
-      status: "paid",
       paymentMethod: "cash",
       cashReceived: args.cashReceived,
       changeGiven,
-      paidAt: now,
-      paidBy: user._id,
     });
-
-    // Release table if dine-in and this was the last open order
-    if (order.tableId) {
-      await releaseTableIfLastOrder(ctx, order.tableId, args.orderId);
-    }
-
-    // Advance takeout status to "preparing" when paid
-    if (order.orderType === "takeout" && order.takeoutStatus === "pending") {
-      await ctx.db.patch(args.orderId, { takeoutStatus: "preparing" });
-    }
 
     return {
       success: true,
@@ -110,7 +199,7 @@ export const processCardPayment = mutation({
       throw new Error("Authentication required");
     }
 
-    // Get order
+    // Get order for idempotency check before delegating
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
     if (order.status !== "open") {
@@ -120,28 +209,29 @@ export const processCardPayment = mutation({
       throw new Error("Order is not open for payment");
     }
 
-    // Update order (no change for card payments)
-    const now = Date.now();
+    // Delegate to shared core (inserts orderPayments row + patches status/paidAt/paidBy)
+    await processPaymentCore(
+      ctx,
+      args.orderId,
+      [
+        {
+          paymentMethod: "card_ewallet",
+          amount: order.netSales,
+          cardPaymentType: args.paymentType,
+          cardReferenceNumber: args.referenceNumber,
+        },
+      ],
+      user._id,
+    );
+
+    // Patch legacy order-level payment fields for backwards compatibility
     await ctx.db.patch(args.orderId, {
-      status: "paid",
       paymentMethod: "card_ewallet",
       cashReceived: undefined,
       changeGiven: undefined,
       cardPaymentType: args.paymentType,
       cardReferenceNumber: args.referenceNumber,
-      paidAt: now,
-      paidBy: user._id,
     });
-
-    // Release table if dine-in and this was the last open order
-    if (order.tableId) {
-      await releaseTableIfLastOrder(ctx, order.tableId, args.orderId);
-    }
-
-    // Advance takeout status to "preparing" when paid
-    if (order.orderType === "takeout" && order.takeoutStatus === "pending") {
-      await ctx.db.patch(args.orderId, { takeoutStatus: "preparing" });
-    }
 
     return {
       success: true,
