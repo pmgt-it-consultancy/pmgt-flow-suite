@@ -57,11 +57,11 @@ Money handling follows the current app behavior, not the older centavo-only assu
 
 ### Backend (Convex)
 
-Schema in `packages/backend/convex/schema.ts`. Key domain tables: `stores`, `products`, `categories`, `modifierGroups`, `modifierOptions`, `modifierGroupAssignments`, `orders`, `orderItems`, `orderItemModifiers`, `orderDiscounts`, `orderVoids`, `tables`, `roles`, `auditLogs`, `dailyReports`, `settings`.
+Schema in `packages/backend/convex/schema.ts`. Key domain tables: `stores`, `products`, `categories`, `modifierGroups`, `modifierOptions`, `modifierGroupAssignments`, `orders`, `orderItems`, `orderItemModifiers`, `orderDiscounts`, `orderPayments`, `orderVoids`, `tables`, `roles`, `auditLogs`, `dailyReports`, `settings`.
 
 Function files organized by domain:
 - **orders.ts** — Order lifecycle (create, add/remove items, void)
-- **checkout.ts** — Payment settlement with tax calculation
+- **checkout.ts** — Payment settlement with tax calculation, split payments via `processPayment` / `processPaymentCore`
 - **products.ts** / **categories.ts** — Product catalog CRUD
 - **modifierGroups.ts** / **modifierOptions.ts** / **modifierAssignments.ts** — Modifier system
 - **tables.ts** — Dine-in table management
@@ -183,6 +183,10 @@ Current config notes:
   - Money values are currently treated as peso amounts with decimal precision, not integer centavos
   - SC/PWD discounts should preserve centavo precision
 - **Modifier system**: Groups assigned to products or categories via join table (`modifierGroupAssignments`), with optional min/max override
+- **Split payments**: Orders support multiple payment methods via `orderPayments` table. `processPayment` mutation accepts a `payments` array; `getReceipt` returns `payments[]` with legacy fallback for old single-payment orders. Reports (`reports.ts`) query `orderPayments` for accurate per-method breakdowns. Legacy fields (`paymentMethod`, `cashReceived`, `changeGiven`, `cardPaymentType`, `cardReferenceNumber`) remain on the `orders` table for backward compatibility — old mutations (`processCashPayment`, `processCardPayment`) still write them.
+- **Counter ordering**: Takeout screen supports a `orderCategory` field (`"dine_in"` | `"takeout"`) separate from `orderType` (which drives workflow). `tableMarker` is a free text field for tent card / table marker numbers, shown on kitchen tickets (large/bold) and customer receipts (appended to order number).
+- **Order numbers**: `T-xxx` / `D-xxx` numbers reset daily (only today's orders count for the counter)
+- **Kitchen ticket fields**: `KitchenTicketData` uses `tableMarker`, `customerName`, `orderCategory` (never `tableName` — that was removed to fix a bug where customer name overwrote the order type display)
 - **Order snapshots**: Product names and prices are snapshotted into order items at creation time
 - **Audit logging**: Operations tracked in `auditLogs` table with store, action, entity references
 
@@ -344,3 +348,4 @@ cd ../../packages/backend && npx convex deploy --cmd 'cd ../../apps/web && turbo
 
 - Commit messages in this repo follow conventional commit style such as `feat(scope): summary` or `fix(scope): summary`
 - `lint-staged` runs `biome check --write --no-errors-on-unmatched` on staged JS/TS/JSON files during commit
+- The main integration branch is `main`. When merging or creating PRs, target `main` (not `feature/pos-system`)
