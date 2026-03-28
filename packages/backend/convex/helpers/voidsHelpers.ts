@@ -2,6 +2,8 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import type { Doc, Id } from "../_generated/dataModel";
 import { internalMutation, internalQuery } from "../_generated/server";
+import { getPHTDayBoundaries } from "../lib/dateUtils";
+import { aggregateOrderTotals, calculateItemTotals } from "../lib/taxCalculations";
 
 /**
  * Internal query to get authenticated user ID
@@ -290,9 +292,6 @@ export const voidPaidOrderInternal = internalMutation({
     refundAmount: v.number(),
   }),
   handler: async (ctx, args) => {
-    const { calculateItemTotals, aggregateOrderTotals } = await import("../lib/taxCalculations");
-    const { getPHTDayBoundaries } = await import("../lib/dateUtils");
-
     // 1. Get and validate order
     const order = await ctx.db.get(args.orderId);
     if (!order) throw new Error("Order not found");
