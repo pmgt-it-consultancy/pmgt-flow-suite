@@ -336,6 +336,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       tableName,
       tableMarker: order?.tableMarker,
       orderCategory: order?.orderCategory,
+      orderDefaultServiceType: order?.orderCategory
+        ? order.orderCategory === "dine_in"
+          ? "dine_in"
+          : "takeout"
+        : order?.orderType === "dine_in"
+          ? "dine_in"
+          : "takeout",
       pax: order?.pax,
       orderType: (order?.orderType as "dine_in" | "take_out" | "delivery") ?? "dine_in",
       cashierName: user?.name ?? "Cashier",
@@ -344,6 +351,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         quantity: item.quantity,
         price: item.productPrice,
         total: item.lineTotal,
+        serviceType: item.serviceType,
         modifiers: item.modifiers?.map((m) => ({
           optionName: m.optionName,
           priceAdjustment: m.priceAdjustment,
@@ -483,10 +491,12 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           tableMarker: order.tableMarker,
           customerName: order.customerName,
           orderCategory: order.orderCategory,
+          orderDefaultServiceType: isTakeout ? "takeout" : "dine_in",
           items: activeItems.map((i) => ({
             name: i.productName,
             quantity: i.quantity,
             notes: i.notes,
+            serviceType: i.serviceType,
             modifiers: i.modifiers?.map((m) => ({
               optionName: m.optionName,
               priceAdjustment: m.priceAdjustment,
