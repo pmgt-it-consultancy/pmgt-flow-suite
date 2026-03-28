@@ -58,12 +58,11 @@ export const OrderSummary = ({ items, orderDefaultServiceType }: OrderSummaryPro
                 <Text style={{ color: "#111827", fontWeight: "600" }}>{item.productName}</Text>
                 {!item.isVatable && <Badge variant="warning">NON-VAT</Badge>}
                 {(() => {
-                  const itemType = item.serviceType ?? orderDefaultServiceType;
-                  const isException =
-                    orderDefaultServiceType && itemType !== orderDefaultServiceType;
-                  if (!isException) return null;
+                  const itemType = item.serviceType ?? orderDefaultServiceType ?? "dine_in";
                   const label = itemType === "takeout" ? "TAKEOUT" : "DINE IN";
-                  return <Badge variant="warning">{label}</Badge>;
+                  return (
+                    <Badge variant={itemType === "takeout" ? "warning" : "default"}>{label}</Badge>
+                  );
                 })()}
               </XStack>
               <Text variant="muted" size="xs" style={{ marginTop: 2 }}>
