@@ -827,6 +827,7 @@ export const addItem = mutation({
     quantity: v.number(),
     notes: v.optional(v.string()),
     customPrice: v.optional(v.number()),
+    serviceType: v.optional(v.union(v.literal("dine_in"), v.literal("takeout"))),
     modifiers: v.optional(
       v.array(
         v.object({
@@ -871,6 +872,17 @@ export const addItem = mutation({
       itemPrice = product.price;
     }
 
+    // Resolve service type: explicit arg > orderCategory > orderType
+    const resolvedServiceType =
+      args.serviceType ??
+      (order.orderCategory
+        ? order.orderCategory === "dine_in"
+          ? "dine_in"
+          : "takeout"
+        : order.orderType === "dine_in"
+          ? "dine_in"
+          : "takeout");
+
     // Create order item with product snapshot
     const itemId = await ctx.db.insert("orderItems", {
       orderId: args.orderId,
@@ -879,6 +891,7 @@ export const addItem = mutation({
       productPrice: itemPrice,
       quantity: args.quantity,
       notes: args.notes,
+      serviceType: resolvedServiceType,
       isVoided: false,
       isSentToKitchen: false,
       voidedBy: undefined,

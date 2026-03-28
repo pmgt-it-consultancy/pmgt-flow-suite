@@ -903,3 +903,143 @@ describe("orders — createDraftOrder requestId dedup", () => {
     expect(orderId1).not.toBe(orderId2);
   });
 });
+
+describe("orders.addItem — serviceType", () => {
+  it("should default to dine_in for dine-in orders", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-010",
+        orderType: "dine_in" as const,
+        orderChannel: "walk_in_dine_in" as const,
+        status: "open" as const,
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    const itemId = await authed.mutation(api.orders.addItem, {
+      orderId,
+      productId,
+      quantity: 1,
+    });
+
+    const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
+    expect(item.serviceType).toBe("dine_in");
+  });
+
+  it("should default to takeout for takeout orders", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "T-010",
+        orderType: "takeout" as const,
+        orderChannel: "walk_in_takeout" as const,
+        status: "open" as const,
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    const itemId = await authed.mutation(api.orders.addItem, {
+      orderId,
+      productId,
+      quantity: 1,
+    });
+
+    const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
+    expect(item.serviceType).toBe("takeout");
+  });
+
+  it("should accept explicit serviceType override", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-011",
+        orderType: "dine_in" as const,
+        orderChannel: "walk_in_dine_in" as const,
+        status: "open" as const,
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    const itemId = await authed.mutation(api.orders.addItem, {
+      orderId,
+      productId,
+      quantity: 1,
+      serviceType: "takeout",
+    });
+
+    const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
+    expect(item.serviceType).toBe("takeout");
+  });
+
+  it("should default from orderCategory for draft orders", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderType: "takeout" as const,
+        status: "draft" as const,
+        draftLabel: "Customer #1",
+        orderCategory: "dine_in" as const,
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+    const itemId = await authed.mutation(api.orders.addItem, {
+      orderId,
+      productId,
+      quantity: 1,
+    });
+
+    const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
+    // orderCategory is dine_in, so serviceType should be dine_in even though orderType is takeout
+    expect(item.serviceType).toBe("dine_in");
+  });
+});
