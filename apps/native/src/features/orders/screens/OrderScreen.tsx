@@ -176,6 +176,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         notes: d.notes,
         isVoided: false,
         isSentToKitchen: false,
+        serviceType: "dine_in" as "dine_in" | "takeout" | undefined,
         lineTotal: d.productPrice * d.quantity,
         modifiers: d.modifiers?.map((m) => ({
           groupName: m.modifierGroupName,
