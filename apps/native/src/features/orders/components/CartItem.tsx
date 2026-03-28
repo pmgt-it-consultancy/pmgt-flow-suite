@@ -108,6 +108,7 @@ export const CartItem = ({
           borderWidth={1}
           borderColor="#E5E7EB"
           alignSelf="flex-start"
+          marginRight={8}
         >
           <TouchableOpacity
             onPress={() => !isSentToKitchen && onServiceTypeChange?.(id, "dine_in")}
