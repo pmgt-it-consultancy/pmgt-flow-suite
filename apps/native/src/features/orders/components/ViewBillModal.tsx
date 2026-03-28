@@ -1,6 +1,6 @@
 import { FlatList } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { Modal, Separator, Text } from "../../shared/components/ui";
+import { Badge, Modal, Separator, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
 interface BillItem {
@@ -9,6 +9,7 @@ interface BillItem {
   productPrice: number;
   lineTotal: number;
   isVoided: boolean;
+  serviceType?: "dine_in" | "takeout";
 }
 
 interface ViewBillModalProps {
@@ -58,7 +59,14 @@ export const ViewBillModal = ({
         renderItem={({ item }) => (
           <XStack justifyContent="space-between" alignItems="center" paddingVertical={8}>
             <YStack flex={1} marginRight={12}>
-              <Text style={{ color: "#111827", fontSize: 14 }}>{item.productName}</Text>
+              <XStack alignItems="center" gap={6} flexWrap="wrap">
+                <Text style={{ color: "#111827", fontSize: 14 }}>{item.productName}</Text>
+                {item.serviceType && (
+                  <Badge variant={item.serviceType === "takeout" ? "warning" : "default"} size="sm">
+                    {item.serviceType === "takeout" ? "TAKEOUT" : "DINE IN"}
+                  </Badge>
+                )}
+              </XStack>
               <Text style={{ color: "#9CA3AF", fontSize: 12 }}>
                 {item.quantity}x {formatCurrency(item.productPrice)}
               </Text>
