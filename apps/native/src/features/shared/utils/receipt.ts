@@ -100,8 +100,21 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
     ? `${data.receiptNumber ?? data.orderNumber} | ${data.tableMarker}`
     : (data.receiptNumber ?? data.orderNumber);
 
+  const orderDefault =
+    data.orderDefaultServiceType ??
+    (data.orderCategory
+      ? data.orderCategory === "dine_in"
+        ? "dine_in"
+        : "takeout"
+      : data.orderType === "dine_in"
+        ? "dine_in"
+        : "takeout");
+
   const itemsHtml = data.items
     .map((item) => {
+      const itemServiceType = item.serviceType ?? orderDefault;
+      const isException = itemServiceType !== orderDefault;
+      const tag = isException ? (itemServiceType === "takeout" ? " (TAKEOUT)" : " (DINE IN)") : "";
       const modifiersHtml = item.modifiers?.length
         ? item.modifiers
             .map(
@@ -112,7 +125,7 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
         : "";
       return `
       <tr>
-        <td>${item.name}</td>
+        <td>${item.name}${tag}</td>
         <td class="center">${item.quantity}</td>
         <td class="right">${formatCurrency(item.price)}</td>
         <td class="right">${formatCurrency(item.total)}</td>

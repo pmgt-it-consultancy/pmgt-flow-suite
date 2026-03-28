@@ -111,8 +111,21 @@ export async function printReceiptToThermal(
   await p.printText("ORDER ITEMS\n", bold());
   await p.printerAlign(ALIGN.LEFT);
 
+  const orderDefault =
+    data.orderDefaultServiceType ??
+    (data.orderCategory
+      ? data.orderCategory === "dine_in"
+        ? "dine_in"
+        : "takeout"
+      : data.orderType === "dine_in"
+        ? "dine_in"
+        : "takeout");
+
   for (const item of data.items) {
-    await p.printText(`${item.name}\n`, normal());
+    const itemServiceType = item.serviceType ?? orderDefault;
+    const isException = itemServiceType !== orderDefault;
+    const tag = isException ? (itemServiceType === "takeout" ? " (TAKEOUT)" : " (DINE IN)") : "";
+    await p.printText(`${item.name}${tag}\n`, normal());
     if (item.modifiers && item.modifiers.length > 0) {
       for (const mod of item.modifiers) {
         const modText =
