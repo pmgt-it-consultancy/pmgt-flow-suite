@@ -285,12 +285,25 @@ export const getReceipt = query({
       discountAmount: v.number(),
       netSales: v.number(),
 
-      // Payment
+      // Payment (legacy single-method fields — kept for backward compatibility)
       paymentMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
       cashReceived: v.optional(v.number()),
       changeGiven: v.optional(v.number()),
       cardPaymentType: v.optional(v.string()),
       cardReferenceNumber: v.optional(v.string()),
+
+      // Payments array — populated from orderPayments table for split payments,
+      // or synthesized from legacy order fields for older orders
+      payments: v.array(
+        v.object({
+          paymentMethod: v.union(v.literal("cash"), v.literal("card_ewallet")),
+          amount: v.number(),
+          cashReceived: v.optional(v.number()),
+          changeGiven: v.optional(v.number()),
+          cardPaymentType: v.optional(v.string()),
+          cardReferenceNumber: v.optional(v.string()),
+        }),
+      ),
     }),
     v.null(),
   ),
@@ -335,6 +348,36 @@ export const getReceipt = query({
         lineTotal: i.productPrice * i.quantity,
       }));
 
+    // Fetch payment rows from orderPayments table
+    const paymentRows = await ctx.db
+      .query("orderPayments")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .collect();
+
+    // Build payments array — use orderPayments if available, else legacy fields
+    const payments =
+      paymentRows.length > 0
+        ? paymentRows.map((p) => ({
+            paymentMethod: p.paymentMethod,
+            amount: p.amount,
+            cashReceived: p.cashReceived,
+            changeGiven: p.changeGiven,
+            cardPaymentType: p.cardPaymentType,
+            cardReferenceNumber: p.cardReferenceNumber,
+          }))
+        : order.paymentMethod
+          ? [
+              {
+                paymentMethod: order.paymentMethod,
+                amount: order.netSales,
+                cashReceived: order.cashReceived,
+                changeGiven: order.changeGiven,
+                cardPaymentType: order.cardPaymentType,
+                cardReferenceNumber: order.cardReferenceNumber,
+              },
+            ]
+          : [];
+
     return {
       storeName: store.name,
       storeAddress1: store.address1,
@@ -369,6 +412,8 @@ export const getReceipt = query({
       changeGiven: order.changeGiven,
       cardPaymentType: order.cardPaymentType,
       cardReferenceNumber: order.cardReferenceNumber,
+
+      payments,
     };
   },
 });

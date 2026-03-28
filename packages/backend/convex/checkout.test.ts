@@ -506,3 +506,104 @@ describe("checkout — payment idempotency", () => {
     ).rejects.toThrow("Order is not open for payment");
   });
 });
+
+describe("checkout — getReceipt with split payments", () => {
+  it("should return payments array for new split payment orders", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupAuthenticatedUser(t);
+    const orderId = await createOpenOrder(t, storeId, userId, 39000);
+
+    // Process split payment
+    const asUser = t.withIdentity({ subject: userId });
+    await asUser.mutation(api.checkout.processPayment, {
+      orderId,
+      payments: [
+        { paymentMethod: "cash", amount: 29000, cashReceived: 29000 },
+        {
+          paymentMethod: "card_ewallet",
+          amount: 10000,
+          cardPaymentType: "GCash",
+          cardReferenceNumber: "REF123",
+        },
+      ],
+    });
+
+    const receipt = await asUser.query(api.checkout.getReceipt, { orderId });
+    expect(receipt.payments).toHaveLength(2);
+    expect(receipt.payments[0].paymentMethod).toBe("cash");
+    expect(receipt.payments[1].cardPaymentType).toBe("GCash");
+  });
+
+  it("should return single-element payments array for legacy orders", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupAuthenticatedUser(t);
+
+    // Create a legacy paid order (payment data on order, no orderPayments rows)
+    const orderId = await t.run(async (ctx: any) => {
+      return ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-001",
+        orderType: "dine_in",
+        orderChannel: "walk_in_dine_in",
+        status: "paid",
+        grossSales: 10000,
+        vatableSales: 8929,
+        vatAmount: 1071,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 10000,
+        paymentMethod: "cash",
+        cashReceived: 12000,
+        changeGiven: 2000,
+        paidAt: Date.now(),
+        paidBy: userId,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const asUser = t.withIdentity({ subject: userId });
+    const receipt = await asUser.query(api.checkout.getReceipt, { orderId });
+    expect(receipt.payments).toHaveLength(1);
+    expect(receipt.payments[0].paymentMethod).toBe("cash");
+    expect(receipt.payments[0].cashReceived).toBe(12000);
+    expect(receipt.payments[0].changeGiven).toBe(2000);
+  });
+
+  it("should return orderCategory and tableMarker in receipt", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupAuthenticatedUser(t);
+
+    const orderId = await t.run(async (ctx: any) => {
+      return ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "T-001",
+        orderType: "takeout",
+        orderChannel: "walk_in_takeout",
+        status: "paid",
+        orderCategory: "dine_in",
+        tableMarker: "15",
+        grossSales: 10000,
+        vatableSales: 8929,
+        vatAmount: 1071,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 10000,
+        paymentMethod: "cash",
+        cashReceived: 10000,
+        changeGiven: 0,
+        paidAt: Date.now(),
+        paidBy: userId,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const asUser = t.withIdentity({ subject: userId });
+    const receipt = await asUser.query(api.checkout.getReceipt, { orderId });
+    expect(receipt.orderCategory).toBe("dine_in");
+    expect(receipt.tableMarker).toBe("15");
+  });
+});
