@@ -29,19 +29,9 @@ async function getNextOrderNumber(
     )
     .collect();
 
-  // Also get still-open orders of this type from previous days
-  // to avoid collisions in the active orders display
-  const openOrdersFromPreviousDays = await ctx.db
-    .query("orders")
-    .withIndex("by_store_status", (q: any) => q.eq("storeId", storeId).eq("status", "open"))
-    .filter((q: any) =>
-      q.and(q.lt(q.field("createdAt"), startOfDay), q.eq(q.field("orderType"), orderType)),
-    )
-    .collect();
-
-  // Find the highest existing number across both sets
+  // Find the highest existing number from today's orders only
   let maxNumber = 0;
-  for (const order of [...todaysOrders, ...openOrdersFromPreviousDays]) {
+  for (const order of todaysOrders) {
     const match = order.orderNumber?.match(/\d+$/);
     if (match) {
       maxNumber = Math.max(maxNumber, Number.parseInt(match[0], 10));

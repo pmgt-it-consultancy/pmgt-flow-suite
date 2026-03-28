@@ -805,6 +805,57 @@ describe("orders — submitDraft idempotency", () => {
   });
 });
 
+describe("order number daily reset", () => {
+  it("should start at T-001 regardless of open orders from previous days", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    // Insert a previous-day open order directly
+    const yesterday = Date.now() - 24 * 60 * 60 * 1000;
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "T-005",
+        orderType: "takeout" as const,
+        orderChannel: "walk_in_takeout" as const,
+        status: "open" as const,
+        grossSales: 100,
+        vatableSales: 89.29,
+        vatAmount: 10.71,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 100,
+        createdBy: userId,
+        createdAt: yesterday,
+      });
+    });
+
+    // Create a new draft order today — should get T-001, not T-006
+    const authed = t.withIdentity({ subject: userId });
+    const orderId = await authed.mutation(api.orders.createDraftOrder, {
+      storeId,
+      requestId: "daily-reset-test-1",
+    });
+
+    // Add an item so it can be submitted
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 1,
+        isVoided: false,
+        isSentToKitchen: false,
+      });
+    });
+
+    const result = await authed.mutation(api.orders.submitDraft, { orderId });
+    expect(result.orderNumber).toBe("T-001");
+  });
+});
+
 describe("orders — createDraftOrder requestId dedup", () => {
   it("should return same orderId for duplicate requestId", async () => {
     const t = convexTest(schema, modules);
