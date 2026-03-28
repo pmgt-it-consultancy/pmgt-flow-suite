@@ -999,6 +999,7 @@ export const updateItemServiceType = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    await requireAuth(ctx);
     const item = await ctx.db.get(args.orderItemId);
     if (!item) throw new Error("Order item not found");
 
@@ -1019,6 +1020,7 @@ export const bulkUpdateItemServiceType = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    await requireAuth(ctx);
     const items = await ctx.db
       .query("orderItems")
       .withIndex("by_order", (q) => q.eq("orderId", args.orderId))

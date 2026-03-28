@@ -1137,7 +1137,8 @@ describe("orders.updateItemServiceType", () => {
       });
     });
 
-    await t.mutation(api.orders.updateItemServiceType, {
+    const authed = t.withIdentity({ subject: userId });
+    await authed.mutation(api.orders.updateItemServiceType, {
       orderItemId: itemId,
       serviceType: "takeout",
     });
@@ -1182,8 +1183,9 @@ describe("orders.updateItemServiceType", () => {
       });
     });
 
+    const authed = t.withIdentity({ subject: userId });
     await expect(
-      t.mutation(api.orders.updateItemServiceType, {
+      authed.mutation(api.orders.updateItemServiceType, {
         orderItemId: itemId,
         serviceType: "takeout",
       }),
@@ -1249,7 +1251,8 @@ describe("orders.bulkUpdateItemServiceType", () => {
       return { unsentItemId, sentItemId, voidedItemId };
     });
 
-    await t.mutation(api.orders.bulkUpdateItemServiceType, {
+    const authed = t.withIdentity({ subject: userId });
+    await authed.mutation(api.orders.bulkUpdateItemServiceType, {
       orderId,
       serviceType: "takeout",
     });
