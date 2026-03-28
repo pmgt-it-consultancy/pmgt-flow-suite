@@ -23,6 +23,9 @@ interface CartItemProps {
   onIncrement: (id: Id<"orderItems">, currentQty: number) => void;
   onDecrement: (id: Id<"orderItems">, currentQty: number) => void;
   onVoidItem?: (id: Id<"orderItems">) => void;
+  serviceType?: "dine_in" | "takeout";
+  orderDefaultServiceType?: "dine_in" | "takeout";
+  onServiceTypeChange?: (id: Id<"orderItems">, serviceType: "dine_in" | "takeout") => void;
 }
 
 export const CartItem = ({
@@ -37,8 +40,15 @@ export const CartItem = ({
   onIncrement,
   onDecrement,
   onVoidItem,
+  serviceType,
+  orderDefaultServiceType,
+  onServiceTypeChange,
 }: CartItemProps) => {
   const formatCurrency = useFormatCurrency();
+  const currentServiceType = serviceType ?? orderDefaultServiceType ?? "dine_in";
+  const isOverridden = orderDefaultServiceType
+    ? currentServiceType !== orderDefaultServiceType
+    : false;
 
   return (
     <YStack
@@ -46,6 +56,9 @@ export const CartItem = ({
       paddingVertical={12}
       borderBottomWidth={1}
       borderBottomColor="#F3F4F6"
+      backgroundColor={isOverridden ? "#FFFBEB" : "transparent"}
+      borderLeftWidth={isOverridden ? 3 : 0}
+      borderLeftColor={isOverridden ? "#F59E0B" : "transparent"}
     >
       <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={8}>
         <YStack flex={1} marginRight={12}>
@@ -83,7 +96,88 @@ export const CartItem = ({
               {notes}
             </Text>
           )}
+          {isOverridden && !isSentToKitchen && (
+            <Text style={{ color: "#D97706", fontSize: 11, marginTop: 4, fontWeight: "500" }}>
+              {currentServiceType === "takeout" ? "Packed for takeout" : "Dine-in override"}
+            </Text>
+          )}
         </YStack>
+        <XStack
+          borderRadius={8}
+          overflow="hidden"
+          borderWidth={1}
+          borderColor="#E5E7EB"
+          alignSelf="flex-start"
+        >
+          <TouchableOpacity
+            onPress={() => !isSentToKitchen && onServiceTypeChange?.(id, "dine_in")}
+            disabled={isSentToKitchen}
+            activeOpacity={0.7}
+            style={{
+              paddingVertical: 5,
+              paddingHorizontal: 8,
+              backgroundColor: isSentToKitchen
+                ? "#F3F4F6"
+                : currentServiceType === "dine_in"
+                  ? isOverridden
+                    ? "#FEF3C7"
+                    : "#DBEAFE"
+                  : "white",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 9,
+                fontWeight: "600",
+                letterSpacing: 0.3,
+                color: isSentToKitchen
+                  ? "#9CA3AF"
+                  : currentServiceType === "dine_in"
+                    ? isOverridden
+                      ? "#D97706"
+                      : "#0D87E1"
+                    : "#9CA3AF",
+              }}
+            >
+              DINE IN
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => !isSentToKitchen && onServiceTypeChange?.(id, "takeout")}
+            disabled={isSentToKitchen}
+            activeOpacity={0.7}
+            style={{
+              paddingVertical: 5,
+              paddingHorizontal: 8,
+              borderLeftWidth: 1,
+              borderLeftColor: "#E5E7EB",
+              backgroundColor: isSentToKitchen
+                ? "#F3F4F6"
+                : currentServiceType === "takeout"
+                  ? isOverridden
+                    ? "#FEF3C7"
+                    : "#DBEAFE"
+                  : "white",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 9,
+                fontWeight: "600",
+                letterSpacing: 0.3,
+                color: isSentToKitchen
+                  ? "#9CA3AF"
+                  : currentServiceType === "takeout"
+                    ? isOverridden
+                      ? "#D97706"
+                      : "#0D87E1"
+                    : "#9CA3AF",
+              }}
+            >
+              TAKEOUT
+            </Text>
+          </TouchableOpacity>
+        </XStack>
         <Text style={{ color: "#111827", fontWeight: "700", fontSize: 14 }}>
           {formatCurrency(lineTotal)}
         </Text>
