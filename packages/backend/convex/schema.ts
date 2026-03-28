@@ -225,6 +225,7 @@ export default defineSchema({
     productPrice: v.number(),
     quantity: v.number(),
     notes: v.optional(v.string()),
+    serviceType: v.optional(v.union(v.literal("dine_in"), v.literal("takeout"))),
     isVoided: v.boolean(),
     isSentToKitchen: v.optional(v.boolean()),
     voidedBy: v.optional(v.id("users")),
