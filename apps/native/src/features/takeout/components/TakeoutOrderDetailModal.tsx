@@ -313,7 +313,17 @@ export const TakeoutOrderDetailModal = ({
             <YStack paddingVertical={8}>
               <XStack justifyContent="space-between" alignItems="center">
                 <YStack flex={1} marginRight={12}>
-                  <Text style={{ color: "#111827", fontSize: 14 }}>{item.productName}</Text>
+                  <XStack alignItems="center" gap={6} flexWrap="wrap">
+                    <Text style={{ color: "#111827", fontSize: 14 }}>{item.productName}</Text>
+                    {item.serviceType && (
+                      <Badge
+                        variant={item.serviceType === "takeout" ? "warning" : "default"}
+                        size="sm"
+                      >
+                        {item.serviceType === "takeout" ? "TAKEOUT" : "DINE IN"}
+                      </Badge>
+                    )}
+                  </XStack>
                   <Text style={{ color: "#9CA3AF", fontSize: 12 }}>
                     {item.quantity}x {formatCurrency(item.productPrice)}
                   </Text>

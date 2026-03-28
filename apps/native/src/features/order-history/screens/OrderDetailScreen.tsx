@@ -372,9 +372,19 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
               borderColor="#F9FAFB"
             >
               <YStack flex={1}>
-                <Text style={{ color: "#111827", fontSize: 14 }}>
-                  {item.quantity}x {item.productName}
-                </Text>
+                <XStack alignItems="center" gap={6} flexWrap="wrap">
+                  <Text style={{ color: "#111827", fontSize: 14 }}>
+                    {item.quantity}x {item.productName}
+                  </Text>
+                  {item.serviceType && (
+                    <Badge
+                      variant={item.serviceType === "takeout" ? "warning" : "default"}
+                      size="sm"
+                    >
+                      {item.serviceType === "takeout" ? "TAKEOUT" : "DINE IN"}
+                    </Badge>
+                  )}
+                </XStack>
                 {item.notes ? (
                   <Text variant="muted" size="xs">
                     {item.notes}
