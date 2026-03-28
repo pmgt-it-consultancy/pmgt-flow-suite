@@ -83,13 +83,21 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
         tableName: receipt.tableName,
         pax: receipt.pax,
         orderType: receipt.orderType as "dine_in" | "take_out" | "delivery",
+        orderDefaultServiceType: receipt.orderType === "dine_in" ? "dine_in" : "takeout",
         cashierName: receipt.cashierName,
-        items: receipt.items.map((i) => ({
-          name: i.name,
-          quantity: i.quantity,
-          price: i.unitPrice,
-          total: i.lineTotal,
-        })),
+        items: receipt.items.map((i) => {
+          const orderItem = order?.items.find(
+            (oi) => oi.productName === i.name && oi.quantity === i.quantity,
+          );
+          return {
+            name: i.name,
+            quantity: i.quantity,
+            price: i.unitPrice,
+            total: i.lineTotal,
+            serviceType:
+              orderItem?.serviceType ?? (receipt.orderType === "dine_in" ? "dine_in" : "takeout"),
+          };
+        }),
         subtotal: receipt.grossSales,
         discounts: discountsList,
         vatableSales: receipt.vatableSales,

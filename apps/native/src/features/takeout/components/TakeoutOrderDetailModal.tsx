@@ -77,10 +77,12 @@ export const TakeoutOrderDetailModal = ({
       tableMarker: order.tableMarker,
       customerName: order.customerName,
       orderCategory: order.orderCategory as "dine_in" | "takeout" | undefined,
+      orderDefaultServiceType: "takeout" as const,
       items: activeItems.map((i) => ({
         name: i.productName,
         quantity: i.quantity,
         notes: i.notes,
+        serviceType: i.serviceType ?? "takeout",
         modifiers: i.modifiers?.map((m) => ({
           optionName: m.optionName,
           priceAdjustment: m.priceAdjustment,
@@ -114,12 +116,14 @@ export const TakeoutOrderDetailModal = ({
       storeTin: store?.tin,
       orderNumber: order?.orderNumber ?? "",
       orderType: "take_out",
+      orderDefaultServiceType: "takeout" as const,
       cashierName: order?.createdByName ?? user?.name ?? "Cashier",
       items: activeItems.map((item) => ({
         name: item.productName,
         quantity: item.quantity,
         price: item.productPrice,
         total: item.lineTotal,
+        serviceType: item.serviceType ?? "takeout",
         modifiers: item.modifiers?.map((m) => ({
           optionName: m.optionName,
           priceAdjustment: m.priceAdjustment,
