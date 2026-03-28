@@ -422,6 +422,7 @@ export const get = query({
       cardReferenceNumber: v.optional(v.string()),
       orderCategory: v.optional(v.union(v.literal("dine_in"), v.literal("takeout"))),
       tableMarker: v.optional(v.string()),
+      refundedFromOrderId: v.optional(v.id("orders")),
       createdBy: v.id("users"),
       createdByName: v.string(),
       createdAt: v.number(),
@@ -466,7 +467,7 @@ export const get = query({
       voids: v.array(
         v.object({
           _id: v.id("orderVoids"),
-          voidType: v.union(v.literal("full_order"), v.literal("item")),
+          voidType: v.union(v.literal("full_order"), v.literal("item"), v.literal("refund")),
           orderItemId: v.optional(v.id("orderItems")),
           reason: v.string(),
           amount: v.number(),
@@ -593,6 +594,7 @@ export const get = query({
       cardReferenceNumber: order.cardReferenceNumber,
       orderCategory: order.orderCategory,
       tableMarker: order.tableMarker,
+      refundedFromOrderId: order.refundedFromOrderId,
       createdBy: order.createdBy,
       createdByName,
       createdAt: order.createdAt,

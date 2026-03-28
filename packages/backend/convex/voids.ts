@@ -15,9 +15,18 @@ type VoidOrderResult =
   | { success: true; voidId: Id<"orderVoids"> }
   | { success: false; error: string };
 
+type VoidPaidOrderResult =
+  | {
+      success: true;
+      voidId: Id<"orderVoids">;
+      replacementOrderId?: Id<"orders">;
+      refundAmount: number;
+    }
+  | { success: false; error: string };
+
 type OrderVoidRecord = {
   _id: Id<"orderVoids">;
-  voidType: "full_order" | "item";
+  voidType: "full_order" | "item" | "refund";
   orderItemId?: Id<"orderItems">;
   reason: string;
   amount: number;
@@ -232,6 +241,81 @@ export const bulkVoidOrders = action({
   },
 });
 
+// Action: Void a paid order (refund & re-ring) with PIN verification
+export const voidPaidOrder = action({
+  args: {
+    orderId: v.id("orders"),
+    refundedItemIds: v.array(v.id("orderItems")),
+    reason: v.string(),
+    refundMethod: v.union(v.literal("cash"), v.literal("card_ewallet")),
+    managerId: v.id("users"),
+    managerPin: v.string(),
+  },
+  returns: v.union(
+    v.object({
+      success: v.literal(true),
+      voidId: v.id("orderVoids"),
+      replacementOrderId: v.optional(v.id("orders")),
+      refundAmount: v.number(),
+    }),
+    v.object({
+      success: v.literal(false),
+      error: v.string(),
+    }),
+  ),
+  handler: async (ctx, args): Promise<VoidPaidOrderResult> => {
+    const requesterId = await ctx.runQuery(
+      internal.helpers.voidsHelpers.getAuthenticatedUserId,
+      {},
+    );
+    if (!requesterId) {
+      return { success: false as const, error: "Authentication required" };
+    }
+
+    const manager = await ctx.runQuery(internal.helpers.voidsHelpers.getManagerWithPin, {
+      managerId: args.managerId,
+    });
+    if (!manager || !manager.isActive) {
+      return { success: false as const, error: "Manager not found or inactive" };
+    }
+    if (!manager.pin) {
+      return { success: false as const, error: "Manager PIN not set" };
+    }
+
+    const pinValid = await bcrypt.compare(args.managerPin, manager.pin);
+    if (!pinValid) {
+      return { success: false as const, error: "Invalid manager PIN" };
+    }
+
+    if (args.refundedItemIds.length === 0) {
+      return { success: false as const, error: "No items selected for refund" };
+    }
+
+    try {
+      const result = await ctx.runMutation(internal.helpers.voidsHelpers.voidPaidOrderInternal, {
+        orderId: args.orderId,
+        refundedItemIds: args.refundedItemIds,
+        reason: args.reason,
+        refundMethod: args.refundMethod,
+        requestedBy: requesterId,
+        approvedBy: args.managerId,
+      });
+
+      return {
+        success: true as const,
+        voidId: result.voidId,
+        replacementOrderId: result.replacementOrderId,
+        refundAmount: result.refundAmount,
+      };
+    } catch (error) {
+      return {
+        success: false as const,
+        error: error instanceof Error ? error.message : "Failed to process refund",
+      };
+    }
+  },
+});
+
 // Action to get voids for an order (public facing)
 export const getOrderVoids = action({
   args: {
@@ -240,7 +324,7 @@ export const getOrderVoids = action({
   returns: v.array(
     v.object({
       _id: v.id("orderVoids"),
-      voidType: v.union(v.literal("full_order"), v.literal("item")),
+      voidType: v.union(v.literal("full_order"), v.literal("item"), v.literal("refund")),
       orderItemId: v.optional(v.id("orderItems")),
       reason: v.string(),
       amount: v.number(),
