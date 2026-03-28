@@ -123,9 +123,9 @@ export async function printReceiptToThermal(
 
   for (const item of data.items) {
     const itemServiceType = item.serviceType ?? orderDefault;
-    const isException = itemServiceType !== orderDefault;
-    const tag = isException ? (itemServiceType === "takeout" ? " (Takeout)" : " (Dine-In)") : "";
-    await p.printText(`${item.name}${tag}\n`, normal());
+    const tag = itemServiceType === "takeout" ? "Takeout" : "Dine-In";
+    await p.printText(`${item.name}\n`, normal());
+    await p.printText(`  ${tag}\n`, normal());
     if (item.modifiers && item.modifiers.length > 0) {
       for (const mod of item.modifiers) {
         const modText =
