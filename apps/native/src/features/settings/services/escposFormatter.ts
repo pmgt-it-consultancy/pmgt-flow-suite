@@ -6,12 +6,14 @@ export interface KitchenTicketItem {
   quantity: number;
   notes?: string;
   modifiers?: { optionName: string; priceAdjustment: number }[];
+  serviceType?: "dine_in" | "takeout";
 }
 
 export interface KitchenTicketData {
   orderNumber: string;
   orderType: "dine_in" | "take_out" | "delivery";
   orderCategory?: "dine_in" | "takeout";
+  orderDefaultServiceType?: "dine_in" | "takeout";
   tableMarker?: string;
   customerName?: string;
   items: KitchenTicketItem[];

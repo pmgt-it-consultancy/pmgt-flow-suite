@@ -7,6 +7,7 @@ export interface ReceiptItem {
   price: number;
   total: number;
   modifiers?: { optionName: string; priceAdjustment: number }[];
+  serviceType?: "dine_in" | "takeout";
 }
 
 export interface ReceiptDiscount {
@@ -55,6 +56,7 @@ export interface ReceiptData {
     cardPaymentType?: string;
     cardReferenceNumber?: string;
   }>;
+  orderDefaultServiceType?: "dine_in" | "takeout";
   transactionDate: Date;
   receiptNumber?: string;
   customerName?: string;
