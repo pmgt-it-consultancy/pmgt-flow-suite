@@ -441,23 +441,38 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             paddingBottom={12}
           >
             {/* Order Category Toggle */}
-            <XStack gap={8} paddingHorizontal={16} paddingTop={12}>
+            <XStack gap={10} paddingHorizontal={16} paddingTop={12}>
               <TouchableOpacity
                 onPress={() => handleCategoryChange("dine_in")}
+                activeOpacity={0.8}
                 style={{
                   flex: 1,
-                  paddingVertical: 12,
-                  borderRadius: 10,
-                  backgroundColor: orderCategory === "dine_in" ? "#DBEAFE" : "#F3F4F6",
-                  borderWidth: 1.5,
-                  borderColor: orderCategory === "dine_in" ? "#0D87E1" : "#E5E7EB",
+                  paddingVertical: 14,
+                  borderRadius: 12,
+                  backgroundColor: orderCategory === "dine_in" ? "#F97316" : "#F3F4F6",
+                  borderWidth: orderCategory === "dine_in" ? 0 : 1.5,
+                  borderColor: "#E5E7EB",
                   alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "row",
+                  gap: 8,
+                  shadowColor: orderCategory === "dine_in" ? "#F97316" : "transparent",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 4,
+                  elevation: orderCategory === "dine_in" ? 3 : 0,
                 }}
               >
+                <Ionicons
+                  name="restaurant-outline"
+                  size={20}
+                  color={orderCategory === "dine_in" ? "#FFFFFF" : "#6B7280"}
+                />
                 <Text
                   style={{
-                    fontWeight: "600",
-                    color: orderCategory === "dine_in" ? "#0D87E1" : "#6B7280",
+                    fontWeight: "700",
+                    fontSize: 16,
+                    color: orderCategory === "dine_in" ? "#FFFFFF" : "#6B7280",
                   }}
                 >
                   Dine-in
@@ -465,20 +480,35 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleCategoryChange("takeout")}
+                activeOpacity={0.8}
                 style={{
                   flex: 1,
-                  paddingVertical: 12,
-                  borderRadius: 10,
-                  backgroundColor: orderCategory === "takeout" ? "#DBEAFE" : "#F3F4F6",
-                  borderWidth: 1.5,
-                  borderColor: orderCategory === "takeout" ? "#0D87E1" : "#E5E7EB",
+                  paddingVertical: 14,
+                  borderRadius: 12,
+                  backgroundColor: orderCategory === "takeout" ? "#F97316" : "#F3F4F6",
+                  borderWidth: orderCategory === "takeout" ? 0 : 1.5,
+                  borderColor: "#E5E7EB",
                   alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "row",
+                  gap: 8,
+                  shadowColor: orderCategory === "takeout" ? "#F97316" : "transparent",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 4,
+                  elevation: orderCategory === "takeout" ? 3 : 0,
                 }}
               >
+                <Ionicons
+                  name="bag-handle-outline"
+                  size={20}
+                  color={orderCategory === "takeout" ? "#FFFFFF" : "#6B7280"}
+                />
                 <Text
                   style={{
-                    fontWeight: "600",
-                    color: orderCategory === "takeout" ? "#0D87E1" : "#6B7280",
+                    fontWeight: "700",
+                    fontSize: 16,
+                    color: orderCategory === "takeout" ? "#FFFFFF" : "#6B7280",
                   }}
                 >
                   Takeout
@@ -487,10 +517,14 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             </XStack>
 
             {/* Table Marker + Customer Name Row */}
-            <XStack gap={8} paddingHorizontal={16} paddingTop={8}>
-              {/* Table Marker — short input */}
-              <YStack flex={0} width={100}>
-                <Text style={{ fontSize: 12, color: "#6B7280", marginBottom: 4 }}>Marker</Text>
+            <XStack gap={10} paddingHorizontal={16} paddingTop={10}>
+              {/* Table Marker — prominent input */}
+              <YStack flex={0} width={120}>
+                <Text
+                  style={{ fontSize: 13, fontWeight: "600", color: "#374151", marginBottom: 6 }}
+                >
+                  Table Marker
+                </Text>
                 <TextInput
                   value={tableMarker}
                   onChangeText={setTableMarker}
@@ -498,22 +532,25 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                   placeholder="e.g. 15"
                   placeholderTextColor="#9CA3AF"
                   style={{
-                    backgroundColor: tableMarker ? "#FFF7ED" : "#F9FAFB",
-                    borderWidth: 1,
-                    borderColor: tableMarker ? "#FDBA74" : "#E5E7EB",
-                    borderRadius: 10,
-                    paddingHorizontal: 12,
-                    paddingVertical: 10,
-                    fontSize: 16,
-                    fontWeight: "600",
+                    backgroundColor: tableMarker ? "#FFF7ED" : "#FFFFFF",
+                    borderWidth: 2,
+                    borderColor: tableMarker ? "#F97316" : "#D1D5DB",
+                    borderRadius: 12,
+                    paddingHorizontal: 14,
+                    paddingVertical: 12,
+                    fontSize: 20,
+                    fontWeight: "700",
                     textAlign: "center",
+                    color: "#111827",
                   }}
                 />
               </YStack>
 
               {/* Customer Name — flex fill */}
               <YStack flex={1}>
-                <Text style={{ fontSize: 12, color: "#6B7280", marginBottom: 4 }}>
+                <Text
+                  style={{ fontSize: 13, fontWeight: "600", color: "#374151", marginBottom: 6 }}
+                >
                   Customer Name
                 </Text>
                 <TextInput
@@ -523,11 +560,14 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                   onBlur={handleCustomerNameBlur}
                   placeholderTextColor="#9CA3AF"
                   style={{
-                    backgroundColor: "#F8FAFC",
-                    borderRadius: 8,
-                    paddingHorizontal: 12,
-                    paddingVertical: 10,
+                    backgroundColor: "#FFFFFF",
+                    borderWidth: 2,
+                    borderColor: customerName ? "#F97316" : "#D1D5DB",
+                    borderRadius: 12,
+                    paddingHorizontal: 14,
+                    paddingVertical: 12,
                     fontSize: 16,
+                    fontWeight: "600",
                     color: "#111827",
                   }}
                 />
