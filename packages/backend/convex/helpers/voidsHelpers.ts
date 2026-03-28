@@ -386,6 +386,7 @@ export const voidPaidOrderInternal = internalMutation({
           productPrice: item.productPrice,
           quantity: item.quantity,
           notes: item.notes,
+          serviceType: item.serviceType,
           isVoided: false,
           isSentToKitchen: item.isSentToKitchen,
         });

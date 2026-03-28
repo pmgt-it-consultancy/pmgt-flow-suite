@@ -1004,6 +1004,13 @@ export const updateItemServiceType = mutation({
     await requireAuth(ctx);
     const item = await ctx.db.get(args.orderItemId);
     if (!item) throw new Error("Order item not found");
+    if (item.isVoided) throw new Error("Cannot modify voided item");
+
+    const order = await ctx.db.get(item.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open" && order.status !== "draft") {
+      throw new Error("Cannot modify items in a closed order");
+    }
 
     if (item.isSentToKitchen) {
       throw new Error("Cannot modify service type of kitchen-sent items");
@@ -1023,6 +1030,12 @@ export const bulkUpdateItemServiceType = mutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     await requireAuth(ctx);
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open" && order.status !== "draft") {
+      throw new Error("Cannot modify items in a closed order");
+    }
+
     const items = await ctx.db
       .query("orderItems")
       .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
