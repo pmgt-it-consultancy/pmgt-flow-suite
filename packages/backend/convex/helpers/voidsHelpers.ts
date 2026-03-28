@@ -360,6 +360,7 @@ export const voidPaidOrderInternal = internalMutation({
         tableMarker: order.tableMarker,
         pax: order.pax,
         status: "paid",
+        takeoutStatus: order.takeoutStatus,
         grossSales: 0,
         vatableSales: 0,
         vatAmount: 0,
@@ -527,7 +528,6 @@ export const voidPaidOrderInternal = internalMutation({
     // Void the original order
     await ctx.db.patch(args.orderId, {
       status: "voided",
-      ...(order.orderType === "takeout" ? { takeoutStatus: "cancelled" } : {}),
     });
 
     // Create void record
