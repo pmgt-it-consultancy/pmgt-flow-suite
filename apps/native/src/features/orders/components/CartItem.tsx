@@ -102,83 +102,6 @@ export const CartItem = ({
             </Text>
           )}
         </YStack>
-        <XStack
-          borderRadius={8}
-          overflow="hidden"
-          borderWidth={1}
-          borderColor="#E5E7EB"
-          alignSelf="flex-start"
-          marginRight={8}
-        >
-          <TouchableOpacity
-            onPress={() => !isSentToKitchen && onServiceTypeChange?.(id, "dine_in")}
-            disabled={isSentToKitchen}
-            activeOpacity={0.7}
-            style={{
-              paddingVertical: 5,
-              paddingHorizontal: 8,
-              backgroundColor: isSentToKitchen
-                ? "#F3F4F6"
-                : currentServiceType === "dine_in"
-                  ? isOverridden
-                    ? "#FEF3C7"
-                    : "#DBEAFE"
-                  : "white",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 9,
-                fontWeight: "600",
-                letterSpacing: 0.3,
-                color: isSentToKitchen
-                  ? "#9CA3AF"
-                  : currentServiceType === "dine_in"
-                    ? isOverridden
-                      ? "#D97706"
-                      : "#0D87E1"
-                    : "#9CA3AF",
-              }}
-            >
-              DINE IN
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => !isSentToKitchen && onServiceTypeChange?.(id, "takeout")}
-            disabled={isSentToKitchen}
-            activeOpacity={0.7}
-            style={{
-              paddingVertical: 5,
-              paddingHorizontal: 8,
-              borderLeftWidth: 1,
-              borderLeftColor: "#E5E7EB",
-              backgroundColor: isSentToKitchen
-                ? "#F3F4F6"
-                : currentServiceType === "takeout"
-                  ? isOverridden
-                    ? "#FEF3C7"
-                    : "#DBEAFE"
-                  : "white",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 9,
-                fontWeight: "600",
-                letterSpacing: 0.3,
-                color: isSentToKitchen
-                  ? "#9CA3AF"
-                  : currentServiceType === "takeout"
-                    ? isOverridden
-                      ? "#D97706"
-                      : "#0D87E1"
-                    : "#9CA3AF",
-              }}
-            >
-              TAKEOUT
-            </Text>
-          </TouchableOpacity>
-        </XStack>
         <Text style={{ color: "#111827", fontWeight: "700", fontSize: 14 }}>
           {formatCurrency(lineTotal)}
         </Text>
@@ -187,76 +110,176 @@ export const CartItem = ({
       <XStack alignItems="center" justifyContent="space-between">
         {isSentToKitchen ? (
           <>
-            <YStack
-              backgroundColor="#F3F4F6"
-              paddingHorizontal={14}
-              paddingVertical={8}
+            <XStack alignItems="center" gap={8}>
+              <YStack
+                backgroundColor="#F3F4F6"
+                paddingHorizontal={14}
+                paddingVertical={8}
+                borderRadius={8}
+              >
+                <Text style={{ color: "#374151", fontWeight: "600", fontSize: 14 }}>
+                  Qty: {quantity}
+                </Text>
+              </YStack>
+              {onVoidItem && (
+                <TouchableOpacity
+                  onPress={() => onVoidItem(id)}
+                  activeOpacity={0.7}
+                  style={{
+                    backgroundColor: "#FEF2F2",
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: "#FECACA",
+                  }}
+                >
+                  <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 13 }}>Void</Text>
+                </TouchableOpacity>
+              )}
+            </XStack>
+            <XStack
               borderRadius={8}
+              overflow="hidden"
+              borderWidth={1}
+              borderColor="#E5E7EB"
+              opacity={0.5}
             >
-              <Text style={{ color: "#374151", fontWeight: "600", fontSize: 14 }}>
-                Qty: {quantity}
-              </Text>
-            </YStack>
-            {onVoidItem && (
               <TouchableOpacity
-                onPress={() => onVoidItem(id)}
-                activeOpacity={0.7}
+                disabled
+                activeOpacity={1}
                 style={{
-                  backgroundColor: "#FEF2F2",
-                  paddingHorizontal: 14,
-                  paddingVertical: 8,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: "#FECACA",
+                  paddingVertical: 6,
+                  paddingHorizontal: 10,
+                  backgroundColor: currentServiceType === "dine_in" ? "#F3F4F6" : "white",
                 }}
               >
-                <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 13 }}>Void</Text>
+                <Text style={{ fontSize: 10, fontWeight: "600", color: "#9CA3AF" }}>DINE IN</Text>
               </TouchableOpacity>
-            )}
+              <TouchableOpacity
+                disabled
+                activeOpacity={1}
+                style={{
+                  paddingVertical: 6,
+                  paddingHorizontal: 10,
+                  borderLeftWidth: 1,
+                  borderLeftColor: "#E5E7EB",
+                  backgroundColor: currentServiceType === "takeout" ? "#F3F4F6" : "white",
+                }}
+              >
+                <Text style={{ fontSize: 10, fontWeight: "600", color: "#9CA3AF" }}>TAKEOUT</Text>
+              </TouchableOpacity>
+            </XStack>
           </>
         ) : (
-          <XStack alignItems="center" gap={8}>
-            <TouchableOpacity
-              onPress={() => onDecrement(id, quantity)}
-              activeOpacity={0.7}
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 10,
-                backgroundColor: "#FEE2E2",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Ionicons name="remove" size={22} color="#EF4444" />
-            </TouchableOpacity>
+          <>
+            <XStack alignItems="center" gap={8}>
+              <TouchableOpacity
+                onPress={() => onDecrement(id, quantity)}
+                activeOpacity={0.7}
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 10,
+                  backgroundColor: "#FEE2E2",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Ionicons name="remove" size={22} color="#EF4444" />
+              </TouchableOpacity>
 
-            <YStack
-              minWidth={48}
-              paddingVertical={10}
-              paddingHorizontal={14}
-              backgroundColor="#F3F4F6"
-              borderRadius={10}
-              alignItems="center"
-            >
-              <Text style={{ fontSize: 18, fontWeight: "700", color: "#111827" }}>{quantity}</Text>
-            </YStack>
+              <YStack
+                minWidth={48}
+                paddingVertical={10}
+                paddingHorizontal={14}
+                backgroundColor="#F3F4F6"
+                borderRadius={10}
+                alignItems="center"
+              >
+                <Text style={{ fontSize: 18, fontWeight: "700", color: "#111827" }}>
+                  {quantity}
+                </Text>
+              </YStack>
 
-            <TouchableOpacity
-              onPress={() => onIncrement(id, quantity)}
-              activeOpacity={0.7}
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 10,
-                backgroundColor: "#DCFCE7",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Ionicons name="add" size={22} color="#22C55E" />
-            </TouchableOpacity>
-          </XStack>
+              <TouchableOpacity
+                onPress={() => onIncrement(id, quantity)}
+                activeOpacity={0.7}
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 10,
+                  backgroundColor: "#DCFCE7",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Ionicons name="add" size={22} color="#22C55E" />
+              </TouchableOpacity>
+            </XStack>
+            <XStack borderRadius={8} overflow="hidden" borderWidth={1} borderColor="#E5E7EB">
+              <TouchableOpacity
+                onPress={() => onServiceTypeChange?.(id, "dine_in")}
+                activeOpacity={0.7}
+                style={{
+                  paddingVertical: 6,
+                  paddingHorizontal: 10,
+                  backgroundColor:
+                    currentServiceType === "dine_in"
+                      ? isOverridden
+                        ? "#FEF3C7"
+                        : "#DBEAFE"
+                      : "white",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: "600",
+                    color:
+                      currentServiceType === "dine_in"
+                        ? isOverridden
+                          ? "#D97706"
+                          : "#0D87E1"
+                        : "#9CA3AF",
+                  }}
+                >
+                  DINE IN
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => onServiceTypeChange?.(id, "takeout")}
+                activeOpacity={0.7}
+                style={{
+                  paddingVertical: 6,
+                  paddingHorizontal: 10,
+                  borderLeftWidth: 1,
+                  borderLeftColor: "#E5E7EB",
+                  backgroundColor:
+                    currentServiceType === "takeout"
+                      ? isOverridden
+                        ? "#FEF3C7"
+                        : "#DBEAFE"
+                      : "white",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: "600",
+                    color:
+                      currentServiceType === "takeout"
+                        ? isOverridden
+                          ? "#D97706"
+                          : "#0D87E1"
+                        : "#9CA3AF",
+                  }}
+                >
+                  TAKEOUT
+                </Text>
+              </TouchableOpacity>
+            </XStack>
+          </>
         )}
       </XStack>
     </YStack>
