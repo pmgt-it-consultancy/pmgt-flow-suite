@@ -1,14 +1,12 @@
 ## What's New
 
-- Refund paid orders — staff can now refund individual items from paid orders; the system voids the original and creates a new order with the remaining items, auto-settled
-- Refund method selection — choose cash or card/e-wallet when processing a refund
-- Refunded order tracking — replacement orders show a "Refunded" badge so cashiers can identify and reprint receipts
-- Refund available everywhere — refund from Order History, Takeout completed orders, or the web admin panel
-- Item-level service type — toggle individual items between Dine-in and Takeout within the same order, with exception badges on receipts and kitchen tickets
-- Reports accuracy — refund voids use the actual refund amount instead of the full order total, preventing double-counting
+- Item-level Dine-In / Takeout — toggle individual items between Dine-In and Takeout within the same order using the DINE IN / TAKEOUT switch on each cart item
+- Kitchen ticket grouping — mixed orders print items grouped under DINE IN and TAKEOUT headers so the kitchen knows what to pack
+- Service type badges — checkout, order details, and receipt preview show Dine-In or Takeout labels on every item
+- Customer receipts — exception items (items that differ from the order type) are subtly tagged on printed and shared receipts
 
 ## Notes
 
-- Refunds require manager PIN approval, same as voids
-- The original order is voided; a new order with a fresh order number is created for the remaining items
-- Discounts from the original order are reapplied to the replacement order automatically
+- Service type is locked once an item is sent to kitchen — void and re-add to change
+- Switching the order category (Dine-In / Takeout toggle) only affects new items; existing cart items keep their current designation
+- Historical orders created before this update will not show service type labels
