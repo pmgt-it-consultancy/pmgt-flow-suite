@@ -629,49 +629,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         onBack={handleBack}
       />
 
-      {isTakeout && order?.status === "open" && order?.takeoutStatus === "pending" && (
-        <XStack
-          paddingHorizontal={16}
-          paddingVertical={8}
-          backgroundColor="#FFF"
-          borderBottomWidth={1}
-          borderColor="#E5E7EB"
-        >
-          <TouchableOpacity
-            onPress={handleSendToKitchenOnly}
-            disabled={isSendingToKitchen}
-            activeOpacity={0.7}
-            style={{
-              flex: 1,
-              backgroundColor: isSendingToKitchen ? "#9CA3AF" : "#FFF7ED",
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: "#FDBA74",
-              paddingVertical: 12,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Ionicons
-              name="restaurant-outline"
-              size={18}
-              color={isSendingToKitchen ? "#FFFFFF" : "#EA580C"}
-              style={{ marginRight: 8 }}
-            />
-            <Text
-              style={{
-                color: isSendingToKitchen ? "#FFFFFF" : "#EA580C",
-                fontWeight: "600",
-                fontSize: 14,
-              }}
-            >
-              {isSendingToKitchen ? "Sending..." : "Send to Kitchen Without Payment"}
-            </Text>
-          </TouchableOpacity>
-        </XStack>
-      )}
-
       <KeyboardAwareScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingVertical: 8, paddingBottom: 120 }}
@@ -828,6 +785,40 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
             </YStack>
           )}
         </XStack>
+        {isTakeout && order?.status === "open" && order?.takeoutStatus === "pending" && (
+          <TouchableOpacity
+            onPress={handleSendToKitchenOnly}
+            disabled={isSendingToKitchen}
+            activeOpacity={0.7}
+            style={{
+              backgroundColor: isSendingToKitchen ? "#9CA3AF" : "#FFF7ED",
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: "#FDBA74",
+              paddingVertical: 14,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 10,
+            }}
+          >
+            <Ionicons
+              name="restaurant-outline"
+              size={20}
+              color={isSendingToKitchen ? "#FFFFFF" : "#EA580C"}
+              style={{ marginRight: 8 }}
+            />
+            <Text
+              style={{
+                color: isSendingToKitchen ? "#FFFFFF" : "#EA580C",
+                fontWeight: "600",
+                fontSize: 15,
+              }}
+            >
+              {isSendingToKitchen ? "Sending..." : "Send to Kitchen Without Payment"}
+            </Text>
+          </TouchableOpacity>
+        )}
         <Button
           variant="success"
           size="lg"
