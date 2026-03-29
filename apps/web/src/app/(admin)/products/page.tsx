@@ -8,7 +8,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminStore } from "@/stores/useAdminStore";
-import { ProductFormDialog, ProductsDataTable } from "./_components";
+import { DownloadProductCatalogButton, ProductFormDialog, ProductsDataTable } from "./_components";
 import { type ProductFormValues, productDefaults } from "./_schemas";
 
 export default function ProductsPage() {
@@ -38,6 +38,10 @@ export default function ProductsPage() {
     api.products.list,
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
+  const modifierAssignments = useQuery(
+    api.modifierAssignments.getForStore,
+    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
+  );
 
   // Filtered products
   const filteredProducts = useMemo(
@@ -50,6 +54,110 @@ export default function ProductsPage() {
       }),
     [products, statusFilter, categoryFilter, searchQuery],
   );
+
+  const catalogPdfData = useMemo(() => {
+    if (!filteredProducts || !store) return null;
+
+    // Build modifier lookup: productId -> groups
+    const modifierMap = new Map<
+      string,
+      NonNullable<typeof modifierAssignments>[number]["groups"]
+    >();
+    if (modifierAssignments) {
+      for (const entry of modifierAssignments) {
+        modifierMap.set(entry.productId, entry.groups);
+      }
+    }
+
+    // Build category lookup for parent/child grouping
+    const categoryLookup = new Map<
+      string,
+      { name: string; parentId?: string; sortOrder: number }
+    >();
+    if (categories) {
+      for (const cat of categories) {
+        categoryLookup.set(cat._id, {
+          name: cat.name,
+          parentId: cat.parentId,
+          sortOrder: cat.sortOrder,
+        });
+      }
+    }
+
+    // Group products by category, showing "ParentCategory > SubCategory" for subcategories
+    const grouped = new Map<string, { sortKey: string; products: typeof filteredProducts }>();
+    for (const product of filteredProducts) {
+      const catInfo = categoryLookup.get(product.categoryId);
+      let displayName = product.categoryName ?? "Uncategorized";
+      let sortKey = displayName;
+      if (catInfo?.parentId) {
+        const parentInfo = categoryLookup.get(catInfo.parentId);
+        if (parentInfo) {
+          displayName = `${parentInfo.name} > ${catInfo.name}`;
+          sortKey = `${parentInfo.name} > ${catInfo.name}`;
+        }
+      }
+      if (!grouped.has(displayName)) grouped.set(displayName, { sortKey, products: [] });
+      grouped.get(displayName)!.products.push(product);
+    }
+
+    const pdfCategories = Array.from(grouped.entries())
+      .sort(([, a], [, b]) => a.sortKey.localeCompare(b.sortKey))
+      .map(([categoryName, { products: prods }]) => ({
+        categoryName,
+        products: prods.map((p) => ({
+          name: p.name,
+          categoryName: p.categoryName ?? "Uncategorized",
+          price: p.price,
+          isOpenPrice: p.isOpenPrice ?? false,
+          minPrice: p.minPrice,
+          maxPrice: p.maxPrice,
+          isVatable: p.isVatable,
+          isActive: p.isActive,
+          modifierGroups: (modifierMap.get(p._id) ?? []).map((g) => ({
+            groupName: g.groupName,
+            selectionType: g.selectionType,
+            minSelections: g.minSelections,
+            maxSelections: g.maxSelections,
+            options: g.options.map((o) => ({
+              name: o.name,
+              priceAdjustment: o.priceAdjustment,
+            })),
+          })),
+        })),
+      }));
+
+    // Build filter label
+    const categoryLabel =
+      categoryFilter === "all"
+        ? "All Categories"
+        : pdfCategories.length === 1
+          ? pdfCategories[0].categoryName
+          : `${pdfCategories.length} categories`;
+    const statusLabel =
+      statusFilter === "all"
+        ? "Active & Inactive"
+        : statusFilter === "active"
+          ? "Active only"
+          : "Inactive only";
+    const searchLabel = searchQuery ? ` · Search: "${searchQuery}"` : "";
+
+    return {
+      storeName: store.name,
+      categories: pdfCategories,
+      totalProducts: filteredProducts.length,
+      totalCategories: pdfCategories.length,
+      filterLabel: `${categoryLabel} · ${statusLabel}${searchLabel}`,
+    };
+  }, [
+    filteredProducts,
+    store,
+    categories,
+    modifierAssignments,
+    categoryFilter,
+    statusFilter,
+    searchQuery,
+  ]);
 
   const handleOpenCreate = useCallback(() => {
     setEditingId(null);
@@ -128,10 +236,18 @@ export default function ProductsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Products</h1>
           <p className="text-gray-500">Manage your product catalog</p>
         </div>
-        <Button onClick={handleOpenCreate} disabled={!selectedStoreId}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Product
-        </Button>
+        <div className="flex items-center gap-2">
+          {catalogPdfData && (
+            <DownloadProductCatalogButton
+              data={catalogPdfData}
+              disabled={!filteredProducts?.length}
+            />
+          )}
+          <Button onClick={handleOpenCreate} disabled={!selectedStoreId}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Product
+          </Button>
+        </div>
       </div>
 
       {/* Products Table with Filters */}
