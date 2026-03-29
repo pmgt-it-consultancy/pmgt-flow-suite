@@ -7,10 +7,7 @@ import { ActivityIndicator, Alert, TextInput, TouchableOpacity } from "react-nat
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
-import {
-  type KitchenTicketData,
-  printKitchenTicketToThermal,
-} from "../../settings/services/escposFormatter";
+import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { type ReceiptData, useFormatCurrency } from "../../shared";
 import { PageHeader } from "../../shared/components/PageHeader";
@@ -191,22 +188,18 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
                   timestamp: new Date(),
                 };
 
-                try {
-                  const { printers, useReceiptPrinterForKitchen, connectPrinter } =
-                    usePrinterStore.getState();
-                  const kitchenPrinter = printers.find((p) => p.role === "kitchen" && p.isDefault);
-                  const receiptPrinter = printers.find((p) => p.role === "receipt" && p.isDefault);
-                  const targetPrinter =
-                    kitchenPrinter ?? (useReceiptPrinterForKitchen ? receiptPrinter : null);
-                  if (targetPrinter) {
-                    const connected = await connectPrinter(targetPrinter.id);
-                    if (connected) {
-                      const charsPerLine = targetPrinter.paperWidth === 58 ? 32 : 48;
-                      await printKitchenTicketToThermal(kitchenData, charsPerLine);
-                    }
+                const { kitchenPrintingEnabled, printKitchenTicket } = usePrinterStore.getState();
+                if (!kitchenPrintingEnabled) {
+                  Alert.alert(
+                    "Kitchen Printing Disabled",
+                    "Kitchen printing is turned off. Enable it in Settings > Printer to auto-print kitchen receipts.",
+                  );
+                } else {
+                  try {
+                    await printKitchenTicket(kitchenData);
+                  } catch (printErr) {
+                    console.log("Kitchen print error (non-blocking):", printErr);
                   }
-                } catch (printErr) {
-                  console.log("Kitchen print error (non-blocking):", printErr);
                 }
               }
 
