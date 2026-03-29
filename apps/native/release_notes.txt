@@ -1,6 +1,6 @@
 ## What's New
 
-- Service type on all receipts — printed and shared receipts now show Dine-In or Takeout label on every item
-- Refund preserves service type — replacement orders created from refunds retain each item's dine-in/takeout designation
-- Kitchen ticket service type — dine-in order screen now passes service type into kitchen ticket data for correct grouping
-- Stronger validation — service type changes are blocked on voided items and closed orders
+- Advance takeout orders — staff can send takeout orders to the kitchen without collecting payment first, then settle payment when the customer picks up
+- Kitchen receipt auto-prints when sending an advance order
+- Takeout queue shows advance orders in "In Progress" with an "Unpaid" badge and a "Take Payment" button
+- Printable product catalog — download a PDF of your product catalog from the admin panel
