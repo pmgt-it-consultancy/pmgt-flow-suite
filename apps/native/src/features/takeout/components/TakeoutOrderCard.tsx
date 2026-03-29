@@ -176,7 +176,7 @@ export const TakeoutOrderCard = ({
             color="#FFFFFF"
             style={{ marginRight: 8 }}
           />
-          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>
+          <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }} numberOfLines={1}>
             {primaryActionLabel}
           </Text>
         </TouchableOpacity>
