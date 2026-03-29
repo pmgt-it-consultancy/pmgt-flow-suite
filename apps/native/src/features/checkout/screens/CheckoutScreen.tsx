@@ -68,6 +68,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   ]);
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSendingToKitchen, setIsSendingToKitchen] = useState(false);
 
   // Receipt Preview State
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
@@ -98,6 +99,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const processPaymentMutation = useMutation(api.checkout.processPayment);
   const applyBulkScPwdDiscount = useMutation(api.discounts.applyBulkScPwdDiscount);
   const removeDiscount = useMutation(api.discounts.removeDiscount);
+  const sendToKitchenMutation = useMutation(api.orders.sendToKitchenWithoutPayment);
 
   // Computed values
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
@@ -143,6 +145,71 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   }, [paymentLines, netSales, totalPayments]);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
+
+  // Send to kitchen without payment (advance takeout order)
+  const handleSendToKitchenOnly = useCallback(async () => {
+    if (!order || !user?.storeId || isSendingToKitchen) return;
+    const storeId = user.storeId;
+
+    Alert.alert(
+      "Send to Kitchen",
+      "Send this order to the kitchen without payment? You can collect payment later.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Send to Kitchen",
+          onPress: async () => {
+            setIsSendingToKitchen(true);
+            try {
+              await sendToKitchenMutation({
+                orderId: order._id,
+                storeId,
+              });
+
+              // Build and print kitchen ticket
+              if (activeItems.length > 0 && order.orderNumber) {
+                const kitchenData: KitchenTicketData = {
+                  orderNumber: order.orderNumber,
+                  orderType: "take_out",
+                  tableMarker: order.tableMarker,
+                  customerName: order.customerName,
+                  orderCategory: order.orderCategory,
+                  orderDefaultServiceType: "takeout",
+                  items: activeItems.map((i) => ({
+                    name: i.productName,
+                    quantity: i.quantity,
+                    notes: i.notes,
+                    serviceType: i.serviceType ?? "takeout",
+                    modifiers: i.modifiers?.map((m) => ({
+                      optionName: m.optionName,
+                      priceAdjustment: m.priceAdjustment,
+                    })),
+                  })),
+                  timestamp: new Date(),
+                };
+
+                try {
+                  await usePrinterStore.getState().printKitchenTicket(kitchenData);
+                } catch (printErr) {
+                  console.log("Kitchen print error (non-blocking):", printErr);
+                }
+              }
+
+              // Navigate to takeout queue
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "HomeScreen" }, { name: "TakeoutListScreen" }],
+              });
+            } catch (error: any) {
+              Alert.alert("Error", error.message || "Failed to send to kitchen");
+            } finally {
+              setIsSendingToKitchen(false);
+            }
+          },
+        },
+      ],
+    );
+  }, [order, user?.storeId, isSendingToKitchen, sendToKitchenMutation, activeItems, navigation]);
 
   // Payment line helpers
   const addPaymentLine = useCallback(() => {
@@ -553,6 +620,49 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         }`}
         onBack={handleBack}
       />
+
+      {isTakeout && order?.status === "open" && order?.takeoutStatus === "pending" && (
+        <XStack
+          paddingHorizontal={16}
+          paddingVertical={8}
+          backgroundColor="#FFF"
+          borderBottomWidth={1}
+          borderColor="#E5E7EB"
+        >
+          <TouchableOpacity
+            onPress={handleSendToKitchenOnly}
+            disabled={isSendingToKitchen}
+            activeOpacity={0.7}
+            style={{
+              flex: 1,
+              backgroundColor: isSendingToKitchen ? "#9CA3AF" : "#FFF7ED",
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: "#FDBA74",
+              paddingVertical: 12,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Ionicons
+              name="restaurant-outline"
+              size={18}
+              color={isSendingToKitchen ? "#FFFFFF" : "#EA580C"}
+              style={{ marginRight: 8 }}
+            />
+            <Text
+              style={{
+                color: isSendingToKitchen ? "#FFFFFF" : "#EA580C",
+                fontWeight: "600",
+                fontSize: 14,
+              }}
+            >
+              {isSendingToKitchen ? "Sending..." : "Send to Kitchen Without Payment"}
+            </Text>
+          </TouchableOpacity>
+        </XStack>
+      )}
 
       <KeyboardAwareScrollView
         style={{ flex: 1 }}

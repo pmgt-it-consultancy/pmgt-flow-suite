@@ -84,26 +84,31 @@ export const TakeoutOrderCard = ({
       : { label: "Unpaid", variant: "warning" as const };
   const canAdvanceWorkflow = isPaid && config.nextLabel && !isVoided;
   const canResumeOrder = isOpen && !isVoided;
-  const primaryActionLabel =
-    canResumeOrder && takeoutStatus === "ready_for_pickup"
+  const isAdvanceOrder =
+    isOpen && (takeoutStatus === "preparing" || takeoutStatus === "ready_for_pickup");
+  const primaryActionLabel = isAdvanceOrder
+    ? "Take Payment"
+    : canResumeOrder && takeoutStatus === "ready_for_pickup"
       ? "Resume & Take Payment"
       : "Resume Order";
   const helperText = isVoided
     ? "Voided order record"
-    : canResumeOrder
-      ? "Open order. Tap to edit cart and continue checkout."
-      : isPaid && config.nextLabel
-        ? "Paid order ready for the next kitchen step."
-        : "Tap to view order details.";
+    : isAdvanceOrder
+      ? "Sent to kitchen. Tap to collect payment."
+      : canResumeOrder
+        ? "Open order. Tap to edit cart and continue checkout."
+        : isPaid && config.nextLabel
+          ? "Paid order ready for the next kitchen step."
+          : "Tap to view order details.";
 
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: canResumeOrder ? "#FFFBEB" : "#FFFFFF",
+        backgroundColor: isAdvanceOrder ? "#EFF6FF" : canResumeOrder ? "#FFFBEB" : "#FFFFFF",
         borderRadius: 12,
         padding: 16,
         borderWidth: 1,
-        borderColor: canResumeOrder ? "#FCD34D" : "#F3F4F6",
+        borderColor: isAdvanceOrder ? "#93C5FD" : canResumeOrder ? "#FCD34D" : "#F3F4F6",
         marginBottom: 12,
       }}
       activeOpacity={0.7}
@@ -156,7 +161,7 @@ export const TakeoutOrderCard = ({
           onPress={() => onPress?.(id)}
           activeOpacity={0.8}
           style={{
-            backgroundColor: "#F59E0B",
+            backgroundColor: isAdvanceOrder ? "#0D87E1" : "#F59E0B",
             borderRadius: 10,
             paddingVertical: 14,
             paddingHorizontal: 20,
@@ -165,7 +170,12 @@ export const TakeoutOrderCard = ({
             justifyContent: "center",
           }}
         >
-          <Ionicons name="create-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+          <Ionicons
+            name={isAdvanceOrder ? "card-outline" : "create-outline"}
+            size={18}
+            color="#FFFFFF"
+            style={{ marginRight: 8 }}
+          />
           <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>
             {primaryActionLabel}
           </Text>

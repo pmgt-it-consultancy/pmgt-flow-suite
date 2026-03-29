@@ -91,12 +91,19 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   const { attentionOrders, kitchenOrders, completedOrders } = useMemo(() => {
     if (!takeoutOrders) return { attentionOrders: [], kitchenOrders: [], completedOrders: [] };
     return {
-      attentionOrders: takeoutOrders.filter((o) => o.status === "open"),
+      // Open orders that are still pending (not yet sent to kitchen)
+      attentionOrders: takeoutOrders.filter(
+        (o) => o.status === "open" && (!o.takeoutStatus || o.takeoutStatus === "pending"),
+      ),
+      // In-progress: paid orders in kitchen workflow OR unpaid advance orders (open + preparing/ready)
       kitchenOrders: takeoutOrders.filter(
         (o) =>
-          o.status === "paid" &&
-          o.takeoutStatus &&
-          !["completed", "cancelled"].includes(o.takeoutStatus),
+          (o.status === "paid" &&
+            o.takeoutStatus &&
+            !["completed", "cancelled"].includes(o.takeoutStatus)) ||
+          (o.status === "open" &&
+            o.takeoutStatus &&
+            ["preparing", "ready_for_pickup"].includes(o.takeoutStatus)),
       ),
       completedOrders: takeoutOrders.filter(
         (o) =>
@@ -173,10 +180,23 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   );
 
   const handleOpenTakeoutOrder = useCallback(
-    (orderId: Id<"orders">, status?: "draft" | "open" | "paid" | "voided") => {
+    (
+      orderId: Id<"orders">,
+      status?: "draft" | "open" | "paid" | "voided",
+      takeoutStatus?: string,
+    ) => {
       if (!user?.storeId) return;
 
       if (status === "open") {
+        // Advance orders (sent to kitchen, awaiting payment) go to checkout
+        if (takeoutStatus === "preparing" || takeoutStatus === "ready_for_pickup") {
+          navigation.navigate("CheckoutScreen", {
+            orderId,
+            orderType: "takeout" as const,
+          });
+          return;
+        }
+        // Regular open orders go to the order screen
         navigation.navigate("TakeoutOrderScreen", {
           storeId: user.storeId,
           orderId,
@@ -347,7 +367,9 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
                   createdAt={item.createdAt}
                   refundedFromOrderId={item.refundedFromOrderId}
                   onAdvanceStatus={handleAdvanceStatus}
-                  onPress={(orderId) => handleOpenTakeoutOrder(orderId, item.status)}
+                  onPress={(orderId) =>
+                    handleOpenTakeoutOrder(orderId, item.status, item.takeoutStatus)
+                  }
                   disableAdvance={
                     (item.takeoutStatus === "ready_for_pickup" && item.status !== "paid") ||
                     advancingOrderIds.has(item._id)

@@ -1573,6 +1573,57 @@ export const sendToKitchen = mutation({
   },
 });
 
+// Send items to kitchen without payment (advance takeout order)
+export const sendToKitchenWithoutPayment = mutation({
+  args: {
+    orderId: v.id("orders"),
+    storeId: v.id("stores"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const user = await requireAuth(ctx);
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "open") throw new Error("Order is not open");
+    if (order.orderType !== "takeout") throw new Error("Not a takeout order");
+    if (order.takeoutStatus !== "pending") throw new Error("Order is not in pending status");
+
+    // Mark all unsent items as sent to kitchen
+    const items = await ctx.db
+      .query("orderItems")
+      .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
+      .collect();
+
+    const unsentItems = items.filter((i) => !i.isVoided && !i.isSentToKitchen);
+    if (unsentItems.length === 0) throw new Error("No items to send to kitchen");
+
+    for (const item of unsentItems) {
+      await ctx.db.patch(item._id, { isSentToKitchen: true });
+    }
+
+    // Advance takeout status to preparing (order stays "open"/unpaid)
+    await ctx.db.patch(args.orderId, { takeoutStatus: "preparing" });
+
+    // Audit log
+    await ctx.db.insert("auditLogs", {
+      storeId: args.storeId,
+      action: "send_to_kitchen_without_payment",
+      entityType: "orders",
+      entityId: args.orderId,
+      details: JSON.stringify({
+        orderNumber: order.orderNumber,
+        itemCount: unsentItems.length,
+        sentBy: user.name ?? "Unknown",
+      }),
+      userId: user._id,
+      createdAt: Date.now(),
+    });
+
+    return null;
+  },
+});
+
 // Create order and send items to kitchen in one step (first-time table order)
 export const createAndSendToKitchen = mutation({
   args: {
