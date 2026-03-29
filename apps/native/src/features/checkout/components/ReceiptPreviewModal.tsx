@@ -570,13 +570,13 @@ export const ReceiptPreviewModal = ({
               )}
             </Button>
 
-            {/* Kitchen Receipt Button — appears after customer receipt is printed */}
-            {printResult === "success" && kitchenTicketData && canPrintKitchen && (
+            {/* Kitchen Receipt Button */}
+            {kitchenTicketData && canPrintKitchen && printResult === "success" && (
               <Text size="xs" variant="muted" style={{ textAlign: "center", marginBottom: 4 }}>
                 Tear the customer receipt first, then print the kitchen receipt below.
               </Text>
             )}
-            {printResult === "success" && kitchenTicketData && canPrintKitchen && (
+            {kitchenTicketData && canPrintKitchen && (
               <Button
                 variant="outline"
                 disabled={!canPrint || isKitchenPrinting}
