@@ -188,11 +188,11 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
       if (!user?.storeId) return;
 
       if (status === "open") {
-        // Advance orders (sent to kitchen, awaiting payment) go to checkout
+        // Advance orders — card tap goes to order screen to add items
         if (takeoutStatus === "preparing" || takeoutStatus === "ready_for_pickup") {
-          navigation.navigate("CheckoutScreen", {
+          navigation.navigate("TakeoutOrderScreen", {
+            storeId: user.storeId,
             orderId,
-            orderType: "takeout" as const,
           });
           return;
         }
@@ -207,6 +207,27 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
       setSelectedOrderId(orderId);
     },
     [user?.storeId, navigation],
+  );
+
+  const handleAddItems = useCallback(
+    (orderId: Id<"orders">) => {
+      if (!user?.storeId) return;
+      navigation.navigate("TakeoutOrderScreen", {
+        storeId: user.storeId,
+        orderId,
+      });
+    },
+    [user?.storeId, navigation],
+  );
+
+  const handleTakePayment = useCallback(
+    (orderId: Id<"orders">) => {
+      navigation.navigate("CheckoutScreen", {
+        orderId,
+        orderType: "takeout" as const,
+      });
+    },
+    [navigation],
   );
 
   const [_discardingId, setDiscardingId] = useState<Id<"orders"> | null>(null);
@@ -370,6 +391,8 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
                   onPress={(orderId) =>
                     handleOpenTakeoutOrder(orderId, item.status, item.takeoutStatus)
                   }
+                  onAddItems={handleAddItems}
+                  onTakePayment={handleTakePayment}
                   disableAdvance={
                     (item.takeoutStatus === "ready_for_pickup" && item.status !== "paid") ||
                     advancingOrderIds.has(item._id)

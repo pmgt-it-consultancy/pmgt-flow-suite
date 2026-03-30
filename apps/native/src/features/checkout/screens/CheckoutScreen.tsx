@@ -103,6 +103,11 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   // Computed values
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
+  const hasUnsentItems = useMemo(() => activeItems.some((i) => !i.isSentToKitchen), [activeItems]);
+  const showKitchenButton =
+    isTakeout &&
+    order?.status === "open" &&
+    (order?.takeoutStatus === "pending" || order?.takeoutStatus === "preparing");
   const discountedQtyByItem = useMemo(() => {
     const map = new Map<string, number>();
     for (const d of discounts ?? []) {
@@ -146,11 +151,65 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
+  // Build kitchen ticket data from all active items (full order picture)
+  const buildKitchenTicketData = useCallback((): KitchenTicketData | null => {
+    if (!order?.orderNumber || activeItems.length === 0) return null;
+    return {
+      orderNumber: order.orderNumber,
+      orderType: "take_out",
+      tableMarker: order.tableMarker,
+      customerName: order.customerName,
+      orderCategory: order.orderCategory,
+      orderDefaultServiceType: "takeout",
+      items: activeItems.map((i) => ({
+        name: i.productName,
+        quantity: i.quantity,
+        notes: i.notes,
+        serviceType: i.serviceType ?? "takeout",
+        modifiers: i.modifiers?.map((m) => ({
+          optionName: m.optionName,
+          priceAdjustment: m.priceAdjustment,
+        })),
+      })),
+      timestamp: new Date(),
+    };
+  }, [order, activeItems]);
+
+  // Print kitchen ticket with disabled-check
+  const printKitchenTicketWithCheck = useCallback(async (data: KitchenTicketData) => {
+    const { kitchenPrintingEnabled, printKitchenTicket } = usePrinterStore.getState();
+    if (!kitchenPrintingEnabled) {
+      Alert.alert(
+        "Kitchen Printing Disabled",
+        "Kitchen printing is turned off. Enable it in Settings > Printer to auto-print kitchen receipts.",
+      );
+      return;
+    }
+    try {
+      await printKitchenTicket(data);
+    } catch (printErr) {
+      console.log("Kitchen print error (non-blocking):", printErr);
+    }
+  }, []);
+
   // Send to kitchen without payment (advance takeout order)
   const handleSendToKitchenOnly = useCallback(async () => {
     if (!order || !user?.storeId || isSendingToKitchen) return;
     const storeId = user.storeId;
 
+    // Reprint mode — no unsent items, just print
+    if (!hasUnsentItems) {
+      setIsSendingToKitchen(true);
+      try {
+        const kitchenData = buildKitchenTicketData();
+        if (kitchenData) await printKitchenTicketWithCheck(kitchenData);
+      } finally {
+        setIsSendingToKitchen(false);
+      }
+      return;
+    }
+
+    // Send mode — has unsent items
     Alert.alert(
       "Send to Kitchen",
       "Send this order to the kitchen without payment? You can collect payment later.",
@@ -166,42 +225,8 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
                 storeId,
               });
 
-              // Build and print kitchen ticket
-              if (activeItems.length > 0 && order.orderNumber) {
-                const kitchenData: KitchenTicketData = {
-                  orderNumber: order.orderNumber,
-                  orderType: "take_out",
-                  tableMarker: order.tableMarker,
-                  customerName: order.customerName,
-                  orderCategory: order.orderCategory,
-                  orderDefaultServiceType: "takeout",
-                  items: activeItems.map((i) => ({
-                    name: i.productName,
-                    quantity: i.quantity,
-                    notes: i.notes,
-                    serviceType: i.serviceType ?? "takeout",
-                    modifiers: i.modifiers?.map((m) => ({
-                      optionName: m.optionName,
-                      priceAdjustment: m.priceAdjustment,
-                    })),
-                  })),
-                  timestamp: new Date(),
-                };
-
-                const { kitchenPrintingEnabled, printKitchenTicket } = usePrinterStore.getState();
-                if (!kitchenPrintingEnabled) {
-                  Alert.alert(
-                    "Kitchen Printing Disabled",
-                    "Kitchen printing is turned off. Enable it in Settings > Printer to auto-print kitchen receipts.",
-                  );
-                } else {
-                  try {
-                    await printKitchenTicket(kitchenData);
-                  } catch (printErr) {
-                    console.log("Kitchen print error (non-blocking):", printErr);
-                  }
-                }
-              }
+              const kitchenData = buildKitchenTicketData();
+              if (kitchenData) await printKitchenTicketWithCheck(kitchenData);
 
               // Navigate to takeout queue
               navigation.reset({
@@ -217,7 +242,16 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         },
       ],
     );
-  }, [order, user?.storeId, isSendingToKitchen, sendToKitchenMutation, activeItems, navigation]);
+  }, [
+    order,
+    user?.storeId,
+    isSendingToKitchen,
+    hasUnsentItems,
+    sendToKitchenMutation,
+    buildKitchenTicketData,
+    printKitchenTicketWithCheck,
+    navigation,
+  ]);
 
   // Payment line helpers
   const addPaymentLine = useCallback(() => {
@@ -785,7 +819,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
             </YStack>
           )}
         </XStack>
-        {isTakeout && order?.status === "open" && order?.takeoutStatus === "pending" && (
+        {showKitchenButton && (
           <TouchableOpacity
             onPress={handleSendToKitchenOnly}
             disabled={isSendingToKitchen}
@@ -803,7 +837,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
             }}
           >
             <Ionicons
-              name="restaurant-outline"
+              name={hasUnsentItems ? "restaurant-outline" : "print-outline"}
               size={20}
               color={isSendingToKitchen ? "#FFFFFF" : "#EA580C"}
               style={{ marginRight: 8 }}
@@ -815,7 +849,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
                 fontSize: 15,
               }}
             >
-              {isSendingToKitchen ? "Sending..." : "Send to Kitchen Without Payment"}
+              {isSendingToKitchen
+                ? hasUnsentItems
+                  ? "Sending..."
+                  : "Printing..."
+                : hasUnsentItems
+                  ? "Send to Kitchen Without Payment"
+                  : "Reprint Kitchen Receipt"}
             </Text>
           </TouchableOpacity>
         )}

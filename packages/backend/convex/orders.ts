@@ -1587,7 +1587,8 @@ export const sendToKitchenWithoutPayment = mutation({
     if (!order) throw new Error("Order not found");
     if (order.status !== "open") throw new Error("Order is not open");
     if (order.orderType !== "takeout") throw new Error("Not a takeout order");
-    if (order.takeoutStatus !== "pending") throw new Error("Order is not in pending status");
+    if (order.takeoutStatus !== "pending" && order.takeoutStatus !== "preparing")
+      throw new Error("Order must be in pending or preparing status");
 
     // Mark all unsent items as sent to kitchen
     const items = await ctx.db

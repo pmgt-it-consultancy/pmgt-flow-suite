@@ -19,6 +19,8 @@ interface TakeoutOrderCardProps {
   refundedFromOrderId?: Id<"orders">;
   onAdvanceStatus: (orderId: Id<"orders">, currentStatus: TakeoutStatus) => void;
   onPress?: (orderId: Id<"orders">) => void;
+  onAddItems?: (orderId: Id<"orders">) => void;
+  onTakePayment?: (orderId: Id<"orders">) => void;
   disableAdvance?: boolean;
 }
 
@@ -69,6 +71,8 @@ export const TakeoutOrderCard = ({
   refundedFromOrderId,
   onAdvanceStatus,
   onPress,
+  onAddItems,
+  onTakePayment,
   disableAdvance = false,
 }: TakeoutOrderCardProps) => {
   const formatCurrency = useFormatCurrency();
@@ -156,12 +160,12 @@ export const TakeoutOrderCard = ({
         {helperText}
       </Text>
 
-      {canResumeOrder && (
+      {canResumeOrder && !isAdvanceOrder && (
         <TouchableOpacity
           onPress={() => onPress?.(id)}
           activeOpacity={0.8}
           style={{
-            backgroundColor: isAdvanceOrder ? "#0D87E1" : "#F59E0B",
+            backgroundColor: "#F59E0B",
             borderRadius: 10,
             paddingVertical: 14,
             paddingHorizontal: 20,
@@ -170,16 +174,53 @@ export const TakeoutOrderCard = ({
             justifyContent: "center",
           }}
         >
-          <Ionicons
-            name={isAdvanceOrder ? "card-outline" : "create-outline"}
-            size={18}
-            color="#FFFFFF"
-            style={{ marginRight: 8 }}
-          />
+          <Ionicons name="create-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
           <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }} numberOfLines={1}>
             {primaryActionLabel}
           </Text>
         </TouchableOpacity>
+      )}
+
+      {isAdvanceOrder && (
+        <XStack gap={10}>
+          <TouchableOpacity
+            onPress={() => onAddItems?.(id)}
+            activeOpacity={0.8}
+            style={{
+              flex: 1,
+              backgroundColor: "#F59E0B",
+              borderRadius: 10,
+              paddingVertical: 14,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Ionicons
+              name="add-circle-outline"
+              size={18}
+              color="#FFFFFF"
+              style={{ marginRight: 6 }}
+            />
+            <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>Add Items</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => onTakePayment?.(id)}
+            activeOpacity={0.8}
+            style={{
+              flex: 1,
+              backgroundColor: "#0D87E1",
+              borderRadius: 10,
+              paddingVertical: 14,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Ionicons name="card-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+            <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>Take Payment</Text>
+          </TouchableOpacity>
+        </XStack>
       )}
 
       {canAdvanceWorkflow && (
