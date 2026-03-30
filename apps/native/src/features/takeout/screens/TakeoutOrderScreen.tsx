@@ -15,6 +15,8 @@ import {
   ModifierSelectionModal,
   VoidItemModal,
 } from "../../orders/components";
+import type { KitchenTicketData } from "../../settings/services/escposFormatter";
+import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -93,6 +95,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const submitDraftMutation = useMutation(api.orders.submitDraft);
   const updateCustomerNameMutation = useMutation(api.orders.updateCustomerName);
   const updateItemServiceTypeMutation = useMutation(api.orders.updateItemServiceType);
+  const sendToKitchenMutation = useMutation(api.orders.sendToKitchenWithoutPayment);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -171,6 +174,10 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     [activeItems],
   );
   const hasItems = activeItems.length > 0;
+  const isAdvanceOrder =
+    order?.status === "open" &&
+    (order?.takeoutStatus === "preparing" || order?.takeoutStatus === "ready_for_pickup");
+  const hasUnsentItems = useMemo(() => activeItems.some((i) => !i.isSentToKitchen), [activeItems]);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -383,6 +390,73 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
       }
     }
   }, [order, orderId, submitDraftMutation, navigation]);
+
+  // Send new items to kitchen for advance orders (running bill)
+  const handleSendToKitchen = useCallback(async () => {
+    if (!order || !hasUnsentItems || isSending) return;
+
+    setIsSending(true);
+    try {
+      await sendToKitchenMutation({
+        orderId,
+        storeId,
+      });
+
+      // Print full kitchen ticket (all items)
+      if (order.orderNumber && activeItems.length > 0) {
+        const kitchenData: KitchenTicketData = {
+          orderNumber: order.orderNumber,
+          orderType: "take_out",
+          tableMarker: order.tableMarker,
+          customerName: order.customerName,
+          orderCategory: order.orderCategory,
+          orderDefaultServiceType: "takeout",
+          items: activeItems.map((i) => ({
+            name: i.productName,
+            quantity: i.quantity,
+            notes: i.notes,
+            serviceType: i.serviceType ?? "takeout",
+            modifiers: i.modifiers?.map((m) => ({
+              optionName: m.optionName,
+              priceAdjustment: m.priceAdjustment,
+            })),
+          })),
+          timestamp: new Date(),
+        };
+
+        const { kitchenPrintingEnabled, printKitchenTicket } = usePrinterStore.getState();
+        if (!kitchenPrintingEnabled) {
+          Alert.alert(
+            "Kitchen Printing Disabled",
+            "Kitchen printing is turned off. Enable it in Settings > Printer to auto-print kitchen receipts.",
+          );
+        } else {
+          try {
+            await printKitchenTicket(kitchenData);
+          } catch (printErr) {
+            console.log("Kitchen print error (non-blocking):", printErr);
+          }
+        }
+      }
+
+      Alert.alert("Sent", "New items sent to kitchen", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to send to kitchen");
+    } finally {
+      setIsSending(false);
+    }
+  }, [
+    order,
+    orderId,
+    storeId,
+    hasUnsentItems,
+    isSending,
+    sendToKitchenMutation,
+    activeItems,
+    navigation,
+  ]);
 
   const formatCurrency = useFormatCurrency();
 
@@ -722,18 +796,58 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             </YStack>
 
             {/* Action Buttons */}
+            {isAdvanceOrder && hasUnsentItems && (
+              <TouchableOpacity
+                onPress={handleSendToKitchen}
+                disabled={!hasItems || isSending}
+                activeOpacity={0.8}
+                style={{
+                  backgroundColor: hasItems && !isSending ? "#F97316" : "#CBD5E1",
+                  borderRadius: 12,
+                  paddingVertical: 16,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 10,
+                  shadowColor: hasItems ? "#F97316" : "transparent",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: hasItems ? 4 : 0,
+                }}
+              >
+                <Ionicons
+                  name="restaurant-outline"
+                  size={22}
+                  color="#FFFFFF"
+                  style={{ marginRight: 10 }}
+                />
+                <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 17 }}>
+                  Send to Kitchen
+                </Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               onPress={handleCheckout}
               disabled={!hasItems || isSending}
               activeOpacity={0.8}
               style={{
-                backgroundColor: hasItems && !isSending ? "#F97316" : "#CBD5E1",
+                backgroundColor:
+                  hasItems && !isSending
+                    ? isAdvanceOrder && hasUnsentItems
+                      ? "#0D87E1"
+                      : "#F97316"
+                    : "#CBD5E1",
                 borderRadius: 12,
                 paddingVertical: 16,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                shadowColor: hasItems ? "#F97316" : "transparent",
+                shadowColor: hasItems
+                  ? isAdvanceOrder && hasUnsentItems
+                    ? "#0D87E1"
+                    : "#F97316"
+                  : "transparent",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,
