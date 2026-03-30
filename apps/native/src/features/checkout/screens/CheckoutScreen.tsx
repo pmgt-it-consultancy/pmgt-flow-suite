@@ -68,7 +68,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   ]);
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isSendingToKitchen, setIsSendingToKitchen] = useState(false);
 
   // Receipt Preview State
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
@@ -99,15 +98,9 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const processPaymentMutation = useMutation(api.checkout.processPayment);
   const applyBulkScPwdDiscount = useMutation(api.discounts.applyBulkScPwdDiscount);
   const removeDiscount = useMutation(api.discounts.removeDiscount);
-  const sendToKitchenMutation = useMutation(api.orders.sendToKitchenWithoutPayment);
 
   // Computed values
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
-  const hasUnsentItems = useMemo(() => activeItems.some((i) => !i.isSentToKitchen), [activeItems]);
-  const showKitchenButton =
-    isTakeout &&
-    order?.status === "open" &&
-    (order?.takeoutStatus === "pending" || order?.takeoutStatus === "preparing");
   const discountedQtyByItem = useMemo(() => {
     const map = new Map<string, number>();
     for (const d of discounts ?? []) {
@@ -150,108 +143,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   }, [paymentLines, netSales, totalPayments]);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
-
-  // Build kitchen ticket data from all active items (full order picture)
-  const buildKitchenTicketData = useCallback((): KitchenTicketData | null => {
-    if (!order?.orderNumber || activeItems.length === 0) return null;
-    return {
-      orderNumber: order.orderNumber,
-      orderType: "take_out",
-      tableMarker: order.tableMarker,
-      customerName: order.customerName,
-      orderCategory: order.orderCategory,
-      orderDefaultServiceType: "takeout",
-      items: activeItems.map((i) => ({
-        name: i.productName,
-        quantity: i.quantity,
-        notes: i.notes,
-        serviceType: i.serviceType ?? "takeout",
-        modifiers: i.modifiers?.map((m) => ({
-          optionName: m.optionName,
-          priceAdjustment: m.priceAdjustment,
-        })),
-      })),
-      timestamp: new Date(),
-    };
-  }, [order, activeItems]);
-
-  // Print kitchen ticket with disabled-check
-  const printKitchenTicketWithCheck = useCallback(async (data: KitchenTicketData) => {
-    const { kitchenPrintingEnabled, printKitchenTicket } = usePrinterStore.getState();
-    if (!kitchenPrintingEnabled) {
-      Alert.alert(
-        "Kitchen Printing Disabled",
-        "Kitchen printing is turned off. Enable it in Settings > Printer to auto-print kitchen receipts.",
-      );
-      return;
-    }
-    try {
-      await printKitchenTicket(data);
-    } catch (printErr) {
-      console.log("Kitchen print error (non-blocking):", printErr);
-    }
-  }, []);
-
-  // Send to kitchen without payment (advance takeout order)
-  const handleSendToKitchenOnly = useCallback(async () => {
-    if (!order || !user?.storeId || isSendingToKitchen) return;
-    const storeId = user.storeId;
-
-    // Reprint mode — no unsent items, just print
-    if (!hasUnsentItems) {
-      setIsSendingToKitchen(true);
-      try {
-        const kitchenData = buildKitchenTicketData();
-        if (kitchenData) await printKitchenTicketWithCheck(kitchenData);
-      } finally {
-        setIsSendingToKitchen(false);
-      }
-      return;
-    }
-
-    // Send mode — has unsent items
-    Alert.alert(
-      "Send to Kitchen",
-      "Send this order to the kitchen without payment? You can collect payment later.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Send to Kitchen",
-          onPress: async () => {
-            setIsSendingToKitchen(true);
-            try {
-              await sendToKitchenMutation({
-                orderId: order._id,
-                storeId,
-              });
-
-              const kitchenData = buildKitchenTicketData();
-              if (kitchenData) await printKitchenTicketWithCheck(kitchenData);
-
-              // Navigate to takeout queue
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "HomeScreen" }, { name: "TakeoutListScreen" }],
-              });
-            } catch (error: any) {
-              Alert.alert("Error", error.message || "Failed to send to kitchen");
-            } finally {
-              setIsSendingToKitchen(false);
-            }
-          },
-        },
-      ],
-    );
-  }, [
-    order,
-    user?.storeId,
-    isSendingToKitchen,
-    hasUnsentItems,
-    sendToKitchenMutation,
-    buildKitchenTicketData,
-    printKitchenTicketWithCheck,
-    navigation,
-  ]);
 
   // Payment line helpers
   const addPaymentLine = useCallback(() => {
@@ -819,46 +710,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
             </YStack>
           )}
         </XStack>
-        {showKitchenButton && (
-          <TouchableOpacity
-            onPress={handleSendToKitchenOnly}
-            disabled={isSendingToKitchen}
-            activeOpacity={0.7}
-            style={{
-              backgroundColor: isSendingToKitchen ? "#9CA3AF" : "#FFF7ED",
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: "#FDBA74",
-              paddingVertical: 14,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 10,
-            }}
-          >
-            <Ionicons
-              name={hasUnsentItems ? "restaurant-outline" : "print-outline"}
-              size={20}
-              color={isSendingToKitchen ? "#FFFFFF" : "#EA580C"}
-              style={{ marginRight: 8 }}
-            />
-            <Text
-              style={{
-                color: isSendingToKitchen ? "#FFFFFF" : "#EA580C",
-                fontWeight: "600",
-                fontSize: 15,
-              }}
-            >
-              {isSendingToKitchen
-                ? hasUnsentItems
-                  ? "Sending..."
-                  : "Printing..."
-                : hasUnsentItems
-                  ? "Send to Kitchen Without Payment"
-                  : "Reprint Kitchen Receipt"}
-            </Text>
-          </TouchableOpacity>
-        )}
         <Button
           variant="success"
           size="lg"

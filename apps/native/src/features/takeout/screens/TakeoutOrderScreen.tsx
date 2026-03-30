@@ -402,8 +402,9 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         storeId,
       });
 
-      // Print full kitchen ticket (all items)
-      if (order.orderNumber && activeItems.length > 0) {
+      // Print kitchen ticket with only the newly sent items
+      const unsentItems = activeItems.filter((i) => !i.isSentToKitchen);
+      if (order.orderNumber && unsentItems.length > 0) {
         const kitchenData: KitchenTicketData = {
           orderNumber: order.orderNumber,
           orderType: "take_out",
@@ -411,7 +412,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
           customerName: order.customerName,
           orderCategory: order.orderCategory,
           orderDefaultServiceType: "takeout",
-          items: activeItems.map((i) => ({
+          items: unsentItems.map((i) => ({
             name: i.productName,
             quantity: i.quantity,
             notes: i.notes,
@@ -457,6 +458,49 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     activeItems,
     navigation,
   ]);
+
+  // Reprint full kitchen receipt (all items)
+  const handleReprintKitchenReceipt = useCallback(async () => {
+    if (!order?.orderNumber || activeItems.length === 0 || isSending) return;
+
+    setIsSending(true);
+    try {
+      const kitchenData: KitchenTicketData = {
+        orderNumber: order.orderNumber,
+        orderType: "take_out",
+        tableMarker: order.tableMarker,
+        customerName: order.customerName,
+        orderCategory: order.orderCategory,
+        orderDefaultServiceType: "takeout",
+        items: activeItems.map((i) => ({
+          name: i.productName,
+          quantity: i.quantity,
+          notes: i.notes,
+          serviceType: i.serviceType ?? "takeout",
+          modifiers: i.modifiers?.map((m) => ({
+            optionName: m.optionName,
+            priceAdjustment: m.priceAdjustment,
+          })),
+        })),
+        timestamp: new Date(),
+      };
+
+      const { kitchenPrintingEnabled, printKitchenTicket } = usePrinterStore.getState();
+      if (!kitchenPrintingEnabled) {
+        Alert.alert(
+          "Kitchen Printing Disabled",
+          "Kitchen printing is turned off. Enable it in Settings > Printer to auto-print kitchen receipts.",
+        );
+      } else {
+        await printKitchenTicket(kitchenData);
+      }
+    } catch (printErr) {
+      console.log("Kitchen reprint error:", printErr);
+      Alert.alert("Error", "Failed to print kitchen receipt");
+    } finally {
+      setIsSending(false);
+    }
+  }, [order, activeItems, isSending]);
 
   const formatCurrency = useFormatCurrency();
 
@@ -827,27 +871,53 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 </Text>
               </TouchableOpacity>
             )}
+            {isAdvanceOrder && !hasUnsentItems && (
+              <TouchableOpacity
+                onPress={handleReprintKitchenReceipt}
+                disabled={isSending}
+                activeOpacity={0.7}
+                style={{
+                  backgroundColor: isSending ? "#9CA3AF" : "#FFF7ED",
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: "#FDBA74",
+                  paddingVertical: 14,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 10,
+                }}
+              >
+                <Ionicons
+                  name="print-outline"
+                  size={20}
+                  color={isSending ? "#FFFFFF" : "#EA580C"}
+                  style={{ marginRight: 8 }}
+                />
+                <Text
+                  style={{
+                    color: isSending ? "#FFFFFF" : "#EA580C",
+                    fontWeight: "600",
+                    fontSize: 15,
+                  }}
+                >
+                  {isSending ? "Printing..." : "Reprint Kitchen Receipt"}
+                </Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               onPress={handleCheckout}
               disabled={!hasItems || isSending}
               activeOpacity={0.8}
               style={{
                 backgroundColor:
-                  hasItems && !isSending
-                    ? isAdvanceOrder && hasUnsentItems
-                      ? "#0D87E1"
-                      : "#F97316"
-                    : "#CBD5E1",
+                  hasItems && !isSending ? (isAdvanceOrder ? "#0D87E1" : "#F97316") : "#CBD5E1",
                 borderRadius: 12,
                 paddingVertical: 16,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                shadowColor: hasItems
-                  ? isAdvanceOrder && hasUnsentItems
-                    ? "#0D87E1"
-                    : "#F97316"
-                  : "transparent",
+                shadowColor: hasItems ? (isAdvanceOrder ? "#0D87E1" : "#F97316") : "transparent",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,
