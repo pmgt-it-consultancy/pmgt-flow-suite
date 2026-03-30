@@ -1,7 +1,4 @@
 ## What's New
 
-- Takeout running bill — add items to advance takeout orders and send to kitchen multiple times before settling payment, just like dine-in
-- Smart kitchen buttons on order screen — "Send to Kitchen" when new items exist, "Reprint Kitchen Receipt" when all items already sent
-- Kitchen receipt prints only new items — subsequent sends print just the newly added items, not the full order
-- Two-button takeout card — advance orders show "Add Items" and "Take Payment" side by side in the queue
-- Checkout screen simplified — kitchen actions moved to the order screen where they belong
+- Send to Kitchen button now visible for all takeout orders — works on first-time sends and draft orders, not just running bills
+- Draft orders are auto-submitted when sending to kitchen directly
