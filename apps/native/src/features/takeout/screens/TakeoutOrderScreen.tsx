@@ -174,8 +174,10 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     [activeItems],
   );
   const hasItems = activeItems.length > 0;
+  const isOpenTakeout =
+    (order?.status === "open" || order?.status === "draft") && order?.orderType === "takeout";
   const isAdvanceOrder =
-    order?.status === "open" &&
+    isOpenTakeout &&
     (order?.takeoutStatus === "preparing" || order?.takeoutStatus === "ready_for_pickup");
   const hasUnsentItems = useMemo(() => activeItems.some((i) => !i.isSentToKitchen), [activeItems]);
 
@@ -391,12 +393,17 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     }
   }, [order, orderId, submitDraftMutation, navigation]);
 
-  // Send new items to kitchen for advance orders (running bill)
+  // Send new items to kitchen (first-time or running bill)
   const handleSendToKitchen = useCallback(async () => {
     if (!order || !hasUnsentItems || isSending) return;
 
     setIsSending(true);
     try {
+      // Submit draft first if needed
+      if (order.status === "draft") {
+        await submitDraftMutation({ orderId });
+      }
+
       await sendToKitchenMutation({
         orderId,
         storeId,
@@ -454,6 +461,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     storeId,
     hasUnsentItems,
     isSending,
+    submitDraftMutation,
     sendToKitchenMutation,
     activeItems,
     navigation,
@@ -840,7 +848,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             </YStack>
 
             {/* Action Buttons */}
-            {isAdvanceOrder && hasUnsentItems && (
+            {isOpenTakeout && hasUnsentItems && (
               <TouchableOpacity
                 onPress={handleSendToKitchen}
                 disabled={!hasItems || isSending}
@@ -911,13 +919,21 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
               activeOpacity={0.8}
               style={{
                 backgroundColor:
-                  hasItems && !isSending ? (isAdvanceOrder ? "#0D87E1" : "#F97316") : "#CBD5E1",
+                  hasItems && !isSending
+                    ? isOpenTakeout && hasUnsentItems
+                      ? "#0D87E1"
+                      : "#F97316"
+                    : "#CBD5E1",
                 borderRadius: 12,
                 paddingVertical: 16,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                shadowColor: hasItems ? (isAdvanceOrder ? "#0D87E1" : "#F97316") : "transparent",
+                shadowColor: hasItems
+                  ? isOpenTakeout && hasUnsentItems
+                    ? "#0D87E1"
+                    : "#F97316"
+                  : "transparent",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,
