@@ -1,5 +1,6 @@
 import { convexTest } from "convex-test";
 import { describe, expect, it } from "vitest";
+import { api } from "./_generated/api";
 import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
@@ -27,7 +28,16 @@ async function setupTestData(t: any) {
     });
   });
 
-  return { storeId, categoryId };
+  const userId = await t.run(async (ctx: any) => {
+    return await ctx.db.insert("users", {
+      name: "Test User",
+      email: "test-products@test.com",
+      storeId,
+      isActive: true,
+    });
+  });
+
+  return { storeId, categoryId, userId };
 }
 
 describe("products — open price schema", () => {
@@ -84,5 +94,55 @@ describe("products — open price schema", () => {
     expect(product.minPrice).toBeUndefined();
     expect(product.maxPrice).toBeUndefined();
     expect(product.price).toBe(15000);
+  });
+});
+
+describe("products.list", () => {
+  it("includes inactive products when includeInactive is true", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, categoryId, userId } = await setupTestData(t);
+
+    await t.run(async (ctx: any) => {
+      const now = Date.now();
+
+      await ctx.db.insert("products", {
+        storeId,
+        name: "Active Product",
+        categoryId,
+        price: 100,
+        isVatable: true,
+        isActive: true,
+        sortOrder: 1,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      await ctx.db.insert("products", {
+        storeId,
+        name: "Inactive Product",
+        categoryId,
+        price: 200,
+        isVatable: true,
+        isActive: false,
+        sortOrder: 2,
+        createdAt: now,
+        updatedAt: now,
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+
+    const activeOnly = await authed.query(api.products.list, { storeId });
+    expect(activeOnly.map((product) => product.name)).toEqual(["Active Product"]);
+
+    const withInactive = await authed.query(api.products.list, {
+      storeId,
+      includeInactive: true,
+    });
+    expect(withInactive.map((product) => product.name)).toEqual([
+      "Active Product",
+      "Inactive Product",
+    ]);
+    expect(withInactive.map((product) => product.isActive)).toEqual([true, false]);
   });
 });

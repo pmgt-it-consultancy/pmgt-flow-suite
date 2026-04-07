@@ -24,6 +24,7 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<Id<"categories"> | "all">("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("active");
+  const includeInactiveProducts = statusFilter !== "active";
 
   // Queries
   const store = useQuery(
@@ -36,7 +37,9 @@ export default function ProductsPage() {
   );
   const products = useQuery(
     api.products.list,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
+    isAuthenticated && selectedStoreId
+      ? { storeId: selectedStoreId, includeInactive: includeInactiveProducts }
+      : "skip",
   );
   const modifierAssignments = useQuery(
     api.modifierAssignments.getForStore,
