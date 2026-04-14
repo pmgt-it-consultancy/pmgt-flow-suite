@@ -1,13 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import {
-  Pressable,
-  Modal as RNModal,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal as RNModal, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
@@ -90,13 +84,17 @@ export const TabSelectionModal = ({
                   {orders.length} {orders.length === 1 ? "tab" : "tabs"} active
                 </Text>
               </YStack>
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 onPress={onClose}
-                style={{ padding: 8, marginRight: -8 }}
+                style={({ pressed }) => [
+                  { padding: 8, marginRight: -8 },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <Ionicons name="close" size={24} color="#6B7280" />
-              </TouchableOpacity>
+              </Pressable>
             </XStack>
 
             {/* Scrollable Tab List */}
@@ -106,11 +104,7 @@ export const TabSelectionModal = ({
             >
               <YStack gap={12}>
                 {orders.map((order) => (
-                  <TouchableOpacity
-                    key={order._id}
-                    onPress={() => handleSelectOrder(order._id)}
-                    activeOpacity={0.7}
-                  >
+                  <Pressable key={order._id} onPress={() => handleSelectOrder(order._id)}>
                     <XStack
                       backgroundColor="#F9FAFB"
                       borderRadius={12}
@@ -150,7 +144,7 @@ export const TabSelectionModal = ({
                       </YStack>
                       <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
                     </XStack>
-                  </TouchableOpacity>
+                  </Pressable>
                 ))}
               </YStack>
             </ScrollView>
@@ -163,20 +157,23 @@ export const TabSelectionModal = ({
               borderTopWidth={1}
               borderColor="#E5E7EB"
             >
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 onPress={handleAddNewTab}
                 disabled={isCreating}
-                activeOpacity={0.7}
-                style={{
-                  backgroundColor: isCreating ? "#93C5FD" : "#0D87E1",
-                  borderRadius: 12,
-                  paddingVertical: 18,
-                  paddingHorizontal: 20,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: 56,
-                }}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: isCreating ? "#93C5FD" : "#0D87E1",
+                    borderRadius: 12,
+                    paddingVertical: 18,
+                    paddingHorizontal: 20,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minHeight: 56,
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
               >
                 <Ionicons name="add-circle-outline" size={22} color="#FFFFFF" />
                 <Text
@@ -189,7 +186,7 @@ export const TabSelectionModal = ({
                 >
                   Add New Tab
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </YStack>
           </View>
         </KeyboardAvoidingView>

@@ -1,6 +1,7 @@
 import { useFonts } from "expo-font";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LogBox, Platform, StatusBar, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { TamaguiProvider } from "tamagui";
 import ConvexClientProvider from "./ConvexClientProvider";
@@ -130,14 +131,16 @@ export default function App() {
   }
 
   return (
-    <TamaguiProvider config={config} defaultTheme="light">
-      <KeyboardProvider>
-        <ConvexClientProvider>
-          <AuthProvider>
-            <AppContent retriggerFullscreen={retriggerFullscreen} />
-          </AuthProvider>
-        </ConvexClientProvider>
-      </KeyboardProvider>
-    </TamaguiProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <TamaguiProvider config={config} defaultTheme="light">
+        <KeyboardProvider>
+          <ConvexClientProvider>
+            <AuthProvider>
+              <AppContent retriggerFullscreen={retriggerFullscreen} />
+            </AuthProvider>
+          </ConvexClientProvider>
+        </KeyboardProvider>
+      </TamaguiProvider>
+    </GestureHandlerRootView>
   );
 }

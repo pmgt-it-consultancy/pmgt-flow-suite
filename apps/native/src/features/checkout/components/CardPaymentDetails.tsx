@@ -1,4 +1,5 @@
-import { TextInput, TouchableOpacity } from "react-native";
+import { TextInput } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Card, Text } from "../../shared/components/ui";
 
@@ -45,7 +46,8 @@ export const CardPaymentDetails = ({
               paymentType !== "";
             const active = type === paymentType || isOtherSelected;
             return (
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 key={type}
                 onPress={() => {
                   if (type === "Other") {
@@ -54,17 +56,19 @@ export const CardPaymentDetails = ({
                     onPaymentTypeChange(type);
                   }
                 }}
-                activeOpacity={0.7}
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 12,
-                  borderRadius: 9999,
-                  borderWidth: 1.5,
-                  backgroundColor: active ? "#EFF6FF" : "#FFFFFF",
-                  borderColor: active ? "#0D87E1" : "#D1D5DB",
-                  minHeight: 48,
-                  justifyContent: "center",
-                }}
+                style={({ pressed }) => [
+                  {
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    borderRadius: 9999,
+                    borderWidth: 1.5,
+                    backgroundColor: active ? "#EFF6FF" : "#FFFFFF",
+                    borderColor: active ? "#0D87E1" : "#D1D5DB",
+                    minHeight: 48,
+                    justifyContent: "center",
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
               >
                 <Text
                   size="sm"
@@ -75,7 +79,7 @@ export const CardPaymentDetails = ({
                 >
                   {type}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </XStack>

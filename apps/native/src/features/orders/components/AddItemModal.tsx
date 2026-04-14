@@ -1,16 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useEffect, useState } from "react";
-import {
-  Pressable,
-  Modal as RNModal,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Modal as RNModal, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
@@ -160,13 +152,17 @@ export const AddItemModal = ({
                     </Text>
                   )}
                 </YStack>
-                <TouchableOpacity
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   onPress={onClose}
-                  style={{ padding: 8, marginRight: -8, marginTop: -4 }}
+                  style={({ pressed }) => [
+                    { padding: 8, marginRight: -8, marginTop: -4 },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
                   <Ionicons name="close" size={24} color="#6B7280" />
-                </TouchableOpacity>
+                </Pressable>
               </XStack>
 
               {/* CONTENT - Scrollable */}
@@ -217,20 +213,23 @@ export const AddItemModal = ({
               >
                 {/* Quantity Controls - Large 56x56 buttons */}
                 <XStack justifyContent="center" alignItems="center" gap={16}>
-                  <TouchableOpacity
+                  <Pressable
+                    android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                     onPress={() => onQuantityChange(Math.max(1, quantity - 1))}
-                    style={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 12,
-                      backgroundColor: "#FEE2E2",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    activeOpacity={0.7}
+                    style={({ pressed }) => [
+                      {
+                        width: 56,
+                        height: 56,
+                        borderRadius: 12,
+                        backgroundColor: "#FEE2E2",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      },
+                      { opacity: pressed ? 0.7 : 1 },
+                    ]}
                   >
                     <Ionicons name="remove" size={28} color="#EF4444" />
-                  </TouchableOpacity>
+                  </Pressable>
 
                   <YStack
                     minWidth={80}
@@ -245,20 +244,23 @@ export const AddItemModal = ({
                     </Text>
                   </YStack>
 
-                  <TouchableOpacity
+                  <Pressable
+                    android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                     onPress={() => onQuantityChange(quantity + 1)}
-                    style={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 12,
-                      backgroundColor: "#DCFCE7",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    activeOpacity={0.7}
+                    style={({ pressed }) => [
+                      {
+                        width: 56,
+                        height: 56,
+                        borderRadius: 12,
+                        backgroundColor: "#DCFCE7",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      },
+                      { opacity: pressed ? 0.7 : 1 },
+                    ]}
                   >
                     <Ionicons name="add" size={28} color="#22C55E" />
-                  </TouchableOpacity>
+                  </Pressable>
                 </XStack>
 
                 {/* Total */}
@@ -275,19 +277,22 @@ export const AddItemModal = ({
                 </Text>
 
                 {/* Full-width Add Button */}
-                <TouchableOpacity
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   onPress={() => onConfirm(isOpenPrice ? customPrice : undefined)}
                   disabled={isLoading || (isOpenPrice && !isPriceValid)}
-                  style={{
-                    backgroundColor:
-                      isLoading || (isOpenPrice && !isPriceValid) ? "#9CA3AF" : "#0D87E1",
-                    borderRadius: 12,
-                    paddingVertical: 18,
-                    width: "100%",
-                    marginTop: 16,
-                    opacity: isLoading || (isOpenPrice && !isPriceValid) ? 0.7 : 1,
-                  }}
-                  activeOpacity={0.8}
+                  style={({ pressed }) => [
+                    {
+                      backgroundColor:
+                        isLoading || (isOpenPrice && !isPriceValid) ? "#9CA3AF" : "#0D87E1",
+                      borderRadius: 12,
+                      paddingVertical: 18,
+                      width: "100%",
+                      marginTop: 16,
+                      opacity: isLoading || (isOpenPrice && !isPriceValid) ? 0.7 : 1,
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   <Text
                     style={{
@@ -299,7 +304,7 @@ export const AddItemModal = ({
                   >
                     {isLoading ? "Adding..." : `Add ${quantity} to Order`}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               </YStack>
             </View>
           </KeyboardAvoidingView>

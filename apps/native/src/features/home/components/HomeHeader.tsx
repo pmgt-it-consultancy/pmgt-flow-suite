@@ -1,4 +1,5 @@
-import { Alert, TouchableOpacity } from "react-native";
+import { Alert } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Text } from "../../shared/components/ui";
@@ -119,7 +120,7 @@ function HeaderActionButton({
   destructive?: boolean;
 }) {
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
+    <Pressable onPress={onPress}>
       <YStack
         minWidth={74}
         paddingHorizontal={12}
@@ -142,6 +143,6 @@ function HeaderActionButton({
           {label}
         </Text>
       </YStack>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

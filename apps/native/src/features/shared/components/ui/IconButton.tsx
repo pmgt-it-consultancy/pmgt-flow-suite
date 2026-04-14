@@ -1,11 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import type React from "react";
-import { forwardRef } from "react";
-import { TouchableOpacity, type TouchableOpacityProps } from "react-native";
+import { type ComponentProps, forwardRef } from "react";
+import { Pressable } from "react-native-gesture-handler";
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
-interface IconButtonProps extends TouchableOpacityProps {
+interface IconButtonProps extends ComponentProps<typeof Pressable> {
   icon: IoniconsName;
   size?: "sm" | "md" | "lg";
   variant?: "default" | "primary" | "ghost" | "destructive";
@@ -39,7 +39,7 @@ const defaultIconColors: Record<NonNullable<IconButtonProps["variant"]>, string>
   destructive: "#EF4444",
 };
 
-export const IconButton = forwardRef<React.ElementRef<typeof TouchableOpacity>, IconButtonProps>(
+export const IconButton = forwardRef<React.ElementRef<typeof Pressable>, IconButtonProps>(
   (
     {
       icon,
@@ -58,23 +58,23 @@ export const IconButton = forwardRef<React.ElementRef<typeof TouchableOpacity>, 
     const color = iconColor ?? defaultIconColors[variant];
 
     return (
-      <TouchableOpacity
+      <Pressable
         ref={ref}
         disabled={disabled}
-        activeOpacity={0.7}
-        style={[
+        android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+        style={({ pressed }) => [
           {
             backgroundColor: v.bg,
             borderRadius: v.radius,
             padding: cfg.padding,
-            opacity: disabled ? 0.5 : 1,
+            opacity: disabled ? 0.5 : pressed ? 0.7 : 1,
           },
-          style as any,
+          typeof style === "function" ? style({ pressed }) : style,
         ]}
         {...props}
       >
         <Ionicons name={icon} size={cfg.iconSize} color={color} />
-      </TouchableOpacity>
+      </Pressable>
     );
   },
 );

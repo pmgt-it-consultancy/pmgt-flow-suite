@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
-import { Platform, TouchableOpacity } from "react-native";
+import { Platform } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
@@ -54,19 +55,22 @@ export const TimeRangeSelector = ({
     <YStack gap={10} paddingHorizontal={16} paddingVertical={12}>
       {/* Preset buttons */}
       <XStack gap={8}>
-        <TouchableOpacity
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
           onPress={() => handleModeChange("full")}
-          style={{
-            flex: 1,
-            height: 48,
-            borderRadius: 10,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: mode === "full" ? "#DBEAFE" : "#F3F4F6",
-            borderWidth: 1,
-            borderColor: mode === "full" ? "#0D87E1" : "#E5E7EB",
-          }}
-          activeOpacity={0.7}
+          style={({ pressed }) => [
+            {
+              flex: 1,
+              height: 48,
+              borderRadius: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: mode === "full" ? "#DBEAFE" : "#F3F4F6",
+              borderWidth: 1,
+              borderColor: mode === "full" ? "#0D87E1" : "#E5E7EB",
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
         >
           <Text
             style={{
@@ -77,21 +81,24 @@ export const TimeRangeSelector = ({
           >
             Full Day
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
           onPress={() => handleModeChange("custom")}
-          style={{
-            flex: 1,
-            height: 48,
-            borderRadius: 10,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: mode === "custom" ? "#DBEAFE" : "#F3F4F6",
-            borderWidth: 1,
-            borderColor: mode === "custom" ? "#0D87E1" : "#E5E7EB",
-          }}
-          activeOpacity={0.7}
+          style={({ pressed }) => [
+            {
+              flex: 1,
+              height: 48,
+              borderRadius: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: mode === "custom" ? "#DBEAFE" : "#F3F4F6",
+              borderWidth: 1,
+              borderColor: mode === "custom" ? "#0D87E1" : "#E5E7EB",
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
         >
           <Text
             style={{
@@ -102,33 +109,36 @@ export const TimeRangeSelector = ({
           >
             Custom Range
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </XStack>
 
       {/* Time pickers (only when custom) */}
       {mode === "custom" && (
         <XStack gap={10}>
-          <TouchableOpacity
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
             onPress={() => setShowStartPicker(true)}
-            style={{
-              flex: 1,
-              height: 48,
-              borderRadius: 10,
-              backgroundColor: "#F9FAFB",
-              borderWidth: 1,
-              borderColor: "#E5E7EB",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 6,
-            }}
-            activeOpacity={0.7}
+            style={({ pressed }) => [
+              {
+                flex: 1,
+                height: 48,
+                borderRadius: 10,
+                backgroundColor: "#F9FAFB",
+                borderWidth: 1,
+                borderColor: "#E5E7EB",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
           >
             <Ionicons name="time-outline" size={16} color="#6B7280" />
             <Text style={{ fontSize: 14, fontWeight: "600", color: "#374151" }}>
               {startTime ? formatTimeLabel(startTime) : "Start"}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
 
           <YStack justifyContent="center">
             <Text variant="muted" size="sm">
@@ -136,27 +146,30 @@ export const TimeRangeSelector = ({
             </Text>
           </YStack>
 
-          <TouchableOpacity
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
             onPress={() => setShowEndPicker(true)}
-            style={{
-              flex: 1,
-              height: 48,
-              borderRadius: 10,
-              backgroundColor: "#F9FAFB",
-              borderWidth: 1,
-              borderColor: "#E5E7EB",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 6,
-            }}
-            activeOpacity={0.7}
+            style={({ pressed }) => [
+              {
+                flex: 1,
+                height: 48,
+                borderRadius: 10,
+                backgroundColor: "#F9FAFB",
+                borderWidth: 1,
+                borderColor: "#E5E7EB",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
           >
             <Ionicons name="time-outline" size={16} color="#6B7280" />
             <Text style={{ fontSize: 14, fontWeight: "600", color: "#374151" }}>
               {endTime ? formatTimeLabel(endTime) : "End"}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </XStack>
       )}
 

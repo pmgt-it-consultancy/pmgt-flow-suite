@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Button, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -106,23 +106,26 @@ export const CartFooter = ({
       )}
 
       {canCancel && (
-        <TouchableOpacity
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
           onPress={onCancelOrder}
           disabled={isCancellingOrder}
-          activeOpacity={0.7}
-          style={{
-            marginTop: 10,
-            paddingVertical: 14,
-            paddingHorizontal: 20,
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "row",
-            backgroundColor: "#FEF2F2",
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: "#FECACA",
-            opacity: isCancellingOrder ? 0.6 : 1,
-          }}
+          style={({ pressed }) => [
+            {
+              marginTop: 10,
+              paddingVertical: 14,
+              paddingHorizontal: 20,
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+              backgroundColor: "#FEF2F2",
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: "#FECACA",
+              opacity: isCancellingOrder ? 0.6 : 1,
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
         >
           <Ionicons
             name="close-circle-outline"
@@ -131,7 +134,7 @@ export const CartFooter = ({
             style={{ marginRight: 8 }}
           />
           <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 15 }}>Cancel Order</Text>
-        </TouchableOpacity>
+        </Pressable>
       )}
     </YStack>
   );

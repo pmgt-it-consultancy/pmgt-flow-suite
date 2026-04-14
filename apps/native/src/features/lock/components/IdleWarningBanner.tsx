@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 

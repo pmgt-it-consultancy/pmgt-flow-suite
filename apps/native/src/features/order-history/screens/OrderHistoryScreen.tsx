@@ -3,14 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, ScrollView, TextInput } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
@@ -128,17 +122,20 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
             : undefined;
 
       return (
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#FFFFFF",
-            marginHorizontal: 12,
-            marginBottom: 8,
-            padding: 16,
-            borderRadius: 12,
-            borderWidth: 1,
-            borderColor: "#F3F4F6",
-          }}
-          activeOpacity={0.7}
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: "#FFFFFF",
+              marginHorizontal: 12,
+              marginBottom: 8,
+              padding: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: "#F3F4F6",
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
           onPress={() => handleSelectOrder(item._id)}
         >
           <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={8}>
@@ -186,7 +183,7 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
               {formatTime(item.createdAt)}
             </Text>
           </XStack>
-        </TouchableOpacity>
+        </Pressable>
       );
     },
     [formatCurrency, handleSelectOrder, formatTime],
@@ -244,9 +241,9 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
             returnKeyType="search"
           />
           {searchQuery ? (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
+            <Pressable onPress={() => setSearchQuery("")}>
               <Ionicons name="close-circle" size={18} color="#9CA3AF" />
-            </TouchableOpacity>
+            </Pressable>
           ) : null}
         </XStack>
       </YStack>

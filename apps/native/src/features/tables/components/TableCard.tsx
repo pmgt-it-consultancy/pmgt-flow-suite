@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { memo } from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Badge, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -53,23 +53,26 @@ export const TableCard = memo(
     const singleOrder = orders[0];
 
     return (
-      <TouchableOpacity
-        style={{
-          backgroundColor: "#FFFFFF",
-          borderRadius: 12,
-          padding: 16,
-          flex: 1,
-          maxWidth: "47%",
-          margin: 8,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.05,
-          shadowRadius: 2,
-          elevation: 1,
-          ...(isOccupied ? { borderLeftWidth: 4, borderLeftColor: "#F59E0B" } : {}),
-        }}
+      <Pressable
+        android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+        style={({ pressed }) => [
+          {
+            backgroundColor: "#FFFFFF",
+            borderRadius: 12,
+            padding: 16,
+            flex: 1,
+            maxWidth: "47%",
+            margin: 8,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.05,
+            shadowRadius: 2,
+            elevation: 1,
+            ...(isOccupied ? { borderLeftWidth: 4, borderLeftColor: "#F59E0B" } : {}),
+          },
+          { opacity: pressed ? 0.7 : 1 },
+        ]}
         onPress={() => onPress(id, name)}
-        activeOpacity={0.7}
       >
         <XStack justifyContent="space-between" alignItems="center" marginBottom={8}>
           <XStack alignItems="center" gap={8}>
@@ -129,7 +132,7 @@ export const TableCard = memo(
         <Badge variant={isOccupied ? "warning" : "success"} style={{ alignSelf: "flex-start" }}>
           {statusLabel}
         </Badge>
-      </TouchableOpacity>
+      </Pressable>
     );
   },
 );

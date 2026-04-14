@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
-import { Platform, TouchableOpacity } from "react-native";
+import { Platform } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
@@ -53,37 +54,43 @@ export const DateNavigationBar = ({ selectedDate, onDateChange }: DateNavigation
         alignItems="center"
         justifyContent="space-between"
       >
-        <TouchableOpacity
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
           onPress={goToPreviousDay}
-          style={{ width: 48, height: 48, justifyContent: "center", alignItems: "center" }}
-          activeOpacity={0.6}
+          style={({ pressed }) => [
+            { width: 48, height: 48, justifyContent: "center", alignItems: "center" },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
         >
           <Ionicons name="chevron-back" size={24} color="#0D87E1" />
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity onPress={() => setShowPicker(true)} activeOpacity={0.6}>
+        <Pressable onPress={() => setShowPicker(true)}>
           <XStack alignItems="center" gap={6}>
             <Ionicons name="calendar-outline" size={18} color="#0D87E1" />
             <Text style={{ color: "#0D87E1", fontWeight: "700", fontSize: 16 }}>
               {formatDateLabel(selectedDate)}
             </Text>
           </XStack>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
           onPress={goToNextDay}
           disabled={today}
-          style={{
-            width: 48,
-            height: 48,
-            justifyContent: "center",
-            alignItems: "center",
-            opacity: today ? 0.3 : 1,
-          }}
-          activeOpacity={0.6}
+          style={({ pressed }) => [
+            {
+              width: 48,
+              height: 48,
+              justifyContent: "center",
+              alignItems: "center",
+              opacity: today ? 0.3 : 1,
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
         >
           <Ionicons name="chevron-forward" size={24} color="#0D87E1" />
-        </TouchableOpacity>
+        </Pressable>
       </XStack>
 
       {showPicker && (

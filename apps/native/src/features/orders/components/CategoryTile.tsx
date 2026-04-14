@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { memo } from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
@@ -14,21 +14,24 @@ interface CategoryTileProps {
 
 export const CategoryTile = memo(({ id, name, itemCount, onPress }: CategoryTileProps) => {
   return (
-    <TouchableOpacity
-      style={{
-        flex: 1,
-        backgroundColor: "#EFF6FF",
-        borderRadius: 12,
-        padding: 16,
-        margin: 6,
-        maxWidth: "31.5%",
-        minHeight: 100,
-        borderWidth: 1,
-        borderColor: "#BFDBFE",
-        justifyContent: "space-between",
-      }}
+    <Pressable
+      android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+      style={({ pressed }) => [
+        {
+          flex: 1,
+          backgroundColor: "#EFF6FF",
+          borderRadius: 12,
+          padding: 16,
+          margin: 6,
+          maxWidth: "31.5%",
+          minHeight: 100,
+          borderWidth: 1,
+          borderColor: "#BFDBFE",
+          justifyContent: "space-between",
+        },
+        { opacity: pressed ? 0.7 : 1 },
+      ]}
       onPress={() => onPress(id)}
-      activeOpacity={0.7}
     >
       <XStack alignItems="center" justifyContent="space-between">
         <Text
@@ -42,6 +45,6 @@ export const CategoryTile = memo(({ id, name, itemCount, onPress }: CategoryTile
       <Text style={{ color: "#0D87E1", fontSize: 12, marginTop: 8 }}>
         {itemCount} {itemCount === 1 ? "item" : "items"}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 });

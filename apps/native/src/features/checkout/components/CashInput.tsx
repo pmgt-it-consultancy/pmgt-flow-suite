@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { TextInput, TouchableOpacity } from "react-native";
+import { TextInput } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Card, Text } from "../../shared/components/ui";
 
@@ -62,31 +63,30 @@ export const CashInput = ({ value, totalAmount, onChange }: CashInputProps) => {
             keyboardType="numeric"
           />
           {value !== "" && (
-            <TouchableOpacity
-              onPress={handleClear}
-              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-              activeOpacity={0.6}
-            >
+            <Pressable onPress={handleClear} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
               <Ionicons name="close-circle" size={22} color="#9CA3AF" />
-            </TouchableOpacity>
+            </Pressable>
           )}
         </XStack>
 
         <XStack gap={10} marginTop={14}>
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              backgroundColor: currentValue === totalAmount ? "#DCFCE7" : "#F0FDF4",
-              paddingVertical: 14,
-              borderRadius: 10,
-              borderWidth: 1.5,
-              borderColor: currentValue === totalAmount ? "#22C55E" : "#BBF7D0",
-              minHeight: 48,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+            style={({ pressed }) => [
+              {
+                flex: 1,
+                backgroundColor: currentValue === totalAmount ? "#DCFCE7" : "#F0FDF4",
+                paddingVertical: 14,
+                borderRadius: 10,
+                borderWidth: 1.5,
+                borderColor: currentValue === totalAmount ? "#22C55E" : "#BBF7D0",
+                minHeight: 48,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
             onPress={handleExactAmount}
-            activeOpacity={0.7}
           >
             <Text
               style={{
@@ -97,27 +97,30 @@ export const CashInput = ({ value, totalAmount, onChange }: CashInputProps) => {
             >
               Exact Amount
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </XStack>
 
         <XStack flexWrap="wrap" gap={10} marginTop={10}>
           {QUICK_AMOUNTS.map((amount) => (
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               key={amount}
-              style={{
-                backgroundColor: "#FFFFFF",
-                paddingVertical: 14,
-                paddingHorizontal: 20,
-                borderRadius: 10,
-                borderWidth: 1.5,
-                borderColor: "#E5E7EB",
-                minWidth: 80,
-                minHeight: 48,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: "#FFFFFF",
+                  paddingVertical: 14,
+                  paddingHorizontal: 20,
+                  borderRadius: 10,
+                  borderWidth: 1.5,
+                  borderColor: "#E5E7EB",
+                  minWidth: 80,
+                  minHeight: 48,
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
               onPress={() => handleQuickAdd(amount)}
-              activeOpacity={0.7}
             >
               <Text
                 style={{
@@ -128,7 +131,7 @@ export const CashInput = ({ value, totalAmount, onChange }: CashInputProps) => {
               >
                 +₱{amount.toLocaleString()}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </XStack>
       </Card>

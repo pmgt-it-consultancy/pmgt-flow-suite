@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { memo } from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Badge, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -108,16 +108,19 @@ export const TakeoutOrderCard = memo(
             : "Tap to view order details.";
 
     return (
-      <TouchableOpacity
-        style={{
-          backgroundColor: isAdvanceOrder ? "#EFF6FF" : canResumeOrder ? "#FFFBEB" : "#FFFFFF",
-          borderRadius: 12,
-          padding: 16,
-          borderWidth: 1,
-          borderColor: isAdvanceOrder ? "#93C5FD" : canResumeOrder ? "#FCD34D" : "#F3F4F6",
-          marginBottom: 12,
-        }}
-        activeOpacity={0.7}
+      <Pressable
+        android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+        style={({ pressed }) => [
+          {
+            backgroundColor: isAdvanceOrder ? "#EFF6FF" : canResumeOrder ? "#FFFBEB" : "#FFFFFF",
+            borderRadius: 12,
+            padding: 16,
+            borderWidth: 1,
+            borderColor: isAdvanceOrder ? "#93C5FD" : canResumeOrder ? "#FCD34D" : "#F3F4F6",
+            marginBottom: 12,
+          },
+          { opacity: pressed ? 0.7 : 1 },
+        ]}
         onPress={() => onPress?.(id)}
       >
         <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={10}>
@@ -163,40 +166,46 @@ export const TakeoutOrderCard = memo(
         </Text>
 
         {canResumeOrder && !isAdvanceOrder && (
-          <TouchableOpacity
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
             onPress={() => onPress?.(id)}
-            activeOpacity={0.8}
-            style={{
-              backgroundColor: "#F59E0B",
-              borderRadius: 10,
-              paddingVertical: 14,
-              paddingHorizontal: 20,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            style={({ pressed }) => [
+              {
+                backgroundColor: "#F59E0B",
+                borderRadius: 10,
+                paddingVertical: 14,
+                paddingHorizontal: 20,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
           >
             <Ionicons name="create-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
             <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }} numberOfLines={1}>
               {primaryActionLabel}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
 
         {isAdvanceOrder && (
           <XStack gap={10}>
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               onPress={() => onAddItems?.(id)}
-              activeOpacity={0.8}
-              style={{
-                flex: 1,
-                backgroundColor: "#F59E0B",
-                borderRadius: 10,
-                paddingVertical: 14,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={({ pressed }) => [
+                {
+                  flex: 1,
+                  backgroundColor: "#F59E0B",
+                  borderRadius: 10,
+                  paddingVertical: 14,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
             >
               <Ionicons
                 name="add-circle-outline"
@@ -205,47 +214,53 @@ export const TakeoutOrderCard = memo(
                 style={{ marginRight: 6 }}
               />
               <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>Add Items</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               onPress={() => onTakePayment?.(id)}
-              activeOpacity={0.8}
-              style={{
-                flex: 1,
-                backgroundColor: "#0D87E1",
-                borderRadius: 10,
-                paddingVertical: 14,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={({ pressed }) => [
+                {
+                  flex: 1,
+                  backgroundColor: "#0D87E1",
+                  borderRadius: 10,
+                  paddingVertical: 14,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
             >
               <Ionicons name="card-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
               <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>
                 Take Payment
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </XStack>
         )}
 
         {canAdvanceWorkflow && (
-          <TouchableOpacity
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
             onPress={() => {
               if (!disableAdvance) {
                 onAdvanceStatus(id, takeoutStatus);
               }
             }}
             disabled={disableAdvance}
-            activeOpacity={0.8}
-            style={{
-              backgroundColor: disableAdvance ? "#9CA3AF" : config.buttonColor,
-              borderRadius: 10,
-              paddingVertical: 14,
-              paddingHorizontal: 20,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: disableAdvance ? 0.7 : 1,
-            }}
+            style={({ pressed }) => [
+              {
+                backgroundColor: disableAdvance ? "#9CA3AF" : config.buttonColor,
+                borderRadius: 10,
+                paddingVertical: 14,
+                paddingHorizontal: 20,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: disableAdvance ? 0.7 : 1,
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
           >
             {config.nextIcon && !disableAdvance ? (
               <Ionicons
@@ -258,7 +273,7 @@ export const TakeoutOrderCard = memo(
             <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 15 }}>
               {disableAdvance ? "Awaiting Payment" : config.nextLabel}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
 
         {!canResumeOrder && !canAdvanceWorkflow && !isVoided && (
@@ -269,7 +284,7 @@ export const TakeoutOrderCard = memo(
             <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
           </XStack>
         )}
-      </TouchableOpacity>
+      </Pressable>
     );
   },
 );

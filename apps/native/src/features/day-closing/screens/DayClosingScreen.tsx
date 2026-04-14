@@ -2,14 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { ActivityIndicator, Alert, SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -197,17 +191,17 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
           borderTopWidth={1}
           borderColor="$gray200"
         >
-          <TouchableOpacity
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
             onPress={handlePrintZReport}
             disabled={!canPrint}
-            activeOpacity={0.7}
             style={[styles.printButton, !canPrint && styles.printButtonDisabled]}
           >
             <Ionicons name="print-outline" size={22} color="#FFFFFF" />
             <Text style={styles.printButtonText}>
               {isPrintingZReport ? "Printing..." : "Print Z-Report"}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </YStack>
       </YStack>
     </SafeAreaView>

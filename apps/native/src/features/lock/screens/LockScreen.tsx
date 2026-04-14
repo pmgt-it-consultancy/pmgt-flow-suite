@@ -3,13 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAction } from "convex/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Alert,
-  Animated,
-  Text as RNText,
-  TouchableOpacity,
-  useWindowDimensions,
-} from "react-native";
+import { Alert, Animated, Text as RNText, useWindowDimensions } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { Button, Text } from "../../shared/components/ui";
@@ -299,7 +294,7 @@ export function LockScreen({ navigation }: LockScreenProps) {
         {isVerifying ? "Verifying..." : "Unlock"}
       </Button>
 
-      <TouchableOpacity onPress={() => setShowManagerModal(true)} activeOpacity={0.7}>
+      <Pressable onPress={() => setShowManagerModal(true)}>
         <Text
           style={{
             fontSize: Math.max(15, Math.round(18 * compactScale)),
@@ -310,7 +305,7 @@ export function LockScreen({ navigation }: LockScreenProps) {
         >
           Manager Override
         </Text>
-      </TouchableOpacity>
+      </Pressable>
 
       <ManagerOverrideModal
         visible={showManagerModal}

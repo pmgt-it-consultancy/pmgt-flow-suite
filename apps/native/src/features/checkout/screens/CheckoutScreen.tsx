@@ -3,7 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, TextInput, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, TextInput } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
@@ -637,26 +638,29 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           )}
 
           {/* Add Payment Method Button */}
-          <TouchableOpacity
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
             onPress={addPaymentLine}
-            activeOpacity={0.7}
-            style={{
-              borderWidth: 1.5,
-              borderColor: "#0D87E1",
-              borderStyle: "dashed",
-              borderRadius: 12,
-              paddingVertical: 14,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-              gap: 8,
-            }}
+            style={({ pressed }) => [
+              {
+                borderWidth: 1.5,
+                borderColor: "#0D87E1",
+                borderStyle: "dashed",
+                borderRadius: 12,
+                paddingVertical: 14,
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+                gap: 8,
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
           >
             <Ionicons name="add-circle-outline" size={20} color="#0D87E1" />
             <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 15 }}>
               Add Payment Method
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </YStack>
 
         <TotalsSummary
@@ -830,18 +834,21 @@ const PaymentLineCard = ({
           {totalLines > 1 ? `Payment ${lineIndex + 1}` : "Payment Method"}
         </Text>
         {totalLines > 1 && (
-          <TouchableOpacity
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
             onPress={onRemove}
-            activeOpacity={0.7}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            style={{
-              backgroundColor: "#FEE2E2",
-              borderRadius: 8,
-              padding: 6,
-            }}
+            style={({ pressed }) => [
+              {
+                backgroundColor: "#FEE2E2",
+                borderRadius: 8,
+                padding: 6,
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
           >
             <Ionicons name="close" size={18} color="#DC2626" />
-          </TouchableOpacity>
+          </Pressable>
         )}
       </XStack>
 
@@ -850,21 +857,24 @@ const PaymentLineCard = ({
         Choose how the customer will settle this portion
       </Text>
       <XStack gap={12} marginBottom={14}>
-        <TouchableOpacity
-          style={{
-            flex: 1,
-            backgroundColor: line.paymentMethod === "cash" ? "#EFF6FF" : "#FFFFFF",
-            borderRadius: 12,
-            paddingVertical: 14,
-            paddingHorizontal: 12,
-            alignItems: "center",
-            borderWidth: 1.5,
-            borderColor: line.paymentMethod === "cash" ? "#0D87E1" : "#E5E7EB",
-            minHeight: 68,
-            justifyContent: "center",
-          }}
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+          style={({ pressed }) => [
+            {
+              flex: 1,
+              backgroundColor: line.paymentMethod === "cash" ? "#EFF6FF" : "#FFFFFF",
+              borderRadius: 12,
+              paddingVertical: 14,
+              paddingHorizontal: 12,
+              alignItems: "center",
+              borderWidth: 1.5,
+              borderColor: line.paymentMethod === "cash" ? "#0D87E1" : "#E5E7EB",
+              minHeight: 68,
+              justifyContent: "center",
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
           onPress={() => onUpdate({ paymentMethod: "cash" })}
-          activeOpacity={0.7}
         >
           <Ionicons
             name="cash-outline"
@@ -881,23 +891,26 @@ const PaymentLineCard = ({
           >
             Cash
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
-          style={{
-            flex: 1,
-            backgroundColor: line.paymentMethod === "card_ewallet" ? "#EFF6FF" : "#FFFFFF",
-            borderRadius: 12,
-            paddingVertical: 14,
-            paddingHorizontal: 12,
-            alignItems: "center",
-            borderWidth: 1.5,
-            borderColor: line.paymentMethod === "card_ewallet" ? "#0D87E1" : "#E5E7EB",
-            minHeight: 68,
-            justifyContent: "center",
-          }}
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+          style={({ pressed }) => [
+            {
+              flex: 1,
+              backgroundColor: line.paymentMethod === "card_ewallet" ? "#EFF6FF" : "#FFFFFF",
+              borderRadius: 12,
+              paddingVertical: 14,
+              paddingHorizontal: 12,
+              alignItems: "center",
+              borderWidth: 1.5,
+              borderColor: line.paymentMethod === "card_ewallet" ? "#0D87E1" : "#E5E7EB",
+              minHeight: 68,
+              justifyContent: "center",
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
           onPress={() => onUpdate({ paymentMethod: "card_ewallet" })}
-          activeOpacity={0.7}
         >
           <Ionicons
             name="card-outline"
@@ -914,7 +927,7 @@ const PaymentLineCard = ({
           >
             Card/E-Wallet
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </XStack>
 
       {/* Cash-specific: just "Cash Received" — this IS the amount */}
@@ -951,60 +964,66 @@ const PaymentLineCard = ({
               keyboardType="numeric"
             />
             {line.cashReceived !== "" && (
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 onPress={() => onUpdate({ cashReceived: "" })}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-                activeOpacity={0.6}
               >
                 <Ionicons name="close-circle" size={20} color="#9CA3AF" />
-              </TouchableOpacity>
+              </Pressable>
             )}
           </XStack>
 
           {/* Exact Amount shortcut */}
-          <TouchableOpacity
-            style={{
-              backgroundColor:
-                cashReceivedValue === amountValue && amountValue > 0 ? "#DCFCE7" : "#F0FDF4",
-              paddingVertical: 12,
-              borderRadius: 10,
-              borderWidth: 1.5,
-              borderColor:
-                cashReceivedValue === amountValue && amountValue > 0 ? "#22C55E" : "#BBF7D0",
-              minHeight: 44,
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 10,
-            }}
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+            style={({ pressed }) => [
+              {
+                backgroundColor:
+                  cashReceivedValue === amountValue && amountValue > 0 ? "#DCFCE7" : "#F0FDF4",
+                paddingVertical: 12,
+                borderRadius: 10,
+                borderWidth: 1.5,
+                borderColor:
+                  cashReceivedValue === amountValue && amountValue > 0 ? "#22C55E" : "#BBF7D0",
+                minHeight: 44,
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 10,
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
             onPress={handleExactAmount}
-            activeOpacity={0.7}
           >
             <Text style={{ color: "#16A34A", fontWeight: "700", fontSize: 13 }}>Exact Amount</Text>
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Quick add buttons */}
           <XStack flexWrap="wrap" gap={8}>
             {QUICK_AMOUNTS.map((amount) => (
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 key={amount}
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderRadius: 10,
-                  borderWidth: 1.5,
-                  borderColor: "#E5E7EB",
-                  minHeight: 44,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: "#FFFFFF",
+                    paddingVertical: 12,
+                    paddingHorizontal: 16,
+                    borderRadius: 10,
+                    borderWidth: 1.5,
+                    borderColor: "#E5E7EB",
+                    minHeight: 44,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
                 onPress={() => handleQuickAdd(amount)}
-                activeOpacity={0.7}
               >
                 <Text style={{ color: "#374151", fontWeight: "600", fontSize: 14 }}>
                   +₱{amount.toLocaleString()}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </XStack>
         </>
@@ -1053,7 +1072,8 @@ const PaymentLineCard = ({
                 line.cardPaymentType !== "";
               const active = type === line.cardPaymentType || isOtherSelected;
               return (
-                <TouchableOpacity
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   key={type}
                   onPress={() => {
                     if (type === "Other") {
@@ -1062,17 +1082,19 @@ const PaymentLineCard = ({
                       onUpdate({ cardPaymentType: type });
                     }
                   }}
-                  activeOpacity={0.7}
-                  style={{
-                    paddingHorizontal: 14,
-                    paddingVertical: 10,
-                    borderRadius: 9999,
-                    borderWidth: 1.5,
-                    backgroundColor: active ? "#EFF6FF" : "#FFFFFF",
-                    borderColor: active ? "#0D87E1" : "#D1D5DB",
-                    minHeight: 44,
-                    justifyContent: "center",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      paddingHorizontal: 14,
+                      paddingVertical: 10,
+                      borderRadius: 9999,
+                      borderWidth: 1.5,
+                      backgroundColor: active ? "#EFF6FF" : "#FFFFFF",
+                      borderColor: active ? "#0D87E1" : "#D1D5DB",
+                      minHeight: 44,
+                      justifyContent: "center",
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   <Text
                     size="sm"
@@ -1083,7 +1105,7 @@ const PaymentLineCard = ({
                   >
                     {type}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </XStack>

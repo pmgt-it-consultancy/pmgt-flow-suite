@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Button, IconButton, Text } from "../../shared/components/ui";
@@ -52,20 +52,24 @@ export const OrderHeader = ({
             {subtitle}
           </Text>
           {tabNumber && tabName && (
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               onPress={onEditTabName}
               disabled={!onEditTabName}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingVertical: 4,
-                paddingHorizontal: 8,
-                backgroundColor: onEditTabName ? "#F3F4F6" : "transparent",
-                borderRadius: 999,
-                borderWidth: 1,
-                borderColor: onEditTabName ? "#E5E7EB" : "transparent",
-              }}
+              style={({ pressed }) => [
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingVertical: 4,
+                  paddingHorizontal: 8,
+                  backgroundColor: onEditTabName ? "#F3F4F6" : "transparent",
+                  borderRadius: 999,
+                  borderWidth: 1,
+                  borderColor: onEditTabName ? "#E5E7EB" : "transparent",
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
             >
               <Text variant="muted" size="sm" numberOfLines={1}>
                 {tabName}
@@ -78,7 +82,7 @@ export const OrderHeader = ({
                   style={{ marginLeft: 4 }}
                 />
               ) : null}
-            </TouchableOpacity>
+            </Pressable>
           )}
         </XStack>
       </YStack>

@@ -1,4 +1,5 @@
-import { Alert, Modal, Pressable, View } from "react-native";
+import { Alert, Modal, View } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import type { ConnectionStatus, SystemStatus } from "../hooks/useSystemStatus";
 import { Button, Text } from "./ui";
@@ -111,7 +112,7 @@ export const StatusDropdown = ({ visible, onClose, status }: StatusDropdownProps
             elevation: 8,
           }}
         >
-          <Pressable onPress={(e) => e.stopPropagation()}>
+          <Pressable onPress={() => {}}>
             <YStack padding={16}>
               <Text variant="heading" size="sm" style={{ marginBottom: 8 }}>
                 System Status

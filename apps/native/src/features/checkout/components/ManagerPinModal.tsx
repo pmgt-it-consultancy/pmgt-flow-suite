@@ -2,7 +2,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAction, useQuery } from "convex/react";
 import { useCallback, useRef, useState } from "react";
-import { Alert, type TextInput as RNTextInput, TextInput, TouchableOpacity } from "react-native";
+import { Alert, type TextInput as RNTextInput, TextInput } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { Button, LoadingState, Modal, Text } from "../../shared/components/ui";
@@ -99,20 +100,23 @@ export const ManagerPinModal = ({
           </Text>
         ) : (
           managers.map((manager) => (
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               key={manager._id}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                padding: 12,
-                borderWidth: 1,
-                borderRadius: 8,
-                marginBottom: 8,
-                borderColor: selectedManagerId === manager._id ? "#0D87E1" : "#E5E7EB",
-                backgroundColor: selectedManagerId === manager._id ? "#EFF6FF" : undefined,
-              }}
+              style={({ pressed }) => [
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  padding: 12,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  marginBottom: 8,
+                  borderColor: selectedManagerId === manager._id ? "#0D87E1" : "#E5E7EB",
+                  backgroundColor: selectedManagerId === manager._id ? "#EFF6FF" : undefined,
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
               onPress={() => handleSelectManager(manager._id)}
-              activeOpacity={0.7}
             >
               <YStack
                 width={40}
@@ -133,7 +137,7 @@ export const ManagerPinModal = ({
                   {manager.roleName}
                 </Text>
               </YStack>
-            </TouchableOpacity>
+            </Pressable>
           ))
         )}
       </YStack>

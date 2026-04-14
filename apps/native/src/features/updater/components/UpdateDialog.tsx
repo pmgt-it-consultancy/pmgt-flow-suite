@@ -1,5 +1,6 @@
 import React from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import type { UpdateInfo } from "../stores/useUpdateStore";
 
 type Props = {

@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useState } from "react";
-import { ScrollView, TextInput, TouchableOpacity } from "react-native";
+import { ScrollView, TextInput } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Button, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -97,11 +98,11 @@ export const RefundItemModal = ({ visible, items, onConfirm, onClose }: RefundIt
             {items.map((item) => {
               const isSelected = selectedItemIds.has(item._id.toString());
               return (
-                <TouchableOpacity
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   key={item._id}
                   onPress={() => toggleItem(item._id.toString())}
-                  activeOpacity={0.7}
-                  style={{ minHeight: 52 }}
+                  style={({ pressed }) => [{ minHeight: 52 }, { opacity: pressed ? 0.7 : 1 }]}
                 >
                   <XStack
                     paddingVertical={12}
@@ -135,7 +136,7 @@ export const RefundItemModal = ({ visible, items, onConfirm, onClose }: RefundIt
                       {formatCurrency(item.lineTotal)}
                     </Text>
                   </XStack>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </ScrollView>
@@ -189,11 +190,7 @@ export const RefundItemModal = ({ visible, items, onConfirm, onClose }: RefundIt
             Refund method
           </Text>
           <XStack gap={10}>
-            <TouchableOpacity
-              onPress={() => setRefundMethod("cash")}
-              style={{ flex: 1, minHeight: 48 }}
-              activeOpacity={0.7}
-            >
+            <Pressable onPress={() => setRefundMethod("cash")} style={{ flex: 1, minHeight: 48 }}>
               <XStack
                 flex={1}
                 paddingVertical={12}
@@ -220,11 +217,11 @@ export const RefundItemModal = ({ visible, items, onConfirm, onClose }: RefundIt
                   Cash
                 </Text>
               </XStack>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               onPress={() => setRefundMethod("card_ewallet")}
-              style={{ flex: 1, minHeight: 48 }}
-              activeOpacity={0.7}
+              style={({ pressed }) => [{ flex: 1, minHeight: 48 }, { opacity: pressed ? 0.7 : 1 }]}
             >
               <XStack
                 flex={1}
@@ -252,7 +249,7 @@ export const RefundItemModal = ({ visible, items, onConfirm, onClose }: RefundIt
                   Card / E-Wallet
                 </Text>
               </XStack>
-            </TouchableOpacity>
+            </Pressable>
           </XStack>
         </YStack>
 

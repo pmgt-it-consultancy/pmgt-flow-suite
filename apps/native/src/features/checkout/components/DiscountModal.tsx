@@ -1,12 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useRef } from "react";
-import {
-  type TextInput as RNTextInput,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { type TextInput as RNTextInput, ScrollView, TextInput } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack } from "tamagui";
 import { Badge, Chip, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -99,17 +95,20 @@ export const DiscountModal = ({
       <XStack justifyContent="space-between" alignItems="center" marginTop={20} marginBottom={10}>
         <Text style={{ color: "#374151", fontWeight: "500" }}>Select Items</Text>
         {availableItems.length > 1 && (
-          <TouchableOpacity
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
             onPress={onSelectAll}
-            activeOpacity={0.7}
-            style={{
-              backgroundColor: allSelected ? "#DBEAFE" : "#F3F4F6",
-              paddingHorizontal: 16,
-              paddingVertical: 10,
-              borderRadius: 8,
-              minHeight: 40,
-              justifyContent: "center",
-            }}
+            style={({ pressed }) => [
+              {
+                backgroundColor: allSelected ? "#DBEAFE" : "#F3F4F6",
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                borderRadius: 8,
+                minHeight: 40,
+                justifyContent: "center",
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
           >
             <Text
               style={{
@@ -120,7 +119,7 @@ export const DiscountModal = ({
             >
               {allSelected ? "Deselect All" : "Select All"}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       </XStack>
 
@@ -129,22 +128,25 @@ export const DiscountModal = ({
         {availableItems.map((item) => {
           const isSelected = selectedItemIds.has(item._id);
           return (
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               key={item._id}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingVertical: 14,
-                paddingHorizontal: 14,
-                borderWidth: 1.5,
-                borderRadius: 10,
-                marginBottom: 8,
-                borderColor: isSelected ? "#0D87E1" : "#E5E7EB",
-                backgroundColor: isSelected ? "#EFF6FF" : undefined,
-                minHeight: 56,
-              }}
+              style={({ pressed }) => [
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingVertical: 14,
+                  paddingHorizontal: 14,
+                  borderWidth: 1.5,
+                  borderRadius: 10,
+                  marginBottom: 8,
+                  borderColor: isSelected ? "#0D87E1" : "#E5E7EB",
+                  backgroundColor: isSelected ? "#EFF6FF" : undefined,
+                  minHeight: 56,
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
               onPress={() => onItemToggle(item._id)}
-              activeOpacity={0.7}
             >
               <Ionicons
                 name={isSelected ? "checkbox" : "square-outline"}
@@ -161,7 +163,7 @@ export const DiscountModal = ({
               <Text style={{ color: "#111827", fontWeight: "600", fontSize: 15 }}>
                 {formatCurrency(item.lineTotal)}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
         {availableItems.length === 0 && (
@@ -222,18 +224,21 @@ export const DiscountModal = ({
       </Text>
 
       {/* Full-width Apply Button */}
-      <TouchableOpacity
+      <Pressable
+        android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
         onPress={onApply}
         disabled={!isValid}
-        style={{
-          backgroundColor: isValid ? "#0D87E1" : "#9CA3AF",
-          borderRadius: 12,
-          paddingVertical: 18,
-          width: "100%",
-          marginTop: 20,
-          opacity: !isValid ? 0.5 : 1,
-        }}
-        activeOpacity={0.8}
+        style={({ pressed }) => [
+          {
+            backgroundColor: isValid ? "#0D87E1" : "#9CA3AF",
+            borderRadius: 12,
+            paddingVertical: 18,
+            width: "100%",
+            marginTop: 20,
+            opacity: !isValid ? 0.5 : 1,
+          },
+          { opacity: pressed ? 0.7 : 1 },
+        ]}
       >
         <Text
           style={{
@@ -245,7 +250,7 @@ export const DiscountModal = ({
         >
           Apply Discount{selectedItemIds.size > 1 ? ` to ${selectedItemIds.size} Items` : ""}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </Modal>
   );
 };

@@ -1,6 +1,6 @@
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { memo } from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Badge, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -40,19 +40,23 @@ export const ProductCard = memo(
     const formatCurrency = useFormatCurrency();
 
     return (
-      <TouchableOpacity
-        style={{
-          flex: 1,
-          backgroundColor: "#FFFFFF",
-          borderRadius: 12,
-          padding: 16,
-          margin: 6,
-          maxWidth: "31.5%",
-          minHeight: 100,
-          borderWidth: 1,
-          borderColor: "#E5E7EB",
-          justifyContent: "space-between",
-        }}
+      <Pressable
+        android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+        style={({ pressed }) => [
+          {
+            flex: 1,
+            backgroundColor: "#FFFFFF",
+            borderRadius: 12,
+            padding: 16,
+            margin: 6,
+            maxWidth: "31.5%",
+            minHeight: 100,
+            borderWidth: 1,
+            borderColor: "#E5E7EB",
+            justifyContent: "space-between",
+          },
+          { opacity: pressed ? 0.7 : 1 },
+        ]}
         onPress={() =>
           onPress({
             id,
@@ -64,7 +68,6 @@ export const ProductCard = memo(
             maxPrice,
           })
         }
-        activeOpacity={0.7}
       >
         <YStack marginBottom={12} gap={8}>
           <Text style={{ color: "#111827", fontWeight: "600", fontSize: 16 }} numberOfLines={2}>
@@ -106,7 +109,7 @@ export const ProductCard = memo(
             </YStack>
           )}
         </XStack>
-      </TouchableOpacity>
+      </Pressable>
     );
   },
 );

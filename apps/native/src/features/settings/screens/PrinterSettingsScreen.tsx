@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Alert, ScrollView, Switch, TouchableOpacity } from "react-native";
+import { Alert, ScrollView, Switch } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Button } from "../../shared/components/ui/Button";
@@ -161,16 +162,20 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
         {/* Manual Open Drawer Button */}
         {cashDrawerEnabled && (
           <YStack paddingHorizontal={16} marginTop={12}>
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               onPress={handleOpenDrawer}
-              style={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: 12,
-                padding: 16,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: 12,
+                  padding: 16,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
             >
               <Ionicons
                 name="lock-open-outline"
@@ -181,7 +186,7 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
               <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 15 }}>
                 Open Cash Drawer
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </YStack>
         )}
 

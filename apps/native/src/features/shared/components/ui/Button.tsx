@@ -1,13 +1,10 @@
 import type React from "react";
-import { forwardRef } from "react";
-import {
-  ActivityIndicator,
-  TouchableOpacity as RNTouchableOpacity,
-  type TouchableOpacity,
-} from "react-native";
+import { type ComponentProps, forwardRef } from "react";
+import { ActivityIndicator } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { Text } from "./Text";
 
-interface ButtonProps extends React.ComponentProps<typeof RNTouchableOpacity> {
+interface ButtonProps extends ComponentProps<typeof Pressable> {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "destructive" | "success";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
@@ -60,7 +57,7 @@ const textSizes: Record<NonNullable<ButtonProps["size"]>, number> = {
   lg: 18,
 };
 
-export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, ButtonProps>(
+export const Button = forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>(
   (
     {
       variant = "primary",
@@ -79,11 +76,11 @@ export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, Butt
     const s = sizeStyles[size];
 
     return (
-      <RNTouchableOpacity
+      <Pressable
         ref={ref}
         disabled={isDisabled}
-        activeOpacity={0.7}
-        style={[
+        android_ripple={{ color: "rgba(255,255,255,0.2)", borderless: false }}
+        style={({ pressed }) => [
           {
             flexDirection: "row",
             alignItems: "center",
@@ -92,10 +89,10 @@ export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, Butt
             paddingHorizontal: s.px,
             paddingVertical: s.py,
             borderRadius: s.radius,
-            opacity: isDisabled ? 0.5 : 1,
+            opacity: isDisabled ? 0.5 : pressed ? 0.8 : 1,
             ...(variant === "outline" ? { borderWidth: 1, borderColor: "#D1D5DB" } : {}),
           },
-          style as any,
+          typeof style === "function" ? style({ pressed }) : style,
         ]}
         {...props}
       >
@@ -122,7 +119,7 @@ export const Button = forwardRef<React.ElementRef<typeof TouchableOpacity>, Butt
         ) : (
           children
         )}
-      </RNTouchableOpacity>
+      </Pressable>
     );
   },
 );

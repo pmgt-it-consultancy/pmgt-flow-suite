@@ -1,14 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import {
-  Pressable,
   Modal as RNModal,
   type ModalProps as RNModalProps,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
 import { Text } from "./Text";
@@ -93,13 +91,17 @@ export const Modal = ({
                       )}
                     </YStack>
                     {showCloseButton && onClose && (
-                      <TouchableOpacity
+                      <Pressable
+                        android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                         onPress={onClose}
-                        style={{ padding: 8, marginRight: -8 }}
+                        style={({ pressed }) => [
+                          { padding: 8, marginRight: -8 },
+                          { opacity: pressed ? 0.7 : 1 },
+                        ]}
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                       >
                         <Ionicons name="close" size={24} color="#6B7280" />
-                      </TouchableOpacity>
+                      </Pressable>
                     )}
                   </XStack>
                 )}
@@ -122,13 +124,17 @@ export const Modal = ({
                       )}
                     </YStack>
                     {showCloseButton && onClose && (
-                      <TouchableOpacity
+                      <Pressable
+                        android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                         onPress={onClose}
-                        style={{ padding: 8, marginRight: -8 }}
+                        style={({ pressed }) => [
+                          { padding: 8, marginRight: -8 },
+                          { opacity: pressed ? 0.7 : 1 },
+                        ]}
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                       >
                         <Ionicons name="close" size={24} color="#6B7280" />
-                      </TouchableOpacity>
+                      </Pressable>
                     )}
                   </XStack>
                 )}

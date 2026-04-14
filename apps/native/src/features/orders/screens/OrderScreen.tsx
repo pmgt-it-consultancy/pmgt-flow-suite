@@ -4,14 +4,8 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import * as Crypto from "expo-crypto";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Modal,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { ActivityIndicator, Alert, FlatList, Modal, TextInput } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
@@ -964,13 +958,17 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
               autoFocus
             />
             <XStack gap={12}>
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  backgroundColor: "#E5E7EB",
-                  borderRadius: 8,
-                  paddingVertical: 12,
-                }}
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+                style={({ pressed }) => [
+                  {
+                    flex: 1,
+                    backgroundColor: "#E5E7EB",
+                    borderRadius: 8,
+                    paddingVertical: 12,
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
                 onPress={() => {
                   setShowPaxModal(false);
                   setPendingPaxAction(null);
@@ -979,21 +977,25 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
                 <Text style={{ textAlign: "center", fontWeight: "600", color: "#374151" }}>
                   Cancel
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 disabled={isSending || isUpdatingPax}
-                style={{
-                  flex: 1,
-                  backgroundColor: isSending || isUpdatingPax ? "#93C5FD" : "#0D87E1",
-                  borderRadius: 8,
-                  paddingVertical: 12,
-                }}
+                style={({ pressed }) => [
+                  {
+                    flex: 1,
+                    backgroundColor: isSending || isUpdatingPax ? "#93C5FD" : "#0D87E1",
+                    borderRadius: 8,
+                    paddingVertical: 12,
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
                 onPress={handlePaxConfirm}
               >
                 <Text style={{ textAlign: "center", fontWeight: "600", color: "#FFFFFF" }}>
                   Confirm
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </XStack>
           </YStack>
         </YStack>

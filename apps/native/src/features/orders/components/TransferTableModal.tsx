@@ -3,7 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
-import { Alert, FlatList, TouchableOpacity } from "react-native";
+import { Alert, FlatList } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { LoadingState, Modal, Text } from "../../shared/components/ui";
 
@@ -66,18 +67,22 @@ export const TransferTableModal = ({
           data={availableTables}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               onPress={() => handleTransfer(item._id, item.name)}
               disabled={isTransferring}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingVertical: 12,
-                paddingHorizontal: 12,
-                borderBottomWidth: 1,
-                borderBottomColor: "#F3F4F6",
-              }}
+              style={({ pressed }) => [
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingVertical: 12,
+                  paddingHorizontal: 12,
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#F3F4F6",
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
             >
               <XStack alignItems="center">
                 <Ionicons name="grid-outline" size={20} color="#6B7280" />
@@ -88,7 +93,7 @@ export const TransferTableModal = ({
               {item.capacity && (
                 <Text style={{ color: "#9CA3AF", fontSize: 12 }}>{item.capacity} seats</Text>
               )}
-            </TouchableOpacity>
+            </Pressable>
           )}
           style={{ maxHeight: 300 }}
         />

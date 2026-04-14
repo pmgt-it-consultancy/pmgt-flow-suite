@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { Alert, TouchableOpacity } from "react-native";
+import { Alert } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -45,7 +46,7 @@ export function DraftOrderCard({
   };
 
   return (
-    <TouchableOpacity onPress={() => onResume(id)} activeOpacity={0.7}>
+    <Pressable onPress={() => onResume(id)}>
       <YStack
         backgroundColor="#FEF3C7"
         borderWidth={2}
@@ -64,12 +65,13 @@ export function DraftOrderCard({
             </Text>
           </YStack>
           <XStack gap={8} alignItems="center">
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               onPress={handleDiscard}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Ionicons name="trash-outline" size={20} color="#DC2626" />
-            </TouchableOpacity>
+            </Pressable>
             <XStack
               backgroundColor="#F59E0B"
               borderRadius={8}
@@ -81,6 +83,6 @@ export function DraftOrderCard({
           </XStack>
         </XStack>
       </YStack>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

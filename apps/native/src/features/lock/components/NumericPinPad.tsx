@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 
@@ -64,46 +65,52 @@ export function NumericPinPad({
 
     if (value === "backspace") {
       return (
-        <TouchableOpacity
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
           key={key}
           onPress={handleBackspace}
           disabled={disabled}
-          activeOpacity={0.7}
-          style={{
-            width: keyWidth,
-            height: keyHeight,
-            borderRadius: keyRadius,
-            backgroundColor: "#FEE2E2",
-            alignItems: "center",
-            justifyContent: "center",
-            opacity: disabled ? 0.5 : 1,
-          }}
+          style={({ pressed }) => [
+            {
+              width: keyWidth,
+              height: keyHeight,
+              borderRadius: keyRadius,
+              backgroundColor: "#FEE2E2",
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: disabled ? 0.5 : 1,
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
         >
           <Ionicons name="backspace-outline" size={backspaceSize} color="#EF4444" />
-        </TouchableOpacity>
+        </Pressable>
       );
     }
 
     return (
-      <TouchableOpacity
+      <Pressable
+        android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
         key={key}
         onPress={() => handlePress(value)}
         disabled={disabled}
-        activeOpacity={0.7}
-        style={{
-          width: keyWidth,
-          height: keyHeight,
-          borderRadius: keyRadius,
-          backgroundColor: "#FFFFFF",
-          borderWidth: 1,
-          borderColor: "#E5E7EB",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: disabled ? 0.5 : 1,
-        }}
+        style={({ pressed }) => [
+          {
+            width: keyWidth,
+            height: keyHeight,
+            borderRadius: keyRadius,
+            backgroundColor: "#FFFFFF",
+            borderWidth: 1,
+            borderColor: "#E5E7EB",
+            alignItems: "center",
+            justifyContent: "center",
+            opacity: disabled ? 0.5 : 1,
+          },
+          { opacity: pressed ? 0.7 : 1 },
+        ]}
       >
         <Text style={{ fontSize: pinFontSize, fontWeight: "500", color: "#111827" }}>{value}</Text>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 

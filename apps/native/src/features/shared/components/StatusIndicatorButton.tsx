@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Pressable } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,

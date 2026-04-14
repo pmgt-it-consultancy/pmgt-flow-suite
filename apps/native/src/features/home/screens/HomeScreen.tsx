@@ -2,7 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { useLockStore } from "../../lock/stores/useLockStore";
@@ -519,7 +520,7 @@ function ActionPanel({
   const footerColor = filled ? "rgba(255,255,255,0.82)" : "#9A3412";
 
   return (
-    <TouchableOpacity activeOpacity={0.88} onPress={onPress} style={{ flex: 1 }}>
+    <Pressable onPress={onPress} style={{ flex: 1 }}>
       <YStack
         flex={1}
         backgroundColor={backgroundColor}
@@ -610,7 +611,7 @@ function ActionPanel({
           </XStack>
         </YStack>
       </YStack>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

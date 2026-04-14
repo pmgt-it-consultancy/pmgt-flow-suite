@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { memo, useState } from "react";
-import { ActivityIndicator, TouchableOpacity } from "react-native";
+import { ActivityIndicator } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
@@ -127,20 +128,23 @@ export const CartItem = memo(
                   </Text>
                 </YStack>
                 {onVoidItem && (
-                  <TouchableOpacity
+                  <Pressable
+                    android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                     onPress={() => onVoidItem(id)}
-                    activeOpacity={0.7}
-                    style={{
-                      backgroundColor: "#FEF2F2",
-                      paddingHorizontal: 14,
-                      paddingVertical: 8,
-                      borderRadius: 8,
-                      borderWidth: 1,
-                      borderColor: "#FECACA",
-                    }}
+                    style={({ pressed }) => [
+                      {
+                        backgroundColor: "#FEF2F2",
+                        paddingHorizontal: 14,
+                        paddingVertical: 8,
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        borderColor: "#FECACA",
+                      },
+                      { opacity: pressed ? 0.7 : 1 },
+                    ]}
                   >
                     <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 13 }}>Void</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 )}
               </XStack>
               <XStack
@@ -150,14 +154,17 @@ export const CartItem = memo(
                 borderColor="#E5E7EB"
                 opacity={0.5}
               >
-                <TouchableOpacity
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   disabled
-                  activeOpacity={1}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 10,
-                    backgroundColor: currentServiceType === "dine_in" ? "#DBEAFE" : "white",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      paddingVertical: 6,
+                      paddingHorizontal: 10,
+                      backgroundColor: currentServiceType === "dine_in" ? "#DBEAFE" : "white",
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   <Text
                     style={{
@@ -168,17 +175,20 @@ export const CartItem = memo(
                   >
                     DINE IN
                   </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
+                </Pressable>
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   disabled
-                  activeOpacity={1}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 10,
-                    borderLeftWidth: 1,
-                    borderLeftColor: "#E5E7EB",
-                    backgroundColor: currentServiceType === "takeout" ? "#DBEAFE" : "white",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      paddingVertical: 6,
+                      paddingHorizontal: 10,
+                      borderLeftWidth: 1,
+                      borderLeftColor: "#E5E7EB",
+                      backgroundColor: currentServiceType === "takeout" ? "#DBEAFE" : "white",
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   <Text
                     style={{
@@ -189,26 +199,29 @@ export const CartItem = memo(
                   >
                     TAKEOUT
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               </XStack>
             </>
           ) : (
             <>
               <XStack alignItems="center" gap={8}>
-                <TouchableOpacity
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   onPress={() => onDecrement(id, quantity)}
-                  activeOpacity={0.7}
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 10,
-                    backgroundColor: "#FEE2E2",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      width: 44,
+                      height: 44,
+                      borderRadius: 10,
+                      backgroundColor: "#FEE2E2",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   <Ionicons name="remove" size={22} color="#EF4444" />
-                </TouchableOpacity>
+                </Pressable>
 
                 <YStack
                   minWidth={48}
@@ -223,20 +236,23 @@ export const CartItem = memo(
                   </Text>
                 </YStack>
 
-                <TouchableOpacity
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   onPress={() => onIncrement(id, quantity)}
-                  activeOpacity={0.7}
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 10,
-                    backgroundColor: "#DCFCE7",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      width: 44,
+                      height: 44,
+                      borderRadius: 10,
+                      backgroundColor: "#DCFCE7",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   <Ionicons name="add" size={22} color="#22C55E" />
-                </TouchableOpacity>
+                </Pressable>
               </XStack>
               <XStack
                 borderRadius={8}
@@ -245,19 +261,22 @@ export const CartItem = memo(
                 borderColor="#E5E7EB"
                 opacity={isUpdatingServiceType ? 0.6 : 1}
               >
-                <TouchableOpacity
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   onPress={() => handleServiceTypePress("dine_in")}
                   disabled={isUpdatingServiceType}
-                  activeOpacity={0.7}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 10,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    minWidth: 52,
-                    minHeight: 24,
-                    backgroundColor: currentServiceType === "dine_in" ? "#DBEAFE" : "white",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      paddingVertical: 6,
+                      paddingHorizontal: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minWidth: 52,
+                      minHeight: 24,
+                      backgroundColor: currentServiceType === "dine_in" ? "#DBEAFE" : "white",
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   {isUpdatingServiceType && currentServiceType !== "dine_in" ? (
                     <ActivityIndicator size="small" color="#0D87E1" />
@@ -272,22 +291,25 @@ export const CartItem = memo(
                       DINE IN
                     </Text>
                   )}
-                </TouchableOpacity>
-                <TouchableOpacity
+                </Pressable>
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   onPress={() => handleServiceTypePress("takeout")}
                   disabled={isUpdatingServiceType}
-                  activeOpacity={0.7}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 10,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    minWidth: 62,
-                    minHeight: 24,
-                    borderLeftWidth: 1,
-                    borderLeftColor: "#E5E7EB",
-                    backgroundColor: currentServiceType === "takeout" ? "#DBEAFE" : "white",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      paddingVertical: 6,
+                      paddingHorizontal: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minWidth: 62,
+                      minHeight: 24,
+                      borderLeftWidth: 1,
+                      borderLeftColor: "#E5E7EB",
+                      backgroundColor: currentServiceType === "takeout" ? "#DBEAFE" : "white",
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   {isUpdatingServiceType && currentServiceType !== "takeout" ? (
                     <ActivityIndicator size="small" color="#0D87E1" />
@@ -302,7 +324,7 @@ export const CartItem = memo(
                       TAKEOUT
                     </Text>
                   )}
-                </TouchableOpacity>
+                </Pressable>
               </XStack>
             </>
           )}

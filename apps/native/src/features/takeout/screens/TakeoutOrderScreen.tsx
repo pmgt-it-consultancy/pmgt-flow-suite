@@ -4,7 +4,8 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ActivityIndicator, Alert, FlatList, TextInput, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, FlatList, TextInput } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import type { SelectedModifier } from "../../orders/components";
@@ -580,26 +581,29 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
           >
             {/* Order Category Toggle */}
             <XStack gap={10} paddingHorizontal={16} paddingTop={12}>
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 onPress={() => handleCategoryChange("dine_in")}
-                activeOpacity={0.8}
-                style={{
-                  flex: 1,
-                  paddingVertical: 14,
-                  borderRadius: 12,
-                  backgroundColor: orderCategory === "dine_in" ? "#F97316" : "#F3F4F6",
-                  borderWidth: orderCategory === "dine_in" ? 0 : 1.5,
-                  borderColor: "#E5E7EB",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "row",
-                  gap: 8,
-                  shadowColor: orderCategory === "dine_in" ? "#F97316" : "transparent",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 4,
-                  elevation: orderCategory === "dine_in" ? 3 : 0,
-                }}
+                style={({ pressed }) => [
+                  {
+                    flex: 1,
+                    paddingVertical: 14,
+                    borderRadius: 12,
+                    backgroundColor: orderCategory === "dine_in" ? "#F97316" : "#F3F4F6",
+                    borderWidth: orderCategory === "dine_in" ? 0 : 1.5,
+                    borderColor: "#E5E7EB",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "row",
+                    gap: 8,
+                    shadowColor: orderCategory === "dine_in" ? "#F97316" : "transparent",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                    elevation: orderCategory === "dine_in" ? 3 : 0,
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
               >
                 <Ionicons
                   name="restaurant-outline"
@@ -615,27 +619,30 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 >
                   Dine-in
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 onPress={() => handleCategoryChange("takeout")}
-                activeOpacity={0.8}
-                style={{
-                  flex: 1,
-                  paddingVertical: 14,
-                  borderRadius: 12,
-                  backgroundColor: orderCategory === "takeout" ? "#F97316" : "#F3F4F6",
-                  borderWidth: orderCategory === "takeout" ? 0 : 1.5,
-                  borderColor: "#E5E7EB",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "row",
-                  gap: 8,
-                  shadowColor: orderCategory === "takeout" ? "#F97316" : "transparent",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 4,
-                  elevation: orderCategory === "takeout" ? 3 : 0,
-                }}
+                style={({ pressed }) => [
+                  {
+                    flex: 1,
+                    paddingVertical: 14,
+                    borderRadius: 12,
+                    backgroundColor: orderCategory === "takeout" ? "#F97316" : "#F3F4F6",
+                    borderWidth: orderCategory === "takeout" ? 0 : 1.5,
+                    borderColor: "#E5E7EB",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "row",
+                    gap: 8,
+                    shadowColor: orderCategory === "takeout" ? "#F97316" : "transparent",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                    elevation: orderCategory === "takeout" ? 3 : 0,
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
               >
                 <Ionicons
                   name="bag-handle-outline"
@@ -651,7 +658,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 >
                   Takeout
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </XStack>
 
             {/* Table Marker + Customer Name Row */}
@@ -849,24 +856,27 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
             {/* Action Buttons */}
             {isOpenTakeout && hasUnsentItems && (
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 onPress={handleSendToKitchen}
                 disabled={!hasItems || isSending}
-                activeOpacity={0.8}
-                style={{
-                  backgroundColor: hasItems && !isSending ? "#F97316" : "#CBD5E1",
-                  borderRadius: 12,
-                  paddingVertical: 16,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 10,
-                  shadowColor: hasItems ? "#F97316" : "transparent",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 8,
-                  elevation: hasItems ? 4 : 0,
-                }}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: hasItems && !isSending ? "#F97316" : "#CBD5E1",
+                    borderRadius: 12,
+                    paddingVertical: 16,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 10,
+                    shadowColor: hasItems ? "#F97316" : "transparent",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: hasItems ? 4 : 0,
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
               >
                 <Ionicons
                   name="restaurant-outline"
@@ -877,24 +887,27 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 17 }}>
                   Send to Kitchen
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             )}
             {isAdvanceOrder && !hasUnsentItems && (
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 onPress={handleReprintKitchenReceipt}
                 disabled={isSending}
-                activeOpacity={0.7}
-                style={{
-                  backgroundColor: isSending ? "#9CA3AF" : "#FFF7ED",
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: "#FDBA74",
-                  paddingVertical: 14,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 10,
-                }}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: isSending ? "#9CA3AF" : "#FFF7ED",
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    borderColor: "#FDBA74",
+                    paddingVertical: 14,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 10,
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
               >
                 <Ionicons
                   name="print-outline"
@@ -911,58 +924,64 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 >
                   {isSending ? "Printing..." : "Reprint Kitchen Receipt"}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             )}
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               onPress={handleCheckout}
               disabled={!hasItems || isSending}
-              activeOpacity={0.8}
-              style={{
-                backgroundColor:
-                  hasItems && !isSending
+              style={({ pressed }) => [
+                {
+                  backgroundColor:
+                    hasItems && !isSending
+                      ? isOpenTakeout && hasUnsentItems
+                        ? "#0D87E1"
+                        : "#F97316"
+                      : "#CBD5E1",
+                  borderRadius: 12,
+                  paddingVertical: 16,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  shadowColor: hasItems
                     ? isOpenTakeout && hasUnsentItems
                       ? "#0D87E1"
                       : "#F97316"
-                    : "#CBD5E1",
-                borderRadius: 12,
-                paddingVertical: 16,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                shadowColor: hasItems
-                  ? isOpenTakeout && hasUnsentItems
-                    ? "#0D87E1"
-                    : "#F97316"
-                  : "transparent",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: hasItems ? 4 : 0,
-              }}
+                    : "transparent",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: hasItems ? 4 : 0,
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
             >
               <Ionicons name="card-outline" size={22} color="#FFFFFF" style={{ marginRight: 10 }} />
               <Text style={{ color: "#FFFFFF", fontWeight: "700", fontSize: 17 }}>
                 Proceed to Payment
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
               onPress={handleCancelOrder}
               disabled={isCancelling}
-              activeOpacity={0.7}
-              style={{
-                marginTop: 12,
-                paddingVertical: 14,
-                paddingHorizontal: 20,
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "row",
-                backgroundColor: "#FEF2F2",
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: "#FECACA",
-                opacity: isCancelling ? 0.6 : 1,
-              }}
+              style={({ pressed }) => [
+                {
+                  marginTop: 12,
+                  paddingVertical: 14,
+                  paddingHorizontal: 20,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "row",
+                  backgroundColor: "#FEF2F2",
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: "#FECACA",
+                  opacity: isCancelling ? 0.6 : 1,
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
             >
               <Ionicons
                 name="close-circle-outline"
@@ -973,7 +992,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
               <Text style={{ color: "#DC2626", fontWeight: "600", fontSize: 15 }}>
                 {isCancelling ? "Cancelling..." : "Cancel Order"}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </YStack>
         </YStack>
       </XStack>

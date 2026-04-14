@@ -4,7 +4,8 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAction } from "convex/react";
 import Constants from "expo-constants";
 import { useEffect } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, ScrollView, Text } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import type { RootStackParamList } from "../../../navigation/Navigation";
 import { PageHeader } from "../../shared/components/PageHeader";
@@ -80,19 +81,23 @@ export function UpdatesScreen({ navigation }: Props) {
 
             {/* Download / Progress / Install */}
             {downloadStatus === "idle" && (
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 onPress={handleDownload}
-                style={{
-                  backgroundColor: "#0D87E1",
-                  borderRadius: 8,
-                  paddingVertical: 12,
-                  alignItems: "center",
-                }}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: "#0D87E1",
+                    borderRadius: 8,
+                    paddingVertical: 12,
+                    alignItems: "center",
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
               >
                 <Text style={{ color: "#FFFFFF", fontWeight: "600", fontSize: 16 }}>
                   Download Update
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             )}
 
             {downloadStatus === "downloading" && (
@@ -115,19 +120,23 @@ export function UpdatesScreen({ navigation }: Props) {
             )}
 
             {downloadStatus === "completed" && (
-              <TouchableOpacity
+              <Pressable
+                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                 onPress={handleInstall}
-                style={{
-                  backgroundColor: "#22C55E",
-                  borderRadius: 8,
-                  paddingVertical: 12,
-                  alignItems: "center",
-                }}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: "#22C55E",
+                    borderRadius: 8,
+                    paddingVertical: 12,
+                    alignItems: "center",
+                  },
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
               >
                 <Text style={{ color: "#FFFFFF", fontWeight: "600", fontSize: 16 }}>
                   Install Update
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             )}
 
             {downloadStatus === "failed" && (
@@ -135,19 +144,23 @@ export function UpdatesScreen({ navigation }: Props) {
                 <Text style={{ color: "#EF4444", fontSize: 14, marginBottom: 8 }}>
                   {error ?? "Download failed"}
                 </Text>
-                <TouchableOpacity
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                   onPress={handleDownload}
-                  style={{
-                    backgroundColor: "#EF4444",
-                    borderRadius: 8,
-                    paddingVertical: 12,
-                    alignItems: "center",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      backgroundColor: "#EF4444",
+                      borderRadius: 8,
+                      paddingVertical: 12,
+                      alignItems: "center",
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   <Text style={{ color: "#FFFFFF", fontWeight: "600", fontSize: 16 }}>
                     Retry Download
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               </YStack>
             )}
           </YStack>
@@ -177,17 +190,21 @@ export function UpdatesScreen({ navigation }: Props) {
 
         {/* Check for Updates Button */}
         {!isChecking && (
-          <TouchableOpacity
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
             onPress={handleCheck}
-            style={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: 12,
-              paddingVertical: 16,
-              alignItems: "center",
-            }}
+            style={({ pressed }) => [
+              {
+                backgroundColor: "#FFFFFF",
+                borderRadius: 12,
+                paddingVertical: 16,
+                alignItems: "center",
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
           >
             <Text style={{ fontWeight: "600", color: "#0D87E1" }}>Check for Updates</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       </ScrollView>
     </YStack>

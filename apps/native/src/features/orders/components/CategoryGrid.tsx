@@ -3,7 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, TouchableOpacity } from "react-native";
+import { FlatList } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
 import { LoadingState, Text } from "../../shared/components/ui";
 import { CategoryTile } from "./CategoryTile";
@@ -208,21 +209,24 @@ export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGri
       ) : (
         <>
           {nav.level > 0 && !searchQuery && (
-            <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-              }}
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+              style={({ pressed }) => [
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
               onPress={handleBack}
-              activeOpacity={0.7}
             >
               <Ionicons name="arrow-back" size={20} color="#0D87E1" />
               <Text style={{ color: "#0D87E1", fontWeight: "600", fontSize: 14, marginLeft: 6 }}>
                 {nav.level === 1 ? "Categories" : nav.categoryName}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
 
           <FlatList

@@ -3,14 +3,8 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import Constants from "expo-constants";
 import { useMemo, useState } from "react";
-import {
-  Alert,
-  Pressable,
-  Modal as RNModal,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Modal as RNModal, ScrollView, View } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
@@ -85,16 +79,20 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
       {/* Settings List */}
       <ScrollView>
         {/* Printers */}
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#FFFFFF",
-            paddingHorizontal: 16,
-            paddingVertical: 16,
-            flexDirection: "row",
-            alignItems: "center",
-            borderBottomWidth: 1,
-            borderBottomColor: "#F3F4F6",
-          }}
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: "#FFFFFF",
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              flexDirection: "row",
+              alignItems: "center",
+              borderBottomWidth: 1,
+              borderBottomColor: "#F3F4F6",
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
           onPress={() => navigation.navigate("PrinterSettingsScreen")}
         >
           <YStack
@@ -114,19 +112,23 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
             </Text>
           </YStack>
           <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-        </TouchableOpacity>
+        </Pressable>
 
         {/* Check for Updates */}
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#FFFFFF",
-            paddingHorizontal: 16,
-            paddingVertical: 16,
-            flexDirection: "row",
-            alignItems: "center",
-            borderBottomWidth: 1,
-            borderBottomColor: "#F3F4F6",
-          }}
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: "#FFFFFF",
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              flexDirection: "row",
+              alignItems: "center",
+              borderBottomWidth: 1,
+              borderBottomColor: "#F3F4F6",
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
           onPress={() => navigation.navigate("UpdatesScreen")}
         >
           <YStack
@@ -146,19 +148,23 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
             </Text>
           </YStack>
           <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#FFFFFF",
-            paddingHorizontal: 16,
-            paddingVertical: 16,
-            flexDirection: "row",
-            alignItems: "center",
-            borderBottomWidth: 1,
-            borderBottomColor: "#F3F4F6",
-            opacity: canManageAutoLock ? 1 : 0.7,
-          }}
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: "#FFFFFF",
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              flexDirection: "row",
+              alignItems: "center",
+              borderBottomWidth: 1,
+              borderBottomColor: "#F3F4F6",
+              opacity: canManageAutoLock ? 1 : 0.7,
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
           onPress={handleOpenTimeoutPicker}
         >
           <YStack
@@ -179,7 +185,7 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
             </Text>
           </YStack>
           <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
 
       <RNModal
@@ -190,12 +196,16 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
         <Pressable
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.4)",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+          style={({ pressed }) => [
+            {
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.4)",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
           onPress={() => setShowTimeoutPicker(false)}
         >
           <Pressable onPress={() => {}}>
@@ -220,18 +230,22 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
               </View>
               <ScrollView>
                 {timeoutOptions.map((option) => (
-                  <TouchableOpacity
+                  <Pressable
+                    android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
                     key={option.value}
-                    style={{
-                      paddingHorizontal: 20,
-                      paddingVertical: 16,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      backgroundColor: autoLockTimeout === option.value ? "#EFF6FF" : "#FFFFFF",
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#F3F4F6",
-                    }}
+                    style={({ pressed }) => [
+                      {
+                        paddingHorizontal: 20,
+                        paddingVertical: 16,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        backgroundColor: autoLockTimeout === option.value ? "#EFF6FF" : "#FFFFFF",
+                        borderBottomWidth: 1,
+                        borderBottomColor: "#F3F4F6",
+                      },
+                      { opacity: pressed ? 0.7 : 1 },
+                    ]}
                     onPress={() => handleSetTimeout(option.value)}
                   >
                     <Text
@@ -246,7 +260,7 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
                     {autoLockTimeout === option.value && (
                       <Ionicons name="checkmark" size={20} color="#0D87E1" />
                     )}
-                  </TouchableOpacity>
+                  </Pressable>
                 ))}
               </ScrollView>
             </View>
