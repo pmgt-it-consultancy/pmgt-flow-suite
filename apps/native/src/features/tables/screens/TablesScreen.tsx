@@ -197,24 +197,27 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     );
   }
 
-  const renderTable = ({ item }: { item: NonNullable<typeof tablesWithOrders>[number] }) => {
-    const isOccupied = item.orders.length > 0;
+  const renderTable = useCallback(
+    ({ item }: { item: NonNullable<typeof tablesWithOrders>[number] }) => {
+      const isOccupied = item.orders.length > 0;
 
-    return (
-      <TableCard
-        id={item._id}
-        name={item.name}
-        capacity={item.capacity ?? 0}
-        isOccupied={isOccupied}
-        orders={item.orders}
-        totalTabs={item.totalTabs}
-        totalItemCount={item.totalItemCount}
-        totalNetSales={item.totalNetSales}
-        onPress={handleSelectTable}
-        onUpdatePax={isOccupied ? handleUpdatePax : undefined}
-      />
-    );
-  };
+      return (
+        <TableCard
+          id={item._id}
+          name={item.name}
+          capacity={item.capacity ?? 0}
+          isOccupied={isOccupied}
+          orders={item.orders}
+          totalTabs={item.totalTabs}
+          totalItemCount={item.totalItemCount}
+          totalNetSales={item.totalNetSales}
+          onPress={handleSelectTable}
+          onUpdatePax={isOccupied ? handleUpdatePax : undefined}
+        />
+      );
+    },
+    [handleSelectTable, handleUpdatePax],
+  );
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">

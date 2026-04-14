@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import { memo } from "react";
 import { TouchableOpacity } from "react-native";
 import { XStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
@@ -11,7 +12,7 @@ interface CategoryTileProps {
   onPress: (categoryId: Id<"categories">) => void;
 }
 
-export const CategoryTile = ({ id, name, itemCount, onPress }: CategoryTileProps) => {
+export const CategoryTile = memo(({ id, name, itemCount, onPress }: CategoryTileProps) => {
   return (
     <TouchableOpacity
       style={{
@@ -43,4 +44,4 @@ export const CategoryTile = ({ id, name, itemCount, onPress }: CategoryTileProps
       </Text>
     </TouchableOpacity>
   );
-};
+});

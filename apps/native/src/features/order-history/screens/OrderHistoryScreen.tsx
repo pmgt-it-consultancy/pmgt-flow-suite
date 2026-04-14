@@ -114,80 +114,83 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
     { key: "voided", label: "Voided" },
   ];
 
-  const renderOrder = ({ item }: { item: NonNullable<typeof orders>[number] }) => {
-    const orderTypeLabel = item.orderType === "dine_in" ? "Dine-In" : "Take-out";
-    const displayName = item.tableName ?? item.customerName ?? "";
-    const statusVariant =
-      item.status === "paid" ? "success" : item.status === "voided" ? "error" : "default";
-    const paymentIcon =
-      item.paymentMethod === "cash"
-        ? "cash-outline"
-        : item.paymentMethod === "card_ewallet"
-          ? "card-outline"
-          : undefined;
+  const renderOrder = useCallback(
+    ({ item }: { item: NonNullable<typeof orders>[number] }) => {
+      const orderTypeLabel = item.orderType === "dine_in" ? "Dine-In" : "Take-out";
+      const displayName = item.tableName ?? item.customerName ?? "";
+      const statusVariant =
+        item.status === "paid" ? "success" : item.status === "voided" ? "error" : "default";
+      const paymentIcon =
+        item.paymentMethod === "cash"
+          ? "cash-outline"
+          : item.paymentMethod === "card_ewallet"
+            ? "card-outline"
+            : undefined;
 
-    return (
-      <TouchableOpacity
-        style={{
-          backgroundColor: "#FFFFFF",
-          marginHorizontal: 12,
-          marginBottom: 8,
-          padding: 16,
-          borderRadius: 12,
-          borderWidth: 1,
-          borderColor: "#F3F4F6",
-        }}
-        activeOpacity={0.7}
-        onPress={() => handleSelectOrder(item._id)}
-      >
-        <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={8}>
-          <XStack alignItems="center" gap={8}>
+      return (
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#FFFFFF",
+            marginHorizontal: 12,
+            marginBottom: 8,
+            padding: 16,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: "#F3F4F6",
+          }}
+          activeOpacity={0.7}
+          onPress={() => handleSelectOrder(item._id)}
+        >
+          <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={8}>
+            <XStack alignItems="center" gap={8}>
+              <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>
+                #{item.orderNumber}
+              </Text>
+              <Badge variant={statusVariant}>
+                {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+              </Badge>
+            </XStack>
             <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>
-              #{item.orderNumber}
-            </Text>
-            <Badge variant={statusVariant}>
-              {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-            </Badge>
-          </XStack>
-          <Text style={{ color: "#111827", fontWeight: "700", fontSize: 16 }}>
-            {formatCurrency(item.netSales)}
-          </Text>
-        </XStack>
-
-        <XStack alignItems="center" gap={12}>
-          <XStack alignItems="center" gap={4}>
-            <Ionicons
-              name={item.orderType === "dine_in" ? "restaurant-outline" : "bag-handle-outline"}
-              size={14}
-              color="#6B7280"
-            />
-            <Text variant="muted" size="sm">
-              {orderTypeLabel}
+              {formatCurrency(item.netSales)}
             </Text>
           </XStack>
 
-          {displayName ? (
-            <Text variant="muted" size="sm">
-              {displayName}
-            </Text>
-          ) : null}
-
-          {paymentIcon ? (
+          <XStack alignItems="center" gap={12}>
             <XStack alignItems="center" gap={4}>
-              <Ionicons name={paymentIcon as any} size={14} color="#6B7280" />
+              <Ionicons
+                name={item.orderType === "dine_in" ? "restaurant-outline" : "bag-handle-outline"}
+                size={14}
+                color="#6B7280"
+              />
               <Text variant="muted" size="sm">
-                {item.paymentMethod === "cash" ? "Cash" : "Card"}
+                {orderTypeLabel}
               </Text>
             </XStack>
-          ) : null}
 
-          <Text variant="muted" size="sm">
-            {formatTime(item.createdAt)}
-          </Text>
-        </XStack>
-      </TouchableOpacity>
-    );
-  };
+            {displayName ? (
+              <Text variant="muted" size="sm">
+                {displayName}
+              </Text>
+            ) : null}
+
+            {paymentIcon ? (
+              <XStack alignItems="center" gap={4}>
+                <Ionicons name={paymentIcon as any} size={14} color="#6B7280" />
+                <Text variant="muted" size="sm">
+                  {item.paymentMethod === "cash" ? "Cash" : "Card"}
+                </Text>
+              </XStack>
+            ) : null}
+
+            <Text variant="muted" size="sm">
+              {formatTime(item.createdAt)}
+            </Text>
+          </XStack>
+        </TouchableOpacity>
+      );
+    },
+    [formatCurrency, handleSelectOrder, formatTime],
+  );
 
   return (
     <YStack flex={1} backgroundColor="#F3F4F6">

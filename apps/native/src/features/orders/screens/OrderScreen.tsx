@@ -66,6 +66,15 @@ interface DraftItem {
 
 let draftIdCounter = 0;
 
+const cartEmptyComponent = (
+  <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
+    <Ionicons name="cart-outline" size={48} color="#D1D5DB" />
+    <Text variant="muted" style={{ marginTop: 8 }}>
+      No items in order
+    </Text>
+  </YStack>
+);
+
 export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const { tableId, storeId } = route.params;
   const [currentOrderId, setCurrentOrderId] = useState<Id<"orders"> | undefined>(
@@ -734,6 +743,28 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     }
   }, [tableId, storeId, createOrderMutation, navigation, currentTableName, isCreatingTab]);
 
+  const renderCartItem = useCallback(
+    ({ item }: { item: (typeof activeItems)[0] }) => (
+      <CartItem
+        id={item._id}
+        productName={item.productName}
+        productPrice={item.productPrice}
+        quantity={item.quantity}
+        lineTotal={item.lineTotal}
+        notes={item.notes}
+        modifiers={item.modifiers}
+        isSentToKitchen={item.isSentToKitchen}
+        serviceType={item.serviceType}
+        orderDefaultServiceType="dine_in"
+        onServiceTypeChange={handleServiceTypeChange}
+        onIncrement={handleIncrement}
+        onDecrement={handleDecrement}
+        onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
+      />
+    ),
+    [handleServiceTypeChange, handleIncrement, handleDecrement, handleVoidItem],
+  );
+
   if (isLoading || !isAuthenticated) {
     return (
       <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#F3F4F6">
@@ -811,33 +842,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
           <FlatList
             data={activeItems}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <CartItem
-                id={item._id}
-                productName={item.productName}
-                productPrice={item.productPrice}
-                quantity={item.quantity}
-                lineTotal={item.lineTotal}
-                notes={item.notes}
-                modifiers={item.modifiers}
-                isSentToKitchen={item.isSentToKitchen}
-                serviceType={item.serviceType}
-                orderDefaultServiceType="dine_in"
-                onServiceTypeChange={handleServiceTypeChange}
-                onIncrement={handleIncrement}
-                onDecrement={handleDecrement}
-                onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
-              />
-            )}
-            ListEmptyComponent={
-              <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
-                <Ionicons name="cart-outline" size={48} color="#D1D5DB" />
-                <Text variant="muted" style={{ marginTop: 8 }}>
-                  No items in order
-                </Text>
-              </YStack>
-            }
+            keyExtractor={(item) => String(item._id)}
+            renderItem={renderCartItem}
+            ListEmptyComponent={cartEmptyComponent}
           />
 
           <CartFooter
