@@ -1,4 +1,8 @@
 ## What's New
 
-- Send to Kitchen button now visible for all takeout orders — works on first-time sends and draft orders, not just running bills
-- Draft orders are auto-submitted when sending to kitchen directly
+- Native-thread touch handling — all buttons now use react-native-gesture-handler Pressable for instant press feedback even during heavy operations (printing, syncing)
+- Android ripple effect on all interactive buttons for clear material tap feedback
+- Memoized list items (cart, products, tables, orders) to prevent unnecessary re-renders
+- Virtualized active orders list on home screen for smoother scrolling during busy service
+- Hoisted currency formatter to module scope — eliminates repeated Intl.NumberFormat creation per list item
+- Stabilized FlatList render callbacks with useCallback across all screens
