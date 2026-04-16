@@ -1,49 +1,51 @@
 # Project Overview
 
 ## Purpose
-pmgt-flow-suite is a fullstack monorepo note-taking application with AI summarization. It features both web and mobile frontends that share a common backend.
+pmgt-flow-suite is a fullstack POS (Point of Sale) system for restaurant operations. It features order management, product catalog with modifiers, table management, takeout workflows, discount/void processing, receipt printing (Bluetooth ESC/POS), audit logging, and sales reporting.
 
 ## Tech Stack
-- **Monorepo Management**: Turborepo 2.6.2
-- **Package Manager**: Yarn 1.22.22
-- **Node.js**: >= 20.19.4
-- **Language**: TypeScript 5.9.3 (100% TypeScript)
+- **Monorepo Management**: Turborepo
+- **Package Manager**: pnpm (workspaces)
+- **Language**: TypeScript (100%)
 
 ### Web App (apps/web)
-- React 19.2.2
-- Next.js 16.0.9 with App Router
+- Next.js 16 with App Router
 - Tailwind CSS v4
-- Clerk authentication (@clerk/nextjs)
 - Radix UI components
+- React Hook Form + Zod (legacy pages), TanStack Form (migrated admin pages)
+- Zustand for client-side state
 
 ### Native App (apps/native)
-- React Native 0.82.1
-- Expo 54.0.25
-- React Navigation
-- Clerk authentication (@clerk/clerk-expo)
+- React Native 0.81 + Expo 54
+- Tamagui (UI/styling) with `@tamagui/config/v5` + `v5-reanimated`
+- React Navigation (bottom tabs + stack)
+- Zustand for local state
+- Bluetooth ESC/POS receipt printing
 
 ### Backend (packages/backend)
-- Convex 1.29.3 (hosted backend with reactive database)
-- OpenAI 6.9.1 (for AI note summarization)
+- Convex (hosted backend with reactive database)
+- `@convex-dev/auth` for authentication
+- Vitest + convex-test for testing
 
 ## Monorepo Structure
 ```
 pmgt-flow-suite/
 ├── apps/
-│   ├── web/              # Next.js web application
-│   └── native/           # React Native (Expo) mobile app
+│   ├── web/              # Next.js admin panel
+│   └── native/           # React Native POS app (Expo)
 ├── packages/
-│   └── backend/          # Convex backend (database + functions)
-├── turbo.json            # Turborepo configuration
-└── package.json          # Root workspace config
+│   ├── backend/          # Convex backend (schema, queries, mutations, actions, tests)
+│   └── shared/           # Shared utilities
+├── turbo.json
+└── package.json
 ```
 
 ## Data Flow
 1. Both frontends import `@packages/backend` for type-safe API access
 2. Convex client hooks (`useQuery`, `useMutation`) provide real-time data
-3. Authentication flows through Clerk with JWT tokens validated by Convex
-4. AI summarization runs as scheduled Convex actions using OpenAI
+3. Authentication via `@convex-dev/auth` with Convex Auth tables
+4. Money values are peso amounts with decimal precision (not integer centavos)
+5. Philippine VAT (12%) with vatable/non-vat/VAT-exempt classification
 
-## Database Schema
-Located in `packages/backend/convex/schema.ts`:
-- `notes` table: userId (string), title (string), content (string), summary (optional string)
+## Key Domain Tables
+`stores`, `products`, `categories`, `modifierGroups`, `modifierOptions`, `modifierGroupAssignments`, `orders`, `orderItems`, `orderItemModifiers`, `orderDiscounts`, `orderPayments`, `orderVoids`, `tables`, `roles`, `auditLogs`, `dailyReports`, `settings`
