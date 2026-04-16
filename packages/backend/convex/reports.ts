@@ -2,12 +2,8 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
-import {
-  getPHTDayBoundaries,
-  getPHTDayBoundariesForDate,
-  getPHTHour,
-  getPHTTimeBoundariesForDate,
-} from "./lib/dateUtils";
+import { getBusinessDayBoundariesForDate } from "./lib/businessDay";
+import { getPHTDayBoundaries, getPHTHour, getPHTTimeBoundariesForDate } from "./lib/dateUtils";
 import { requirePermission } from "./lib/permissions";
 import { cleanupExpiredDraftOrders } from "./orders";
 
@@ -1200,7 +1196,11 @@ export const getDashboardSummary = query({
       throw new Error("Authentication required");
     }
 
-    const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(args.reportDate);
+    const store = await ctx.db.get(args.storeId);
+    const { startOfDay, endOfDay } = getBusinessDayBoundariesForDate(
+      store?.schedule,
+      args.reportDate,
+    );
 
     const orders = await ctx.db
       .query("orders")
@@ -1265,7 +1265,11 @@ export const getTopSellingProductsLive = query({
       throw new Error("Authentication required");
     }
 
-    const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(args.reportDate);
+    const store = await ctx.db.get(args.storeId);
+    const { startOfDay, endOfDay } = getBusinessDayBoundariesForDate(
+      store?.schedule,
+      args.reportDate,
+    );
 
     const orders = await ctx.db
       .query("orders")
