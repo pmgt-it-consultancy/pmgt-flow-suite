@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
@@ -90,20 +90,39 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
     );
   }
 
-  const timeString = clock.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  const dateString = clock.toLocaleDateString([], {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
+  const timeString = useMemo(
+    () => clock.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    [clock],
+  );
+  const dateString = useMemo(
+    () =>
+      clock.toLocaleDateString([], {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      }),
+    [clock],
+  );
 
-  const dineInCount = activeOrders?.filter((order) => order.orderType === "dine_in").length ?? 0;
-  const takeoutCount = activeOrders?.filter((order) => order.orderType === "takeout").length ?? 0;
-  const totalOrders = activeOrders?.length ?? 0;
-  const averageTicket =
-    summary && summary.totalOrdersToday > 0
-      ? summary.todayRevenue / summary.totalOrdersToday
-      : null;
+  const { dineInCount, takeoutCount, totalOrders } = useMemo(() => {
+    if (!activeOrders) return { dineInCount: 0, takeoutCount: 0, totalOrders: 0 };
+    let dineIn = 0;
+    let takeout = 0;
+    for (const o of activeOrders) {
+      if (o.orderType === "dine_in") dineIn++;
+      else if (o.orderType === "takeout") takeout++;
+    }
+    return { dineInCount: dineIn, takeoutCount: takeout, totalOrders: activeOrders.length };
+  }, [activeOrders]);
+
+  const averageTicket = useMemo(
+    () =>
+      summary && summary.totalOrdersToday > 0
+        ? summary.todayRevenue / summary.totalOrdersToday
+        : null,
+    [summary],
+  );
+
   const permissions = user?.role?.permissions ?? [];
   const canUseDayClose = permissions.includes("reports.print_eod");
 
@@ -350,7 +369,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
   );
 };
 
-function ScoreCard({
+const ScoreCard = memo(function ScoreCard({
   value,
   label,
   detail,
@@ -418,9 +437,15 @@ function ScoreCard({
       </YStack>
     </YStack>
   );
-}
+});
 
-function RevenueCard({ value, average }: { value: string; average: string | null }) {
+const RevenueCard = memo(function RevenueCard({
+  value,
+  average,
+}: {
+  value: string;
+  average: string | null;
+}) {
   return (
     <YStack
       flex={1.2}
@@ -484,9 +509,9 @@ function RevenueCard({ value, average }: { value: string; average: string | null
       </YStack>
     </YStack>
   );
-}
+});
 
-function ActionPanel({
+const ActionPanel = memo(function ActionPanel({
   title,
   subtitle,
   icon,
@@ -613,9 +638,9 @@ function ActionPanel({
       </YStack>
     </Pressable>
   );
-}
+});
 
-function HeaderStat({
+const HeaderStat = memo(function HeaderStat({
   label,
   value,
   color,
@@ -637,6 +662,6 @@ function HeaderStat({
       </Text>
     </YStack>
   );
-}
+});
 
 export default HomeScreen;
