@@ -149,7 +149,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const updateItemServiceType = useMutation(api.orders.updateItemServiceType);
 
   // Printer
-  const { printKitchenTicket } = usePrinterStore();
+  const printKitchenTicket = usePrinterStore((s) => s.printKitchenTicket);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {

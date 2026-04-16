@@ -76,8 +76,10 @@ export const ReceiptPreviewModal = ({
   const [printResult, setPrintResult] = useState<"success" | "error" | null>(null);
   const [kitchenPrintResult, setKitchenPrintResult] = useState<"success" | "error" | null>(null);
   const [isKitchenPrinting, setIsKitchenPrinting] = useState(false);
-  const { printers, connectionStatus, connectPrinter, useReceiptPrinterForKitchen } =
-    usePrinterStore();
+  const printers = usePrinterStore((s) => s.printers);
+  const connectionStatus = usePrinterStore((s) => s.connectionStatus);
+  const connectPrinter = usePrinterStore((s) => s.connectPrinter);
+  const useReceiptPrinterForKitchen = usePrinterStore((s) => s.useReceiptPrinterForKitchen);
 
   // Reset print states whenever the modal opens so stale results don't persist
   useEffect(() => {
