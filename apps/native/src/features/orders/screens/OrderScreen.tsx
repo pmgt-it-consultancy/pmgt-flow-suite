@@ -24,6 +24,7 @@ import {
   ViewBillModal,
   VoidItemModal,
 } from "../components";
+import { useCartMutations } from "../hooks/useCartMutations";
 
 interface OrderScreenProps {
   navigation: any;
@@ -137,16 +138,18 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     : [];
 
   // Mutations
-  const addItem = useMutation(api.orders.addItem);
-  const updateItemQuantity = useMutation(api.orders.updateItemQuantity);
-  const removeItemMutation = useMutation(api.orders.removeItem);
+  const {
+    addItem,
+    updateItemQuantity,
+    removeItem: removeItemMutation,
+    updateItemServiceType,
+  } = useCartMutations();
   const cancelOrderMutation = useMutation(api.checkout.cancelOrder);
   const sendToKitchenMutation = useMutation(api.orders.sendToKitchen);
   const createAndSendMutation = useMutation(api.orders.createAndSendToKitchen);
   const createOrderMutation = useMutation(api.orders.create);
   const updatePaxMutation = useMutation(api.orders.updatePax);
   const updateTabNameMutation = useMutation(api.orders.updateTabName);
-  const updateItemServiceType = useMutation(api.orders.updateItemServiceType);
 
   // Printer
   const printKitchenTicket = usePrinterStore((s) => s.printKitchenTicket);
