@@ -26,7 +26,17 @@ export function useCartMutations() {
       }
     },
   );
-  const removeItem = useMutation(api.orders.removeItem);
+  const removeItem = useMutation(api.orders.removeItem).withOptimisticUpdate((localStore, args) => {
+    const allQueries = localStore.getAllQueries(api.orders.get);
+    for (const { args: queryArgs, value } of allQueries) {
+      if (!value) continue;
+      if (!value.items.some((i) => i._id === args.orderItemId)) continue;
+      localStore.setQuery(api.orders.get, queryArgs, {
+        ...value,
+        items: value.items.filter((i) => i._id !== args.orderItemId),
+      });
+    }
+  });
   const updateItemServiceType = useMutation(api.orders.updateItemServiceType);
 
   return { addItem, updateItemQuantity, removeItem, updateItemServiceType };
