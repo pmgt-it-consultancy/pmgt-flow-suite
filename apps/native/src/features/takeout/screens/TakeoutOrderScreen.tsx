@@ -443,7 +443,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
           try {
             await printKitchenTicket(kitchenData);
           } catch (printErr) {
-            console.log("Kitchen print error (non-blocking):", printErr);
+            if (__DEV__) console.log("Kitchen print error (non-blocking):", printErr);
           }
         }
       }
@@ -504,7 +504,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         await printKitchenTicket(kitchenData);
       }
     } catch (printErr) {
-      console.log("Kitchen reprint error:", printErr);
+      if (__DEV__) console.log("Kitchen reprint error:", printErr);
       Alert.alert("Error", "Failed to print kitchen receipt");
     } finally {
       setIsSending(false);

@@ -1266,3 +1266,169 @@ describe("orders.bulkUpdateItemServiceType", () => {
     expect(voidedItem.serviceType).toBe("dine_in"); // unchanged — voided
   });
 });
+
+describe("orders — itemCount denormalization", () => {
+  it("itemCount is maintained across add/update/remove/void", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupTestData(t);
+
+    // Seed an open order
+    const orderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-099",
+        orderType: "dine_in" as const,
+        orderChannel: "walk_in_dine_in" as const,
+        status: "open" as const,
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+
+    // Add item with quantity 2 → itemCount should be 2
+    const orderItemId = await authed.mutation(api.orders.addItem, {
+      orderId,
+      productId,
+      quantity: 2,
+    });
+    let order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+    expect(order.itemCount).toBe(2);
+
+    // Update quantity to 5 → itemCount should be 5
+    await authed.mutation(api.orders.updateItemQuantity, {
+      orderItemId,
+      quantity: 5,
+    });
+    order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+    expect(order.itemCount).toBe(5);
+
+    // Remove (delete) the item → itemCount should be 0
+    await authed.mutation(api.orders.removeItem, {
+      orderItemId,
+    });
+    order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+    expect(order.itemCount).toBe(0);
+
+    // Add a kitchen-sent item so we can void it via removeItem
+    const sentItemId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Adobo",
+        productPrice: 15000,
+        quantity: 3,
+        isVoided: false,
+        isSentToKitchen: true,
+      });
+    });
+    // Manually sync itemCount to reflect the raw insert
+    await t.run(async (ctx: any) => {
+      ctx.db.patch(orderId, { itemCount: 3 });
+    });
+
+    // Void the sent item → itemCount should drop back to 0
+    await authed.mutation(api.orders.removeItem, {
+      orderItemId: sentItemId,
+      voidReason: "test void",
+    });
+    order = await t.run(async (ctx: any) => ctx.db.get(orderId));
+    expect(order.itemCount).toBe(0);
+  });
+});
+
+describe("tables.update — tableName fan-out", () => {
+  it("renames tableName on open orders but not on paid orders", async () => {
+    const t = convexTest(schema, modules);
+
+    const { storeId, userId } = await setupTestData(t);
+
+    // Seed the required roles/permissions
+    await t.run(async (ctx: any) => {
+      const roleId = await ctx.db.insert("roles", {
+        name: "Admin",
+        permissions: ["tables.manage"],
+        scopeLevel: "branch",
+        isSystem: false,
+      });
+      await ctx.db.patch(userId, { roleId });
+    });
+
+    // Create table "A"
+    const tableId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("tables", {
+        storeId,
+        name: "Table A",
+        status: "available",
+        sortOrder: 1,
+        isActive: true,
+        createdAt: Date.now(),
+      });
+    });
+
+    // Create an open order on that table (snapshots "Table A")
+    const openOrderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        tableId,
+        tableName: "Table A",
+        orderType: "dine_in",
+        orderChannel: "walk_in_dine_in",
+        status: "open",
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    // Create a paid order on the same table (should NOT be updated)
+    const paidOrderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        tableId,
+        tableName: "Table A",
+        orderType: "dine_in",
+        orderChannel: "walk_in_dine_in",
+        status: "paid",
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+        paidAt: Date.now(),
+        paidBy: userId,
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+
+    // Rename table to "Table B"
+    await authed.mutation(api.tables.update, { tableId, name: "Table B" });
+
+    // Open order should have tableName updated
+    const openOrder = await t.run(async (ctx: any) => ctx.db.get(openOrderId));
+    expect(openOrder?.tableName).toBe("Table B");
+
+    // Paid order should retain original tableName
+    const paidOrder = await t.run(async (ctx: any) => ctx.db.get(paidOrderId));
+    expect(paidOrder?.tableName).toBe("Table A");
+  });
+});

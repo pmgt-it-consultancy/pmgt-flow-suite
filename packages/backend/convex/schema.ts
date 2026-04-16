@@ -209,6 +209,9 @@ export default defineSchema({
     tabName: v.optional(v.string()), // Default "Tab 1", editable to guest name
     requestId: v.optional(v.string()), // Idempotency key to prevent duplicate orders
     refundedFromOrderId: v.optional(v.id("orders")),
+    // NEW: denormalized for fast listActive (Task 15-18 maintenance + Task 17 backfill)
+    tableName: v.optional(v.string()),
+    itemCount: v.optional(v.number()),
   })
     .index("by_store", ["storeId"])
     .index("by_status", ["status"])
