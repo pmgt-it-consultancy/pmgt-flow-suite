@@ -119,23 +119,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
   const products = useQuery(api.products.list, { storeId });
 
-  // Prefetch all modifier data for the store — available instantly on product tap
-  const allModifiers = useQuery(api.modifierAssignments.getForStore, { storeId });
-  const modifiersByProduct = useMemo(() => {
-    const map = new Map<string, typeof modifierGroups>();
-    if (allModifiers) {
-      for (const entry of allModifiers) {
-        map.set(entry.productId, entry.groups);
-      }
-    }
-    return map;
-  }, [allModifiers]);
-
-  // Get modifier groups for the selected product from prefetched data
-  type ModifierGroup = NonNullable<typeof allModifiers>[number]["groups"];
-  const modifierGroups: ModifierGroup = selectedProduct
-    ? (modifiersByProduct.get(selectedProduct.id) ?? [])
-    : [];
+  // Fetch modifier groups for the selected product on demand
+  const modifierGroups = useQuery(
+    api.modifierAssignments.getForProduct,
+    selectedProduct ? { productId: selectedProduct.id } : "skip",
+  );
 
   // Mutations
   const {
@@ -888,15 +876,15 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       </XStack>
 
       <ModifierSelectionModal
-        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length > 0}
+        visible={!!selectedProduct && selectedProduct.hasModifiers}
         product={selectedProduct}
-        modifierGroups={modifierGroups}
-        isLoading={isAddingItem || isSending}
+        modifierGroups={modifierGroups ?? []}
+        isLoading={isAddingItem || isSending || modifierGroups === undefined}
         onClose={handleCloseModal}
         onConfirm={handleConfirmModifiers}
       />
       <AddItemModal
-        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length === 0}
+        visible={!!selectedProduct && !selectedProduct.hasModifiers}
         product={selectedProduct}
         quantity={quantity}
         notes={notes}
