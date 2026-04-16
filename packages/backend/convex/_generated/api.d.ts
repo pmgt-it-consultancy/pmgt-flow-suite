@@ -26,6 +26,7 @@ import type * as lib_categoryHelpers from "../lib/categoryHelpers.js";
 import type * as lib_dateUtils from "../lib/dateUtils.js";
 import type * as lib_permissions from "../lib/permissions.js";
 import type * as lib_taxCalculations from "../lib/taxCalculations.js";
+import type * as migrations_2026_04_orderDenormalization from "../migrations/2026_04_orderDenormalization.js";
 import type * as modifierAssignments from "../modifierAssignments.js";
 import type * as modifierGroups from "../modifierGroups.js";
 import type * as modifierOptions from "../modifierOptions.js";
@@ -71,6 +72,7 @@ declare const fullApi: ApiFromModules<{
   "lib/dateUtils": typeof lib_dateUtils;
   "lib/permissions": typeof lib_permissions;
   "lib/taxCalculations": typeof lib_taxCalculations;
+  "migrations/2026_04_orderDenormalization": typeof migrations_2026_04_orderDenormalization;
   modifierAssignments: typeof modifierAssignments;
   modifierGroups: typeof modifierGroups;
   modifierOptions: typeof modifierOptions;
