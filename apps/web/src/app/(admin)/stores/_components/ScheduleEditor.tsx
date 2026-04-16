@@ -80,8 +80,8 @@ export function ScheduleEditor({ form }: ScheduleEditorProps) {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-2">
-        {WEEKDAY_ROWS.map(({ key, label }) => (
+      <div className="flex flex-col gap-1.5">
+        {WEEKDAY_ROWS.map(({ key, label }, rowIndex) => (
           <form.Field
             key={key}
             name={`schedule.${key}`}
@@ -89,56 +89,65 @@ export function ScheduleEditor({ form }: ScheduleEditorProps) {
             children={(slotField: any) => {
               const { open, close } = slotField.state.value;
               const hint = computeHint(open, close);
+              const showLabels = rowIndex === 0;
               return (
-                <div className="grid grid-cols-[120px_1fr_1fr] gap-3 items-start">
-                  <div className="pt-8 text-sm font-medium">{label}</div>
+                <div className="flex flex-col">
+                  <div className="grid grid-cols-[120px_1fr_1fr] items-center gap-3">
+                    <div className="text-sm font-medium">{label}</div>
 
-                  <form.Field
-                    name={`schedule.${key}.open`}
-                    // biome-ignore lint/suspicious/noExplicitAny: TanStack Form generics
-                    children={(field: any) => {
-                      const hasErrors =
-                        field.state.meta.isTouched && field.state.meta.errors.length > 0;
-                      return (
-                        <Field data-invalid={hasErrors || undefined}>
-                          <FieldLabel htmlFor={`schedule-${key}-open`}>Open</FieldLabel>
-                          <Input
-                            id={`schedule-${key}-open`}
-                            type="time"
-                            aria-invalid={hasErrors || undefined}
-                            value={field.state.value}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            onBlur={field.handleBlur}
-                          />
-                          <FieldError errors={normalizeErrors(field.state.meta.errors)} />
-                        </Field>
-                      );
-                    }}
-                  />
+                    <form.Field
+                      name={`schedule.${key}.open`}
+                      // biome-ignore lint/suspicious/noExplicitAny: TanStack Form generics
+                      children={(field: any) => {
+                        const hasErrors =
+                          field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                        return (
+                          <Field data-invalid={hasErrors || undefined}>
+                            {showLabels && (
+                              <FieldLabel htmlFor={`schedule-${key}-open`}>Open</FieldLabel>
+                            )}
+                            <Input
+                              id={`schedule-${key}-open`}
+                              type="time"
+                              aria-label={showLabels ? undefined : `${label} open time`}
+                              aria-invalid={hasErrors || undefined}
+                              value={field.state.value}
+                              onChange={(e) => field.handleChange(e.target.value)}
+                              onBlur={field.handleBlur}
+                            />
+                            <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+                          </Field>
+                        );
+                      }}
+                    />
 
-                  <form.Field
-                    name={`schedule.${key}.close`}
-                    // biome-ignore lint/suspicious/noExplicitAny: TanStack Form generics
-                    children={(field: any) => {
-                      const hasErrors =
-                        field.state.meta.isTouched && field.state.meta.errors.length > 0;
-                      return (
-                        <Field data-invalid={hasErrors || undefined}>
-                          <FieldLabel htmlFor={`schedule-${key}-close`}>Close</FieldLabel>
-                          <Input
-                            id={`schedule-${key}-close`}
-                            type="time"
-                            aria-invalid={hasErrors || undefined}
-                            value={field.state.value}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            onBlur={field.handleBlur}
-                          />
-                          {hint && <p className="text-xs text-gray-500">{hint}</p>}
-                          <FieldError errors={normalizeErrors(field.state.meta.errors)} />
-                        </Field>
-                      );
-                    }}
-                  />
+                    <form.Field
+                      name={`schedule.${key}.close`}
+                      // biome-ignore lint/suspicious/noExplicitAny: TanStack Form generics
+                      children={(field: any) => {
+                        const hasErrors =
+                          field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                        return (
+                          <Field data-invalid={hasErrors || undefined}>
+                            {showLabels && (
+                              <FieldLabel htmlFor={`schedule-${key}-close`}>Close</FieldLabel>
+                            )}
+                            <Input
+                              id={`schedule-${key}-close`}
+                              type="time"
+                              aria-label={showLabels ? undefined : `${label} close time`}
+                              aria-invalid={hasErrors || undefined}
+                              value={field.state.value}
+                              onChange={(e) => field.handleChange(e.target.value)}
+                              onBlur={field.handleBlur}
+                            />
+                            <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+                          </Field>
+                        );
+                      }}
+                    />
+                  </div>
+                  {hint && <p className="mt-0.5 pl-[132px] text-xs text-gray-500">{hint}</p>}
                 </div>
               );
             }}
