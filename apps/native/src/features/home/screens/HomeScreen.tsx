@@ -82,14 +82,6 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
     screenLockMutation({ storeId: user.storeId, trigger: "manual" }).catch(() => {});
   }, [isLocking, lockScreen, navigation, screenLockMutation, user, userHasPin]);
 
-  if (isLoading || !isAuthenticated) {
-    return (
-      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#EDF3F7">
-        <ActivityIndicator size="large" color="#0D87E1" />
-      </YStack>
-    );
-  }
-
   const timeString = useMemo(
     () => clock.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     [clock],
@@ -122,6 +114,14 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
         : null,
     [summary],
   );
+
+  if (isLoading || !isAuthenticated) {
+    return (
+      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#EDF3F7">
+        <ActivityIndicator size="large" color="#0D87E1" />
+      </YStack>
+    );
+  }
 
   const permissions = user?.role?.permissions ?? [];
   const canUseDayClose = permissions.includes("reports.print_eod");
