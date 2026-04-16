@@ -104,7 +104,7 @@ export const ReceiptPreviewModal = ({
       await onPrint();
       setPrintResult("success");
     } catch (err) {
-      console.log("Print error:", err);
+      if (__DEV__) console.log("Print error:", err);
       setPrintResult("error");
     } finally {
       setIsPrinting(false);
@@ -126,7 +126,7 @@ export const ReceiptPreviewModal = ({
       await printKitchenTicketToThermal(kitchenTicketData, charsPerLine);
       setKitchenPrintResult("success");
     } catch (err) {
-      console.log("Kitchen print error:", err);
+      if (__DEV__) console.log("Kitchen print error:", err);
       setKitchenPrintResult("error");
     } finally {
       setIsKitchenPrinting(false);

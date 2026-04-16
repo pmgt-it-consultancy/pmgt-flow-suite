@@ -151,7 +151,7 @@ export const useUpdateStore = create<UpdateStore>((set, get) => ({
 
       task
         .begin(({ expectedBytes }) => {
-          console.log(`Download started, expected: ${expectedBytes} bytes`);
+          if (__DEV__) console.log(`Download started, expected: ${expectedBytes} bytes`);
         })
         .progress(({ bytesDownloaded, bytesTotal }) => {
           const pct = bytesTotal > 0 ? bytesDownloaded / bytesTotal : 0;
