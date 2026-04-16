@@ -9,6 +9,25 @@ import {
   type ItemCalculation,
 } from "./lib/taxCalculations";
 
+/**
+ * Recompute the denormalized `itemCount` on an order, based on non-voided
+ * orderItems. Called by every mutation that inserts, updates, removes,
+ * voids, or unvoids an orderItems row.
+ */
+export async function recomputeOrderItemCount(
+  ctx: { db: any },
+  orderId: Id<"orders">,
+): Promise<void> {
+  const items = await ctx.db
+    .query("orderItems")
+    .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
+    .collect();
+  const itemCount = items
+    .filter((i: any) => !i.isVoided)
+    .reduce((sum: number, i: any) => sum + i.quantity, 0);
+  await ctx.db.patch(orderId, { itemCount });
+}
+
 // Generate next order number for today (PHT timezone)
 async function getNextOrderNumber(
   ctx: { db: any },
@@ -919,6 +938,7 @@ export const addItem = mutation({
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, args.orderId);
+    await recomputeOrderItemCount(ctx, args.orderId);
 
     return itemId;
   },
@@ -961,6 +981,7 @@ export const updateItemQuantity = mutation({
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, item.orderId);
+    await recomputeOrderItemCount(ctx, item.orderId);
 
     return null;
   },
@@ -1100,6 +1121,7 @@ export const removeItem = mutation({
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, item.orderId);
+    await recomputeOrderItemCount(ctx, item.orderId);
 
     return null;
   },
@@ -1767,6 +1789,7 @@ export const createAndSendToKitchen = mutation({
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, orderId);
+    await recomputeOrderItemCount(ctx, orderId);
 
     return { orderId, orderNumber, sentItemIds };
   },
