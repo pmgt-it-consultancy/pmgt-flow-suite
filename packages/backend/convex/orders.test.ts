@@ -6,6 +6,7 @@ import {
   calculateItemTotals,
   type ItemCalculation,
 } from "./lib/taxCalculations";
+import { getNextOrderNumber } from "./orders";
 import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
@@ -1430,5 +1431,82 @@ describe("tables.update — tableName fan-out", () => {
     // Paid order should retain original tableName
     const paidOrder = await t.run(async (ctx: any) => ctx.db.get(paidOrderId));
     expect(paidOrder?.tableName).toBe("Table A");
+  });
+});
+
+const restaurantClose3am = {
+  monday: { open: "10:00", close: "03:00" },
+  tuesday: { open: "10:00", close: "03:00" },
+  wednesday: { open: "10:00", close: "03:00" },
+  thursday: { open: "10:00", close: "03:00" },
+  friday: { open: "10:00", close: "03:00" },
+  saturday: { open: "10:00", close: "03:00" },
+  sunday: { open: "10:00", close: "03:00" },
+};
+
+describe("orders — business-day cutoff with store schedule", () => {
+  it("keeps D-xxx numbers continuous across midnight when store closes at 03:00", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.patch(storeId, { schedule: restaurantClose3am });
+      // Pre-existing D-045 at 23:30 PHT Mon Apr 13 (= 15:30 UTC Mon).
+      await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-045",
+        orderType: "dine_in",
+        status: "open",
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: new Date("2026-04-13T15:30:00Z").getTime(),
+      });
+    });
+
+    // Query next number at 00:30 PHT Tue Apr 14 (= 16:30 UTC Mon Apr 13).
+    // Monday's schedule closes at 03:00 next day → this timestamp still belongs
+    // to Monday's business day → counter must NOT reset.
+    const nowUtc = new Date("2026-04-13T16:30:00Z").getTime();
+    const nextNumber = await t.run(async (ctx: any) =>
+      getNextOrderNumber(ctx, storeId, "dine_in", nowUtc),
+    );
+    expect(nextNumber).toBe("D-046");
+  });
+
+  it("resets counter at 04:00 PHT after Monday's 03:00 close", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.patch(storeId, { schedule: restaurantClose3am });
+      await ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "D-045",
+        orderType: "dine_in",
+        status: "open",
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: new Date("2026-04-13T15:30:00Z").getTime(),
+      });
+    });
+
+    // Query at 04:00 PHT Tue Apr 14 (= 20:00 UTC Mon) — past Monday's 03:00 close.
+    const nowUtc = new Date("2026-04-13T20:00:00Z").getTime();
+    const nextNumber = await t.run(async (ctx: any) =>
+      getNextOrderNumber(ctx, storeId, "dine_in", nowUtc),
+    );
+    expect(nextNumber).toBe("D-001");
   });
 });
