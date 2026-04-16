@@ -1431,51 +1431,26 @@ export const listActive = query({
     }),
   ),
   handler: async (ctx, args) => {
-    // Require authenticated user
     await requireAuth(ctx);
 
-    // Get open orders for this store
     const orders = await ctx.db
       .query("orders")
       .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "open"))
       .collect();
 
-    // Get additional info for each order
-    const results = await Promise.all(
-      orders.map(async (order) => {
-        // Get table name
-        let tableName: string | undefined;
-        if (order.tableId) {
-          const table = await ctx.db.get(order.tableId);
-          tableName = table?.name;
-        }
-
-        // Get item count
-        const items = await ctx.db
-          .query("orderItems")
-          .withIndex("by_order", (q) => q.eq("orderId", order._id))
-          .collect();
-
-        const activeItems = items.filter((i) => !i.isVoided);
-        const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
-
-        return {
-          _id: order._id,
-          orderNumber: order.orderNumber,
-          orderType: order.orderType,
-          tableId: order.tableId,
-          tableName,
-          pax: order.pax,
-          customerName: order.customerName,
-          takeoutStatus: order.takeoutStatus,
-          subtotal: order.netSales,
-          itemCount,
-          createdAt: order.createdAt,
-        };
-      }),
-    );
-
-    return results;
+    return orders.map((order) => ({
+      _id: order._id,
+      orderNumber: order.orderNumber,
+      orderType: order.orderType,
+      tableId: order.tableId,
+      tableName: order.tableName,
+      pax: order.pax,
+      customerName: order.customerName,
+      takeoutStatus: order.takeoutStatus,
+      subtotal: order.netSales,
+      itemCount: order.itemCount ?? 0,
+      createdAt: order.createdAt,
+    }));
   },
 });
 
