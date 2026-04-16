@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
-import { getPHTDayBoundaries } from "./lib/dateUtils";
+import { getBusinessDayBoundaries } from "./lib/businessDay";
 import {
   aggregateOrderTotals,
   calculateItemTotals,
@@ -28,16 +28,18 @@ export async function recomputeOrderItemCount(
   await ctx.db.patch(orderId, { itemCount });
 }
 
-// Generate next order number for today (PHT timezone)
-async function getNextOrderNumber(
+// Generate next order number for today's business day (respects store schedule).
+// Exported for unit-testability; internal callers pass the same `ctx` they already have.
+export async function getNextOrderNumber(
   ctx: { db: any },
   storeId: Id<"stores">,
   orderType: "dine_in" | "takeout",
+  now?: number,
 ): Promise<string> {
   const prefix = orderType === "dine_in" ? "D" : "T";
-  const { startOfDay, endOfDay } = getPHTDayBoundaries();
+  const store = await ctx.db.get(storeId);
+  const { startOfDay, endOfDay } = getBusinessDayBoundaries(store?.schedule, now);
 
-  // Get today's orders of this type (using PHT day boundaries)
   const todaysOrders = await ctx.db
     .query("orders")
     .withIndex("by_store_createdAt", (q: any) =>
@@ -48,7 +50,6 @@ async function getNextOrderNumber(
     )
     .collect();
 
-  // Find the highest existing number from today's orders only
   let maxNumber = 0;
   for (const order of todaysOrders) {
     const match = order.orderNumber?.match(/\d+$/);
@@ -195,7 +196,8 @@ export const createDraftOrder = mutation({
       .unique();
     if (existing) return existing._id;
 
-    const { startOfDay } = getPHTDayBoundaries();
+    const store = await ctx.db.get(args.storeId);
+    const { startOfDay } = getBusinessDayBoundaries(store?.schedule);
 
     // Count all drafts created today (monotonic — gaps allowed if drafts are discarded)
     const todaysDrafts = await ctx.db
@@ -360,7 +362,8 @@ export async function cleanupExpiredDraftOrders(
   ctx: { db: any },
   storeId: Id<"stores">,
 ): Promise<number> {
-  const { startOfDay } = getPHTDayBoundaries();
+  const store = await ctx.db.get(storeId);
+  const { startOfDay } = getBusinessDayBoundaries(store?.schedule);
 
   const expiredDrafts = await ctx.db
     .query("orders")
@@ -1325,7 +1328,8 @@ export const getTakeoutOrders = query({
   handler: async (ctx, args) => {
     await requireAuth(ctx);
 
-    const { startOfDay: phtStartOfDay } = getPHTDayBoundaries();
+    const store = await ctx.db.get(args.storeId);
+    const { startOfDay: phtStartOfDay } = getBusinessDayBoundaries(store?.schedule);
     const startOfDay = args.startDate ?? phtStartOfDay;
     const endOfDay = args.endDate;
 
@@ -1381,7 +1385,8 @@ export const getDashboardSummary = query({
   handler: async (ctx, args) => {
     await requireAuth(ctx);
 
-    const { startOfDay, endOfDay } = getPHTDayBoundaries();
+    const store = await ctx.db.get(args.storeId);
+    const { startOfDay, endOfDay } = getBusinessDayBoundaries(store?.schedule);
 
     const todaysOrders = await ctx.db
       .query("orders")
@@ -1484,8 +1489,9 @@ export const getTodaysOpenOrders = query({
     // Require authenticated user
     await requireAuth(ctx);
 
-    // Get start of today (PHT)
-    const { startOfDay } = getPHTDayBoundaries();
+    // Get start of today's business day (respects store schedule)
+    const store = await ctx.db.get(args.storeId);
+    const { startOfDay } = getBusinessDayBoundaries(store?.schedule);
 
     // Get today's open orders
     const orders = await ctx.db

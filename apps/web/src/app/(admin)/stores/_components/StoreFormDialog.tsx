@@ -31,6 +31,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { normalizeErrors } from "../../_shared/normalizeErrors";
 import { useStoreMutations } from "../_hooks";
 import { type StoreFormValues, storeDefaults, storeSchema } from "../_schemas";
+import { ScheduleEditor } from "./ScheduleEditor";
 
 interface StoreFormDialogProps {
   open: boolean;
@@ -554,6 +555,10 @@ export function StoreFormDialog({
                 </div>
               )}
             />
+
+            <FieldSeparator>Operating Hours</FieldSeparator>
+
+            <ScheduleEditor form={form} />
 
             <FieldSeparator>Receipt</FieldSeparator>
 

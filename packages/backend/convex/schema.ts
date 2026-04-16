@@ -61,6 +61,17 @@ export default defineSchema({
     website: v.optional(v.string()),
     socials: v.optional(v.array(v.object({ platform: v.string(), url: v.string() }))),
     footer: v.optional(v.string()),
+    schedule: v.optional(
+      v.object({
+        monday: v.object({ open: v.string(), close: v.string() }),
+        tuesday: v.object({ open: v.string(), close: v.string() }),
+        wednesday: v.object({ open: v.string(), close: v.string() }),
+        thursday: v.object({ open: v.string(), close: v.string() }),
+        friday: v.object({ open: v.string(), close: v.string() }),
+        saturday: v.object({ open: v.string(), close: v.string() }),
+        sunday: v.object({ open: v.string(), close: v.string() }),
+      }),
+    ),
     isActive: v.boolean(),
     createdAt: v.number(),
   })

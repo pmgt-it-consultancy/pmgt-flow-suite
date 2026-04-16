@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { StoreFormValues } from "../_schemas";
+import { defaultSchedule, type StoreFormValues } from "../_schemas";
 
 interface StoreData {
   _id: Id<"stores">;
@@ -36,6 +36,7 @@ interface StoreData {
   website?: string;
   socials?: { platform: string; url: string }[];
   footer?: string;
+  schedule?: StoreFormValues["schedule"];
   isActive: boolean;
   createdAt: number;
   branchCount: number;
@@ -62,6 +63,7 @@ export function StoresTable({ stores, onEdit, onDuplicate }: StoresTableProps) {
     website: store.website ?? "",
     socials: store.socials ?? [],
     footer: store.footer ?? "",
+    schedule: store.schedule ?? defaultSchedule,
     isActive: store.isActive,
   });
 
