@@ -743,6 +743,28 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     }
   }, [tableId, storeId, createOrderMutation, navigation, currentTableName, isCreatingTab]);
 
+  const handleSetQuantity = useCallback(
+    async (itemId: Id<"orderItems">, targetQty: number) => {
+      if (isDraftMode) {
+        setDraftItems((prev) =>
+          prev.map((d) =>
+            (d.localId as unknown as Id<"orderItems">) === itemId
+              ? { ...d, quantity: targetQty }
+              : d,
+          ),
+        );
+        return;
+      }
+      try {
+        await updateItemQuantity({ orderItemId: itemId, quantity: targetQty });
+      } catch (error) {
+        if (__DEV__) console.error("Update quantity error:", error);
+        Alert.alert("Error", "Failed to update quantity");
+      }
+    },
+    [isDraftMode, updateItemQuantity],
+  );
+
   const renderCartItem = useCallback(
     ({ item }: { item: (typeof activeItems)[0] }) => (
       <CartItem
@@ -759,10 +781,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         onServiceTypeChange={handleServiceTypeChange}
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
+        onSetQuantity={handleSetQuantity}
         onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
       />
     ),
-    [handleServiceTypeChange, handleIncrement, handleDecrement, handleVoidItem],
+    [handleServiceTypeChange, handleIncrement, handleDecrement, handleSetQuantity, handleVoidItem],
   );
 
   if (isLoading || !isAuthenticated) {
