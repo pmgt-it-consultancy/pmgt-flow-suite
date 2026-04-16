@@ -46,43 +46,51 @@ export function DraftOrderCard({
   };
 
   return (
-    <Pressable onPress={() => onResume(id)}>
-      <YStack
-        backgroundColor="#FEF3C7"
-        borderWidth={2}
-        borderColor="#F59E0B"
-        borderStyle="dashed"
-        borderRadius={12}
-        padding={14}
-      >
-        <XStack justifyContent="space-between" alignItems="center">
-          <YStack flex={1}>
-            <Text variant="heading" size="base">
-              {displayName}
-            </Text>
-            <Text variant="muted" size="sm">
-              {time} · {itemCount} {itemCount === 1 ? "item" : "items"} · {formatCurrency(subtotal)}
-            </Text>
-          </YStack>
-          <XStack gap={8} alignItems="center">
-            <Pressable
-              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-              onPress={handleDiscard}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Ionicons name="trash-outline" size={20} color="#DC2626" />
-            </Pressable>
-            <XStack
-              backgroundColor="#F59E0B"
-              borderRadius={8}
-              paddingVertical={8}
-              paddingHorizontal={14}
-            >
-              <Text style={{ color: "white", fontWeight: "600", fontSize: 13 }}>Resume</Text>
-            </XStack>
-          </XStack>
-        </XStack>
-      </YStack>
-    </Pressable>
+    <YStack
+      backgroundColor="#FEF3C7"
+      borderWidth={2}
+      borderColor="#F59E0B"
+      borderStyle="dashed"
+      borderRadius={12}
+      padding={14}
+    >
+      <XStack alignItems="center" gap={12}>
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.08)", borderless: false }}
+          onPress={() => onResume(id)}
+          style={({ pressed }) => [{ flex: 1, paddingVertical: 4 }, { opacity: pressed ? 0.7 : 1 }]}
+        >
+          <Text variant="heading" size="base">
+            {displayName}
+          </Text>
+          <Text variant="muted" size="sm">
+            {time} · {itemCount} {itemCount === 1 ? "item" : "items"} · {formatCurrency(subtotal)}
+          </Text>
+        </Pressable>
+        <Pressable
+          android_ripple={{ color: "rgba(220,38,38,0.15)", borderless: true }}
+          onPress={handleDiscard}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          style={({ pressed }) => [{ padding: 8 }, { opacity: pressed ? 0.5 : 1 }]}
+        >
+          <Ionicons name="trash-outline" size={20} color="#DC2626" />
+        </Pressable>
+        <Pressable
+          android_ripple={{ color: "rgba(255,255,255,0.25)", borderless: false }}
+          onPress={() => onResume(id)}
+          style={({ pressed }) => [
+            {
+              backgroundColor: "#F59E0B",
+              borderRadius: 8,
+              paddingVertical: 8,
+              paddingHorizontal: 14,
+            },
+            { opacity: pressed ? 0.8 : 1 },
+          ]}
+        >
+          <Text style={{ color: "white", fontWeight: "600", fontSize: 13 }}>Resume</Text>
+        </Pressable>
+      </XStack>
+    </YStack>
   );
 }
