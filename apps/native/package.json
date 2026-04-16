@@ -1,6 +1,6 @@
 {
   "name": "pmgt-flow-native",
-  "version": "3.21.0",
+  "version": "3.22.0",
   "main": "index.tsx",
   "scripts": {
     "dev": "npm run android:staging",
