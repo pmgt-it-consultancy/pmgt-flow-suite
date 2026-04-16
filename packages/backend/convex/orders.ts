@@ -9,6 +9,25 @@ import {
   type ItemCalculation,
 } from "./lib/taxCalculations";
 
+/**
+ * Recompute the denormalized `itemCount` on an order, based on non-voided
+ * orderItems. Called by every mutation that inserts, updates, removes,
+ * voids, or unvoids an orderItems row.
+ */
+export async function recomputeOrderItemCount(
+  ctx: { db: any },
+  orderId: Id<"orders">,
+): Promise<void> {
+  const items = await ctx.db
+    .query("orderItems")
+    .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
+    .collect();
+  const itemCount = items
+    .filter((i: any) => !i.isVoided)
+    .reduce((sum: number, i: any) => sum + i.quantity, 0);
+  await ctx.db.patch(orderId, { itemCount });
+}
+
 // Generate next order number for today (PHT timezone)
 async function getNextOrderNumber(
   ctx: { db: any },
@@ -110,6 +129,9 @@ export const create = mutation({
     const orderChannel = args.orderType === "dine_in" ? "walk_in_dine_in" : "walk_in_takeout";
     const takeoutStatus = args.orderType === "takeout" ? "pending" : undefined;
 
+    // Snapshot table name at creation time
+    const tableName = args.tableId ? (await ctx.db.get(args.tableId))?.name : undefined;
+
     // Create order with zero totals
     const now = Date.now();
     const orderId = await ctx.db.insert("orders", {
@@ -119,6 +141,7 @@ export const create = mutation({
       orderChannel,
       takeoutStatus,
       tableId: args.tableId,
+      tableName,
       customerName: args.customerName,
       status: "open",
       grossSales: 0,
@@ -919,6 +942,7 @@ export const addItem = mutation({
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, args.orderId);
+    await recomputeOrderItemCount(ctx, args.orderId);
 
     return itemId;
   },
@@ -961,6 +985,7 @@ export const updateItemQuantity = mutation({
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, item.orderId);
+    await recomputeOrderItemCount(ctx, item.orderId);
 
     return null;
   },
@@ -1100,6 +1125,7 @@ export const removeItem = mutation({
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, item.orderId);
+    await recomputeOrderItemCount(ctx, item.orderId);
 
     return null;
   },
@@ -1350,8 +1376,6 @@ export const getDashboardSummary = query({
   },
   returns: v.object({
     totalOrdersToday: v.number(),
-    activeDineIn: v.number(),
-    activeTakeout: v.number(),
     todayRevenue: v.number(),
   }),
   handler: async (ctx, args) => {
@@ -1359,7 +1383,6 @@ export const getDashboardSummary = query({
 
     const { startOfDay, endOfDay } = getPHTDayBoundaries();
 
-    // Get all today's orders (PHT day)
     const todaysOrders = await ctx.db
       .query("orders")
       .withIndex("by_store_createdAt", (q) =>
@@ -1371,20 +1394,11 @@ export const getDashboardSummary = query({
     const nonDraftOrders = todaysOrders.filter((o) => o.status !== "draft");
     const totalOrdersToday = nonDraftOrders.length;
 
-    // Active counts should reflect ALL open orders (not just today's)
-    // to match what the active orders list displays
-    const allOpenOrders = await ctx.db
-      .query("orders")
-      .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "open"))
-      .collect();
-    const activeDineIn = allOpenOrders.filter((o) => o.orderType === "dine_in").length;
-    const activeTakeout = allOpenOrders.filter((o) => o.orderType === "takeout").length;
-
     const todayRevenue = todaysOrders
       .filter((o) => o.status === "paid")
       .reduce((sum, o) => sum + o.netSales, 0);
 
-    return { totalOrdersToday, activeDineIn, activeTakeout, todayRevenue };
+    return { totalOrdersToday, todayRevenue };
   },
 });
 
@@ -1417,51 +1431,26 @@ export const listActive = query({
     }),
   ),
   handler: async (ctx, args) => {
-    // Require authenticated user
     await requireAuth(ctx);
 
-    // Get open orders for this store
     const orders = await ctx.db
       .query("orders")
       .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "open"))
       .collect();
 
-    // Get additional info for each order
-    const results = await Promise.all(
-      orders.map(async (order) => {
-        // Get table name
-        let tableName: string | undefined;
-        if (order.tableId) {
-          const table = await ctx.db.get(order.tableId);
-          tableName = table?.name;
-        }
-
-        // Get item count
-        const items = await ctx.db
-          .query("orderItems")
-          .withIndex("by_order", (q) => q.eq("orderId", order._id))
-          .collect();
-
-        const activeItems = items.filter((i) => !i.isVoided);
-        const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
-
-        return {
-          _id: order._id,
-          orderNumber: order.orderNumber,
-          orderType: order.orderType,
-          tableId: order.tableId,
-          tableName,
-          pax: order.pax,
-          customerName: order.customerName,
-          takeoutStatus: order.takeoutStatus,
-          subtotal: order.netSales,
-          itemCount,
-          createdAt: order.createdAt,
-        };
-      }),
-    );
-
-    return results;
+    return orders.map((order) => ({
+      _id: order._id,
+      orderNumber: order.orderNumber,
+      orderType: order.orderType,
+      tableId: order.tableId,
+      tableName: order.tableName,
+      pax: order.pax,
+      customerName: order.customerName,
+      takeoutStatus: order.takeoutStatus,
+      subtotal: order.netSales,
+      itemCount: order.itemCount ?? 0,
+      createdAt: order.createdAt,
+    }));
   },
 });
 
@@ -1691,6 +1680,7 @@ export const createAndSendToKitchen = mutation({
       orderChannel: "walk_in_dine_in",
       takeoutStatus: undefined,
       tableId: args.tableId,
+      tableName: table.name,
       customerName: undefined,
       status: "open",
       grossSales: 0,
@@ -1779,6 +1769,7 @@ export const createAndSendToKitchen = mutation({
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, orderId);
+    await recomputeOrderItemCount(ctx, orderId);
 
     return { orderId, orderNumber, sentItemIds };
   },
@@ -1922,9 +1913,10 @@ export const transferTable = mutation({
       });
     }
 
-    // Update order with new table and new tab number
+    // Update order with new table, new tab number, and snapshotted table name
     await ctx.db.patch(args.orderId, {
       tableId: args.newTableId,
+      tableName: newTable.name,
       tabNumber: newTabNumber,
       tabName: newTabName,
     });

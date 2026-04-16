@@ -4,6 +4,7 @@ import type { Doc, Id } from "../_generated/dataModel";
 import { internalMutation, internalQuery } from "../_generated/server";
 import { getPHTDayBoundaries } from "../lib/dateUtils";
 import { aggregateOrderTotals, calculateItemTotals } from "../lib/taxCalculations";
+import { recomputeOrderItemCount } from "../orders";
 
 /**
  * Internal query to get authenticated user ID
@@ -139,6 +140,7 @@ export const voidOrderItemInternal = internalMutation({
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, item.orderId);
+    await recomputeOrderItemCount(ctx, item.orderId);
 
     // Log audit
     await ctx.db.insert("auditLogs", {
@@ -355,6 +357,7 @@ export const voidPaidOrderInternal = internalMutation({
         orderType: order.orderType,
         orderChannel: order.orderChannel,
         tableId: order.tableId,
+        tableName: order.tableName,
         customerName: order.customerName,
         orderCategory: order.orderCategory,
         tableMarker: order.tableMarker,
@@ -511,6 +514,9 @@ export const voidPaidOrderInternal = internalMutation({
         discountAmount: totalDiscountAmount,
         netSales: netSales,
       });
+
+      // Update denormalized item count on replacement order
+      await recomputeOrderItemCount(ctx, replacementOrderId);
 
       // Create payment record for the new order
       await ctx.db.insert("orderPayments", {

@@ -167,7 +167,7 @@ export async function scanDevices(): Promise<BluetoothDevice[]> {
     const paired: unknown[] = parsed?.paired ?? [];
 
     const deviceMap = new Map<string, BluetoothDevice>();
-    console.log("Scan result:", parsed);
+    if (__DEV__) console.log("Scan result:", parsed);
 
     const addDevices = (list: unknown[]) => {
       for (const d of list) {

@@ -236,6 +236,10 @@ export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGri
             renderItem={renderItem}
             contentContainerStyle={{ padding: 6 }}
             columnWrapperStyle={{ justifyContent: "flex-start" }}
+            initialNumToRender={12}
+            maxToRenderPerBatch={12}
+            windowSize={5}
+            removeClippedSubviews={true}
             ListEmptyComponent={
               <YStack flex={1} alignItems="center" justifyContent="center" paddingVertical={64}>
                 <Ionicons

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { memo, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
@@ -24,6 +24,7 @@ interface CartItemProps {
   isSentToKitchen: boolean;
   onIncrement: (id: Id<"orderItems">, currentQty: number) => void;
   onDecrement: (id: Id<"orderItems">, currentQty: number) => void;
+  onSetQuantity?: (id: Id<"orderItems">, targetQty: number) => void | Promise<void>;
   onVoidItem?: (id: Id<"orderItems">) => void;
   serviceType?: "dine_in" | "takeout";
   orderDefaultServiceType?: "dine_in" | "takeout";
@@ -45,6 +46,7 @@ export const CartItem = memo(
     isSentToKitchen,
     onIncrement,
     onDecrement,
+    onSetQuantity,
     onVoidItem,
     serviceType,
     orderDefaultServiceType,
@@ -63,6 +65,74 @@ export const CartItem = memo(
         setIsUpdatingServiceType(false);
       }
     };
+
+    const DEBOUNCE_MS = 300;
+
+    const [displayQty, setDisplayQty] = useState(quantity);
+    const pendingQtyRef = useRef<number | null>(null);
+    const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Keep displayQty synced with upstream quantity unless the user has a pending change.
+    useEffect(() => {
+      if (pendingQtyRef.current === null) {
+        setDisplayQty(quantity);
+      }
+    }, [quantity]);
+
+    const flushNow = (target: number) => {
+      if (flushTimerRef.current) {
+        clearTimeout(flushTimerRef.current);
+        flushTimerRef.current = null;
+      }
+      pendingQtyRef.current = null;
+      if (target < 1) {
+        // Route through the existing remove/confirm path.
+        onDecrement(id, 1);
+      } else if (onSetQuantity) {
+        onSetQuantity(id, target);
+      } else {
+        // Fallback if parent hasn't wired onSetQuantity yet — use the old increment path.
+        const diff = target - quantity;
+        if (diff > 0) onIncrement(id, quantity);
+        else if (diff < 0) onDecrement(id, quantity);
+      }
+    };
+
+    const scheduleFlush = (nextQty: number) => {
+      setDisplayQty(nextQty);
+      pendingQtyRef.current = nextQty;
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+
+      if (nextQty < 1) {
+        // Remove confirmation must fire immediately — don't debounce.
+        flushNow(nextQty);
+        return;
+      }
+
+      flushTimerRef.current = setTimeout(() => {
+        const pending = pendingQtyRef.current;
+        if (pending !== null && pending !== quantity && pending >= 1) {
+          flushNow(pending);
+        } else {
+          pendingQtyRef.current = null;
+          flushTimerRef.current = null;
+        }
+      }, DEBOUNCE_MS);
+    };
+
+    // Flush on unmount so we don't lose a pending edit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+      return () => {
+        if (flushTimerRef.current) {
+          clearTimeout(flushTimerRef.current);
+          const pending = pendingQtyRef.current;
+          if (pending !== null && pending !== quantity && pending >= 1 && onSetQuantity) {
+            onSetQuantity(id, pending);
+          }
+        }
+      };
+    }, []); // unmount-only
 
     return (
       <YStack
@@ -207,7 +277,7 @@ export const CartItem = memo(
               <XStack alignItems="center" gap={8}>
                 <Pressable
                   android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-                  onPress={() => onDecrement(id, quantity)}
+                  onPress={() => scheduleFlush(displayQty - 1)}
                   style={({ pressed }) => [
                     {
                       width: 44,
@@ -232,13 +302,13 @@ export const CartItem = memo(
                   alignItems="center"
                 >
                   <Text style={{ fontSize: 18, fontWeight: "700", color: "#111827" }}>
-                    {quantity}
+                    {displayQty}
                   </Text>
                 </YStack>
 
                 <Pressable
                   android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-                  onPress={() => onIncrement(id, quantity)}
+                  onPress={() => scheduleFlush(displayQty + 1)}
                   style={({ pressed }) => [
                     {
                       width: 44,

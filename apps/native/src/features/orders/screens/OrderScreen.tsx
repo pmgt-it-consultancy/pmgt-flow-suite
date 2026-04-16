@@ -24,6 +24,7 @@ import {
   ViewBillModal,
   VoidItemModal,
 } from "../components";
+import { useCartMutations } from "../hooks/useCartMutations";
 
 interface OrderScreenProps {
   navigation: any;
@@ -118,38 +119,28 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
   const products = useQuery(api.products.list, { storeId });
 
-  // Prefetch all modifier data for the store — available instantly on product tap
-  const allModifiers = useQuery(api.modifierAssignments.getForStore, { storeId });
-  const modifiersByProduct = useMemo(() => {
-    const map = new Map<string, typeof modifierGroups>();
-    if (allModifiers) {
-      for (const entry of allModifiers) {
-        map.set(entry.productId, entry.groups);
-      }
-    }
-    return map;
-  }, [allModifiers]);
-
-  // Get modifier groups for the selected product from prefetched data
-  type ModifierGroup = NonNullable<typeof allModifiers>[number]["groups"];
-  const modifierGroups: ModifierGroup = selectedProduct
-    ? (modifiersByProduct.get(selectedProduct.id) ?? [])
-    : [];
+  // Fetch modifier groups for the selected product on demand
+  const modifierGroups = useQuery(
+    api.modifierAssignments.getForProduct,
+    selectedProduct ? { productId: selectedProduct.id } : "skip",
+  );
 
   // Mutations
-  const addItem = useMutation(api.orders.addItem);
-  const updateItemQuantity = useMutation(api.orders.updateItemQuantity);
-  const removeItemMutation = useMutation(api.orders.removeItem);
+  const {
+    addItem,
+    updateItemQuantity,
+    removeItem: removeItemMutation,
+    updateItemServiceType,
+  } = useCartMutations();
   const cancelOrderMutation = useMutation(api.checkout.cancelOrder);
   const sendToKitchenMutation = useMutation(api.orders.sendToKitchen);
   const createAndSendMutation = useMutation(api.orders.createAndSendToKitchen);
   const createOrderMutation = useMutation(api.orders.create);
   const updatePaxMutation = useMutation(api.orders.updatePax);
   const updateTabNameMutation = useMutation(api.orders.updateTabName);
-  const updateItemServiceType = useMutation(api.orders.updateItemServiceType);
 
   // Printer
-  const { printKitchenTicket } = usePrinterStore();
+  const printKitchenTicket = usePrinterStore((s) => s.printKitchenTicket);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -426,7 +417,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     async (paxValue?: number) => {
       if (sendToKitchenLockRef.current) return;
 
-      console.log("[SendToKitchen] Starting. isDraftMode:", isDraftMode, "paxValue:", paxValue);
+      if (__DEV__)
+        console.log("[SendToKitchen] Starting. isDraftMode:", isDraftMode, "paxValue:", paxValue);
       sendToKitchenLockRef.current = true;
       setIsSending(true);
       let shouldReleaseLock = true;
@@ -436,12 +428,13 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
         if (isDraftMode) {
           // Validate required params
-          console.log("[SendToKitchen] Draft mode - validating params:", {
-            tableId,
-            storeId,
-            paxValue,
-            itemCount: draftItems.length,
-          });
+          if (__DEV__)
+            console.log("[SendToKitchen] Draft mode - validating params:", {
+              tableId,
+              storeId,
+              paxValue,
+              itemCount: draftItems.length,
+            });
 
           if (!tableId) {
             throw new Error("Table ID is required");
@@ -456,7 +449,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             throw new Error("No items to send");
           }
 
-          console.log("[SendToKitchen] Calling createAndSendMutation...");
+          if (__DEV__) console.log("[SendToKitchen] Calling createAndSendMutation...");
 
           // First-time: create order + send
           let result: {
@@ -477,7 +470,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
                 customPrice: d.customPrice,
               })),
             });
-            console.log("[SendToKitchen] Mutation result:", JSON.stringify(result));
+            if (__DEV__) console.log("[SendToKitchen] Mutation result:", result);
           } catch (mutationError: any) {
             console.error("[SendToKitchen] Mutation error:", mutationError);
             throw new Error(`Mutation failed: ${mutationError.message || mutationError}`);
@@ -502,11 +495,12 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           setDraftItems([]);
         } else {
           // Existing order: send unsent items
-          console.log("[SendToKitchen] Existing order mode:", {
-            currentOrderId,
-            orderExists: !!order,
-            orderNumber: order?.orderNumber,
-          });
+          if (__DEV__)
+            console.log("[SendToKitchen] Existing order mode:", {
+              currentOrderId,
+              orderExists: !!order,
+              orderNumber: order?.orderNumber,
+            });
 
           if (!currentOrderId) {
             throw new Error("Order ID is required");
@@ -578,7 +572,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
     // Guard: In non-draft mode, wait for order to load
     if (!isDraftMode && !order) {
-      console.log("[SendToKitchen] Order not loaded yet, ignoring");
+      if (__DEV__) console.log("[SendToKitchen] Order not loaded yet, ignoring");
       return;
     }
 
@@ -737,6 +731,28 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     }
   }, [tableId, storeId, createOrderMutation, navigation, currentTableName, isCreatingTab]);
 
+  const handleSetQuantity = useCallback(
+    async (itemId: Id<"orderItems">, targetQty: number) => {
+      if (isDraftMode) {
+        setDraftItems((prev) =>
+          prev.map((d) =>
+            (d.localId as unknown as Id<"orderItems">) === itemId
+              ? { ...d, quantity: targetQty }
+              : d,
+          ),
+        );
+        return;
+      }
+      try {
+        await updateItemQuantity({ orderItemId: itemId, quantity: targetQty });
+      } catch (error) {
+        if (__DEV__) console.error("Update quantity error:", error);
+        Alert.alert("Error", "Failed to update quantity");
+      }
+    },
+    [isDraftMode, updateItemQuantity],
+  );
+
   const renderCartItem = useCallback(
     ({ item }: { item: (typeof activeItems)[0] }) => (
       <CartItem
@@ -753,10 +769,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         onServiceTypeChange={handleServiceTypeChange}
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
+        onSetQuantity={handleSetQuantity}
         onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
       />
     ),
-    [handleServiceTypeChange, handleIncrement, handleDecrement, handleVoidItem],
+    [handleServiceTypeChange, handleIncrement, handleDecrement, handleSetQuantity, handleVoidItem],
   );
 
   if (isLoading || !isAuthenticated) {
@@ -859,15 +876,15 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       </XStack>
 
       <ModifierSelectionModal
-        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length > 0}
+        visible={!!selectedProduct && selectedProduct.hasModifiers}
         product={selectedProduct}
-        modifierGroups={modifierGroups}
-        isLoading={isAddingItem || isSending}
+        modifierGroups={modifierGroups ?? []}
+        isLoading={isAddingItem || isSending || modifierGroups === undefined}
         onClose={handleCloseModal}
         onConfirm={handleConfirmModifiers}
       />
       <AddItemModal
-        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length === 0}
+        visible={!!selectedProduct && !selectedProduct.hasModifiers}
         product={selectedProduct}
         quantity={quantity}
         notes={notes}

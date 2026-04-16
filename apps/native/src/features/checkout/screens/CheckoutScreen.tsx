@@ -76,7 +76,9 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const [completedKitchenData, setCompletedKitchenData] = useState<KitchenTicketData | null>(null);
 
   // Printer Store
-  const { printReceipt: printToThermal, openCashDrawer, cashDrawerEnabled } = usePrinterStore();
+  const printToThermal = usePrinterStore((s) => s.printReceipt);
+  const openCashDrawer = usePrinterStore((s) => s.openCashDrawer);
+  const cashDrawerEnabled = usePrinterStore((s) => s.cashDrawerEnabled);
 
   // Discount State
   const [showDiscountModal, setShowDiscountModal] = useState(false);

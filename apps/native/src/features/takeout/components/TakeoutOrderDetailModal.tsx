@@ -40,7 +40,7 @@ export const TakeoutOrderDetailModal = ({
 }: TakeoutOrderDetailModalProps) => {
   const { user } = useAuth();
   const formatCurrency = useFormatCurrency();
-  const { printReceipt: printToThermal } = usePrinterStore();
+  const printToThermal = usePrinterStore((s) => s.printReceipt);
 
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);

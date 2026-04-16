@@ -47,7 +47,7 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
   const logReprint = useMutation(api.checkout.logReceiptReprint);
   const voidOrderAction = useAction(api.voids.voidOrder);
   const voidPaidOrderAction = useAction(api.voids.voidPaidOrder);
-  const { printReceipt: printToThermal } = usePrinterStore();
+  const printToThermal = usePrinterStore((s) => s.printReceipt);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 

@@ -4,46 +4,44 @@ When completing a task in this project, run through these checks:
 
 ## 1. Type Checking
 ```bash
-npm run typecheck
+pnpm typecheck
 ```
-Ensures TypeScript compiles without errors across all packages.
 
-## 2. Linting (Web App)
+## 2. Lint + Format (Biome)
 ```bash
-cd apps/web && npm run lint
+pnpm check
 ```
-Checks for ESLint violations in the web app.
 
-## 3. Code Formatting
+## 3. Build Verification (if significant changes)
 ```bash
-npm run format
+pnpm build
 ```
-Formats all TypeScript, JavaScript, JSON, and Markdown files.
 
-## 4. Build Verification
+## 4. Backend Tests (if Convex changes)
 ```bash
-npm run build
+cd packages/backend && pnpm vitest run
 ```
-Ensures production builds succeed for all packages.
 
 ## Convex-Specific Checks
 
-### After Modifying Schema (`packages/backend/convex/schema.ts`)
-- Ensure all existing data is compatible with schema changes
-- Add appropriate indexes for query patterns
-- Update any affected queries/mutations
+### After Modifying Schema
+- Ensure existing data compatibility
+- Add indexes for query patterns (`by_field1_and_field2`)
+- Update affected queries/mutations
+- Add `returns` validator to all functions
 
 ### After Adding/Modifying Functions
 - Verify `args` and `returns` validators are complete
-- Public functions (`query`/`mutation`/`action`) are intentionally public
-- Internal functions use `internal*` variants
+- Public vs internal function choice is intentional
 - Actions using Node.js have `"use node";` directive
+- Use `withIndex()` not `filter()`
+- Money math rounds at centavo precision
 
 ### After Modifying Authentication
 - Test both web and native auth flows
-- Verify `getUserId(ctx)` returns expected values
+- Verify `getAuthenticatedUser(ctx)` returns expected values
 
 ## Pre-Commit Summary
 ```bash
-npm run typecheck && npm run format && cd apps/web && npm run lint
+pnpm typecheck && pnpm check
 ```

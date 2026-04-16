@@ -87,23 +87,19 @@ export const ModifierSelectionModal = ({
       customPrice >= openMinPrice &&
       customPrice <= openMaxPrice);
 
-  // Initialize defaults when modal opens
-  const initializedRef = useState<string | null>(null);
-  if (product && initializedRef[0] !== product.id) {
+  useEffect(() => {
+    if (!visible || !product) return;
     const defaults: Record<string, Set<string>> = {};
     for (const group of modifierGroups) {
       const defaultOptions = group.options.filter((o) => o.isDefault);
-      if (defaultOptions.length > 0) {
-        defaults[group.groupId] = new Set(defaultOptions.map((o) => o.optionId));
-      } else {
-        defaults[group.groupId] = new Set();
-      }
+      defaults[group.groupId] =
+        defaultOptions.length > 0 ? new Set(defaultOptions.map((o) => o.optionId)) : new Set();
     }
     setSelections(defaults);
     setQuantity(1);
     setNotes("");
-    initializedRef[1](product.id);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- modifierGroups is derived per-product; resetting only when the user opens a different product is intentional.
+  }, [product?.id, visible]);
 
   const handleSelectOption = useCallback((group: ModifierGroup, optionId: string) => {
     setSelections((prev) => {

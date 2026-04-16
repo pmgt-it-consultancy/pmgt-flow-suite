@@ -2,7 +2,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useConvexAuth, useQuery } from "convex/react";
-import { createContext, type ReactNode, useCallback, useContext } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useMemo } from "react";
 
 interface User {
   _id: Id<"users">;
@@ -102,14 +102,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [currentUser],
   );
 
-  const value: AuthContextType = {
-    user: currentUser ?? null,
-    isLoading,
-    isAuthenticated: isConvexAuthenticated && !!currentUser,
-    signIn,
-    signOut,
-    hasPermission,
-  };
+  const value = useMemo<AuthContextType>(
+    () => ({
+      user: currentUser ?? null,
+      isLoading,
+      isAuthenticated: isConvexAuthenticated && !!currentUser,
+      signIn,
+      signOut,
+      hasPermission,
+    }),
+    [currentUser, isLoading, isConvexAuthenticated, signIn, signOut, hasPermission],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
