@@ -1,8 +1,63 @@
 import { api } from "@packages/backend/convex/_generated/api";
+import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 
+let optimisticIdCounter = 0;
+
 export function useCartMutations() {
-  const addItem = useMutation(api.orders.addItem);
+  const addItem = useMutation(api.orders.addItem).withOptimisticUpdate((localStore, args) => {
+    const orderQuery = localStore.getQuery(api.orders.get, { orderId: args.orderId });
+    if (!orderQuery) return;
+
+    // Find the product in the store's product list cache so we can synthesize the item
+    // without waiting for the server response.
+    // The OrderScreen subscribes to api.products.list with { storeId } — grab that entry.
+    const allProducts = localStore.getAllQueries(api.products.list);
+    let product: (typeof allProducts)[number]["value"] extends (infer T)[] | undefined
+      ? T | undefined
+      : undefined;
+    for (const { value } of allProducts) {
+      if (!value) continue;
+      const found = value.find((p) => p._id === args.productId);
+      if (found) {
+        product = found;
+        break;
+      }
+    }
+    if (!product) return;
+
+    const placeholderId = `optimistic-${++optimisticIdCounter}` as Id<"orderItems">;
+    const basePrice = args.customPrice ?? product.price;
+    const modifierTotal = (args.modifiers ?? []).reduce((s, m) => s + m.priceAdjustment, 0);
+    const unitPrice = basePrice + modifierTotal;
+    const lineTotal = unitPrice * args.quantity;
+
+    // Build the optimistic item. Shape matches api.orders.get's items validator.
+    const newItem = {
+      _id: placeholderId,
+      productId: args.productId,
+      productName: product.name,
+      productPrice: basePrice,
+      isVatable: product.isVatable,
+      quantity: args.quantity,
+      notes: args.notes,
+      isVoided: false,
+      isSentToKitchen: undefined,
+      serviceType: undefined,
+      lineTotal,
+      modifiers: (args.modifiers ?? []).map((m) => ({
+        groupName: m.modifierGroupName,
+        optionName: m.modifierOptionName,
+        priceAdjustment: m.priceAdjustment,
+      })),
+    };
+
+    localStore.setQuery(
+      api.orders.get,
+      { orderId: args.orderId },
+      { ...orderQuery, items: [...orderQuery.items, newItem] },
+    );
+  });
   const updateItemQuantity = useMutation(api.orders.updateItemQuantity).withOptimisticUpdate(
     (localStore, args) => {
       // Walk every cached `api.orders.get` query and patch the matching item's quantity + lineTotal.
