@@ -1,6 +1,6 @@
 import { v } from "convex/values";
-import type { Doc } from "./_generated/dataModel";
-import { mutation, query } from "./_generated/server";
+import type { Doc, Id } from "./_generated/dataModel";
+import { mutation, type QueryCtx, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { getCategoryChain } from "./lib/categoryHelpers";
 import { requirePermission } from "./lib/permissions";
@@ -125,6 +125,97 @@ export const updateAssignment = mutation({
   },
 });
 
+// Shared per-product modifier resolution used by both getForProduct and getForStore.
+// Returns the resolved modifier groups (with options) for a single product.
+// Inactive groups are filtered out. Products with no assignments return [].
+async function fetchProductModifierGroups(
+  ctx: QueryCtx,
+  productId: Id<"products">,
+): Promise<
+  Array<{
+    groupId: Id<"modifierGroups">;
+    groupName: string;
+    selectionType: "single" | "multi";
+    minSelections: number;
+    maxSelections: number | undefined;
+    sortOrder: number;
+    options: Array<{
+      optionId: Id<"modifierOptions">;
+      name: string;
+      priceAdjustment: number;
+      isDefault: boolean;
+    }>;
+  }>
+> {
+  const product = await ctx.db.get(productId);
+  if (!product) return [];
+
+  // 1. Get product-level assignments
+  const productAssignments = await ctx.db
+    .query("modifierGroupAssignments")
+    .withIndex("by_product", (q) => q.eq("productId", productId))
+    .collect();
+
+  // 2. Get category chain (direct category + parent if subcategory)
+  const categoryChain = await getCategoryChain(ctx, product.categoryId);
+
+  // 3. Merge with priority: product > direct category > parent category
+  const seenGroupIds = new Set(productAssignments.map((a) => a.modifierGroupId));
+  const mergedAssignments = [...productAssignments];
+
+  for (const catId of categoryChain) {
+    const catAssignments = await ctx.db
+      .query("modifierGroupAssignments")
+      .withIndex("by_category", (q) => q.eq("categoryId", catId))
+      .collect();
+    for (const a of catAssignments) {
+      if (!seenGroupIds.has(a.modifierGroupId)) {
+        mergedAssignments.push(a);
+        seenGroupIds.add(a.modifierGroupId);
+      }
+    }
+  }
+
+  // Sort by assignment sortOrder
+  mergedAssignments.sort((a, b) => a.sortOrder - b.sortOrder);
+
+  // 4. Resolve each assignment to group + options
+  const results = await Promise.all(
+    mergedAssignments.map(async (assignment) => {
+      const group = await ctx.db.get(assignment.modifierGroupId);
+      if (!group || !group.isActive) return null;
+
+      // Fetch available options
+      const options = await ctx.db
+        .query("modifierOptions")
+        .withIndex("by_group_available", (q) =>
+          q.eq("modifierGroupId", group._id).eq("isAvailable", true),
+        )
+        .collect();
+
+      options.sort((a, b) => a.sortOrder - b.sortOrder);
+
+      return {
+        groupId: group._id,
+        groupName: group.name,
+        selectionType: group.selectionType,
+        minSelections: assignment.minSelectionsOverride ?? group.minSelections,
+        maxSelections: assignment.maxSelectionsOverride ?? group.maxSelections,
+        sortOrder: assignment.sortOrder,
+        options: options.map((o) => ({
+          optionId: o._id,
+          name: o.name,
+          priceAdjustment: o.priceAdjustment,
+          isDefault: o.isDefault,
+        })),
+      };
+    }),
+  );
+
+  // Filter out null (inactive groups)
+  return results.filter((r): r is NonNullable<typeof r> => r !== null);
+}
+
 // Get resolved modifier groups for a product (product-level + category-inherited)
 export const getForProduct = query({
   args: {
@@ -150,74 +241,7 @@ export const getForProduct = query({
   ),
   handler: async (ctx, args) => {
     await requireAuth(ctx);
-
-    const product = await ctx.db.get(args.productId);
-    if (!product) return [];
-
-    // 1. Get product-level assignments
-    const productAssignments = await ctx.db
-      .query("modifierGroupAssignments")
-      .withIndex("by_product", (q) => q.eq("productId", args.productId))
-      .collect();
-
-    // 2. Get category chain (direct category + parent if subcategory)
-    const categoryChain = await getCategoryChain(ctx, product.categoryId);
-
-    // 3. Merge with priority: product > direct category > parent category
-    const seenGroupIds = new Set(productAssignments.map((a) => a.modifierGroupId));
-    const mergedAssignments = [...productAssignments];
-
-    for (const catId of categoryChain) {
-      const catAssignments = await ctx.db
-        .query("modifierGroupAssignments")
-        .withIndex("by_category", (q) => q.eq("categoryId", catId))
-        .collect();
-      for (const a of catAssignments) {
-        if (!seenGroupIds.has(a.modifierGroupId)) {
-          mergedAssignments.push(a);
-          seenGroupIds.add(a.modifierGroupId);
-        }
-      }
-    }
-
-    // Sort by assignment sortOrder
-    mergedAssignments.sort((a, b) => a.sortOrder - b.sortOrder);
-
-    // 4. Resolve each assignment to group + options
-    const results = await Promise.all(
-      mergedAssignments.map(async (assignment) => {
-        const group = await ctx.db.get(assignment.modifierGroupId);
-        if (!group || !group.isActive) return null;
-
-        // Fetch available options
-        const options = await ctx.db
-          .query("modifierOptions")
-          .withIndex("by_group_available", (q) =>
-            q.eq("modifierGroupId", group._id).eq("isAvailable", true),
-          )
-          .collect();
-
-        options.sort((a, b) => a.sortOrder - b.sortOrder);
-
-        return {
-          groupId: group._id,
-          groupName: group.name,
-          selectionType: group.selectionType,
-          minSelections: assignment.minSelectionsOverride ?? group.minSelections,
-          maxSelections: assignment.maxSelectionsOverride ?? group.maxSelections,
-          sortOrder: assignment.sortOrder,
-          options: options.map((o) => ({
-            optionId: o._id,
-            name: o.name,
-            priceAdjustment: o.priceAdjustment,
-            isDefault: o.isDefault,
-          })),
-        };
-      }),
-    );
-
-    // Filter out null (inactive groups)
-    return results.filter((r): r is NonNullable<typeof r> => r !== null);
+    return await fetchProductModifierGroups(ctx, args.productId);
   },
 });
 
@@ -262,72 +286,10 @@ export const getForStore = query({
 
     const results = await Promise.all(
       activeProducts.map(async (product) => {
-        // Product-level assignments
-        const productAssignments = await ctx.db
-          .query("modifierGroupAssignments")
-          .withIndex("by_product", (q) => q.eq("productId", product._id))
-          .collect();
-
-        // Walk category chain: direct category first, then parent
-        const categoryChain = await getCategoryChain(ctx, product.categoryId);
-        const seenGroupIds = new Set(productAssignments.map((a) => a.modifierGroupId));
-        const mergedAssignments = [...productAssignments];
-
-        for (const catId of categoryChain) {
-          const catAssignments = await ctx.db
-            .query("modifierGroupAssignments")
-            .withIndex("by_category", (q) => q.eq("categoryId", catId))
-            .collect();
-          for (const a of catAssignments) {
-            if (!seenGroupIds.has(a.modifierGroupId)) {
-              mergedAssignments.push(a);
-              seenGroupIds.add(a.modifierGroupId);
-            }
-          }
-        }
-
-        if (mergedAssignments.length === 0) return null;
-
-        mergedAssignments.sort((a, b) => a.sortOrder - b.sortOrder);
-
-        const groups = await Promise.all(
-          mergedAssignments.map(async (assignment) => {
-            const group = await ctx.db.get(assignment.modifierGroupId);
-            if (!group || !group.isActive) return null;
-
-            const options = await ctx.db
-              .query("modifierOptions")
-              .withIndex("by_group_available", (q) =>
-                q.eq("modifierGroupId", group._id).eq("isAvailable", true),
-              )
-              .collect();
-
-            options.sort((a, b) => a.sortOrder - b.sortOrder);
-
-            return {
-              groupId: group._id,
-              groupName: group.name,
-              selectionType: group.selectionType,
-              minSelections: assignment.minSelectionsOverride ?? group.minSelections,
-              maxSelections: assignment.maxSelectionsOverride ?? group.maxSelections,
-              sortOrder: assignment.sortOrder,
-              options: options.map((o) => ({
-                optionId: o._id,
-                name: o.name,
-                priceAdjustment: o.priceAdjustment,
-                isDefault: o.isDefault,
-              })),
-            };
-          }),
-        );
-
-        const activeGroups = groups.filter((g): g is NonNullable<typeof g> => g !== null);
-        if (activeGroups.length === 0) return null;
-
-        return {
-          productId: product._id,
-          groups: activeGroups,
-        };
+        const groups = await fetchProductModifierGroups(ctx, product._id);
+        // Preserve original behavior: skip products with no modifier groups at all
+        if (groups.length === 0) return null;
+        return { productId: product._id, groups };
       }),
     );
 

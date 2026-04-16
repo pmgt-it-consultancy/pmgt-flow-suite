@@ -1,5 +1,6 @@
 import { convexTest } from "convex-test";
 import { describe, expect, it } from "vitest";
+import { api } from "./_generated/api";
 import { getCategoryChain } from "./lib/categoryHelpers";
 import schema from "./schema";
 
@@ -514,6 +515,56 @@ describe("getForProduct resolution — category inheritance", () => {
     });
 
     expect(result).toBe(2);
+  });
+});
+
+describe("getForProduct vs getForStore equivalence", () => {
+  it("getForProduct returns the same groups as getForStore filtered to one product", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId, modifierGroupId } = await setupModifierTestData(t);
+
+    // Assign modifier group to product
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("modifierGroupAssignments", {
+        storeId,
+        modifierGroupId,
+        productId,
+        sortOrder: 0,
+        createdAt: Date.now(),
+      });
+    });
+
+    const asUser = t.withIdentity({ subject: userId, tokenIdentifier: `convex|${userId}` });
+
+    const [forProductResult, forStoreResult] = await Promise.all([
+      asUser.query(api.modifierAssignments.getForProduct, { productId }),
+      asUser.query(api.modifierAssignments.getForStore, { storeId }),
+    ]);
+
+    // Find the entry for this product in the getForStore result
+    const storeEntry = forStoreResult.find((r: any) => r.productId === productId);
+    expect(storeEntry).toBeDefined();
+
+    // The groups arrays should be deeply equal
+    expect(forProductResult).toEqual(storeEntry!.groups);
+  });
+
+  it("getForProduct returns [] for product with no modifiers; getForStore omits that product", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId, productId } = await setupModifierTestData(t);
+    // No assignments created — product has no modifiers
+
+    const asUser = t.withIdentity({ subject: userId, tokenIdentifier: `convex|${userId}` });
+
+    const [forProductResult, forStoreResult] = await Promise.all([
+      asUser.query(api.modifierAssignments.getForProduct, { productId }),
+      asUser.query(api.modifierAssignments.getForStore, { storeId }),
+    ]);
+
+    // getForProduct returns empty array
+    expect(forProductResult).toEqual([]);
+    // getForStore omits the product entirely
+    expect(forStoreResult.find((r: any) => r.productId === productId)).toBeUndefined();
   });
 });
 
