@@ -1,3 +1,5 @@
 ## What's New
 
-- Fixed unresponsive buttons in several modals, including the in-app update prompt, the tab selection sheet, the guest count (PAX) entry modal, the auto-lock timeout picker, and the system status dropdown
+- Fixed the Takeout Orders screen freezing when tapping "Ready for Pickup" or other action buttons in quick succession — rapid taps no longer wedge the app's touch handling
+- Each takeout order card now has an explicit "View Details" / "View Receipt" button for opening the order detail and reprint screen
+- Voided takeout orders can now be opened from the list (previously had no tap affordance to reach the detail modal)

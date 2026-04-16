@@ -100,28 +100,22 @@ export const TakeoutOrderCard = memo(
     const helperText = isVoided
       ? "Voided order record"
       : isAdvanceOrder
-        ? "Sent to kitchen. Tap to collect payment."
+        ? "Ticket sent. Advance or collect payment below."
         : canResumeOrder
-          ? "Open order. Tap to edit cart and continue checkout."
+          ? "Open order. Resume to edit or take payment."
           : isPaid && config.nextLabel
             ? "Paid order ready for the next kitchen step."
-            : "Tap to view order details.";
+            : "Past order — open to reprint the receipt.";
+    const showDetailsRow = !isOpen;
 
     return (
-      <Pressable
-        android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-        style={({ pressed }) => [
-          {
-            backgroundColor: isAdvanceOrder ? "#EFF6FF" : canResumeOrder ? "#FFFBEB" : "#FFFFFF",
-            borderRadius: 12,
-            padding: 16,
-            borderWidth: 1,
-            borderColor: isAdvanceOrder ? "#93C5FD" : canResumeOrder ? "#FCD34D" : "#F3F4F6",
-            marginBottom: 12,
-          },
-          { opacity: pressed ? 0.7 : 1 },
-        ]}
-        onPress={() => onPress?.(id)}
+      <YStack
+        backgroundColor={isAdvanceOrder ? "#EFF6FF" : canResumeOrder ? "#FFFBEB" : "#FFFFFF"}
+        borderRadius={12}
+        padding={16}
+        borderWidth={1}
+        borderColor={isAdvanceOrder ? "#93C5FD" : canResumeOrder ? "#FCD34D" : "#F3F4F6"}
+        marginBottom={12}
       >
         <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={10}>
           <YStack>
@@ -276,15 +270,40 @@ export const TakeoutOrderCard = memo(
           </Pressable>
         )}
 
-        {!canResumeOrder && !canAdvanceWorkflow && !isVoided && (
-          <XStack alignItems="center" justifyContent="space-between">
-            <Text variant="muted" size="sm">
-              View details
-            </Text>
-            <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
-          </XStack>
+        {showDetailsRow && (
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.08)", borderless: false }}
+            onPress={() => onPress?.(id)}
+            style={({ pressed }) => [
+              {
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                backgroundColor: "#F8FAFC",
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: "#E2E8F0",
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                marginTop: canAdvanceWorkflow ? 10 : 0,
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
+          >
+            <XStack alignItems="center" gap={8}>
+              <Ionicons
+                name={canAdvanceWorkflow ? "receipt-outline" : "document-text-outline"}
+                size={18}
+                color="#475569"
+              />
+              <Text style={{ color: "#334155", fontWeight: "600", fontSize: 14 }}>
+                {canAdvanceWorkflow ? "View Receipt" : "View Details"}
+              </Text>
+            </XStack>
+            <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+          </Pressable>
         )}
-      </Pressable>
+      </YStack>
     );
   },
 );
