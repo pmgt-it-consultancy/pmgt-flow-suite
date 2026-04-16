@@ -4,6 +4,18 @@ import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser, getAuthenticatedUserWithRole } from "./lib/auth";
 import { requirePermission } from "./lib/permissions";
 
+const scheduleValidator = v.optional(
+  v.object({
+    monday: v.object({ open: v.string(), close: v.string() }),
+    tuesday: v.object({ open: v.string(), close: v.string() }),
+    wednesday: v.object({ open: v.string(), close: v.string() }),
+    thursday: v.object({ open: v.string(), close: v.string() }),
+    friday: v.object({ open: v.string(), close: v.string() }),
+    saturday: v.object({ open: v.string(), close: v.string() }),
+    sunday: v.object({ open: v.string(), close: v.string() }),
+  }),
+);
+
 // List stores based on user scope
 export const list = query({
   args: {
@@ -25,6 +37,7 @@ export const list = query({
       website: v.optional(v.string()),
       socials: v.optional(v.array(v.object({ platform: v.string(), url: v.string() }))),
       footer: v.optional(v.string()),
+      schedule: scheduleValidator,
       isActive: v.boolean(),
       createdAt: v.number(),
       branchCount: v.number(),
@@ -94,6 +107,7 @@ export const list = query({
           website: store.website,
           socials: store.socials,
           footer: store.footer,
+          schedule: store.schedule,
           isActive: store.isActive,
           createdAt: store.createdAt,
           branchCount: branches.length,
@@ -129,6 +143,7 @@ export const get = query({
       website: v.optional(v.string()),
       socials: v.optional(v.array(v.object({ platform: v.string(), url: v.string() }))),
       footer: v.optional(v.string()),
+      schedule: scheduleValidator,
       isActive: v.boolean(),
       createdAt: v.number(),
     }),
@@ -162,6 +177,7 @@ export const get = query({
       website: store.website,
       socials: store.socials,
       footer: store.footer,
+      schedule: store.schedule,
       isActive: store.isActive,
       createdAt: store.createdAt,
     };
