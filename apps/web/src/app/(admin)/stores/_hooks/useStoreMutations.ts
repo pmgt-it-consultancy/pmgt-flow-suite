@@ -27,6 +27,7 @@ export function useStoreMutations() {
         website: values.website || undefined,
         socials: values.socials.length > 0 ? values.socials : undefined,
         footer: values.footer || undefined,
+        schedule: values.schedule,
       });
       toast.success("Store created successfully");
     },
@@ -50,6 +51,7 @@ export function useStoreMutations() {
         socials: values.socials.length > 0 ? values.socials : undefined,
         footer: values.footer || undefined,
         isActive: values.isActive,
+        schedule: values.schedule,
       });
       toast.success("Store updated successfully");
     },

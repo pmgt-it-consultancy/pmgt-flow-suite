@@ -2,7 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import type { Doc, Id } from "../_generated/dataModel";
 import { internalMutation, internalQuery } from "../_generated/server";
-import { getPHTDayBoundaries } from "../lib/dateUtils";
+import { getBusinessDayBoundaries } from "../lib/businessDay";
 import { aggregateOrderTotals, calculateItemTotals } from "../lib/taxCalculations";
 import { recomputeOrderItemCount } from "../orders";
 
@@ -330,7 +330,7 @@ export const voidPaidOrderInternal = internalMutation({
 
       // Generate new order number
       const prefix = order.orderType === "dine_in" ? "D" : "T";
-      const { startOfDay, endOfDay } = getPHTDayBoundaries();
+      const { startOfDay, endOfDay } = getBusinessDayBoundaries(store?.schedule);
       const todaysOrders = await ctx.db
         .query("orders")
         .withIndex("by_store_createdAt", (q: any) =>
