@@ -357,6 +357,7 @@ export const voidPaidOrderInternal = internalMutation({
         orderType: order.orderType,
         orderChannel: order.orderChannel,
         tableId: order.tableId,
+        tableName: order.tableName,
         customerName: order.customerName,
         orderCategory: order.orderCategory,
         tableMarker: order.tableMarker,

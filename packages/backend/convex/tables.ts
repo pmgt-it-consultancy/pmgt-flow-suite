@@ -151,10 +151,12 @@ export const update = mutation({
 
     await requirePermission(ctx, user._id, "tables.manage");
 
+    const existing = await ctx.db.get(args.tableId);
+    if (!existing) throw new Error("Table not found");
+
     // Cannot deactivate a table that has an active order
     if (args.isActive === false) {
-      const table = await ctx.db.get(args.tableId);
-      if (table?.currentOrderId) {
+      if (existing.currentOrderId) {
         throw new Error("Cannot deactivate a table with an active order");
       }
     }
@@ -165,6 +167,18 @@ export const update = mutation({
     );
 
     await ctx.db.patch(tableId, filteredUpdates);
+
+    // Fan out new name to all currently open orders on this table
+    if (args.name !== undefined && args.name !== existing.name) {
+      const openOrders = await ctx.db
+        .query("orders")
+        .withIndex("by_tableId_status", (q) => q.eq("tableId", args.tableId).eq("status", "open"))
+        .collect();
+      for (const o of openOrders) {
+        await ctx.db.patch(o._id, { tableName: args.name });
+      }
+    }
+
     return null;
   },
 });

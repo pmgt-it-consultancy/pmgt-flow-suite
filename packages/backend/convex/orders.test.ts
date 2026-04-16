@@ -1344,3 +1344,91 @@ describe("orders — itemCount denormalization", () => {
     expect(order.itemCount).toBe(0);
   });
 });
+
+describe("tables.update — tableName fan-out", () => {
+  it("renames tableName on open orders but not on paid orders", async () => {
+    const t = convexTest(schema, modules);
+
+    const { storeId, userId } = await setupTestData(t);
+
+    // Seed the required roles/permissions
+    await t.run(async (ctx: any) => {
+      const roleId = await ctx.db.insert("roles", {
+        name: "Admin",
+        permissions: ["tables.manage"],
+        scopeLevel: "branch",
+        isSystem: false,
+      });
+      await ctx.db.patch(userId, { roleId });
+    });
+
+    // Create table "A"
+    const tableId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("tables", {
+        storeId,
+        name: "Table A",
+        status: "available",
+        sortOrder: 1,
+        isActive: true,
+        createdAt: Date.now(),
+      });
+    });
+
+    // Create an open order on that table (snapshots "Table A")
+    const openOrderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        tableId,
+        tableName: "Table A",
+        orderType: "dine_in",
+        orderChannel: "walk_in_dine_in",
+        status: "open",
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+      });
+    });
+
+    // Create a paid order on the same table (should NOT be updated)
+    const paidOrderId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("orders", {
+        storeId,
+        tableId,
+        tableName: "Table A",
+        orderType: "dine_in",
+        orderChannel: "walk_in_dine_in",
+        status: "paid",
+        grossSales: 0,
+        vatableSales: 0,
+        vatAmount: 0,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 0,
+        createdBy: userId,
+        createdAt: Date.now(),
+        paidAt: Date.now(),
+        paidBy: userId,
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+
+    // Rename table to "Table B"
+    await authed.mutation(api.tables.update, { tableId, name: "Table B" });
+
+    // Open order should have tableName updated
+    const openOrder = await t.run(async (ctx: any) => ctx.db.get(openOrderId));
+    expect(openOrder?.tableName).toBe("Table B");
+
+    // Paid order should retain original tableName
+    const paidOrder = await t.run(async (ctx: any) => ctx.db.get(paidOrderId));
+    expect(paidOrder?.tableName).toBe("Table A");
+  });
+});
