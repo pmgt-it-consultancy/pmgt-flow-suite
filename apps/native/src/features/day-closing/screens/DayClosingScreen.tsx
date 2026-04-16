@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
@@ -27,27 +27,51 @@ const formatDateKey = (date: Date): string => {
   return `${y}-${m}-${d}`;
 };
 
+const parseBusinessDate = (businessDate: string): Date => {
+  const [y, m, d] = businessDate.split("-").map(Number);
+  return new Date(y, m - 1, d);
+};
+
 export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   const { user } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isPrintingZReport, setIsPrintingZReport] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [startTime, setStartTime] = useState<string | undefined>(undefined);
   const [endTime, setEndTime] = useState<string | undefined>(undefined);
 
   const storeId = user?.storeId;
-  const reportDate = formatDateKey(selectedDate);
 
-  // Queries
-  const report = useQuery(api.reports.getDailyReport, storeId ? { storeId, reportDate } : "skip");
+  // The business day may lag the device's midnight when the store closes after
+  // midnight (e.g. close=03:00). Subscribe to the schedule-aware date and use
+  // it both to initialize selectedDate and to drive the navigation bar's
+  // "today" lock so users can't jump past the current business day.
+  const todayBusinessDate = useQuery(
+    api.reports.getCurrentBusinessDate,
+    storeId ? { storeId } : "skip",
+  );
+
+  useEffect(() => {
+    if (todayBusinessDate && !selectedDate) {
+      setSelectedDate(parseBusinessDate(todayBusinessDate));
+    }
+  }, [todayBusinessDate, selectedDate]);
+
+  const reportDate = selectedDate ? formatDateKey(selectedDate) : null;
+
+  // Queries — all skip until we have both storeId and a resolved business date
+  const report = useQuery(
+    api.reports.getDailyReport,
+    storeId && reportDate ? { storeId, reportDate } : "skip",
+  );
   const productSales = useQuery(
     api.reports.getDailyProductSales,
-    storeId ? { storeId, reportDate } : "skip",
+    storeId && reportDate ? { storeId, reportDate } : "skip",
   );
   const store = useQuery(api.stores.get, storeId ? { storeId } : "skip");
   const paymentTransactions = useQuery(
     api.reports.getDailyPaymentTransactions,
-    storeId ? { storeId, reportDate } : "skip",
+    storeId && reportDate ? { storeId, reportDate } : "skip",
   );
 
   // Mutations
@@ -70,7 +94,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
 
   // Generate report + log closing
   const handleGenerateReport = useCallback(async () => {
-    if (!storeId) return;
+    if (!storeId || !reportDate) return;
     setIsGenerating(true);
     try {
       await generateReport({ storeId, reportDate, startTime, endTime });
@@ -84,7 +108,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
 
   // Print Z-Report to thermal printer
   const handlePrintZReport = useCallback(async () => {
-    if (!report || !storeId || !store) return;
+    if (!report || !storeId || !store || !reportDate) return;
     setIsPrintingZReport(true);
     try {
       const storeAddress = [store.address1, store.address2].filter(Boolean).join(", ");
@@ -158,8 +182,15 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
           }
         />
 
-        {/* Date Navigation */}
-        <DateNavigationBar selectedDate={selectedDate} onDateChange={setSelectedDate} />
+        {/* Date Navigation — hidden until we have the business date so the
+            "today" lock can be computed correctly. */}
+        {selectedDate && todayBusinessDate && (
+          <DateNavigationBar
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+            todayBusinessDate={todayBusinessDate}
+          />
+        )}
 
         {/* Time Range */}
         <TimeRangeSelector

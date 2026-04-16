@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
-import { getBusinessDayBoundariesForDate } from "./lib/businessDay";
+import { getBusinessDayBoundaries, getBusinessDayBoundariesForDate } from "./lib/businessDay";
 import { getPHTDayBoundaries, getPHTHour, getPHTTimeBoundariesForDate } from "./lib/dateUtils";
 import { requirePermission } from "./lib/permissions";
 import { cleanupExpiredDraftOrders } from "./orders";
@@ -1316,5 +1316,22 @@ export const getTopSellingProductsLive = query({
       ...r,
       grossAmount: roundToTwo(r.grossAmount),
     }));
+  },
+});
+
+// Returns the current business-day date (YYYY-MM-DD PHT) for a store, honoring
+// the store's schedule. Stays subscribed so clients re-render when the business
+// day rolls over (e.g. at the configured close time).
+export const getCurrentBusinessDate = query({
+  args: { storeId: v.id("stores") },
+  returns: v.string(),
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+    if (!currentUser) {
+      throw new Error("Authentication required");
+    }
+    const store = await ctx.db.get(args.storeId);
+    const { businessDate } = getBusinessDayBoundaries(store?.schedule);
+    return businessDate;
   },
 });

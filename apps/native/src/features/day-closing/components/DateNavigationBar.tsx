@@ -9,15 +9,25 @@ import { Text } from "../../shared/components/ui";
 interface DateNavigationBarProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
+  /**
+   * Current business day as "YYYY-MM-DD" — schedule-aware from the backend.
+   * Used to lock the "next day" button and the date-picker's maximum date so
+   * users don't jump past the business day even if the device clock is already
+   * showing tomorrow (e.g. 00:30 when the store closes at 03:00).
+   */
+  todayBusinessDate: string;
 }
 
-const isToday = (date: Date): boolean => {
-  const now = new Date();
-  return (
-    date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth() &&
-    date.getDate() === now.getDate()
-  );
+const formatDateKey = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+const parseBusinessDate = (businessDate: string): Date => {
+  const [y, m, d] = businessDate.split("-").map(Number);
+  return new Date(y, m - 1, d);
 };
 
 const formatDateLabel = (date: Date): string =>
@@ -28,9 +38,14 @@ const formatDateLabel = (date: Date): string =>
     year: "numeric",
   });
 
-export const DateNavigationBar = ({ selectedDate, onDateChange }: DateNavigationBarProps) => {
+export const DateNavigationBar = ({
+  selectedDate,
+  onDateChange,
+  todayBusinessDate,
+}: DateNavigationBarProps) => {
   const [showPicker, setShowPicker] = useState(false);
-  const today = isToday(selectedDate);
+  const today = formatDateKey(selectedDate) === todayBusinessDate;
+  const maxPickerDate = parseBusinessDate(todayBusinessDate);
 
   const goToPreviousDay = () => {
     const prev = new Date(selectedDate);
@@ -98,7 +113,7 @@ export const DateNavigationBar = ({ selectedDate, onDateChange }: DateNavigation
           value={selectedDate}
           mode="date"
           display={Platform.OS === "ios" ? "spinner" : "default"}
-          maximumDate={new Date()}
+          maximumDate={maxPickerDate}
           onChange={(_, date) => {
             setShowPicker(false);
             if (date) onDateChange(date);
