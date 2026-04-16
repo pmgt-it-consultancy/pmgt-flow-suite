@@ -212,7 +212,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
                   icon="receipt-outline"
                 />
                 <ScoreCard
-                  value={summary.activeDineIn.toString()}
+                  value={dineInCount.toString()}
                   label="Dine-In"
                   detail={dineInCount > 0 ? `${dineInCount} tables busy` : "Ready for seating"}
                   tint="#ECFDF5"
@@ -220,7 +220,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
                   icon="restaurant-outline"
                 />
                 <ScoreCard
-                  value={summary.activeTakeout.toString()}
+                  value={takeoutCount.toString()}
                   label="Takeout"
                   detail={takeoutCount > 0 ? `${takeoutCount} waiting` : "No pending pickup"}
                   tint="#FFF2E8"

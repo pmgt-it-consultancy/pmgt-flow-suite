@@ -1350,8 +1350,6 @@ export const getDashboardSummary = query({
   },
   returns: v.object({
     totalOrdersToday: v.number(),
-    activeDineIn: v.number(),
-    activeTakeout: v.number(),
     todayRevenue: v.number(),
   }),
   handler: async (ctx, args) => {
@@ -1359,7 +1357,6 @@ export const getDashboardSummary = query({
 
     const { startOfDay, endOfDay } = getPHTDayBoundaries();
 
-    // Get all today's orders (PHT day)
     const todaysOrders = await ctx.db
       .query("orders")
       .withIndex("by_store_createdAt", (q) =>
@@ -1371,20 +1368,11 @@ export const getDashboardSummary = query({
     const nonDraftOrders = todaysOrders.filter((o) => o.status !== "draft");
     const totalOrdersToday = nonDraftOrders.length;
 
-    // Active counts should reflect ALL open orders (not just today's)
-    // to match what the active orders list displays
-    const allOpenOrders = await ctx.db
-      .query("orders")
-      .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "open"))
-      .collect();
-    const activeDineIn = allOpenOrders.filter((o) => o.orderType === "dine_in").length;
-    const activeTakeout = allOpenOrders.filter((o) => o.orderType === "takeout").length;
-
     const todayRevenue = todaysOrders
       .filter((o) => o.status === "paid")
       .reduce((sum, o) => sum + o.netSales, 0);
 
-    return { totalOrdersToday, activeDineIn, activeTakeout, todayRevenue };
+    return { totalOrdersToday, todayRevenue };
   },
 });
 
