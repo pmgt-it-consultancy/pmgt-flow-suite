@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getBusinessDayBoundaries, getWeekdayKey } from "./businessDay";
-import { getPHTDayBoundaries } from "./dateUtils";
+import {
+  getBusinessDayBoundaries,
+  getBusinessDayBoundariesForDate,
+  getWeekdayKey,
+} from "./businessDay";
+import { getPHTDayBoundaries, getPHTDayBoundariesForDate } from "./dateUtils";
 
 function utc(s: string): number {
   return new Date(s).getTime();
@@ -104,5 +108,34 @@ describe("getBusinessDayBoundaries (with schedule)", () => {
     const now = utc("2026-04-18T18:00:00Z");
     const result = getBusinessDayBoundaries(restaurantSchedule, now);
     expect(result.businessDate).toBe("2026-04-18"); // Saturday
+  });
+});
+
+describe("getBusinessDayBoundariesForDate (with schedule)", () => {
+  it("falls through to midnight boundaries when schedule is undefined", () => {
+    const result = getBusinessDayBoundariesForDate(undefined, "2026-04-13");
+    expect(result).toEqual({
+      ...getPHTDayBoundariesForDate("2026-04-13"),
+      businessDate: "2026-04-13",
+    });
+  });
+
+  it("returns open→close window for a weekday business day with cross-midnight close", () => {
+    // Monday Apr 13: open 10:00, close 01:00 next day
+    const result = getBusinessDayBoundariesForDate(restaurantSchedule, "2026-04-13");
+    // start = Apr 13 10:00 PHT = Apr 13 02:00 UTC
+    expect(result.startOfDay).toBe(utc("2026-04-13T02:00:00Z"));
+    // end = Apr 14 01:00 PHT = Apr 13 17:00 UTC
+    expect(result.endOfDay).toBe(utc("2026-04-13T17:00:00Z"));
+    expect(result.businessDate).toBe("2026-04-13");
+  });
+
+  it("returns open→close window for Sunday (same-day close)", () => {
+    // Sunday Apr 19: open 11:00, close 22:00 same day
+    const result = getBusinessDayBoundariesForDate(restaurantSchedule, "2026-04-19");
+    // start = Apr 19 11:00 PHT = Apr 19 03:00 UTC
+    expect(result.startOfDay).toBe(utc("2026-04-19T03:00:00Z"));
+    // end = Apr 19 22:00 PHT = Apr 19 14:00 UTC
+    expect(result.endOfDay).toBe(utc("2026-04-19T14:00:00Z"));
   });
 });

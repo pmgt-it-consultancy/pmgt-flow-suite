@@ -142,3 +142,31 @@ export function getBusinessDayBoundaries(
     businessDate: phtDateString(phtMidnightToday),
   };
 }
+
+/**
+ * Returns business-day boundaries for a named PHT calendar date. The date
+ * argument is interpreted as the PHT date on which the business day OPENED.
+ * When `schedule` is undefined, falls through to PHT midnight boundaries.
+ */
+export function getBusinessDayBoundariesForDate(
+  schedule: StoreSchedule | undefined,
+  dateStr: string,
+): BusinessDayBoundaries {
+  if (!schedule) {
+    const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(dateStr);
+    return { startOfDay, endOfDay, businessDate: dateStr };
+  }
+
+  const midnightUTC = new Date(dateStr).getTime();
+  const phtMidnight = midnightUTC - PHT_OFFSET_MS;
+  const weekdayKey = getWeekdayKey(phtMidnight);
+  const slot = schedule[weekdayKey];
+  const crossesMidnight = slot.close <= slot.open;
+
+  const startOfDay = phtMidnight + timeToMs(slot.open);
+  const endOfDay = crossesMidnight
+    ? phtMidnight + DAY_MS + timeToMs(slot.close)
+    : phtMidnight + timeToMs(slot.close);
+
+  return { startOfDay, endOfDay, businessDate: dateStr };
+}
