@@ -1,13 +1,12 @@
 ## What's New
 
-- Cart taps feel instant — adding items, adjusting quantities, toggling dine-in/takeout, and removing items update immediately without waiting for the server
-- Rapid +/- presses on cart items are coalesced into a single update instead of firing one per tap
-- Home screen redraws less often during busy service — clock, order counts, and revenue tiles no longer re-render on unrelated activity
-- Printer status changes (reconnects, Bluetooth polling) no longer cause the order entry or checkout screen to refresh
-- Modifier groups load only when you tap a product — the app no longer pre-loads every modifier in the store on screen open
-- Home screen "Active Orders" pulls roughly half the data it used to, so the list populates faster after each order change
-- Order entry product grid scrolls smoother on large menus
+- Configurable store operating hours — admins can now set a per-day schedule (Mon–Sun) with open and close times per store
+- Closing time now drives the business-day cutoff, so orders placed after midnight for late-night restaurants keep counting on the correct business day (e.g. D-045 at 23:30 → D-046 at 00:30 when the store closes at 03:00)
+- Daily (Z-Report) totals aggregate across the full shift, even when closing time is past midnight
+- Day Closing screen respects the configured schedule — opening the screen at 00:30 with a 03:00 close stays on yesterday's business day and prevents jumping to tomorrow
 
 ## Notes
 
-- Requires a one-time backend migration (`backfillOrderDenorm`) to populate denormalized fields on existing open orders; runs automatically during deploy
+- Stores without a configured schedule keep the existing midnight cutoff — no behavior change until an admin sets hours
+- Admins configure schedules under Stores → edit store → Operating Hours
+- 00:00 / 00:00 on all days means "24 hours, midnight cutoff" (equivalent to today's default)
