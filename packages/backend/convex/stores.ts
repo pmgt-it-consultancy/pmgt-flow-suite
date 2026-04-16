@@ -200,6 +200,7 @@ export const create = mutation({
     website: v.optional(v.string()),
     socials: v.optional(v.array(v.object({ platform: v.string(), url: v.string() }))),
     footer: v.optional(v.string()),
+    schedule: scheduleValidator,
   },
   returns: v.id("stores"),
   handler: async (ctx, args) => {
@@ -233,6 +234,7 @@ export const create = mutation({
       website: args.website,
       socials: args.socials,
       footer: args.footer,
+      schedule: args.schedule,
       isActive: true,
       createdAt: Date.now(),
     });
@@ -257,6 +259,7 @@ export const update = mutation({
     website: v.optional(v.string()),
     socials: v.optional(v.array(v.object({ platform: v.string(), url: v.string() }))),
     footer: v.optional(v.string()),
+    schedule: scheduleValidator,
     isActive: v.optional(v.boolean()),
   },
   returns: v.null(),
