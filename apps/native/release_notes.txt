@@ -1,12 +1,3 @@
 ## What's New
 
-- Configurable store operating hours — admins can now set a per-day schedule (Mon–Sun) with open and close times per store
-- Closing time now drives the business-day cutoff, so orders placed after midnight for late-night restaurants keep counting on the correct business day (e.g. D-045 at 23:30 → D-046 at 00:30 when the store closes at 03:00)
-- Daily (Z-Report) totals aggregate across the full shift, even when closing time is past midnight
-- Day Closing screen respects the configured schedule — opening the screen at 00:30 with a 03:00 close stays on yesterday's business day and prevents jumping to tomorrow
-
-## Notes
-
-- Stores without a configured schedule keep the existing midnight cutoff — no behavior change until an admin sets hours
-- Admins configure schedules under Stores → edit store → Operating Hours
-- 00:00 / 00:00 on all days means "24 hours, midnight cutoff" (equivalent to today's default)
+- Fixed unresponsive buttons in several modals, including the in-app update prompt, the tab selection sheet, the guest count (PAX) entry modal, the auto-lock timeout picker, and the system status dropdown

@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
+import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import type { UpdateInfo } from "../stores/useUpdateStore";
 
 type Props = {
@@ -15,23 +15,25 @@ type OptionalProps = Props & {
 export function OptionalUpdateDialog({ updateInfo, onGoToUpdates, onDismiss }: OptionalProps) {
   return (
     <Modal visible animationType="fade" transparent>
-      <View style={optionalStyles.overlay}>
-        <View style={optionalStyles.card}>
-          <Text style={styles.title}>Update Available</Text>
-          <Text style={styles.subtitle}>Version {updateInfo.latestVersion} is available.</Text>
-          {updateInfo.releaseNotes ? (
-            <Text style={styles.notes}>{updateInfo.releaseNotes}</Text>
-          ) : null}
-          <View style={optionalStyles.buttons}>
-            <Pressable style={optionalStyles.laterButton} onPress={onDismiss}>
-              <Text style={optionalStyles.laterButtonText}>Later</Text>
-            </Pressable>
-            <Pressable style={styles.button} onPress={onGoToUpdates}>
-              <Text style={styles.buttonText}>Update Now</Text>
-            </Pressable>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={optionalStyles.overlay}>
+          <View style={optionalStyles.card}>
+            <Text style={styles.title}>Update Available</Text>
+            <Text style={styles.subtitle}>Version {updateInfo.latestVersion} is available.</Text>
+            {updateInfo.releaseNotes ? (
+              <Text style={styles.notes}>{updateInfo.releaseNotes}</Text>
+            ) : null}
+            <View style={optionalStyles.buttons}>
+              <Pressable style={optionalStyles.laterButton} onPress={onDismiss}>
+                <Text style={optionalStyles.laterButtonText}>Later</Text>
+              </Pressable>
+              <Pressable style={styles.button} onPress={onGoToUpdates}>
+                <Text style={styles.buttonText}>Update Now</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
-      </View>
+      </GestureHandlerRootView>
     </Modal>
   );
 }
@@ -39,18 +41,20 @@ export function OptionalUpdateDialog({ updateInfo, onGoToUpdates, onDismiss }: O
 export function ForceUpdateModal({ updateInfo, onGoToUpdates }: Props) {
   return (
     <Modal visible animationType="fade" transparent={false}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Update Required</Text>
-        <Text style={styles.subtitle}>
-          Version {updateInfo.latestVersion} is required to continue using this app.
-        </Text>
-        {updateInfo.releaseNotes ? (
-          <Text style={styles.notes}>{updateInfo.releaseNotes}</Text>
-        ) : null}
-        <Pressable style={styles.button} onPress={onGoToUpdates}>
-          <Text style={styles.buttonText}>Go to Updates</Text>
-        </Pressable>
-      </View>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Update Required</Text>
+          <Text style={styles.subtitle}>
+            Version {updateInfo.latestVersion} is required to continue using this app.
+          </Text>
+          {updateInfo.releaseNotes ? (
+            <Text style={styles.notes}>{updateInfo.releaseNotes}</Text>
+          ) : null}
+          <Pressable style={styles.button} onPress={onGoToUpdates}>
+            <Text style={styles.buttonText}>Go to Updates</Text>
+          </Pressable>
+        </View>
+      </GestureHandlerRootView>
     </Modal>
   );
 }
