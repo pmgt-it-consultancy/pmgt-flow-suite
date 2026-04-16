@@ -37,6 +37,52 @@ cd apps/native && pnpm android
 cd apps/native && pnpm start
 ```
 
+## Development Tooling
+
+### Required Skills
+
+These skills MUST be invoked via the `Skill` tool before writing or reviewing code in the matching domain. Do not rely on general knowledge — load the skill first so its current guidance is applied.
+
+| When working on... | Invoke |
+|--------------------|--------|
+| `apps/web` (Next.js/React) | `vercel-react-best-practices`, `vercel-composition-patterns` |
+| `apps/native` (React Native/Expo) | `vercel-react-native-skills`, `vercel-react-best-practices`, `vercel-composition-patterns` |
+| Any new UI, visual design, layout, or styling (web or native) | `frontend-design` |
+| New features, components, or behavior changes | `brainstorming` before implementation |
+| Multi-step tasks with a spec | `writing-plans`, then `executing-plans` |
+| Bugs, test failures, unexpected behavior | `systematic-debugging` |
+
+Compose skills when multiple apply (e.g. a new native screen → `brainstorming` → `frontend-design` → `vercel-react-native-skills` + `vercel-composition-patterns` during implementation).
+
+### Serena (Semantic Code Navigation)
+
+Serena provides LSP-backed semantic tools. Prefer them over raw `Read` + `Grep` whenever the target is a symbol rather than a text blob — they're cheaper on context and more accurate across renames.
+
+**Discovery flow (use this order):**
+1. `get_symbols_overview` — get a file's top-level symbols before reading anything
+2. `find_symbol` with `name_path` (e.g. `processPayment`, `OrderCard/render`) — jump directly to a definition; set `include_body: true` only when you need the implementation
+3. `find_referencing_symbols` — find all call sites / usages before renaming or changing a signature
+4. `search_for_pattern` — fallback for non-symbol text (strings, comments, config keys)
+5. `Read` on a full file only when symbolic exploration isn't enough (e.g. config files, JSON, markdown)
+
+**Editing:**
+- `replace_symbol_body` — rewrite a full function/class body by name path (safer than `Edit` for large symbols)
+- `insert_after_symbol` / `insert_before_symbol` — add new symbols adjacent to existing ones
+- `rename_symbol` — rename across the project (propagates to all references)
+- `safe_delete_symbol` — delete a symbol only when no references remain
+
+**Project memory:**
+- `list_memories` / `read_memory` / `write_memory` — Serena's own persistent memory (separate from auto-memory). Use for durable project knowledge that should survive conversations: architectural decisions, domain glossaries, non-obvious invariants. Not for conversation state or todos.
+- Use the `save-serena` skill when finishing a session to capture progress.
+
+**Scoping:** Always pass `relative_path` (file or directory) to symbolic searches when you know the area — avoids whole-repo scans.
+
+**Anti-patterns:**
+- Don't `Read` an entire file and then call symbolic tools on it — you already have the content
+- Don't `search_for_pattern` for a known symbol name — use `find_symbol`
+- Don't `Edit` a whole function body — use `replace_symbol_body`
+- Don't use text-based rename — use `rename_symbol`
+
 ## Architecture
 
 ### Monorepo Structure
