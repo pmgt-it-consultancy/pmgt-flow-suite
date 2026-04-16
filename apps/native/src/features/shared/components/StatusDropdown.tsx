@@ -1,5 +1,5 @@
 import { Alert, Modal, View } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
+import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import type { ConnectionStatus, SystemStatus } from "../hooks/useSystemStatus";
 import { Button, Text } from "./ui";
@@ -96,82 +96,84 @@ export const StatusDropdown = ({ visible, onClose, status }: StatusDropdownProps
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={{ flex: 1 }} onPress={onClose}>
-        <View
-          style={{
-            position: "absolute",
-            top: 8,
-            right: 16,
-            minWidth: 260,
-            backgroundColor: "white",
-            borderRadius: 12,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.15,
-            shadowRadius: 12,
-            elevation: 8,
-          }}
-        >
-          <Pressable onPress={() => {}}>
-            <YStack padding={16}>
-              <Text variant="heading" size="sm" style={{ marginBottom: 8 }}>
-                System Status
-              </Text>
-
-              <YStack borderTopWidth={1} borderColor="#F3F4F6">
-                <StatusRow
-                  label="Server"
-                  connectionStatus={status.server}
-                  onRetry={status.retryServer}
-                  retryLabel="Retry"
-                />
-                <StatusRow
-                  label="Receipt Printer"
-                  connectionStatus={status.receiptPrinter}
-                  onRetry={async () => {
-                    const success = await status.reconnectPrinter("receipt");
-                    if (!success) {
-                      Alert.alert(
-                        "Reconnect Failed",
-                        "Could not connect to the receipt printer. Make sure the printer is turned on and in range.",
-                        [
-                          { text: "Retry", onPress: () => status.reconnectPrinter("receipt") },
-                          { text: "Dismiss", style: "cancel" },
-                        ],
-                      );
-                    }
-                  }}
-                  retryLabel="Reconnect"
-                />
-                <StatusRow
-                  label={status.kitchenPrinterLabel}
-                  connectionStatus={status.kitchenPrinter}
-                  onRetry={async () => {
-                    const success = await status.reconnectPrinter("kitchen");
-                    if (!success) {
-                      Alert.alert(
-                        "Reconnect Failed",
-                        "Could not connect to the kitchen printer. Make sure the printer is turned on and in range.",
-                        [
-                          { text: "Retry", onPress: () => status.reconnectPrinter("kitchen") },
-                          { text: "Dismiss", style: "cancel" },
-                        ],
-                      );
-                    }
-                  }}
-                  retryLabel="Reconnect"
-                />
-              </YStack>
-
-              <YStack borderTopWidth={1} borderColor="#F3F4F6" paddingTop={8} marginTop={4}>
-                <Text size="xs" style={{ color: lastSync.isWarning ? "#EF4444" : "#9CA3AF" }}>
-                  Last sync: {lastSync.text}
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Pressable style={{ flex: 1 }} onPress={onClose}>
+          <View
+            style={{
+              position: "absolute",
+              top: 8,
+              right: 16,
+              minWidth: 260,
+              backgroundColor: "white",
+              borderRadius: 12,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.15,
+              shadowRadius: 12,
+              elevation: 8,
+            }}
+          >
+            <Pressable onPress={() => {}}>
+              <YStack padding={16}>
+                <Text variant="heading" size="sm" style={{ marginBottom: 8 }}>
+                  System Status
                 </Text>
+
+                <YStack borderTopWidth={1} borderColor="#F3F4F6">
+                  <StatusRow
+                    label="Server"
+                    connectionStatus={status.server}
+                    onRetry={status.retryServer}
+                    retryLabel="Retry"
+                  />
+                  <StatusRow
+                    label="Receipt Printer"
+                    connectionStatus={status.receiptPrinter}
+                    onRetry={async () => {
+                      const success = await status.reconnectPrinter("receipt");
+                      if (!success) {
+                        Alert.alert(
+                          "Reconnect Failed",
+                          "Could not connect to the receipt printer. Make sure the printer is turned on and in range.",
+                          [
+                            { text: "Retry", onPress: () => status.reconnectPrinter("receipt") },
+                            { text: "Dismiss", style: "cancel" },
+                          ],
+                        );
+                      }
+                    }}
+                    retryLabel="Reconnect"
+                  />
+                  <StatusRow
+                    label={status.kitchenPrinterLabel}
+                    connectionStatus={status.kitchenPrinter}
+                    onRetry={async () => {
+                      const success = await status.reconnectPrinter("kitchen");
+                      if (!success) {
+                        Alert.alert(
+                          "Reconnect Failed",
+                          "Could not connect to the kitchen printer. Make sure the printer is turned on and in range.",
+                          [
+                            { text: "Retry", onPress: () => status.reconnectPrinter("kitchen") },
+                            { text: "Dismiss", style: "cancel" },
+                          ],
+                        );
+                      }
+                    }}
+                    retryLabel="Reconnect"
+                  />
+                </YStack>
+
+                <YStack borderTopWidth={1} borderColor="#F3F4F6" paddingTop={8} marginTop={4}>
+                  <Text size="xs" style={{ color: lastSync.isWarning ? "#EF4444" : "#9CA3AF" }}>
+                    Last sync: {lastSync.text}
+                  </Text>
+                </YStack>
               </YStack>
-            </YStack>
-          </Pressable>
-        </View>
-      </Pressable>
+            </Pressable>
+          </View>
+        </Pressable>
+      </GestureHandlerRootView>
     </Modal>
   );
 };

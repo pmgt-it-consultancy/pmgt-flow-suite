@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "convex/react";
 import Constants from "expo-constants";
 import { useMemo, useState } from "react";
 import { Alert, Modal as RNModal, ScrollView, View } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
+import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
@@ -195,77 +195,79 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
         onRequestClose={() => setShowTimeoutPicker(false)}
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        <Pressable
-          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-          style={({ pressed }) => [
-            {
-              flex: 1,
-              backgroundColor: "rgba(0,0,0,0.4)",
-              justifyContent: "center",
-              alignItems: "center",
-            },
-            { opacity: pressed ? 0.7 : 1 },
-          ]}
-          onPress={() => setShowTimeoutPicker(false)}
-        >
-          <Pressable onPress={() => {}}>
-            <View
-              style={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: 16,
-                width: "100%",
-                maxHeight: "60%",
-                overflow: "hidden",
-              }}
-            >
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Pressable
+            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+            style={({ pressed }) => [
+              {
+                flex: 1,
+                backgroundColor: "rgba(0,0,0,0.4)",
+                justifyContent: "center",
+                alignItems: "center",
+              },
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
+            onPress={() => setShowTimeoutPicker(false)}
+          >
+            <Pressable onPress={() => {}}>
               <View
                 style={{
-                  paddingHorizontal: 20,
-                  paddingVertical: 16,
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#E5E7EB",
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: 16,
+                  width: "100%",
+                  maxHeight: "60%",
+                  overflow: "hidden",
                 }}
               >
-                <Text style={{ fontSize: 18, fontWeight: "700" }}>Auto-Lock After</Text>
-              </View>
-              <ScrollView>
-                {timeoutOptions.map((option) => (
-                  <Pressable
-                    android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-                    key={option.value}
-                    style={({ pressed }) => [
-                      {
-                        paddingHorizontal: 20,
-                        paddingVertical: 16,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        backgroundColor: autoLockTimeout === option.value ? "#EFF6FF" : "#FFFFFF",
-                        borderBottomWidth: 1,
-                        borderBottomColor: "#F3F4F6",
-                      },
-                      { opacity: pressed ? 0.7 : 1 },
-                    ]}
-                    onPress={() => handleSetTimeout(option.value)}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: autoLockTimeout === option.value ? "600" : "400",
-                        color: autoLockTimeout === option.value ? "#0D87E1" : "#111827",
-                      }}
+                <View
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 16,
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#E5E7EB",
+                  }}
+                >
+                  <Text style={{ fontSize: 18, fontWeight: "700" }}>Auto-Lock After</Text>
+                </View>
+                <ScrollView>
+                  {timeoutOptions.map((option) => (
+                    <Pressable
+                      android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+                      key={option.value}
+                      style={({ pressed }) => [
+                        {
+                          paddingHorizontal: 20,
+                          paddingVertical: 16,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          backgroundColor: autoLockTimeout === option.value ? "#EFF6FF" : "#FFFFFF",
+                          borderBottomWidth: 1,
+                          borderBottomColor: "#F3F4F6",
+                        },
+                        { opacity: pressed ? 0.7 : 1 },
+                      ]}
+                      onPress={() => handleSetTimeout(option.value)}
                     >
-                      {option.label}
-                    </Text>
-                    {autoLockTimeout === option.value && (
-                      <Ionicons name="checkmark" size={20} color="#0D87E1" />
-                    )}
-                  </Pressable>
-                ))}
-              </ScrollView>
-            </View>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: autoLockTimeout === option.value ? "600" : "400",
+                          color: autoLockTimeout === option.value ? "#0D87E1" : "#111827",
+                        }}
+                      >
+                        {option.label}
+                      </Text>
+                      {autoLockTimeout === option.value && (
+                        <Ionicons name="checkmark" size={20} color="#0D87E1" />
+                      )}
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+            </Pressable>
           </Pressable>
-        </Pressable>
+        </GestureHandlerRootView>
       </RNModal>
     </YStack>
   );

@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import * as Crypto from "expo-crypto";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Modal, TextInput } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
+import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
@@ -947,75 +947,77 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           setPendingPaxAction(null);
         }}
       >
-        <YStack
-          flex={1}
-          justifyContent="center"
-          alignItems="center"
-          backgroundColor="rgba(0,0,0,0.5)"
-        >
-          <YStack backgroundColor="#FFFFFF" borderRadius={16} padding={24} width={288}>
-            <Text variant="heading" size="lg" style={{ textAlign: "center", marginBottom: 16 }}>
-              {pendingPaxAction === "update" ? "Update Guest Count" : "Guest Count (PAX)"}
-            </Text>
-            <TextInput
-              style={{
-                borderWidth: 1,
-                borderColor: "#D1D5DB",
-                borderRadius: 8,
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-                textAlign: "center",
-                fontSize: 18,
-                marginBottom: 16,
-              }}
-              keyboardType="number-pad"
-              placeholder="Number of guests"
-              value={paxInput}
-              onChangeText={setPaxInput}
-              autoFocus
-            />
-            <XStack gap={12}>
-              <Pressable
-                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-                style={({ pressed }) => [
-                  {
-                    flex: 1,
-                    backgroundColor: "#E5E7EB",
-                    borderRadius: 8,
-                    paddingVertical: 12,
-                  },
-                  { opacity: pressed ? 0.7 : 1 },
-                ]}
-                onPress={() => {
-                  setShowPaxModal(false);
-                  setPendingPaxAction(null);
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <YStack
+            flex={1}
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor="rgba(0,0,0,0.5)"
+          >
+            <YStack backgroundColor="#FFFFFF" borderRadius={16} padding={24} width={288}>
+              <Text variant="heading" size="lg" style={{ textAlign: "center", marginBottom: 16 }}>
+                {pendingPaxAction === "update" ? "Update Guest Count" : "Guest Count (PAX)"}
+              </Text>
+              <TextInput
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#D1D5DB",
+                  borderRadius: 8,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  textAlign: "center",
+                  fontSize: 18,
+                  marginBottom: 16,
                 }}
-              >
-                <Text style={{ textAlign: "center", fontWeight: "600", color: "#374151" }}>
-                  Cancel
-                </Text>
-              </Pressable>
-              <Pressable
-                android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-                disabled={isSending || isUpdatingPax}
-                style={({ pressed }) => [
-                  {
-                    flex: 1,
-                    backgroundColor: isSending || isUpdatingPax ? "#93C5FD" : "#0D87E1",
-                    borderRadius: 8,
-                    paddingVertical: 12,
-                  },
-                  { opacity: pressed ? 0.7 : 1 },
-                ]}
-                onPress={handlePaxConfirm}
-              >
-                <Text style={{ textAlign: "center", fontWeight: "600", color: "#FFFFFF" }}>
-                  Confirm
-                </Text>
-              </Pressable>
-            </XStack>
+                keyboardType="number-pad"
+                placeholder="Number of guests"
+                value={paxInput}
+                onChangeText={setPaxInput}
+                autoFocus
+              />
+              <XStack gap={12}>
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+                  style={({ pressed }) => [
+                    {
+                      flex: 1,
+                      backgroundColor: "#E5E7EB",
+                      borderRadius: 8,
+                      paddingVertical: 12,
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
+                  onPress={() => {
+                    setShowPaxModal(false);
+                    setPendingPaxAction(null);
+                  }}
+                >
+                  <Text style={{ textAlign: "center", fontWeight: "600", color: "#374151" }}>
+                    Cancel
+                  </Text>
+                </Pressable>
+                <Pressable
+                  android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+                  disabled={isSending || isUpdatingPax}
+                  style={({ pressed }) => [
+                    {
+                      flex: 1,
+                      backgroundColor: isSending || isUpdatingPax ? "#93C5FD" : "#0D87E1",
+                      borderRadius: 8,
+                      paddingVertical: 12,
+                    },
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
+                  onPress={handlePaxConfirm}
+                >
+                  <Text style={{ textAlign: "center", fontWeight: "600", color: "#FFFFFF" }}>
+                    Confirm
+                  </Text>
+                </Pressable>
+              </XStack>
+            </YStack>
           </YStack>
-        </YStack>
+        </GestureHandlerRootView>
       </Modal>
     </YStack>
   );
