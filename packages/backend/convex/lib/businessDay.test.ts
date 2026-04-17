@@ -2,9 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   getBusinessDayBoundaries,
   getBusinessDayBoundariesForDate,
+  getReportBoundariesForDate,
   getWeekdayKey,
 } from "./businessDay";
-import { getPHTDayBoundaries, getPHTDayBoundariesForDate } from "./dateUtils";
+import {
+  getPHTDayBoundaries,
+  getPHTDayBoundariesForDate,
+  getPHTTimeBoundariesForDate,
+} from "./dateUtils";
 
 function utc(s: string): number {
   return new Date(s).getTime();
@@ -137,5 +142,56 @@ describe("getBusinessDayBoundariesForDate (with schedule)", () => {
     expect(result.startOfDay).toBe(utc("2026-04-19T03:00:00Z"));
     // end = Apr 19 22:00 PHT = Apr 19 14:00 UTC
     expect(result.endOfDay).toBe(utc("2026-04-19T14:00:00Z"));
+  });
+});
+
+describe("getReportBoundariesForDate", () => {
+  it("delegates to getPHTTimeBoundariesForDate when both times provided", () => {
+    const result = getReportBoundariesForDate(undefined, "2026-04-16", "17:00", "01:00");
+    const expected = getPHTTimeBoundariesForDate("2026-04-16", "17:00", "01:00");
+    expect(result).toEqual(expected);
+  });
+
+  it("same result regardless of schedule when both times provided (explicit override)", () => {
+    const resultWithSchedule = getReportBoundariesForDate(
+      restaurantSchedule,
+      "2026-04-16",
+      "10:00",
+      "12:00",
+    );
+    const resultWithoutSchedule = getReportBoundariesForDate(
+      undefined,
+      "2026-04-16",
+      "10:00",
+      "12:00",
+    );
+    expect(resultWithSchedule).toEqual(resultWithoutSchedule);
+  });
+
+  it("uses schedule business-day boundaries when no times given and schedule defined", () => {
+    // 2026-04-16 is a Thursday → restaurantSchedule.thursday = { open: 10:00, close: 01:00 (next day) }
+    const result = getReportBoundariesForDate(restaurantSchedule, "2026-04-16");
+    // Apr 16 10:00 PHT = Apr 16 02:00 UTC
+    expect(result.start).toBe(utc("2026-04-16T02:00:00Z"));
+    // Apr 17 01:00 PHT = Apr 16 17:00 UTC
+    expect(result.end).toBe(utc("2026-04-16T17:00:00Z"));
+  });
+
+  it("falls back to PHT midnight boundaries when no times and no schedule", () => {
+    const result = getReportBoundariesForDate(undefined, "2026-04-16");
+    const expected = getPHTDayBoundariesForDate("2026-04-16");
+    expect(result.start).toBe(expected.startOfDay);
+    expect(result.end).toBe(expected.endOfDay);
+  });
+
+  it("treats partial times as absent (uses schedule path)", () => {
+    const onlyStart = getReportBoundariesForDate(
+      restaurantSchedule,
+      "2026-04-16",
+      "18:00",
+      undefined,
+    );
+    const noTimes = getReportBoundariesForDate(restaurantSchedule, "2026-04-16");
+    expect(onlyStart).toEqual(noTimes);
   });
 });

@@ -5,7 +5,11 @@
  * existing PHT midnight-cutoff behavior from dateUtils.ts.
  */
 
-import { getPHTDayBoundaries, getPHTDayBoundariesForDate } from "./dateUtils";
+import {
+  getPHTDayBoundaries,
+  getPHTDayBoundariesForDate,
+  getPHTTimeBoundariesForDate,
+} from "./dateUtils";
 
 const PHT_OFFSET_MS = 8 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -169,4 +173,32 @@ export function getBusinessDayBoundariesForDate(
     : phtMidnight + timeToMs(slot.close);
 
   return { startOfDay, endOfDay, businessDate: dateStr };
+}
+
+/**
+ * Resolves the time window for a daily report, choosing between:
+ *   1. An explicit custom range (both startTime AND endTime given) — honors
+ *      cross-midnight via getPHTTimeBoundariesForDate.
+ *   2. The store's schedule, when defined.
+ *   3. PHT midnight-to-midnight fallback.
+ *
+ * A partial custom range (only one of startTime/endTime) is treated as no
+ * custom range — the schedule path is used. This matches the UI contract
+ * where both time pickers must be set to engage a custom range.
+ */
+export function getReportBoundariesForDate(
+  schedule: StoreSchedule | undefined,
+  dateStr: string,
+  startTime?: string,
+  endTime?: string,
+): { start: number; end: number } {
+  if (startTime && endTime) {
+    return getPHTTimeBoundariesForDate(dateStr, startTime, endTime);
+  }
+  if (schedule) {
+    const { startOfDay, endOfDay } = getBusinessDayBoundariesForDate(schedule, dateStr);
+    return { start: startOfDay, end: endOfDay };
+  }
+  const { startOfDay, endOfDay } = getPHTDayBoundariesForDate(dateStr);
+  return { start: startOfDay, end: endOfDay };
 }
