@@ -8,7 +8,7 @@ import {
   getReportBoundariesForDate,
   type StoreSchedule,
 } from "./lib/businessDay";
-import { getPHTDayBoundaries, getPHTHour, getPHTTimeBoundariesForDate } from "./lib/dateUtils";
+import { getPHTDayBoundaries, getPHTHour } from "./lib/dateUtils";
 import { requirePermission } from "./lib/permissions";
 import { cleanupExpiredDraftOrders } from "./orders";
 
@@ -1029,8 +1029,11 @@ export const getHourlySales = query({
       throw new Error("Authentication required");
     }
 
+    const store = await ctx.db.get(args.storeId);
+
     // Parse date range (PHT boundaries, with optional time range)
-    const { start: startOfDay, end: endOfDay } = getPHTTimeBoundariesForDate(
+    const { start: startOfDay, end: endOfDay } = getReportBoundariesForDate(
+      store?.schedule,
       args.reportDate,
       args.startTime,
       args.endTime,
