@@ -1,5 +1,9 @@
 ## What's New
 
-- Fixed the Takeout Orders screen freezing when tapping "Ready for Pickup" or other action buttons in quick succession — rapid taps no longer wedge the app's touch handling
-- Each takeout order card now has an explicit "View Details" / "View Receipt" button for opening the order detail and reprint screen
-- Voided takeout orders can now be opened from the list (previously had no tap affordance to reach the detail modal)
+- Day Closing now correctly captures late-night shifts. Stores that close after midnight (e.g. 5 PM → 1 AM) get a single continuous Z-Report instead of splitting the shift across two dates.
+- Custom Range time picker now defaults to the store's configured opening and closing hours for the selected weekday, and shows a small "(next day)" label under the end time when the range crosses midnight.
+- Printed Z-Report now appends "(next day)" to the time range line whenever the custom range wraps past midnight, so the printout is self-explanatory.
+
+## Notes
+
+- Requires the store's weekly schedule to be configured in the admin panel for the automatic "Full Day" late-night behavior. Stores without a schedule still default to midnight-to-midnight cutoffs.
