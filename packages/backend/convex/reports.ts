@@ -100,6 +100,7 @@ export const generateDailyReport = mutation({
         ctx,
         args.storeId,
         args.reportDate,
+        schedule,
         args.startTime,
         args.endTime,
       );
@@ -109,6 +110,7 @@ export const generateDailyReport = mutation({
         ctx,
         args.storeId,
         args.reportDate,
+        schedule,
         args.startTime,
         args.endTime,
       );
@@ -147,6 +149,7 @@ export const generateDailyReport = mutation({
       ctx,
       args.storeId,
       args.reportDate,
+      schedule,
       args.startTime,
       args.endTime,
     );
@@ -156,6 +159,7 @@ export const generateDailyReport = mutation({
       ctx,
       args.storeId,
       args.reportDate,
+      schedule,
       args.startTime,
       args.endTime,
     );
@@ -335,11 +339,13 @@ async function generateProductSalesBreakdown(
   ctx: { db: any },
   storeId: Id<"stores">,
   reportDate: string,
+  schedule: StoreSchedule | undefined,
   startTime?: string,
   endTime?: string,
 ): Promise<void> {
-  // Parse date range (PHT boundaries, with optional time range)
-  const { start: startOfDay, end: endOfDay } = getPHTTimeBoundariesForDate(
+  // Parse date range (schedule-aware boundaries, with optional time range)
+  const { start: startOfDay, end: endOfDay } = getReportBoundariesForDate(
+    schedule,
     reportDate,
     startTime,
     endTime,
@@ -478,6 +484,7 @@ async function generatePaymentTransactionsBreakdown(
   ctx: { db: any },
   storeId: Id<"stores">,
   reportDate: string,
+  schedule: StoreSchedule | undefined,
   startTime?: string,
   endTime?: string,
 ): Promise<void> {
@@ -491,8 +498,9 @@ async function generatePaymentTransactionsBreakdown(
     await ctx.db.delete(tx._id);
   }
 
-  // Parse date range (PHT boundaries, with optional time range)
-  const { start: startOfDay, end: endOfDay } = getPHTTimeBoundariesForDate(
+  // Parse date range (schedule-aware boundaries, with optional time range)
+  const { start: startOfDay, end: endOfDay } = getReportBoundariesForDate(
+    schedule,
     reportDate,
     startTime,
     endTime,
