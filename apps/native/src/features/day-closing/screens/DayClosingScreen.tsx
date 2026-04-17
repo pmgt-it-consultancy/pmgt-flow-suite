@@ -32,6 +32,20 @@ const parseBusinessDate = (businessDate: string): Date => {
   return new Date(y, m - 1, d);
 };
 
+const WEEKDAY_KEYS = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+] as const;
+
+type WeekdayKey = (typeof WEEKDAY_KEYS)[number];
+
+const weekdayKeyFromDate = (date: Date): WeekdayKey => WEEKDAY_KEYS[date.getDay()];
+
 export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -73,6 +87,9 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     api.reports.getDailyPaymentTransactions,
     storeId && reportDate ? { storeId, reportDate } : "skip",
   );
+
+  const scheduleSlot =
+    selectedDate && store?.schedule ? store.schedule[weekdayKeyFromDate(selectedDate)] : undefined;
 
   // Mutations
   const generateReport = useMutation(api.reports.generateDailyReport);
@@ -197,6 +214,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
           startTime={startTime}
           endTime={endTime}
           onTimeRangeChange={handleTimeRangeChange}
+          scheduleSlot={scheduleSlot}
         />
 
         {/* Scrollable Content — single ScrollView, no nested scrollables */}

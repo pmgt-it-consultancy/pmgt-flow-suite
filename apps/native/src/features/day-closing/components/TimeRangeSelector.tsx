@@ -10,6 +10,7 @@ interface TimeRangeSelectorProps {
   startTime: string | undefined; // "HH:mm" or undefined for full day
   endTime: string | undefined;
   onTimeRangeChange: (startTime: string | undefined, endTime: string | undefined) => void;
+  scheduleSlot?: { open: string; close: string };
 }
 
 type Mode = "full" | "custom";
@@ -38,8 +39,10 @@ export const TimeRangeSelector = ({
   startTime,
   endTime,
   onTimeRangeChange,
+  scheduleSlot,
 }: TimeRangeSelectorProps) => {
   const mode: Mode = startTime || endTime ? "custom" : "full";
+  const crossesMidnight = !!startTime && !!endTime && endTime <= startTime;
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
 
@@ -47,7 +50,9 @@ export const TimeRangeSelector = ({
     if (newMode === "full") {
       onTimeRangeChange(undefined, undefined);
     } else {
-      onTimeRangeChange("06:00", "22:00");
+      const defaultStart = scheduleSlot?.open ?? "06:00";
+      const defaultEnd = scheduleSlot?.close ?? "22:00";
+      onTimeRangeChange(defaultStart, defaultEnd);
     }
   };
 
@@ -146,30 +151,36 @@ export const TimeRangeSelector = ({
             </Text>
           </YStack>
 
-          <Pressable
-            android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-            onPress={() => setShowEndPicker(true)}
-            style={({ pressed }) => [
-              {
-                flex: 1,
-                height: 48,
-                borderRadius: 10,
-                backgroundColor: "#F9FAFB",
-                borderWidth: 1,
-                borderColor: "#E5E7EB",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-              },
-              { opacity: pressed ? 0.7 : 1 },
-            ]}
-          >
-            <Ionicons name="time-outline" size={16} color="#6B7280" />
-            <Text style={{ fontSize: 14, fontWeight: "600", color: "#374151" }}>
-              {endTime ? formatTimeLabel(endTime) : "End"}
-            </Text>
-          </Pressable>
+          <YStack flex={1} gap={2}>
+            <Pressable
+              android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+              onPress={() => setShowEndPicker(true)}
+              style={({ pressed }) => [
+                {
+                  height: 48,
+                  borderRadius: 10,
+                  backgroundColor: "#F9FAFB",
+                  borderWidth: 1,
+                  borderColor: "#E5E7EB",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                },
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <Ionicons name="time-outline" size={16} color="#6B7280" />
+              <Text style={{ fontSize: 14, fontWeight: "600", color: "#374151" }}>
+                {endTime ? formatTimeLabel(endTime) : "End"}
+              </Text>
+            </Pressable>
+            {crossesMidnight && (
+              <Text variant="muted" size="xs" style={{ textAlign: "center" }}>
+                (next day)
+              </Text>
+            )}
+          </YStack>
         </XStack>
       )}
 
