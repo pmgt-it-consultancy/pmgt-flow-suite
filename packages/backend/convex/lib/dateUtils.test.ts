@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getPHTDayBoundaries, getPHTDayBoundariesForDate, getPHTHour } from "./dateUtils";
+import {
+  getPHTDayBoundaries,
+  getPHTDayBoundariesForDate,
+  getPHTHour,
+  getPHTTimeBoundariesForDate,
+} from "./dateUtils";
 
 // Helper: create a UTC timestamp from a readable string
 function utc(dateStr: string): number {
@@ -79,5 +84,45 @@ describe("getPHTHour", () => {
 
   it("handles midnight PHT (16:00 UTC = 00:00 PHT)", () => {
     expect(getPHTHour(utc("2026-03-12T16:00:00Z"))).toBe(0);
+  });
+});
+
+describe("getPHTTimeBoundariesForDate", () => {
+  it("returns full-day boundaries when no times given", () => {
+    const { start, end } = getPHTTimeBoundariesForDate("2026-04-16");
+    // Apr 16 00:00 PHT = Apr 15 16:00 UTC
+    expect(start).toBe(utc("2026-04-15T16:00:00Z"));
+    // full 24-hour span
+    expect(end - start).toBe(24 * 60 * 60 * 1000);
+  });
+
+  it("returns same-day range for startTime < endTime", () => {
+    const { start, end } = getPHTTimeBoundariesForDate("2026-04-16", "06:00", "22:00");
+    // Apr 16 06:00 PHT = Apr 15 22:00 UTC
+    expect(start).toBe(utc("2026-04-15T22:00:00Z"));
+    // Apr 16 22:00 PHT = Apr 16 14:00 UTC
+    expect(end).toBe(utc("2026-04-16T14:00:00Z"));
+    expect(end - start).toBe(16 * 60 * 60 * 1000);
+  });
+
+  it("rolls end to the next day when endTime <= startTime (cross-midnight)", () => {
+    const { start, end } = getPHTTimeBoundariesForDate("2026-04-16", "17:00", "01:00");
+    // Apr 16 17:00 PHT = Apr 16 09:00 UTC
+    expect(start).toBe(utc("2026-04-16T09:00:00Z"));
+    // Apr 17 01:00 PHT = Apr 16 17:00 UTC
+    expect(end).toBe(utc("2026-04-16T17:00:00Z"));
+    expect(end - start).toBe(8 * 60 * 60 * 1000);
+  });
+
+  it("treats equal start/end (both provided) as a 24-hour window", () => {
+    const { start, end } = getPHTTimeBoundariesForDate("2026-04-16", "17:00", "17:00");
+    expect(end - start).toBe(24 * 60 * 60 * 1000);
+  });
+
+  it("ignores partial times (startTime only) — no rollover", () => {
+    const { start, end } = getPHTTimeBoundariesForDate("2026-04-16", "06:00");
+    // start at 06:00 PHT, end at 23:59:59 PHT — no cross-midnight
+    expect(end).toBeGreaterThan(start);
+    expect(end - start).toBeLessThan(24 * 60 * 60 * 1000);
   });
 });

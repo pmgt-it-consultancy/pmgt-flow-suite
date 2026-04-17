@@ -63,9 +63,10 @@ export function getPHTTimeBoundariesForDate(
 ): { start: number; end: number } {
   const midnightUTC = new Date(dateStr).getTime();
   const midnightPHT = midnightUTC - PHT_OFFSET_MS;
+  const DAY_MS = 24 * 60 * 60 * 1000;
 
   if (!startTime && !endTime) {
-    return { start: midnightPHT, end: midnightPHT + 24 * 60 * 60 * 1000 };
+    return { start: midnightPHT, end: midnightPHT + DAY_MS };
   }
 
   const parseTime = (time: string): number => {
@@ -73,8 +74,14 @@ export function getPHTTimeBoundariesForDate(
     return (h * 60 + m) * 60 * 1000;
   };
 
-  const start = midnightPHT + (startTime ? parseTime(startTime) : 0);
-  const end = midnightPHT + (endTime ? parseTime(endTime) : 24 * 60 * 60 * 1000 - 1000);
+  const startMs = startTime ? parseTime(startTime) : 0;
+  const endMs = endTime ? parseTime(endTime) : DAY_MS - 1000;
+  // Only roll end to next day when BOTH times are provided and the range
+  // wraps through midnight (or is the full 24h sentinel where end === start).
+  const crossesMidnight = !!startTime && !!endTime && endMs <= startMs;
+
+  const start = midnightPHT + startMs;
+  const end = midnightPHT + (crossesMidnight ? endMs + DAY_MS : endMs);
 
   return { start, end };
 }
