@@ -2,7 +2,12 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
-import { getBusinessDayBoundaries, getBusinessDayBoundariesForDate } from "./lib/businessDay";
+import {
+  getBusinessDayBoundaries,
+  getBusinessDayBoundariesForDate,
+  getReportBoundariesForDate,
+  type StoreSchedule,
+} from "./lib/businessDay";
 import { getPHTDayBoundaries, getPHTHour, getPHTTimeBoundariesForDate } from "./lib/dateUtils";
 import { requirePermission } from "./lib/permissions";
 import { cleanupExpiredDraftOrders } from "./orders";
@@ -60,6 +65,9 @@ export const generateDailyReport = mutation({
       throw new Error("Authentication required");
     }
 
+    const store = await ctx.db.get(args.storeId);
+    const schedule = store?.schedule;
+
     // Check for existing report
     const existingReport = await ctx.db
       .query("dailyReports")
@@ -74,6 +82,7 @@ export const generateDailyReport = mutation({
         ctx,
         args.storeId,
         args.reportDate,
+        schedule,
         args.startTime,
         args.endTime,
       );
@@ -115,6 +124,7 @@ export const generateDailyReport = mutation({
       ctx,
       args.storeId,
       args.reportDate,
+      schedule,
       args.startTime,
       args.endTime,
     );
@@ -162,6 +172,7 @@ async function aggregateDailyData(
   ctx: { db: any },
   storeId: Id<"stores">,
   reportDate: string,
+  schedule: StoreSchedule | undefined,
   startTime?: string,
   endTime?: string,
 ): Promise<{
@@ -183,8 +194,9 @@ async function aggregateDailyData(
   transactionCount: number;
   averageTicket: number;
 }> {
-  // Parse date range (PHT boundaries, with optional time range)
-  const { start: startOfDay, end: endOfDay } = getPHTTimeBoundariesForDate(
+  // Parse date range (schedule-aware boundaries, with optional time range override)
+  const { start: startOfDay, end: endOfDay } = getReportBoundariesForDate(
+    schedule,
     reportDate,
     startTime,
     endTime,
