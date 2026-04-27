@@ -30,6 +30,8 @@
     "@convex-dev/react-query": "^0.1.0",
     "@expo/vector-icons": "^15.0.3",
     "@kesha-antonov/react-native-background-downloader": "^4.5.2",
+    "@nozbe/watermelondb": "^0.28.0",
+    "@nozbe/with-observables": "^1.6.0",
     "@packages/backend": "workspace:*",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "^8.6.0",
@@ -87,6 +89,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.28.5",
+    "@babel/plugin-proposal-decorators": "^7.29.0",
     "@types/jest": "29.5.14",
     "@types/react": "catalog:react19",
     "@types/react-test-renderer": "19.1.0",

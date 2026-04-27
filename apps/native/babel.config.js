@@ -3,6 +3,7 @@ module.exports = (api) => {
   return {
     presets: ["babel-preset-expo"],
     plugins: [
+      ["@babel/plugin-proposal-decorators", { legacy: true }],
       [
         "@tamagui/babel-plugin",
         {
