@@ -13,6 +13,16 @@ const CustomPassword = Password<DataModel>({
   },
 });
 
+// 60-day session lifetime, refreshed on every authenticated request via
+// Convex Auth's automatic refresh-token rotation. As long as the tablet
+// makes any authenticated call within any 60-day window, the cashier
+// stays signed in indefinitely under normal POS operation.
+const SIXTY_DAYS_MS = 60 * 24 * 60 * 60 * 1000;
+
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [CustomPassword],
+  session: {
+    totalDurationMs: SIXTY_DAYS_MS,
+    inactiveDurationMs: SIXTY_DAYS_MS,
+  },
 });
