@@ -22,10 +22,16 @@ export default defineSchema({
     storeId: v.optional(v.id("stores")),
     pin: v.optional(v.string()), // Manager PIN (bcrypt hashed)
     isActive: v.optional(v.boolean()),
+
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("email", ["email"])
     .index("phone", ["phone"])
-    .index("by_store", ["storeId"]),
+    .index("by_store", ["storeId"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // Keep notes temporarily for migration
   notes: defineTable({
@@ -41,7 +47,13 @@ export default defineSchema({
     permissions: v.array(v.string()),
     scopeLevel: v.union(v.literal("system"), v.literal("parent"), v.literal("branch")),
     isSystem: v.boolean(),
-  }).index("by_name", ["name"]),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
+  })
+    .index("by_name", ["name"])
+    .index("by_updatedAt", ["updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // ===== STORES =====
   stores: defineTable({
@@ -74,9 +86,17 @@ export default defineSchema({
     ),
     isActive: v.boolean(),
     createdAt: v.number(),
+    // Monotonic counter for assigning device codes (A, B, ..., Z, AA, AB, ...).
+    // Never decremented; codes are never reused — preserves audit trail.
+    deviceCodeCounter: v.optional(v.number()),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_parent", ["parentId"])
-    .index("by_isActive", ["isActive"]),
+    .index("by_isActive", ["isActive"])
+    .index("by_updatedAt", ["updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // ===== PRODUCTS =====
   categories: defineTable({
@@ -86,11 +106,16 @@ export default defineSchema({
     sortOrder: v.number(),
     isActive: v.boolean(),
     createdAt: v.number(),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_store", ["storeId"])
     .index("by_parent", ["parentId"])
     .index("by_store_parent", ["storeId", "parentId"])
-    .index("by_isActive_sortOrder", ["isActive", "sortOrder"]),
+    .index("by_isActive_sortOrder", ["isActive", "sortOrder"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   products: defineTable({
     storeId: v.id("stores"),
@@ -105,10 +130,14 @@ export default defineSchema({
     sortOrder: v.number(),
     createdAt: v.number(),
     updatedAt: v.number(),
+    // Sync infrastructure
+    clientId: v.optional(v.string()),
   })
     .index("by_store", ["storeId"])
     .index("by_category", ["categoryId"])
-    .index("by_store_active", ["storeId", "isActive"]),
+    .index("by_store_active", ["storeId", "isActive"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // ===== MODIFIERS =====
   modifierGroups: defineTable({
@@ -120,21 +149,33 @@ export default defineSchema({
     sortOrder: v.number(),
     isActive: v.boolean(),
     createdAt: v.number(),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_store", ["storeId"])
-    .index("by_store_active", ["storeId", "isActive"]),
+    .index("by_store_active", ["storeId", "isActive"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   modifierOptions: defineTable({
     modifierGroupId: v.id("modifierGroups"),
+    // Denormalized from modifierGroup for sync filtering
+    storeId: v.optional(v.id("stores")),
     name: v.string(),
     priceAdjustment: v.number(), // can be 0
     isDefault: v.boolean(),
     isAvailable: v.boolean(),
     sortOrder: v.number(),
     createdAt: v.number(),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_group", ["modifierGroupId"])
-    .index("by_group_available", ["modifierGroupId", "isAvailable"]),
+    .index("by_group_available", ["modifierGroupId", "isAvailable"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // Join table: assigns modifier groups to products or categories
   modifierGroupAssignments: defineTable({
@@ -148,11 +189,16 @@ export default defineSchema({
     minSelectionsOverride: v.optional(v.number()),
     maxSelectionsOverride: v.optional(v.number()),
     createdAt: v.number(),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_product", ["productId"])
     .index("by_category", ["categoryId"])
     .index("by_modifierGroup", ["modifierGroupId"])
-    .index("by_store", ["storeId"]),
+    .index("by_store", ["storeId"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // ===== TABLES =====
   tables: defineTable({
@@ -164,10 +210,15 @@ export default defineSchema({
     sortOrder: v.number(),
     isActive: v.boolean(),
     createdAt: v.number(),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_store", ["storeId"])
     .index("by_status", ["status"])
-    .index("by_store_status", ["storeId", "status"]),
+    .index("by_store_status", ["storeId", "status"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // ===== ORDERS =====
   orders: defineTable({
@@ -223,6 +274,10 @@ export default defineSchema({
     // NEW: denormalized for fast listActive (Task 15-18 maintenance + Task 17 backfill)
     tableName: v.optional(v.string()),
     itemCount: v.optional(v.number()),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
+    originDeviceId: v.optional(v.string()), // Tracks which tablet created the order; used for "origin tablet wins" conflict rule
   })
     .index("by_store", ["storeId"])
     .index("by_status", ["status"])
@@ -231,10 +286,14 @@ export default defineSchema({
     .index("by_store_createdAt", ["storeId", "createdAt"])
     .index("by_tableId", ["tableId"])
     .index("by_tableId_status", ["tableId", "status"])
-    .index("by_requestId", ["requestId"]),
+    .index("by_requestId", ["requestId"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   orderItems: defineTable({
     orderId: v.id("orders"),
+    // Denormalized from order for sync filtering
+    storeId: v.optional(v.id("stores")),
     productId: v.id("products"),
     productName: v.string(),
     productPrice: v.number(),
@@ -246,17 +305,33 @@ export default defineSchema({
     voidedBy: v.optional(v.id("users")),
     voidedAt: v.optional(v.number()),
     voidReason: v.optional(v.string()),
-  }).index("by_order", ["orderId"]),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
+  })
+    .index("by_order", ["orderId"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   orderItemModifiers: defineTable({
     orderItemId: v.id("orderItems"),
+    // Denormalized from orderItem for sync filtering
+    storeId: v.optional(v.id("stores")),
     modifierGroupName: v.string(), // snapshot
     modifierOptionName: v.string(), // snapshot
     priceAdjustment: v.number(), // snapshot at order time
-  }).index("by_orderItem", ["orderItemId"]),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
+  })
+    .index("by_orderItem", ["orderItemId"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   orderDiscounts: defineTable({
     orderId: v.id("orders"),
+    // Denormalized from order for sync filtering
+    storeId: v.optional(v.id("stores")),
     orderItemId: v.optional(v.id("orderItems")),
     discountType: v.union(
       v.literal("senior_citizen"),
@@ -271,13 +346,20 @@ export default defineSchema({
     vatExemptAmount: v.number(),
     approvedBy: v.id("users"),
     createdAt: v.number(),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_order", ["orderId"])
     .index("by_orderItem", ["orderItemId"])
-    .index("by_type_createdAt", ["discountType", "createdAt"]),
+    .index("by_type_createdAt", ["discountType", "createdAt"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   orderVoids: defineTable({
     orderId: v.id("orders"),
+    // Denormalized from order for sync filtering
+    storeId: v.optional(v.id("stores")),
     voidType: v.union(v.literal("full_order"), v.literal("item"), v.literal("refund")),
     orderItemId: v.optional(v.id("orderItems")),
     reason: v.string(),
@@ -287,9 +369,14 @@ export default defineSchema({
     createdAt: v.number(),
     refundMethod: v.optional(v.union(v.literal("cash"), v.literal("card_ewallet"))),
     replacementOrderId: v.optional(v.id("orders")),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_order", ["orderId"])
-    .index("by_createdAt", ["createdAt"]),
+    .index("by_createdAt", ["createdAt"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // ===== AUDIT =====
   auditLogs: defineTable({
@@ -300,11 +387,15 @@ export default defineSchema({
     details: v.string(),
     userId: v.id("users"),
     createdAt: v.number(),
+    // Sync infrastructure (push-only, no pull)
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_store", ["storeId"])
     .index("by_action", ["action"])
     .index("by_createdAt", ["createdAt"])
-    .index("by_entity", ["entityType", "entityId"]),
+    .index("by_entity", ["entityType", "entityId"])
+    .index("by_clientId", ["clientId"]),
 
   // ===== REPORTS =====
   dailyReports: defineTable({
@@ -369,16 +460,26 @@ export default defineSchema({
     value: v.string(),
     updatedAt: v.number(),
     updatedBy: v.id("users"),
-  }).index("by_store_key", ["storeId", "key"]),
+    // Sync infrastructure
+    clientId: v.optional(v.string()),
+  })
+    .index("by_store_key", ["storeId", "key"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // ===== APP CONFIG =====
   appConfig: defineTable({
     key: v.string(),
     value: v.string(),
     storeId: v.optional(v.id("stores")),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_key", ["key"])
-    .index("by_store_key", ["storeId", "key"]),
+    .index("by_store_key", ["storeId", "key"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
 
   // ===== ORDER PAYMENTS =====
   orderPayments: defineTable({
@@ -392,8 +493,39 @@ export default defineSchema({
     cardReferenceNumber: v.optional(v.string()),
     createdAt: v.number(),
     createdBy: v.id("users"),
+    // Sync infrastructure
+    updatedAt: v.optional(v.number()),
+    clientId: v.optional(v.string()),
   })
     .index("by_order", ["orderId"])
     .index("by_store", ["storeId"])
-    .index("by_store_and_method", ["storeId", "paymentMethod"]),
+    .index("by_store_and_method", ["storeId", "paymentMethod"])
+    .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_clientId", ["clientId"]),
+
+  // ===== SYNC INFRASTRUCTURE =====
+
+  // Idempotency cache for /sync/push retries.
+  // Cleaned daily by syncMaintenance.cleanupSyncedMutations cron (TTL 7 days).
+  syncedMutations: defineTable({
+    clientMutationId: v.string(),
+    storeId: v.id("stores"),
+    response: v.string(), // JSON-stringified push response
+    createdAt: v.number(),
+  })
+    .index("by_clientMutationId", ["clientMutationId"])
+    .index("by_createdAt", ["createdAt"]),
+
+  // Devices registered to a store. deviceCode is assigned monotonically
+  // from stores.deviceCodeCounter (Excel-style: A, B, ..., Z, AA, AB, ...).
+  // Codes are never reused, even after a device retires.
+  syncDevices: defineTable({
+    deviceId: v.string(), // UUID generated on first install (stored in tablet's SecureStore)
+    storeId: v.id("stores"),
+    deviceCode: v.string(), // "A", "B", ..., "Z", "AA", "AB", ...
+    registeredAt: v.number(),
+    lastSeenAt: v.number(),
+  })
+    .index("by_storeId_deviceCode", ["storeId", "deviceCode"])
+    .index("by_deviceId", ["deviceId"]),
 });
