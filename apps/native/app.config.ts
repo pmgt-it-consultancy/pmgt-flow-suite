@@ -66,6 +66,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     ["./plugins/withReactNativeArchitectures", "arm64-v8a,x86_64"],
+    "./plugins/withWatermelonDB",
     "./plugins/withApkInstaller",
   ],
 });
