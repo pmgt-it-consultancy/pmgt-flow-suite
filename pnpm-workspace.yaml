@@ -1,27 +1,29 @@
 packages:
-  - "apps/*"
-  - "packages/*"
+  - apps/*
+  - packages/*
 
 catalog:
-  # Shared dependencies - pinned versions across all packages
+  '@tanstack/react-form': ^1.27.7
+  '@tanstack/react-query': ^5.90.16
   convex: ^1.29.3
-  zod: ^4.3.5
-  "@tanstack/react-query": ^5.90.16
-  "@tanstack/react-form": ^1.27.7
-  typescript: 5.9.3
   tailwindcss: ^4.1.18
+  typescript: 5.9.3
+  zod: ^4.3.5
 
 catalogs:
   react19:
+    '@types/react': ~19.1.10
+    '@types/react-dom': ~19.1.0
     react: 19.1.0
     react-dom: 19.1.0
-    "@types/react": ~19.1.10
-    "@types/react-dom": ~19.1.0
 
 linkWorkspacePackages: true
 
 onlyBuiltDependencies:
   - esbuild
-  - "@tailwindcss/oxide"
+  - '@tailwindcss/oxide'
   - sharp
   - unrs-resolver
+
+patchedDependencies:
+  '@nozbe/watermelondb@0.28.0': patches/@nozbe__watermelondb@0.28.0.patch

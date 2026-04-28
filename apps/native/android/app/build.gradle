@@ -153,10 +153,10 @@ android {
 }
 
 dependencies {
-    implementation project(':watermelondb-jsi')
     // MMKV is required by @kesha-antonov/react-native-background-downloader
     // If you're using react-native-mmkv, remove this line to avoid duplicate class errors
     implementation 'com.tencent:mmkv-shared:2.2.4'
+    implementation project(':watermelondb-jsi')
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
