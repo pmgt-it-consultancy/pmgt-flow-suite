@@ -13,6 +13,7 @@ import { useLockStore } from "./src/features/lock/stores/useLockStore";
 import { SplashScreen } from "./src/features/shared/components/SplashScreen";
 import { useAndroidFullscreen } from "./src/features/shared/hooks";
 import Navigation from "./src/navigation/Navigation";
+import { SyncBootstrap } from "./src/sync";
 import config from "./tamagui.config";
 
 function AppContent({ retriggerFullscreen }: { retriggerFullscreen: () => void }) {
@@ -136,6 +137,7 @@ export default function App() {
         <KeyboardProvider>
           <ConvexClientProvider>
             <AuthProvider>
+              <SyncBootstrap />
               <AppContent retriggerFullscreen={retriggerFullscreen} />
             </AuthProvider>
           </ConvexClientProvider>

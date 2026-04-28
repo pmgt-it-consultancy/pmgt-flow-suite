@@ -1,6 +1,7 @@
 import { Alert } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
+import { SyncStatusPill } from "../../../sync";
 import { SystemStatusBar } from "../../shared/components/SystemStatusBar";
 import { Text } from "../../shared/components/ui";
 
@@ -99,6 +100,7 @@ export const HomeHeader = ({
       </XStack>
 
       <XStack gap={8} alignItems="center">
+        <SyncStatusPill />
         <SystemStatusBar />
         <HeaderActionButton label="Past Orders" onPress={onOrderHistory} />
         <HeaderActionButton label="Settings" onPress={onSettings} />
