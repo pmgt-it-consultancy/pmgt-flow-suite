@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Modal, TextInput } from "react-native";
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
+import { useProducts } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -117,7 +118,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
   // Queries
   const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
-  const products = useQuery(api.products.list, { storeId });
+  // Reads from WatermelonDB when EXPO_PUBLIC_OFFLINE_PRODUCTS=1, else falls
+  // through to api.products.list — same shape either way.
+  const products = useProducts(storeId);
 
   // Fetch modifier groups for the selected product on demand
   const modifierGroups = useQuery(

@@ -1,3 +1,5 @@
+export { type ProductListItem, useProducts } from "./dataSources";
+export { type FeatureFlag, featureFlags, isFlagEnabled } from "./featureFlags";
 export { useNetworkStatus } from "./networkStatus";
 export { SyncBootstrap } from "./SyncBootstrap";
 export { syncManager } from "./SyncManager";
