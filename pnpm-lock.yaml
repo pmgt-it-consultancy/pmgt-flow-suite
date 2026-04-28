@@ -12,12 +12,6 @@ catalogs:
     '@tanstack/react-query':
       specifier: ^5.90.16
       version: 5.90.16
-    convex:
-      specifier: ^1.29.3
-      version: 1.31.3
-    tailwindcss:
-      specifier: ^4.1.18
-      version: 4.1.18
     typescript:
       specifier: 5.9.3
       version: 5.9.3
@@ -28,9 +22,6 @@ catalogs:
     '@types/react':
       specifier: ~19.1.10
       version: 19.1.17
-    '@types/react-dom':
-      specifier: ~19.1.0
-      version: 19.1.11
     react:
       specifier: 19.1.0
       version: 19.1.0
@@ -13762,7 +13753,7 @@ snapshots:
   metro-source-map@0.83.3:
     dependencies:
       '@babel/traverse': 7.28.5
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.28.5'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.0'
       '@babel/types': 7.28.5
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4

@@ -31,9 +31,16 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
 }
 expoAutolinking.useExpoModules()
 
-rootProject.name = 'PMGT Flow'
+rootProject.name = 'PMGT Flow STG'
 
 expoAutolinking.useExpoVersionCatalog()
 
 include ':app'
 includeBuild(expoAutolinking.reactNativeGradlePlugin)
+
+include ':watermelondb-jsi'
+project(':watermelondb-jsi').projectDir = new File(
+  ['node', '--print', "require.resolve('@nozbe/watermelondb/package.json')"]
+    .execute(null, rootProject.projectDir).text.trim(),
+  '../native/android-jsi',
+)

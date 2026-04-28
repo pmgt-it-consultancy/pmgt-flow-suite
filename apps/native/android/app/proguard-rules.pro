@@ -12,3 +12,6 @@
 -keep class com.facebook.react.turbomodule.** { *; }
 
 # Add any project specific keep options here:
+
+# WatermelonDB
+-keep class com.nozbe.watermelondb.** { *; }

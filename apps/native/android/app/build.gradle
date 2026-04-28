@@ -92,7 +92,7 @@ android {
         applicationId 'com.pmgtitconsultancy.pmgtflow.stg'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 32303
+        versionCode 6
         versionName "3.23.3"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
@@ -153,6 +153,7 @@ android {
 }
 
 dependencies {
+    implementation project(':watermelondb-jsi')
     // MMKV is required by @kesha-antonov/react-native-background-downloader
     // If you're using react-native-mmkv, remove this line to avoid duplicate class errors
     implementation 'com.tencent:mmkv-shared:2.2.4'
