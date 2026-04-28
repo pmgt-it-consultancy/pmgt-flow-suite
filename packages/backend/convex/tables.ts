@@ -3,6 +3,7 @@ import type { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { requirePermission } from "./lib/permissions";
+import { newClientId } from "./lib/sync";
 
 // List tables for a store
 export const list = query({
@@ -131,6 +132,8 @@ export const create = mutation({
       sortOrder,
       isActive: true,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
+      clientId: newClientId(),
     });
   },
 });
@@ -166,7 +169,7 @@ export const update = mutation({
       Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
-    await ctx.db.patch(tableId, filteredUpdates);
+    await ctx.db.patch(tableId, { ...filteredUpdates, updatedAt: Date.now() });
 
     // Fan out new name to all currently open orders on this table
     if (args.name !== undefined && args.name !== existing.name) {
@@ -174,8 +177,9 @@ export const update = mutation({
         .query("orders")
         .withIndex("by_tableId_status", (q) => q.eq("tableId", args.tableId).eq("status", "open"))
         .collect();
+      const now = Date.now();
       for (const o of openOrders) {
-        await ctx.db.patch(o._id, { tableName: args.name });
+        await ctx.db.patch(o._id, { tableName: args.name, updatedAt: now });
       }
     }
 
@@ -201,6 +205,7 @@ export const updateStatus = mutation({
     await ctx.db.patch(args.tableId, {
       status: args.status,
       currentOrderId: args.status === "available" ? undefined : args.currentOrderId,
+      updatedAt: Date.now(),
     });
     return null;
   },
@@ -219,8 +224,9 @@ export const reorder = mutation({
     await requirePermission(ctx, user._id, "tables.manage");
 
     // Update sortOrder for each table
+    const now = Date.now();
     for (let i = 0; i < args.tableIds.length; i++) {
-      await ctx.db.patch(args.tableIds[i], { sortOrder: i });
+      await ctx.db.patch(args.tableIds[i], { sortOrder: i, updatedAt: now });
     }
 
     return null;

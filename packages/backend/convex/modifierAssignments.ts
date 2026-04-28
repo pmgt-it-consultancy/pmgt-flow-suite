@@ -4,6 +4,7 @@ import { mutation, type QueryCtx, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { getCategoryChain } from "./lib/categoryHelpers";
 import { requirePermission } from "./lib/permissions";
+import { newClientId } from "./lib/sync";
 
 // Assign a modifier group to a product or category
 export const assign = mutation({
@@ -80,6 +81,8 @@ export const assign = mutation({
       minSelectionsOverride: args.minSelectionsOverride,
       maxSelectionsOverride: args.maxSelectionsOverride,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
+      clientId: newClientId(),
     });
   },
 });
@@ -120,7 +123,7 @@ export const updateAssignment = mutation({
       Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
-    await ctx.db.patch(assignmentId, filteredUpdates);
+    await ctx.db.patch(assignmentId, { ...filteredUpdates, updatedAt: Date.now() });
     return null;
   },
 });

@@ -3,6 +3,7 @@ import type { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { requirePermission } from "./lib/permissions";
+import { newClientId } from "./lib/sync";
 
 // List modifier groups for a store
 export const list = query({
@@ -167,6 +168,8 @@ export const create = mutation({
       sortOrder,
       isActive: true,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
+      clientId: newClientId(),
     });
   },
 });
@@ -192,7 +195,7 @@ export const update = mutation({
       Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
-    await ctx.db.patch(modifierGroupId, filteredUpdates);
+    await ctx.db.patch(modifierGroupId, { ...filteredUpdates, updatedAt: Date.now() });
     return null;
   },
 });
@@ -207,8 +210,9 @@ export const reorder = mutation({
     const user = await requireAuth(ctx);
     await requirePermission(ctx, user._id, "modifiers.manage");
 
+    const now = Date.now();
     for (let i = 0; i < args.modifierGroupIds.length; i++) {
-      await ctx.db.patch(args.modifierGroupIds[i], { sortOrder: i });
+      await ctx.db.patch(args.modifierGroupIds[i], { sortOrder: i, updatedAt: now });
     }
 
     return null;

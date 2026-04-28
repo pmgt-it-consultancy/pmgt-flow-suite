@@ -3,6 +3,7 @@ import type { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { requirePermission } from "./lib/permissions";
+import { newClientId } from "./lib/sync";
 
 // List modifier options for a group
 export const list = query({
@@ -83,14 +84,21 @@ export const create = mutation({
       sortOrder = existing.length > 0 ? Math.max(...existing.map((o) => o.sortOrder)) + 1 : 0;
     }
 
+    // Resolve storeId via the parent group for sync filtering
+    const parentGroup = await ctx.db.get(args.modifierGroupId);
+    const storeId = parentGroup?.storeId;
+
     return await ctx.db.insert("modifierOptions", {
       modifierGroupId: args.modifierGroupId,
+      storeId,
       name: args.name,
       priceAdjustment: args.priceAdjustment,
       isDefault: args.isDefault ?? false,
       isAvailable: true,
       sortOrder,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
+      clientId: newClientId(),
     });
   },
 });
@@ -115,7 +123,7 @@ export const update = mutation({
       Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
-    await ctx.db.patch(modifierOptionId, filteredUpdates);
+    await ctx.db.patch(modifierOptionId, { ...filteredUpdates, updatedAt: Date.now() });
     return null;
   },
 });
@@ -130,8 +138,9 @@ export const reorder = mutation({
     const user = await requireAuth(ctx);
     await requirePermission(ctx, user._id, "modifiers.manage");
 
+    const now = Date.now();
     for (let i = 0; i < args.modifierOptionIds.length; i++) {
-      await ctx.db.patch(args.modifierOptionIds[i], { sortOrder: i });
+      await ctx.db.patch(args.modifierOptionIds[i], { sortOrder: i, updatedAt: now });
     }
 
     return null;
@@ -153,6 +162,7 @@ export const toggleAvailability = mutation({
 
     await ctx.db.patch(args.modifierOptionId, {
       isAvailable: !option.isAvailable,
+      updatedAt: Date.now(),
     });
 
     return null;

@@ -3,6 +3,7 @@ import type { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { requirePermission } from "./lib/permissions";
+import { newClientId } from "./lib/sync";
 
 // List categories for a store
 export const list = query({
@@ -152,6 +153,8 @@ export const create = mutation({
       sortOrder,
       isActive: true,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
+      clientId: newClientId(),
     });
   },
 });
@@ -193,7 +196,7 @@ export const update = mutation({
       Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
-    await ctx.db.patch(categoryId, filteredUpdates);
+    await ctx.db.patch(categoryId, { ...filteredUpdates, updatedAt: Date.now() });
     return null;
   },
 });
@@ -211,8 +214,9 @@ export const reorder = mutation({
     await requirePermission(ctx, user._id, "categories.manage");
 
     // Update sortOrder for each category
+    const now = Date.now();
     for (let i = 0; i < args.categoryIds.length; i++) {
-      await ctx.db.patch(args.categoryIds[i], { sortOrder: i });
+      await ctx.db.patch(args.categoryIds[i], { sortOrder: i, updatedAt: now });
     }
 
     return null;

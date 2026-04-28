@@ -4,6 +4,7 @@ import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { getCategoryChain } from "./lib/categoryHelpers";
 import { requirePermission } from "./lib/permissions";
+import { newClientId } from "./lib/sync";
 
 // List products for a store
 export const list = query({
@@ -216,6 +217,7 @@ export const create = mutation({
       sortOrder,
       createdAt: now,
       updatedAt: now,
+      clientId: newClientId(),
     });
   },
 });
