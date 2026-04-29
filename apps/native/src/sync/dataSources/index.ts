@@ -10,6 +10,7 @@ export {
   useModifiersForStore,
 } from "./useModifiers";
 export { type ProductListItem, useProducts } from "./useProducts";
+export { useStore } from "./useStores";
 export {
   type AvailableTable,
   type TableOrderSummary,
