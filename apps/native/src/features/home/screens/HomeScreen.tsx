@@ -5,6 +5,7 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
+import { useActiveOrders } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { useLockStore } from "../../lock/stores/useLockStore";
 import { Text } from "../../shared/components/ui";
@@ -34,10 +35,7 @@ export const HomeScreen = ({ navigation }: HomeScreenProps) => {
     user?.storeId ? { storeId: user.storeId } : "skip",
   );
 
-  const activeOrders = useQuery(
-    api.orders.listActive,
-    user?.storeId ? { storeId: user.storeId } : "skip",
-  );
+  const activeOrders = useActiveOrders(user?.storeId);
 
   const userHasPin = useQuery(
     api.screenLock.getUserHasPin,
