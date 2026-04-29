@@ -20,7 +20,7 @@ import { setAuthTokenFn } from "./syncEndpoints";
  */
 export function SyncBootstrap() {
   const token = useAuthToken();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   // Keep latest token in a ref so the sync manager always sees current
   // value across refresh-token rotations without re-registering callbacks.
@@ -35,12 +35,14 @@ export function SyncBootstrap() {
   // Start/stop the sync loop based on auth state.
   useEffect(() => {
     if (isAuthenticated && token) {
-      void syncManager.start();
+      if (user?.storeId) {
+        void syncManager.start(user.storeId as string);
+      }
       return () => {
         syncManager.stop();
       };
     }
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, user?.storeId]);
 
   return null;
 }

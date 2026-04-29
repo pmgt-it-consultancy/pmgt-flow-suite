@@ -9,6 +9,7 @@ import {
 } from "../../../db";
 import { generateUUID } from "../../../sync/idBridge";
 import { syncManager } from "../../../sync/SyncManager";
+import { getNextOrderNumber } from "./orderNumber";
 import { recalculateOrderTotals } from "./recalculateOrder";
 
 function uid(): string {
@@ -36,8 +37,7 @@ export async function createOrder(params: {
     if (existing.length > 0) return existing[0].id;
   }
 
-  const prefix = params.orderType === "dine_in" ? "D" : "T";
-  const orderNumber = `${prefix}-${Date.now().toString().slice(-6)}`;
+  const orderNumber = await getNextOrderNumber(params.storeId, params.orderType);
 
   let orderId = "";
 
@@ -315,7 +315,7 @@ export async function createAndSendToKitchen(params: {
 }> {
   const db = getDatabase();
   const orderId = uid();
-  const orderNumber = `D-${Date.now().toString().slice(-6)}`;
+  const orderNumber = await getNextOrderNumber(params.storeId, "dine_in");
   const sentItemIds: string[] = [];
 
   await db.write(async () => {

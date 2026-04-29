@@ -2,10 +2,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import Constants from "expo-constants";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Alert, Modal as RNModal, ScrollView, View } from "react-native";
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
-import { YStack } from "tamagui";
+import { XStack, YStack } from "tamagui";
+import { getOrCreateDeviceId } from "../../../auth/deviceId";
+import { syncManager } from "../../../sync/SyncManager";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Text } from "../../shared/components/ui";
@@ -19,6 +21,12 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
   const { user, hasPermission } = useAuth();
   const printers = usePrinterStore((s) => s.printers);
   const storeId = user?.storeId;
+  const [deviceCode, setDeviceCode] = useState(syncManager.getDeviceCode());
+  const [deviceId, setDeviceId] = useState("");
+
+  useEffect(() => {
+    getOrCreateDeviceId().then(setDeviceId);
+  }, []);
   const [showTimeoutPicker, setShowTimeoutPicker] = useState(false);
   const autoLockTimeout = useQuery(
     api.screenLock.getAutoLockTimeout,
@@ -186,6 +194,30 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
           </YStack>
           <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
         </Pressable>
+
+        {/* Device Info */}
+        <YStack paddingHorizontal={20} paddingVertical={8}>
+          <Text
+            style={{
+              fontSize: 12,
+              fontWeight: "600",
+              color: "#6B7280",
+              marginBottom: 8,
+              textTransform: "uppercase",
+              letterSpacing: 1,
+            }}
+          >
+            Device Info
+          </Text>
+          <YStack backgroundColor="#FFFFFF" borderRadius={12} padding={16}>
+            <DeviceInfoRow label="Device Code" value={deviceCode || "—"} />
+            <DeviceInfoRow label="Store" value={user?.name ?? "—"} />
+            <DeviceInfoRow
+              label="Device ID"
+              value={deviceId ? `${deviceId.slice(0, 8)}...${deviceId.slice(-4)}` : "—"}
+            />
+          </YStack>
+        </YStack>
       </ScrollView>
 
       <RNModal
@@ -272,3 +304,12 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
     </YStack>
   );
 };
+
+const DeviceInfoRow = ({ label, value }: { label: string; value: string }) => (
+  <XStack justifyContent="space-between" alignItems="center" paddingVertical={6}>
+    <Text variant="muted" size="sm">
+      {label}
+    </Text>
+    <Text style={{ color: "#111827", fontSize: 14, fontWeight: "500" }}>{value}</Text>
+  </XStack>
+);

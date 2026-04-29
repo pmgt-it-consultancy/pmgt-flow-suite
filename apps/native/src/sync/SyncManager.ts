@@ -2,7 +2,7 @@ import { synchronize } from "@nozbe/watermelondb/sync";
 import { getOrCreateDeviceId } from "../auth/deviceId";
 import { getDatabase } from "../db";
 import { subscribeToNetworkChanges } from "./networkStatus";
-import { callPull, callPush } from "./syncEndpoints";
+import { callPull, callPush, callRegisterDevice } from "./syncEndpoints";
 import type { ChangeBucket, SyncState, WatermelonRow } from "./types";
 
 const PULL_PERIOD_MS = 60_000;
@@ -42,14 +42,22 @@ class SyncManagerImpl {
   private inFlight = false;
   private retryAttempt = 0;
   private deviceId = "";
+  private deviceCode = "";
   private unsubNet: (() => void) | null = null;
   private started = false;
   private pushDebounce: ReturnType<typeof setTimeout> | null = null;
 
-  async start(): Promise<void> {
+  async start(storeId: string): Promise<void> {
     if (this.started) return;
     this.started = true;
     this.deviceId = await getOrCreateDeviceId();
+
+    try {
+      const result = await callRegisterDevice(this.deviceId, storeId);
+      this.deviceCode = result.deviceCode;
+    } catch (err) {
+      console.warn("[SyncManager] device registration failed:", err);
+    }
 
     this.unsubNet = subscribeToNetworkChanges((online) => {
       if (online) {
@@ -92,6 +100,10 @@ class SyncManagerImpl {
     return this.state;
   }
 
+  getDeviceCode(): string {
+    return this.deviceCode;
+  }
+
   /**
    * Called by service functions after any local write. Pushes immediately
    * but debounces: multiple calls within 500ms collapse into one push so
@@ -116,8 +128,10 @@ class SyncManagerImpl {
         database: getDatabase(),
         pullChanges: async ({ lastPulledAt }) => {
           const result = await callPull(lastPulledAt ?? null);
+          // /sync/pull returns camelCase collection names (matching Convex
+          // tables), but WatermelonDB's local schema uses snake_case.
           return {
-            changes: result.changes as unknown as Record<string, ChangeBucket>,
+            changes: mapCamelToSnake(result.changes) as unknown as Record<string, ChangeBucket>,
             timestamp: result.timestamp,
           };
         },
@@ -130,13 +144,14 @@ class SyncManagerImpl {
             return;
           }
           const clientMutationId = crypto.randomUUID();
+          // WatermelonDB pushes snake_case keys; /sync/push expects camelCase.
+          const mapped = mapSnakeToCamel(
+            changes as Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }>,
+          );
           const response = await callPush(
             {
               lastPulledAt: lastPulledAt ?? 0,
-              changes: changes as Record<
-                string,
-                { created: WatermelonRow[]; updated: WatermelonRow[] }
-              >,
+              changes: mapped,
               clientMutationId,
             },
             this.deviceId,
@@ -187,6 +202,38 @@ function allEmpty(
     if (t.created.length > 0 || t.updated.length > 0) return false;
   }
   return true;
+}
+
+/**
+ * Translates camelCase collection names from /sync/pull into snake_case
+ * keys that WatermelonDB's local schema understands.
+ */
+function mapCamelToSnake(changes: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(changes)) {
+    out[camelToSnake(key)] = value;
+  }
+  return out;
+}
+
+/**
+ * Translates snake_case collection names from WatermelonDB into camelCase
+ * keys that /sync/push expects.
+ */
+function mapSnakeToCamel<T>(changes: Record<string, T>): Record<string, T> {
+  const out: Record<string, T> = {};
+  for (const [key, value] of Object.entries(changes)) {
+    out[snakeToCamel(key)] = value;
+  }
+  return out;
+}
+
+function camelToSnake(str: string): string {
+  return str.replace(/[A-Z]/g, (ch) => `_${ch.toLowerCase()}`);
+}
+
+function snakeToCamel(str: string): string {
+  return str.replace(/_([a-z])/g, (_, ch) => ch.toUpperCase());
 }
 
 export const syncManager = new SyncManagerImpl();
