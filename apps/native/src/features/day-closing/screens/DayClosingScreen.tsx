@@ -5,6 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
+import { useNetworkStatus } from "../../../sync/networkStatus";
+import { syncManager } from "../../../sync/SyncManager";
 import { useAuth } from "../../auth/context";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { PageHeader } from "../../shared/components/PageHeader";
@@ -48,9 +50,11 @@ const weekdayKeyFromDate = (date: Date): WeekdayKey => WEEKDAY_KEYS[date.getDay(
 
 export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   const { user } = useAuth();
+  const isOnline = useNetworkStatus();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isPrintingZReport, setIsPrintingZReport] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [startTime, setStartTime] = useState<string | undefined>(undefined);
   const [endTime, setEndTime] = useState<string | undefined>(undefined);
 
@@ -112,8 +116,13 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   // Generate report + log closing
   const handleGenerateReport = useCallback(async () => {
     if (!storeId || !reportDate) return;
+    if (!isOnline) {
+      Alert.alert("Offline", "Connect to WiFi to generate reports.");
+      return;
+    }
     setIsGenerating(true);
     try {
+      await syncManager.syncNow();
       await generateReport({ storeId, reportDate, startTime, endTime });
       await logDayClosing({ storeId, reportDate });
     } catch (_error) {
@@ -121,11 +130,33 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     } finally {
       setIsGenerating(false);
     }
-  }, [storeId, reportDate, startTime, endTime, generateReport, logDayClosing]);
+  }, [storeId, reportDate, startTime, endTime, isOnline, generateReport, logDayClosing]);
 
   // Print Z-Report to thermal printer
   const handlePrintZReport = useCallback(async () => {
     if (!report || !storeId || !store || !reportDate) return;
+
+    if (!isOnline) {
+      Alert.alert(
+        "Offline",
+        "Connect to WiFi to close the day. Z-Report requires a live connection to sync pending orders and fetch report data.",
+      );
+      return;
+    }
+
+    setIsSyncing(true);
+    try {
+      await syncManager.syncNow();
+    } catch {
+      setIsSyncing(false);
+      Alert.alert(
+        "Sync Failed",
+        "Could not sync pending orders. Please check your connection and try again.",
+      );
+      return;
+    }
+    setIsSyncing(false);
+
     setIsPrintingZReport(true);
     try {
       const storeAddress = [store.address1, store.address2].filter(Boolean).join(", ");
@@ -172,6 +203,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     storeId,
     store,
     reportDate,
+    isOnline,
     charsPerLine,
     productSales,
     paymentTransactions,
@@ -179,7 +211,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     endTime,
   ]);
 
-  const canPrint = !!report && !isPrintingZReport;
+  const canPrint = !!report && !isPrintingZReport && !isSyncing;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -248,7 +280,11 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
           >
             <Ionicons name="print-outline" size={22} color="#FFFFFF" />
             <Text style={styles.printButtonText}>
-              {isPrintingZReport ? "Printing..." : "Print Z-Report"}
+              {isSyncing
+                ? "Syncing..."
+                : isPrintingZReport
+                  ? "Printing..."
+                  : "Sync & Print Z-Report"}
             </Text>
           </Pressable>
         </YStack>

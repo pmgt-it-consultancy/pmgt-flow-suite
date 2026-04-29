@@ -21,11 +21,13 @@ function formatStatus(state: SyncState): string {
   // idle
   if (!state.lastPulledAt) return "Not synced";
   const ago = Date.now() - state.lastPulledAt;
-  if (ago < 60_000) return "Synced";
+  const dc = syncManager.getDeviceCode();
+  const deviceSuffix = dc ? ` · Device ${dc}` : "";
+  if (ago < 60_000) return `Synced${deviceSuffix}`;
   const minutes = Math.floor(ago / 60_000);
-  if (minutes < 60) return `Synced ${minutes}m ago`;
+  if (minutes < 60) return `Synced ${minutes}m ago${deviceSuffix}`;
   const hours = Math.floor(minutes / 60);
-  return `Synced ${hours}h ago`;
+  return `Synced ${hours}h ago${deviceSuffix}`;
 }
 
 /**
@@ -41,6 +43,8 @@ export function SyncStatusPill() {
 
   const colors = COLORS[state.status];
   const text = formatStatus(state);
+  const accessibilityLabel =
+    state.status === "error" && state.lastError ? `${text}: ${state.lastError}` : text;
 
   const onPress = () => {
     if (state.status === "error" || state.status === "offline") {
@@ -49,7 +53,11 @@ export function SyncStatusPill() {
   };
 
   return (
-    <TouchableOpacity onPress={onPress} accessibilityRole="button" accessibilityLabel={text}>
+    <TouchableOpacity
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+    >
       <View
         style={{
           backgroundColor: colors.bg,
