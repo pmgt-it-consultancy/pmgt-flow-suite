@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, TextInput } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
@@ -9,6 +9,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
 import { useStore } from "../../../sync";
 import { useAuth } from "../../auth/context";
+import { applyBulkScPwdDiscount, removeDiscount } from "../../discounts/services/discountMutations";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { type ReceiptData, useFormatCurrency } from "../../shared";
@@ -22,6 +23,7 @@ import {
   ReceiptPreviewModal,
   TotalsSummary,
 } from "../components";
+import { processPayment } from "../services/checkoutMutations";
 
 interface CheckoutScreenProps {
   navigation: any;
@@ -98,10 +100,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const store = useStore(order?.storeId);
   const discounts = useQuery(api.discounts.getOrderDiscounts, { orderId });
 
-  // Mutations
-  const processPaymentMutation = useMutation(api.checkout.processPayment);
-  const applyBulkScPwdDiscount = useMutation(api.discounts.applyBulkScPwdDiscount);
-  const removeDiscount = useMutation(api.discounts.removeDiscount);
+  // Mutations — all use WatermelonDB service functions imported above
 
   // Computed values
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
@@ -253,16 +252,16 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       if (pendingManagerAction === "apply" && discountType && selectedItemIds.size > 0) {
         try {
           const items = Array.from(selectedItemIds).map((itemId) => ({
-            orderItemId: itemId as Id<"orderItems">,
+            orderItemId: itemId as string,
             quantityApplied: 1,
           }));
           await applyBulkScPwdDiscount({
-            orderId,
+            orderId: orderId as string,
             items,
             discountType,
             customerName: discountName.trim(),
             customerId: discountIdNumber.trim(),
-            managerId,
+            managerId: managerId as string,
           });
           Alert.alert(
             "Success",
@@ -273,7 +272,10 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         }
       } else if (pendingManagerAction === "remove" && discountToRemove) {
         try {
-          await removeDiscount({ discountId: discountToRemove, managerId });
+          await removeDiscount({
+            discountId: discountToRemove as string,
+            managerId: managerId as string,
+          });
         } catch (error: any) {
           Alert.alert("Error", error.message || "Failed to remove discount");
         }
@@ -290,8 +292,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       discountIdNumber,
       discountToRemove,
       orderId,
-      applyBulkScPwdDiscount,
-      removeDiscount,
     ],
   );
 
@@ -482,7 +482,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         };
       });
 
-      await processPaymentMutation({ orderId, payments });
+      await processPayment({ orderId: orderId as string, payments });
 
       const receiptData = createReceiptData();
       setCompletedReceiptData(receiptData);
@@ -532,7 +532,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     remaining,
     activeItems,
     isTakeout,
-    processPaymentMutation,
+    processPayment,
     orderId,
     createReceiptData,
     cashDrawerEnabled,
