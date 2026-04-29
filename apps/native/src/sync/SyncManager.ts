@@ -44,6 +44,7 @@ class SyncManagerImpl {
   private deviceId = "";
   private unsubNet: (() => void) | null = null;
   private started = false;
+  private pushDebounce: ReturnType<typeof setTimeout> | null = null;
 
   async start(): Promise<void> {
     if (this.started) return;
@@ -89,6 +90,16 @@ class SyncManagerImpl {
 
   getState(): SyncState {
     return this.state;
+  }
+
+  /**
+   * Called by service functions after any local write. Pushes immediately
+   * but debounces: multiple calls within 500ms collapse into one push so
+   * rapid-fire cart edits don't hammer the Convex backend.
+   */
+  triggerPush(): void {
+    if (this.pushDebounce) clearTimeout(this.pushDebounce);
+    this.pushDebounce = setTimeout(() => void this.syncOnce(), 500);
   }
 
   async syncNow(): Promise<void> {
