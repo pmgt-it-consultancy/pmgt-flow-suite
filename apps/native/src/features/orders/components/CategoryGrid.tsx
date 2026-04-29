@@ -1,11 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
+import { useCategoryTree } from "../../../sync";
 import { LoadingState, Text } from "../../shared/components/ui";
 import { CategoryTile } from "./CategoryTile";
 import { ProductCard } from "./ProductCard";
@@ -52,7 +51,7 @@ export const CategoryGrid = ({ storeId, products, onSelectProduct }: CategoryGri
   const [nav, setNav] = useState<NavState>({ level: 0 });
   const [searchQuery, setSearchQuery] = useState("");
 
-  const categoryTree = useQuery(api.categories.getTree, { storeId });
+  const categoryTree = useCategoryTree(storeId);
 
   // Search mode: flat product results across all categories
   const searchResults = useMemo(() => {
