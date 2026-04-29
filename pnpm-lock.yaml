@@ -412,6 +412,9 @@ importers:
       '@convex-dev/auth':
         specifier: ^0.0.90
         version: 0.0.90(@auth/core@0.37.4)(convex@1.31.7(react@19.1.0))(react@19.1.0)
+      '@packages/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@types/node':
         specifier: ^25.0.5
         version: 25.0.6
@@ -452,6 +455,10 @@ importers:
       zod:
         specifier: ^3.23.0
         version: 3.25.76
+    devDependencies:
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@edge-runtime/vm@5.0.0)(@types/node@25.0.6)(jiti@2.6.1)(jsdom@20.0.3)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2)
 
 packages:
 

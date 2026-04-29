@@ -15,6 +15,7 @@
   "dependencies": {
     "@auth/core": "^0.37.0",
     "@convex-dev/auth": "^0.0.90",
+    "@packages/shared": "workspace:*",
     "@types/node": "^25.0.5",
     "bcryptjs": "^3.0.3",
     "convex": "catalog:",
