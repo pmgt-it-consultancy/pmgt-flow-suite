@@ -5,6 +5,7 @@ import { useAction, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 import { Alert, FlatList, TextInput } from "react-native";
 import { XStack, YStack } from "tamagui";
+import { useStore } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { ManagerPinModal, ReceiptPreviewModal } from "../../checkout/components";
 import { RefundItemModal } from "../../order-history/components/RefundItemModal";
@@ -60,7 +61,7 @@ export const TakeoutOrderDetailModal = ({
     api.checkout.getReceipt,
     orderId && order?.status === "paid" ? { orderId } : "skip",
   );
-  const store = useQuery(api.stores.get, order?.storeId ? { storeId: order.storeId } : "skip");
+  const store = useStore(order?.storeId);
   const discounts = useQuery(api.discounts.getOrderDiscounts, orderId ? { orderId } : "skip");
   const voidOrderAction = useAction(api.voids.voidOrder);
   const voidPaidOrderAction = useAction(api.voids.voidPaidOrder);

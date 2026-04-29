@@ -7,6 +7,7 @@ import { ActivityIndicator, Alert, TextInput } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
+import { useStore } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -94,7 +95,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   // Queries - auth is handled automatically by Convex Auth
   const order = useQuery(api.orders.get, { orderId });
-  const store = useQuery(api.stores.get, order?.storeId ? { storeId: order.storeId } : "skip");
+  const store = useStore(order?.storeId);
   const discounts = useQuery(api.discounts.getOrderDiscounts, { orderId });
 
   // Mutations
