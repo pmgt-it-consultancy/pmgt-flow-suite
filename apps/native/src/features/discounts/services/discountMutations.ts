@@ -1,7 +1,7 @@
-import { generateUUID } from "../../../../sync/idBridge";
-import { syncManager } from "../../../../sync/SyncManager";
 import { getDatabase, type OrderDiscount } from "../../../db";
-import { recalculateOrderTotals } from "../../../orders/services/recalculateOrder";
+import { generateUUID } from "../../../sync/idBridge";
+import { syncManager } from "../../../sync/SyncManager";
+import { recalculateOrderTotals } from "../../orders/services/recalculateOrder";
 
 function uid(): string {
   return generateUUID();
@@ -20,9 +20,9 @@ export async function applyBulkScPwdDiscount(params: {
 }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
+  await db.write(async () => {
     for (const item of params.items) {
-      await writer.collections.get<OrderDiscount>("order_discounts").create((d) => {
+      await db.get<OrderDiscount>("order_discounts").create((d) => {
         d._raw.id = uid();
         d.orderId = params.orderId;
         d.orderItemId = item.orderItemId;
@@ -50,10 +50,8 @@ export async function removeDiscount(params: {
 
   let orderId = "";
 
-  await db.write(async (writer) => {
-    const discount = await writer.collections
-      .get<OrderDiscount>("order_discounts")
-      .find(params.discountId);
+  await db.write(async () => {
+    const discount = await db.get<OrderDiscount>("order_discounts").find(params.discountId);
     orderId = discount.orderId;
     await discount.markAsDeleted();
   });

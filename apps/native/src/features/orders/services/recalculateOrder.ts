@@ -81,8 +81,8 @@ export async function recalculateOrderTotals(orderId: string): Promise<void> {
   totals.discountAmount += globalDiscountAmount;
   totals.netSales -= globalDiscountAmount;
 
-  await db.write(async (writer) => {
-    const orderToPatch = await writer.collections.get<Order>("orders").find(orderId);
+  await db.write(async () => {
+    const orderToPatch = await db.get<Order>("orders").find(orderId);
     await orderToPatch.update((o) => {
       o.grossSales = totals.grossSales;
       o.vatableSales = totals.vatableSales;

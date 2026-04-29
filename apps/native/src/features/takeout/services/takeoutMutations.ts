@@ -1,7 +1,7 @@
 import { Q } from "@nozbe/watermelondb";
-import { generateUUID } from "../../../../sync/idBridge";
-import { syncManager } from "../../../../sync/SyncManager";
 import { getDatabase, type Order } from "../../../db";
+import { generateUUID } from "../../../sync/idBridge";
+import { syncManager } from "../../../sync/SyncManager";
 
 function uid(): string {
   return generateUUID();
@@ -16,8 +16,8 @@ export async function createDraftOrder(params: {
   const db = getDatabase();
   let orderId = "";
 
-  await db.write(async (writer) => {
-    await writer.collections.get<Order>("orders").create((o) => {
+  await db.write(async () => {
+    await db.get<Order>("orders").create((o) => {
       orderId = uid();
       o._raw.id = orderId;
       o.storeId = params.storeId;
@@ -47,8 +47,8 @@ export async function createDraftOrder(params: {
 export async function discardDraft(params: { orderId: string }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").find(params.orderId);
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(params.orderId);
     await order.update((o) => {
       o.status = "voided";
     });
@@ -62,8 +62,8 @@ export async function discardDraft(params: { orderId: string }): Promise<void> {
 export async function submitDraft(params: { orderId: string }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").find(params.orderId);
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(params.orderId);
     await order.update((o) => {
       o.status = "open";
       o.takeoutStatus = "pending";
@@ -81,8 +81,8 @@ export async function updateTakeoutStatus(params: {
 }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").find(params.orderId);
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(params.orderId);
     await order.update((o) => {
       o.takeoutStatus = params.status;
     });

@@ -1,6 +1,4 @@
 import { Q } from "@nozbe/watermelondb";
-import { generateUUID } from "../../../../sync/idBridge";
-import { syncManager } from "../../../../sync/SyncManager";
 import {
   getDatabase,
   type Order,
@@ -9,6 +7,8 @@ import {
   type Product,
   type TableModel,
 } from "../../../db";
+import { generateUUID } from "../../../sync/idBridge";
+import { syncManager } from "../../../sync/SyncManager";
 import { recalculateOrderTotals } from "./recalculateOrder";
 
 function uid(): string {
@@ -41,8 +41,8 @@ export async function createOrder(params: {
 
   let orderId = "";
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").create((o) => {
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").create((o) => {
       o._raw.id = uid();
       orderId = o._raw.id;
       o.storeId = params.storeId;
@@ -66,7 +66,7 @@ export async function createOrder(params: {
     });
 
     if (params.tableId) {
-      const table = await writer.collections.get<TableModel>("tables").find(params.tableId);
+      const table = await db.get<TableModel>("tables").find(params.tableId);
       await table.update((t) => {
         t.status = "occupied";
       });
@@ -93,12 +93,12 @@ export async function addItemToOrder(params: {
 }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const product = await writer.collections.get<Product>("products").find(params.productId);
+  await db.write(async () => {
+    const product = await db.get<Product>("products").find(params.productId);
 
     const basePrice = params.customPrice ?? product.price;
 
-    const orderItem = await writer.collections.get<OrderItem>("order_items").create((oi) => {
+    const orderItem = await db.get<OrderItem>("order_items").create((oi) => {
       oi._raw.id = uid();
       oi.orderId = params.orderId;
       oi.productId = params.productId;
@@ -113,7 +113,7 @@ export async function addItemToOrder(params: {
 
     if (params.modifiers) {
       for (const mod of params.modifiers) {
-        await writer.collections.get<OrderItemModifier>("order_item_modifiers").create((oim) => {
+        await db.get<OrderItemModifier>("order_item_modifiers").create((oim) => {
           oim._raw.id = uid();
           oim.orderItemId = orderItem.id;
           oim.modifierGroupName = mod.modifierGroupName;
@@ -123,7 +123,7 @@ export async function addItemToOrder(params: {
       }
     }
 
-    const order = await writer.collections.get<Order>("orders").find(params.orderId);
+    const order = await db.get<Order>("orders").find(params.orderId);
     await order.update((o) => {
       o.itemCount = (o.itemCount ?? 0) + params.quantity;
     });
@@ -142,8 +142,8 @@ export async function removeItemFromOrder(params: {
   const db = getDatabase();
   let orderId = "";
 
-  await db.write(async (writer) => {
-    const item = await writer.collections.get<OrderItem>("order_items").find(params.orderItemId);
+  await db.write(async () => {
+    const item = await db.get<OrderItem>("order_items").find(params.orderItemId);
 
     orderId = item.orderId;
 
@@ -153,7 +153,7 @@ export async function removeItemFromOrder(params: {
       oi.voidedAt = Date.now();
     });
 
-    const order = await writer.collections.get<Order>("orders").find(orderId);
+    const order = await db.get<Order>("orders").find(orderId);
     await order.update((o) => {
       o.itemCount = Math.max(0, (o.itemCount ?? 0) - item.quantity);
     });
@@ -172,8 +172,8 @@ export async function updateItemQuantity(params: {
   const db = getDatabase();
   let orderId = "";
 
-  await db.write(async (writer) => {
-    const item = await writer.collections.get<OrderItem>("order_items").find(params.orderItemId);
+  await db.write(async () => {
+    const item = await db.get<OrderItem>("order_items").find(params.orderItemId);
 
     const oldQty = item.quantity;
     orderId = item.orderId;
@@ -182,7 +182,7 @@ export async function updateItemQuantity(params: {
       oi.quantity = params.quantity;
     });
 
-    const order = await writer.collections.get<Order>("orders").find(orderId);
+    const order = await db.get<Order>("orders").find(orderId);
     await order.update((o) => {
       o.itemCount = (o.itemCount ?? 0) - oldQty + params.quantity;
     });
@@ -200,8 +200,8 @@ export async function updateItemServiceType(params: {
 }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const item = await writer.collections.get<OrderItem>("order_items").find(params.orderItemId);
+  await db.write(async () => {
+    const item = await db.get<OrderItem>("order_items").find(params.orderItemId);
     await item.update((oi) => {
       oi.serviceType = params.serviceType;
     });
@@ -215,8 +215,8 @@ export async function updateItemServiceType(params: {
 export async function updateOrderPax(params: { orderId: string; pax: number }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").find(params.orderId);
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(params.orderId);
     await order.update((o) => {
       o.pax = params.pax;
     });
@@ -230,8 +230,8 @@ export async function updateOrderPax(params: { orderId: string; pax: number }): 
 export async function updateTabName(params: { orderId: string; tabName: string }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").find(params.orderId);
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(params.orderId);
     await order.update((o) => {
       o.tabName = params.tabName;
     });
@@ -250,8 +250,8 @@ export async function updateCustomerName(params: {
 }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").find(params.orderId);
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(params.orderId);
     await order.update((o) => {
       if (params.customerName !== undefined) o.customerName = params.customerName || undefined;
       if (params.orderCategory !== undefined) o.orderCategory = params.orderCategory;
@@ -267,8 +267,8 @@ export async function updateCustomerName(params: {
 export async function sendToKitchen(params: { orderId: string }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const items = await writer.collections
+  await db.write(async () => {
+    const items = await db
       .get<OrderItem>("order_items")
       .query(
         Q.where("order_id", params.orderId),
@@ -318,8 +318,8 @@ export async function createAndSendToKitchen(params: {
   const orderNumber = `D-${Date.now().toString().slice(-6)}`;
   const sentItemIds: string[] = [];
 
-  await db.write(async (writer) => {
-    await writer.collections.get<Order>("orders").create((o) => {
+  await db.write(async () => {
+    await db.get<Order>("orders").create((o) => {
       o._raw.id = orderId;
       o.storeId = params.storeId;
       o.orderNumber = orderNumber;
@@ -342,13 +342,13 @@ export async function createAndSendToKitchen(params: {
     });
 
     for (const d of params.items) {
-      const product = await writer.collections.get<Product>("products").find(d.productId);
+      const product = await db.get<Product>("products").find(d.productId);
 
       const basePrice = d.customPrice ?? product.price;
       const oiId = uid();
       sentItemIds.push(oiId);
 
-      await writer.collections.get<OrderItem>("order_items").create((oi) => {
+      await db.get<OrderItem>("order_items").create((oi) => {
         oi._raw.id = oiId;
         oi.orderId = orderId;
         oi.productId = d.productId;
@@ -362,7 +362,7 @@ export async function createAndSendToKitchen(params: {
 
       if (d.modifiers) {
         for (const mod of d.modifiers) {
-          await writer.collections.get<OrderItemModifier>("order_item_modifiers").create((oim) => {
+          await db.get<OrderItemModifier>("order_item_modifiers").create((oim) => {
             oim._raw.id = uid();
             oim.orderItemId = oiId;
             oim.modifierGroupName = mod.modifierGroupName;
@@ -373,7 +373,7 @@ export async function createAndSendToKitchen(params: {
       }
     }
 
-    const table = await writer.collections.get<TableModel>("tables").find(params.tableId);
+    const table = await db.get<TableModel>("tables").find(params.tableId);
     await table.update((t) => {
       t.status = "occupied";
     });
@@ -381,8 +381,8 @@ export async function createAndSendToKitchen(params: {
 
   await recalculateOrderTotals(orderId);
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").find(orderId);
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(orderId);
     const totalQty = params.items.reduce((s, d) => s + d.quantity, 0);
     await order.update((o) => {
       o.itemCount = totalQty;

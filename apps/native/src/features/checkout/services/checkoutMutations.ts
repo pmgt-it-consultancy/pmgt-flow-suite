@@ -1,6 +1,4 @@
 import { Q } from "@nozbe/watermelondb";
-import { generateUUID } from "../../../../sync/idBridge";
-import { syncManager } from "../../../../sync/SyncManager";
 import {
   getDatabase,
   type Order,
@@ -8,6 +6,8 @@ import {
   type OrderVoid,
   type TableModel,
 } from "../../../db";
+import { generateUUID } from "../../../sync/idBridge";
+import { syncManager } from "../../../sync/SyncManager";
 
 function uid(): string {
   return generateUUID();
@@ -28,11 +28,11 @@ export async function processPayment(params: {
 }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").find(params.orderId);
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(params.orderId);
 
     for (const p of params.payments) {
-      await writer.collections.get<OrderPayment>("order_payments").create((op) => {
+      await db.get<OrderPayment>("order_payments").create((op) => {
         op._raw.id = uid();
         op.orderId = params.orderId;
         op.storeId = order.storeId;
@@ -60,13 +60,13 @@ export async function processPayment(params: {
     });
 
     if (order.tableId) {
-      const otherOpen = await writer.collections
+      const otherOpen = await db
         .get<Order>("orders")
         .query(Q.where("table_id", order.tableId), Q.where("status", "open"))
         .fetch();
 
       if (otherOpen.length === 0) {
-        const table = await writer.collections.get<TableModel>("tables").find(order.tableId);
+        const table = await db.get<TableModel>("tables").find(order.tableId);
         await table.update((t) => {
           t.status = "available";
         });
@@ -82,14 +82,14 @@ export async function processPayment(params: {
 export async function cancelOrder(params: { orderId: string }): Promise<void> {
   const db = getDatabase();
 
-  await db.write(async (writer) => {
-    const order = await writer.collections.get<Order>("orders").find(params.orderId);
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(params.orderId);
 
     await order.update((o) => {
       o.status = "voided";
     });
 
-    await writer.collections.get<OrderVoid>("order_voids").create((ov) => {
+    await db.get<OrderVoid>("order_voids").create((ov) => {
       ov._raw.id = uid();
       ov.orderId = params.orderId;
       ov.voidType = "order";
@@ -101,13 +101,13 @@ export async function cancelOrder(params: { orderId: string }): Promise<void> {
     });
 
     if (order.tableId) {
-      const otherOpen = await writer.collections
+      const otherOpen = await db
         .get<Order>("orders")
         .query(Q.where("table_id", order.tableId), Q.where("status", "open"))
         .fetch();
 
       if (otherOpen.length === 0) {
-        const table = await writer.collections.get<TableModel>("tables").find(order.tableId);
+        const table = await db.get<TableModel>("tables").find(order.tableId);
         await table.update((t) => {
           t.status = "available";
         });

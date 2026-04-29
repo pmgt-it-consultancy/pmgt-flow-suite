@@ -452,9 +452,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
           // First-time: create order + send
           let result: {
-            orderId: Id<"orders">;
+            orderId: string;
             orderNumber: string;
-            sentItemIds: Id<"orderItems">[];
+            sentItemIds: string[];
           };
           try {
             result = await createAndSendToKitchen({
@@ -479,7 +479,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             throw new Error(`Failed to create order - invalid response: ${JSON.stringify(result)}`);
           }
 
-          setCurrentOrderId(result.orderId);
+          setCurrentOrderId(result.orderId as Id<"orders">);
           orderNumber = result.orderNumber;
           sentItemNames = draftItems.map((d) => ({
             name: d.productName,
