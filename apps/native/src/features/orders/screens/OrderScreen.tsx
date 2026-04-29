@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import * as Crypto from "expo-crypto";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Modal, TextInput } from "react-native";
@@ -9,6 +9,7 @@ import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler"
 import { XStack, YStack } from "tamagui";
 import { useModifiersForProduct, useProducts } from "../../../sync";
 import { useAuth } from "../../auth/context";
+import { cancelOrder } from "../../checkout/services/checkoutMutations";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Text } from "../../shared/components/ui";
@@ -25,7 +26,17 @@ import {
   ViewBillModal,
   VoidItemModal,
 } from "../components";
-import { useCartMutations } from "../hooks/useCartMutations";
+import {
+  addItemToOrder,
+  createAndSendToKitchen,
+  createOrder,
+  removeItemFromOrder,
+  sendToKitchen,
+  updateItemQuantity,
+  updateItemServiceType,
+  updateOrderPax,
+  updateTabName,
+} from "../services/orderMutations";
 
 interface OrderScreenProps {
   navigation: any;
@@ -125,19 +136,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   // Fetch modifier groups for the selected product on demand
   const modifierGroups = useModifiersForProduct(selectedProduct ? selectedProduct.id : undefined);
 
-  // Mutations
-  const {
-    addItem,
-    updateItemQuantity,
-    removeItem: removeItemMutation,
-    updateItemServiceType,
-  } = useCartMutations();
-  const cancelOrderMutation = useMutation(api.checkout.cancelOrder);
-  const sendToKitchenMutation = useMutation(api.orders.sendToKitchen);
-  const createAndSendMutation = useMutation(api.orders.createAndSendToKitchen);
-  const createOrderMutation = useMutation(api.orders.create);
-  const updatePaxMutation = useMutation(api.orders.updatePax);
-  const updateTabNameMutation = useMutation(api.orders.updateTabName);
+  // Mutations — all use WatermelonDB service functions imported above
 
   // Printer
   const printKitchenTicket = usePrinterStore((s) => s.printKitchenTicket);
@@ -240,9 +239,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         }
 
         setIsAddingItem(true);
-        await addItem({
-          orderId: currentOrderId!,
-          productId: selectedProduct.id,
+        await addItemToOrder({
+          orderId: currentOrderId! as string,
+          productId: selectedProduct.id as string,
           quantity,
           notes: notes || undefined,
           ...(selectedProduct.isOpenPrice && customPrice !== undefined ? { customPrice } : {}),
@@ -256,7 +255,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         setIsAddingItem(false);
       }
     },
-    [selectedProduct, isDraftMode, currentOrderId, quantity, notes, addItem],
+    [selectedProduct, isDraftMode, currentOrderId, quantity, notes],
   );
 
   const handleConfirmModifiers = useCallback(
@@ -290,9 +289,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         }
 
         setIsAddingItem(true);
-        await addItem({
-          orderId: currentOrderId!,
-          productId: selectedProduct.id,
+        await addItemToOrder({
+          orderId: currentOrderId! as string,
+          productId: selectedProduct.id as string,
           quantity: qty,
           notes: itemNotes || undefined,
           modifiers,
@@ -307,7 +306,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         setIsAddingItem(false);
       }
     },
-    [selectedProduct, isDraftMode, currentOrderId, addItem],
+    [selectedProduct, isDraftMode, currentOrderId],
   );
 
   const handleIncrement = useCallback(
@@ -323,7 +322,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         return;
       }
       try {
-        await updateItemQuantity({ orderItemId: itemId, quantity: currentQty + 1 });
+        await updateItemQuantity({ orderItemId: itemId as string, quantity: currentQty + 1 });
       } catch (error) {
         console.error("Update quantity error:", error);
         Alert.alert("Error", "Failed to update quantity");
@@ -359,7 +358,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             style: "destructive",
             onPress: async () => {
               try {
-                await removeItemMutation({ orderItemId: itemId });
+                await removeItemFromOrder({ orderItemId: itemId as string });
               } catch (error) {
                 console.error("Remove item error:", error);
                 Alert.alert("Error", "Failed to remove item");
@@ -371,13 +370,13 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       }
 
       try {
-        await updateItemQuantity({ orderItemId: itemId, quantity: currentQty - 1 });
+        await updateItemQuantity({ orderItemId: itemId as string, quantity: currentQty - 1 });
       } catch (error) {
         console.error("Update quantity error:", error);
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [isDraftMode, updateItemQuantity, removeItemMutation],
+    [isDraftMode, updateItemQuantity, removeItemFromOrder],
   );
 
   const handleVoidItem = useCallback(
@@ -393,19 +392,19 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     async (reason: string) => {
       if (!voidingItem) return;
       try {
-        await removeItemMutation({ orderItemId: voidingItem.id, voidReason: reason });
+        await removeItemFromOrder({ orderItemId: voidingItem.id as string, voidReason: reason });
       } catch (error: any) {
         Alert.alert("Error", error.message || "Failed to void item");
       }
       setVoidingItem(null);
     },
-    [voidingItem, removeItemMutation],
+    [voidingItem, removeItemFromOrder],
   );
 
   const handleServiceTypeChange = useCallback(
     async (itemId: Id<"orderItems">, serviceType: "dine_in" | "takeout") => {
       try {
-        await updateItemServiceType({ orderItemId: itemId, serviceType });
+        await updateItemServiceType({ orderItemId: itemId as string, serviceType });
       } catch (error) {
         console.error("Failed to update service type:", error);
       }
@@ -458,12 +457,12 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             sentItemIds: Id<"orderItems">[];
           };
           try {
-            result = await createAndSendMutation({
-              storeId,
-              tableId,
+            result = await createAndSendToKitchen({
+              storeId: storeId as string,
+              tableId: tableId as string,
               pax: paxValue,
               items: draftItems.map((d) => ({
-                productId: d.productId,
+                productId: d.productId as string,
                 quantity: d.quantity,
                 notes: d.notes,
                 modifiers: d.modifiers,
@@ -510,7 +509,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           }
 
           const unsentItems = activeItems.filter((i) => !i.isSentToKitchen);
-          await sendToKitchenMutation({ orderId: currentOrderId });
+          await sendToKitchen({ orderId: currentOrderId as string });
           orderNumber = order.orderNumber;
           sentItemNames = unsentItems.map((i) => ({
             name: i.productName,
@@ -553,8 +552,6 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     },
     [
       isDraftMode,
-      createAndSendMutation,
-      sendToKitchenMutation,
       storeId,
       tableId,
       draftItems,
@@ -604,7 +601,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       if (pendingPaxAction === "send") {
         await executeSendToKitchen(pax);
       } else if (pendingPaxAction === "update" && currentOrderId) {
-        await updatePaxMutation({ orderId: currentOrderId, pax });
+        await updateOrderPax({ orderId: currentOrderId as string, pax });
       }
       setPendingPaxAction(null);
     } catch (error: any) {
@@ -619,7 +616,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       paxLockRef.current = false;
       setIsUpdatingPax(false);
     }
-  }, [paxInput, pendingPaxAction, executeSendToKitchen, currentOrderId, updatePaxMutation]);
+  }, [paxInput, pendingPaxAction, executeSendToKitchen, currentOrderId, updateOrderPax]);
 
   const handleUpdatePax = useCallback(() => {
     setPaxInput(order?.pax?.toString() ?? "");
@@ -672,7 +669,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             cancelOrderLockRef.current = true;
             setIsCancellingOrder(true);
             try {
-              await cancelOrderMutation({ orderId: currentOrderId! });
+              await cancelOrder({ orderId: currentOrderId! as string });
               navigation.goBack();
             } catch (error: any) {
               Alert.alert("Error", error.message || "Failed to cancel order");
@@ -683,7 +680,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         },
       ],
     );
-  }, [isDraftMode, draftItems.length, cancelOrderMutation, currentOrderId, navigation]);
+  }, [isDraftMode, draftItems.length, currentOrderId, navigation]);
 
   const handleTransferred = useCallback((_newTableId: Id<"tables">, newTableName: string) => {
     setCurrentTableName(newTableName);
@@ -695,12 +692,12 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     async (newName: string) => {
       if (!currentOrderId) return;
       try {
-        await updateTabNameMutation({ orderId: currentOrderId, tabName: newName });
+        await updateTabName({ orderId: currentOrderId as string, tabName: newName });
       } catch (error: any) {
         Alert.alert("Error", error.message || "Failed to update tab name");
       }
     },
-    [currentOrderId, updateTabNameMutation],
+    [currentOrderId],
   );
 
   const handleAddNewTab = useCallback(async () => {
@@ -710,10 +707,10 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     setIsCreatingTab(true);
 
     try {
-      const newOrderId = await createOrderMutation({
-        storeId,
+      const newOrderId = await createOrder({
+        storeId: storeId as string,
         orderType: "dine_in",
-        tableId,
+        tableId: tableId as string,
         pax: 1,
         requestId: Crypto.randomUUID(),
       });
@@ -729,7 +726,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       Alert.alert("Error", error.message || "Failed to create new tab");
       setIsCreatingTab(false);
     }
-  }, [tableId, storeId, createOrderMutation, navigation, currentTableName, isCreatingTab]);
+  }, [tableId, storeId, navigation, currentTableName, isCreatingTab]);
 
   const handleSetQuantity = useCallback(
     async (itemId: Id<"orderItems">, targetQty: number) => {
@@ -744,7 +741,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         return;
       }
       try {
-        await updateItemQuantity({ orderItemId: itemId, quantity: targetQty });
+        await updateItemQuantity({ orderItemId: itemId as string, quantity: targetQty });
       } catch (error) {
         if (__DEV__) console.error("Update quantity error:", error);
         Alert.alert("Error", "Failed to update quantity");
