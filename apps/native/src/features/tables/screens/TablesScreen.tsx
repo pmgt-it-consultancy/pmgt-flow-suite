@@ -1,11 +1,12 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import * as Crypto from "expo-crypto";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Modal, RefreshControl, TextInput } from "react-native";
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
+import { useTablesListWithOrders } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { Text } from "../../shared/components/ui";
 import { EmptyState, Header, TableCard } from "../components";
@@ -41,10 +42,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
   const createOrderMutation = useMutation(api.orders.create);
 
   // Query tables with multi-tab order information
-  const tablesWithOrders = useQuery(
-    api.tables.listWithOrders,
-    user?.storeId ? { storeId: user.storeId } : "skip",
-  );
+  const tablesWithOrders = useTablesListWithOrders(user?.storeId);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
