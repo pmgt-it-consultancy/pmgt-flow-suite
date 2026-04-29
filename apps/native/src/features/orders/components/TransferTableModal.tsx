@@ -1,11 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { useState } from "react";
 import { Alert, FlatList } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
+import { useTablesAvailable } from "../../../sync";
 import { LoadingState, Modal, Text } from "../../shared/components/ui";
 
 interface TransferTableModalProps {
@@ -26,7 +27,7 @@ export const TransferTableModal = ({
   onClose,
 }: TransferTableModalProps) => {
   const [isTransferring, setIsTransferring] = useState(false);
-  const availableTables = useQuery(api.tables.getAvailable, visible ? { storeId } : "skip");
+  const availableTables = useTablesAvailable(visible ? storeId : undefined);
   const transferTable = useMutation(api.orders.transferTable);
 
   const handleTransfer = async (newTableId: Id<"tables">, newTableName: string) => {
