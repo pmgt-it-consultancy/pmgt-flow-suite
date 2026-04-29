@@ -1,9 +1,8 @@
 "use node";
 
-import { createAccount } from "@convex-dev/auth/server";
+import { createAccount, modifyAccountCredentials } from "@convex-dev/auth/server";
 import bcrypt from "bcryptjs";
 import { v } from "convex/values";
-import * as Scrypt from "scrypt-kdf";
 import { internal } from "./_generated/api";
 import { action } from "./_generated/server";
 
@@ -234,7 +233,7 @@ export const create = action({
 
 /**
  * Reset a user's password (admin only)
- * Hashes the new password and updates the auth account
+ * Uses Convex Auth's built-in modifyAccountCredentials to properly hash with Lucia Scrypt
  */
 export const resetPassword = action({
   args: {
@@ -246,7 +245,6 @@ export const resetPassword = action({
     v.object({ success: v.literal(false), error: v.string() }),
   ),
   handler: async (ctx, args) => {
-    // Validate authentication
     const currentUserId = await ctx.runQuery(
       internal.helpers.usersHelpers.getAuthenticatedUserId,
       {},
@@ -256,7 +254,6 @@ export const resetPassword = action({
       return { success: false as const, error: "Authentication required" };
     }
 
-    // Check if user has permission to manage users
     const hasPermission = await ctx.runQuery(
       internal.helpers.permissionsHelpers.checkUserPermission,
       { userId: currentUserId, permission: "users.manage" },
@@ -266,7 +263,6 @@ export const resetPassword = action({
       return { success: false as const, error: "Permission denied" };
     }
 
-    // Get user email to find their auth account
     const user = await ctx.runQuery(internal.helpers.usersHelpers.getUserById, {
       userId: args.userId,
     });
@@ -275,24 +271,13 @@ export const resetPassword = action({
       return { success: false as const, error: "User not found" };
     }
 
-    // Find the auth account
-    const authAccount = await ctx.runQuery(internal.helpers.usersHelpers.getAuthAccountByEmail, {
-      email: user.email,
-    });
-
-    if (!authAccount) {
-      return { success: false as const, error: "Auth account not found" };
-    }
-
     try {
-      // Hash new password using scrypt (same as Convex Auth Password provider)
-      const keyBuffer = await Scrypt.kdf(args.newPassword, { logN: 15, r: 8, p: 1 });
-      const hashedPassword = Buffer.from(keyBuffer).toString("base64");
-
-      // Update auth account with new password
-      await ctx.runMutation(internal.helpers.usersHelpers.updateAuthAccountSecret, {
-        accountId: authAccount.accountId,
-        newSecret: hashedPassword,
+      await modifyAccountCredentials(ctx, {
+        provider: "password",
+        account: {
+          id: user.email.toLowerCase(),
+          secret: args.newPassword,
+        },
       });
 
       return { success: true as const };
