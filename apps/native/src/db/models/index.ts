@@ -1,4 +1,5 @@
 export { AppConfig } from "./AppConfig";
+export { AuditLog } from "./AuditLog";
 export { Category } from "./Category";
 export { ModifierGroup } from "./ModifierGroup";
 export { ModifierGroupAssignment } from "./ModifierGroupAssignment";

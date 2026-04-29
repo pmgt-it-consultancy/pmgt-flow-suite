@@ -1,13 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, TextInput } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
-import { useStore } from "../../../sync";
+import { useOrderDetail, useOrderDiscountsQuery, useStore } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { applyBulkScPwdDiscount, removeDiscount } from "../../discounts/services/discountMutations";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
@@ -95,10 +93,10 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const [pendingManagerAction, setPendingManagerAction] = useState<"apply" | "remove" | null>(null);
   const [discountToRemove, setDiscountToRemove] = useState<Id<"orderDiscounts"> | null>(null);
 
-  // Queries - auth is handled automatically by Convex Auth
-  const order = useQuery(api.orders.get, { orderId });
+  // Queries — local-first via WatermelonDB
+  const order = useOrderDetail(orderId);
   const store = useStore(order?.storeId);
-  const discounts = useQuery(api.discounts.getOrderDiscounts, { orderId });
+  const discounts = useOrderDiscountsQuery(orderId);
 
   // Mutations — all use WatermelonDB service functions imported above
 

@@ -389,12 +389,29 @@ async function applyPushedRow({
 
   switch (table) {
     case "orders": {
-      // Conflict rule: paid/voided orders are frozen
-      if (existing && (existing.status === "paid" || existing.status === "voided")) {
+      // Conflict rule: paid/voided orders are normally frozen, but allow:
+      //   - paid → voided  (offline-first void/refund of a completed order)
+      //   - voided → voided (idempotent no-op replay from a retry)
+      const incomingStatus = row.status as Doc<"orders">["status"] | undefined;
+      const isPaidToVoided = existing?.status === "paid" && incomingStatus === "voided";
+      const isVoidedReplay = existing?.status === "voided" && incomingStatus === "voided";
+      if (
+        existing &&
+        (existing.status === "paid" || existing.status === "voided") &&
+        !isPaidToVoided &&
+        !isVoidedReplay
+      ) {
         throw new Error("Order is closed");
       }
-      // Origin tablet wins for open orders
-      if (existing && existing.originDeviceId && existing.originDeviceId !== deviceId) {
+      // Origin tablet wins for open orders. For paid → voided we relax this
+      // so a paid order can be refunded/voided from any device in the store.
+      if (
+        existing &&
+        existing.originDeviceId &&
+        existing.originDeviceId !== deviceId &&
+        !isPaidToVoided &&
+        !isVoidedReplay
+      ) {
         throw new Error(`Order is owned by another device (${existing.originDeviceId})`);
       }
       const tableId = (await resolveFk("tables", row.tableId as string | undefined)) as

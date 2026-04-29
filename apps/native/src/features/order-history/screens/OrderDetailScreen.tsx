@@ -1,16 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAction, useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, TextInput } from "react-native";
 import { XStack, YStack } from "tamagui";
+import {
+  syncManager,
+  useOrderDetail,
+  useOrderDiscountsQuery,
+  useOrderReceipt,
+} from "../../../sync";
 import { ManagerPinModal } from "../../checkout/components";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import type { ReceiptData } from "../../shared";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Badge, Button, Modal, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
+import { voidOrder, voidPaidOrderRefund } from "../../voids/services";
 import { RefundItemModal } from "../components/RefundItemModal";
 
 interface OrderDetailScreenProps {
@@ -38,15 +45,13 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
   } | null>(null);
   const [showRefundPinModal, setShowRefundPinModal] = useState(false);
 
-  // Queries
-  const order = useQuery(api.orders.get, { orderId });
-  const receipt = useQuery(api.checkout.getReceipt, { orderId });
-  const discounts = useQuery(api.discounts.getOrderDiscounts, { orderId });
+  // Queries — read from local WatermelonDB
+  const order = useOrderDetail(orderId);
+  const receipt = useOrderReceipt(orderId);
+  const discounts = useOrderDiscountsQuery(orderId);
 
-  // Mutations & Actions
+  // Reprint logging stays online — it's append-only audit, not blocking
   const logReprint = useMutation(api.checkout.logReceiptReprint);
-  const voidOrderAction = useAction(api.voids.voidOrder);
-  const voidPaidOrderAction = useAction(api.voids.voidPaidOrder);
   const printToThermal = usePrinterStore((s) => s.printReceipt);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
@@ -141,29 +146,23 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
   }, [voidReason]);
 
   const handleManagerPinSuccess = useCallback(
-    async (managerId: Id<"users">, pin: string) => {
+    async (managerId: Id<"users">, _pin: string) => {
       setShowManagerPinModal(false);
       try {
-        const result = await voidOrderAction({
-          orderId,
+        await voidOrder({
+          orderId: orderId as string,
           reason: voidReason.trim(),
-          managerId,
-          managerPin: pin,
+          managerId: managerId as string,
         });
-
-        if (result.success) {
-          Alert.alert("Success", "Order has been voided", [
-            { text: "OK", onPress: () => navigation.goBack() },
-          ]);
-        } else {
-          const errorResult = result as { success: false; error: string };
-          Alert.alert("Error", errorResult.error);
-        }
+        void syncManager.syncNow();
+        Alert.alert("Success", "Order has been voided", [
+          { text: "OK", onPress: () => navigation.goBack() },
+        ]);
       } catch (error: any) {
         Alert.alert("Error", error.message || "Failed to void order");
       }
     },
-    [voidOrderAction, orderId, voidReason, navigation],
+    [orderId, voidReason, navigation],
   );
 
   const handleRefundConfirm = useCallback(
@@ -176,45 +175,34 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
   );
 
   const handleRefundPinSuccess = useCallback(
-    async (managerId: Id<"users">, pin: string) => {
+    async (managerId: Id<"users">, _pin: string) => {
       if (!refundData) return;
       setShowRefundPinModal(false);
       try {
-        const result = await voidPaidOrderAction({
-          orderId,
-          refundedItemIds: refundData.itemIds,
+        const result = await voidPaidOrderRefund({
+          orderId: orderId as string,
+          refundedItemIds: refundData.itemIds.map((id) => id as string),
           reason: refundData.reason,
           refundMethod: refundData.refundMethod,
-          managerId,
-          managerPin: pin,
+          managerId: managerId as string,
         });
-
-        if (result.success) {
-          const successResult = result as {
-            success: true;
-            refundAmount: number;
-            replacementOrderId?: Id<"orders">;
-          };
-          Alert.alert(
-            "Refund Processed",
-            `Refund of ${formatCurrency(successResult.refundAmount)} has been processed.${
-              successResult.replacementOrderId
-                ? " A new order has been created with the remaining items."
-                : ""
-            }`,
-            [{ text: "OK", onPress: () => navigation.goBack() }],
-          );
-        } else {
-          const errorResult = result as { success: false; error: string };
-          Alert.alert("Error", errorResult.error);
-        }
+        void syncManager.syncNow();
+        Alert.alert(
+          "Refund Processed",
+          `Refund of ${formatCurrency(result.refundAmount)} has been processed.${
+            result.replacementOrderId
+              ? " A new order has been created with the remaining items."
+              : ""
+          }`,
+          [{ text: "OK", onPress: () => navigation.goBack() }],
+        );
       } catch (error: any) {
         Alert.alert("Error", error.message || "Failed to process refund");
       } finally {
         setRefundData(null);
       }
     },
-    [voidPaidOrderAction, orderId, refundData, formatCurrency, navigation],
+    [orderId, refundData, formatCurrency, navigation],
   );
 
   const formatDate = useCallback((timestamp: number) => {

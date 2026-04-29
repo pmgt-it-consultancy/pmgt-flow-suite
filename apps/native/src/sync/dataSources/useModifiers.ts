@@ -1,7 +1,5 @@
 import { Q } from "@nozbe/watermelondb";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useMemo } from "react";
 import {
   type Category,
@@ -12,7 +10,6 @@ import {
   type Product,
 } from "../../db";
 import { useObservable } from "../../db/useObservable";
-import { isFlagEnabled } from "../featureFlags";
 
 export type ModifierOptionItem = {
   optionId: Id<"modifierOptions">;
@@ -159,13 +156,6 @@ export function buildModifiersByProduct(
 export function useModifiersForStore(
   storeId: Id<"stores"> | undefined,
 ): ProductModifierGroups[] | undefined {
-  const offline = isFlagEnabled("useWatermelon.modifiers");
-
-  const convexResult = useQuery(
-    api.modifierAssignments.getForStore,
-    !offline && storeId ? { storeId } : "skip",
-  );
-
   const watermelonGroups = useObservable<ModifierGroup>(
     () =>
       getDatabase()
@@ -175,7 +165,7 @@ export function useModifiersForStore(
             ? [Q.where("store_id", storeId), Q.where("is_active", true)]
             : [Q.where("store_id", "__none__")]),
         ),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonOptions = useObservable<ModifierOption>(
@@ -183,7 +173,7 @@ export function useModifiersForStore(
       getDatabase()
         .collections.get<ModifierOption>("modifier_options")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonAssignments = useObservable<ModifierGroupAssignment>(
@@ -191,7 +181,7 @@ export function useModifiersForStore(
       getDatabase()
         .collections.get<ModifierGroupAssignment>("modifier_group_assignments")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonProducts = useObservable<Product>(
@@ -199,7 +189,7 @@ export function useModifiersForStore(
       getDatabase()
         .collections.get<Product>("products")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonCategories = useObservable<Category>(
@@ -207,11 +197,11 @@ export function useModifiersForStore(
       getDatabase()
         .collections.get<Category>("categories")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
-    [offline, storeId],
+    [storeId],
   );
 
-  const watermelonResult = useMemo(() => {
-    if (!offline) return undefined;
+  return useMemo(() => {
+    if (!storeId) return undefined;
     if (
       !watermelonGroups ||
       !watermelonOptions ||
@@ -224,7 +214,7 @@ export function useModifiersForStore(
       watermelonGroups,
       watermelonOptions,
       watermelonAssignments,
-      storeId ?? "",
+      storeId,
       watermelonProducts,
       watermelonCategories,
     );
@@ -232,7 +222,6 @@ export function useModifiersForStore(
       .filter(([, groups]) => groups.length > 0)
       .map(([productId, groups]) => ({ productId: productId as Id<"products">, groups }));
   }, [
-    offline,
     storeId,
     watermelonGroups,
     watermelonOptions,
@@ -240,48 +229,39 @@ export function useModifiersForStore(
     watermelonProducts,
     watermelonCategories,
   ]);
-
-  return offline ? watermelonResult : convexResult;
 }
 
 export function useModifiersForProduct(
   productId: Id<"products"> | undefined,
 ): ModifierGroupItem[] | undefined {
-  const offline = isFlagEnabled("useWatermelon.modifiers");
-
-  const convexResult = useQuery(
-    api.modifierAssignments.getForProduct,
-    !offline && productId ? { productId } : "skip",
-  );
-
   const watermelonGroups = useObservable<ModifierGroup>(
     () => getDatabase().collections.get<ModifierGroup>("modifier_groups").query(),
-    [offline],
+    [],
   );
 
   const watermelonOptions = useObservable<ModifierOption>(
     () => getDatabase().collections.get<ModifierOption>("modifier_options").query(),
-    [offline],
+    [],
   );
 
   const watermelonAssignments = useObservable<ModifierGroupAssignment>(
     () =>
       getDatabase().collections.get<ModifierGroupAssignment>("modifier_group_assignments").query(),
-    [offline],
+    [],
   );
 
   const watermelonProducts = useObservable<Product>(
     () => getDatabase().collections.get<Product>("products").query(),
-    [offline],
+    [],
   );
 
   const watermelonCategories = useObservable<Category>(
     () => getDatabase().collections.get<Category>("categories").query(),
-    [offline],
+    [],
   );
 
-  const watermelonResult = useMemo(() => {
-    if (!offline) return undefined;
+  return useMemo(() => {
+    if (!productId) return undefined;
     if (
       !watermelonGroups ||
       !watermelonOptions ||
@@ -290,7 +270,6 @@ export function useModifiersForProduct(
       !watermelonCategories
     )
       return undefined;
-    if (!productId) return undefined;
     const product = watermelonProducts.find((p) => p.id === productId);
     if (!product) return undefined;
     const byProduct = buildModifiersByProduct(
@@ -303,7 +282,6 @@ export function useModifiersForProduct(
     );
     return byProduct.get(productId as string) ?? [];
   }, [
-    offline,
     productId,
     watermelonGroups,
     watermelonOptions,
@@ -311,6 +289,4 @@ export function useModifiersForProduct(
     watermelonProducts,
     watermelonCategories,
   ]);
-
-  return offline ? watermelonResult : convexResult;
 }

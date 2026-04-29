@@ -46,6 +46,7 @@ export class Order extends Model {
   @text("table_name") tableNameSnapshot?: string;
   @field("item_count") itemCount?: number;
   @text("origin_device_id") originDeviceId?: string;
+  @field("refunded_from_order_id") refundedFromOrderId?: string;
   @field("updated_at") updatedAt!: number;
 
   @children("order_items") items: unknown;

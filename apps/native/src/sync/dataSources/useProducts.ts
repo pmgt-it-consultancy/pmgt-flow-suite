@@ -1,16 +1,9 @@
 import { Q } from "@nozbe/watermelondb";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useMemo } from "react";
 import { type Category, getDatabase, type ModifierGroupAssignment, type Product } from "../../db";
 import { useObservable } from "../../db/useObservable";
-import { isFlagEnabled } from "../featureFlags";
 
-/**
- * Shape returned by api.products.list — clients expect this exact object.
- * When the WatermelonDB path is active, we compute the same shape locally.
- */
 export type ProductListItem = {
   _id: Id<"products">;
   storeId: Id<"stores">;
@@ -29,22 +22,7 @@ export type ProductListItem = {
   hasModifiers: boolean;
 };
 
-/**
- * Data-source picker for the products catalog. When the
- * `useWatermelon.products` flag is on, reads from local SQLite via
- * WatermelonDB observables; otherwise falls through to Convex's reactive
- * `useQuery`.
- *
- * Returns `undefined` during initial load (matches Convex's loading
- * convention) — call sites that special-case `useQuery === undefined`
- * continue to work unchanged.
- */
 export function useProducts(storeId: Id<"stores"> | undefined): ProductListItem[] | undefined {
-  const offline = isFlagEnabled("useWatermelon.products");
-
-  // Always call hooks in the same order — gate the data sources internally.
-  const convexResult = useQuery(api.products.list, !offline && storeId ? { storeId } : "skip");
-
   const watermelonProducts = useObservable<Product>(
     () =>
       getDatabase()
@@ -54,7 +32,7 @@ export function useProducts(storeId: Id<"stores"> | undefined): ProductListItem[
             ? [Q.where("store_id", storeId), Q.where("is_active", true)]
             : [Q.where("store_id", "__none__")]),
         ),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonCategories = useObservable<Category>(
@@ -62,7 +40,7 @@ export function useProducts(storeId: Id<"stores"> | undefined): ProductListItem[
       getDatabase()
         .collections.get<Category>("categories")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonAssignments = useObservable<ModifierGroupAssignment>(
@@ -70,18 +48,16 @@ export function useProducts(storeId: Id<"stores"> | undefined): ProductListItem[
       getDatabase()
         .collections.get<ModifierGroupAssignment>("modifier_group_assignments")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
-    [offline, storeId],
+    [storeId],
   );
 
-  const watermelonResult = useMemo<ProductListItem[] | undefined>(() => {
-    if (!offline) return undefined;
+  return useMemo<ProductListItem[] | undefined>(() => {
+    if (!storeId) return undefined;
     if (!watermelonProducts || !watermelonCategories || !watermelonAssignments) return undefined;
 
-    // Build category name lookup
     const categoryById = new Map<string, Category>();
     for (const c of watermelonCategories) categoryById.set(c.id, c);
 
-    // Build category-chain lookup (id → ancestor ids including self)
     const chainCache = new Map<string, Set<string>>();
     const chainFor = (catId: string): Set<string> => {
       const cached = chainCache.get(catId);
@@ -98,7 +74,6 @@ export function useProducts(storeId: Id<"stores"> | undefined): ProductListItem[
       return chain;
     };
 
-    // Index assignments for fast hasModifiers lookups
     const productHasMods = new Set<string>();
     const categoryHasMods = new Set<string>();
     for (const a of watermelonAssignments) {
@@ -132,7 +107,5 @@ export function useProducts(storeId: Id<"stores"> | undefined): ProductListItem[
           hasModifiers,
         };
       });
-  }, [offline, watermelonProducts, watermelonCategories, watermelonAssignments]);
-
-  return offline ? watermelonResult : convexResult;
+  }, [storeId, watermelonProducts, watermelonCategories, watermelonAssignments]);
 }

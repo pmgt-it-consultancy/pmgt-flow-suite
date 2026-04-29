@@ -1,12 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ActivityIndicator, Alert, FlatList, RefreshControl } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { useTakeoutOrders } from "../../../sync";
+import { useDraftOrders, useTakeoutOrders } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Button, IconButton, Text } from "../../shared/components/ui";
@@ -77,10 +75,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
     return unsubscribe;
   }, [navigation]);
 
-  const drafts = useQuery(
-    api.orders.getDraftOrders,
-    user?.storeId ? { storeId: user.storeId } : "skip",
-  );
+  const drafts = useDraftOrders(user?.storeId);
 
   const { attentionOrders, kitchenOrders, completedOrders } = useMemo(() => {
     if (!takeoutOrders) return { attentionOrders: [], kitchenOrders: [], completedOrders: [] };

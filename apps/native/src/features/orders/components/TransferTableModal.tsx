@@ -1,13 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
 import { useState } from "react";
 import { Alert, FlatList } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { useTablesAvailable } from "../../../sync";
 import { LoadingState, Modal, Text } from "../../shared/components/ui";
+import { transferOrderTable } from "../services/orderMutations";
 
 interface TransferTableModalProps {
   visible: boolean;
@@ -28,12 +27,14 @@ export const TransferTableModal = ({
 }: TransferTableModalProps) => {
   const [isTransferring, setIsTransferring] = useState(false);
   const availableTables = useTablesAvailable(visible ? storeId : undefined);
-  const transferTable = useMutation(api.orders.transferTable);
 
   const handleTransfer = async (newTableId: Id<"tables">, newTableName: string) => {
     setIsTransferring(true);
     try {
-      await transferTable({ orderId, newTableId });
+      await transferOrderTable({
+        orderId: orderId as string,
+        newTableId: newTableId as string,
+      });
       onTransferred(newTableId, newTableName);
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to transfer table");

@@ -1,13 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ActivityIndicator, Alert, FlatList, TextInput } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
-import { useModifiersForStore, useProducts } from "../../../sync";
+import { useModifiersForStore, useOrderDetail, useProducts } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { cancelOrder } from "../../checkout/services/checkoutMutations";
 import type { SelectedModifier } from "../../orders/components";
@@ -80,8 +78,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     quantity: number;
   } | null>(null);
 
-  // Queries
-  const order = useQuery(api.orders.get, { orderId });
+  // Queries — local-first via WatermelonDB
+  const order = useOrderDetail(orderId);
   const products = useProducts(storeId);
 
   // Prefetch all modifier data for the store — available instantly on product tap

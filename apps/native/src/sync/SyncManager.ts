@@ -53,6 +53,19 @@ class SyncManagerImpl {
     this.started = true;
     this.deviceId = await getOrCreateDeviceId();
 
+    // One-time cursor reset for upgrades from schema v1. v1 silently
+    // sanitized rows pulled with camelCase keys to defaults, so catalog
+    // data on disk is mostly empty — force a full re-pull once.
+    const adapter = getDatabase().adapter as unknown as {
+      getLocal: (k: string) => Promise<string | null>;
+      setLocal: (k: string, v: string) => Promise<void>;
+    };
+    const resetFlag = await adapter.getLocal("__sync_cursor_reset_v2");
+    if (!resetFlag) {
+      await adapter.setLocal("__watermelon_last_pulled_at", "0");
+      await adapter.setLocal("__sync_cursor_reset_v2", "1");
+    }
+
     try {
       const result = await callRegisterDevice(this.deviceId, storeId);
       this.deviceCode = result.deviceCode;
@@ -129,10 +142,13 @@ class SyncManagerImpl {
         database: getDatabase(),
         pullChanges: async ({ lastPulledAt }) => {
           const result = await callPull(lastPulledAt ?? null);
-          // /sync/pull returns camelCase collection names (matching Convex
-          // tables), but WatermelonDB's local schema uses snake_case.
+          // /sync/pull returns camelCase collection names AND camelCase row
+          // fields (matching the Convex schema). WatermelonDB's local schema
+          // uses snake_case for both, so translate at every level.
           return {
-            changes: mapCamelToSnake(result.changes) as unknown as Record<string, ChangeBucket>,
+            changes: mapPullChanges(
+              result.changes as Record<string, ChangeBucket>,
+            ) as unknown as Record<string, ChangeBucket>,
             timestamp: result.timestamp,
           };
         },
@@ -145,8 +161,11 @@ class SyncManagerImpl {
             return;
           }
           const clientMutationId = generateUUID();
-          // WatermelonDB pushes snake_case keys; /sync/push expects camelCase.
-          const mapped = mapSnakeToCamel(
+          // WatermelonDB hands rows in snake_case (its schema's column names);
+          // /sync/push expects camelCase keys at both the collection and row
+          // level. Strip Watermelon's internal `_status` / `_changed` markers
+          // along the way — applyPushedRow on the backend doesn't read them.
+          const mapped = mapPushChanges(
             changes as Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }>,
           );
           const response = await callPush(
@@ -206,25 +225,55 @@ function allEmpty(
 }
 
 /**
- * Translates camelCase collection names from /sync/pull into snake_case
- * keys that WatermelonDB's local schema understands.
+ * Translates a /sync/pull payload (camelCase collections + camelCase row
+ * fields) into the snake_case shape WatermelonDB expects. Also drops any
+ * `_*` keys WM treats as reserved, so applyRemote doesn't reject the row.
  */
-function mapCamelToSnake(changes: Record<string, unknown>): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(changes)) {
-    out[camelToSnake(key)] = value;
+function mapPullChanges(changes: Record<string, ChangeBucket>): Record<string, ChangeBucket> {
+  const out: Record<string, ChangeBucket> = {};
+  for (const [collection, bucket] of Object.entries(changes)) {
+    out[camelToSnake(collection)] = {
+      created: (bucket.created ?? []).map((row) => translateRow(row, camelToSnake, true)),
+      updated: (bucket.updated ?? []).map((row) => translateRow(row, camelToSnake, true)),
+      deleted: bucket.deleted ?? [],
+    };
   }
   return out;
 }
 
 /**
- * Translates snake_case collection names from WatermelonDB into camelCase
- * keys that /sync/push expects.
+ * Translates a WatermelonDB push payload (snake_case collections + snake_case
+ * row fields, plus internal `_status`/`_changed` markers) into the camelCase
+ * shape /sync/push expects.
  */
-function mapSnakeToCamel<T>(changes: Record<string, T>): Record<string, T> {
-  const out: Record<string, T> = {};
-  for (const [key, value] of Object.entries(changes)) {
-    out[snakeToCamel(key)] = value;
+function mapPushChanges(
+  changes: Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }>,
+): Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }> {
+  const out: Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }> = {};
+  for (const [collection, bucket] of Object.entries(changes)) {
+    out[snakeToCamel(collection)] = {
+      created: (bucket.created ?? []).map((row) => translateRow(row, snakeToCamel, true)),
+      updated: (bucket.updated ?? []).map((row) => translateRow(row, snakeToCamel, true)),
+    };
+  }
+  return out;
+}
+
+/**
+ * Re-keys a single sync row. `id` is always preserved verbatim. Any key
+ * starting with `_` is stripped — those are WatermelonDB's internal change
+ * markers (`_status`, `_changed`) which neither side of the wire wants.
+ */
+function translateRow(
+  row: WatermelonRow,
+  translate: (key: string) => string,
+  stripInternal: boolean,
+): WatermelonRow {
+  const out: WatermelonRow = { id: row.id } as WatermelonRow;
+  for (const [k, v] of Object.entries(row)) {
+    if (k === "id") continue;
+    if (stripInternal && k.startsWith("_")) continue;
+    out[translate(k)] = v;
   }
   return out;
 }

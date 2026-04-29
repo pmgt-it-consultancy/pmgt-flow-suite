@@ -2,8 +2,16 @@ export {
   type ActiveOrderSummary,
   type AvailableTable,
   type CategoryTreeNode,
+  type DraftOrderEntry,
   type ModifierGroupItem,
   type ModifierOptionItem,
+  type OrderDetailView,
+  type OrderDiscountSummary,
+  type OrderDiscountView,
+  type OrderHistoryEntry,
+  type OrderItemView,
+  type OrderReceiptView,
+  type OrderVoidView,
   type ProductListItem,
   type ProductModifierGroups,
   type TableOrderSummary,
@@ -11,15 +19,19 @@ export {
   type TakeoutOrderSummary,
   useActiveOrders,
   useCategoryTree,
+  useDraftOrders,
   useModifiersForProduct,
   useModifiersForStore,
+  useOrderDetail,
+  useOrderDiscountsQuery,
+  useOrderHistoryQuery,
+  useOrderReceipt,
   useProducts,
   useStore,
   useTablesAvailable,
   useTablesListWithOrders,
   useTakeoutOrders,
 } from "./dataSources";
-export { type FeatureFlag, featureFlags, isFlagEnabled } from "./featureFlags";
 export { useNetworkStatus } from "./networkStatus";
 export { SyncBootstrap } from "./SyncBootstrap";
 export { syncManager } from "./SyncManager";

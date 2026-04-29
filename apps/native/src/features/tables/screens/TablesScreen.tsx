@@ -1,6 +1,4 @@
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
 import * as Crypto from "expo-crypto";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Modal, RefreshControl, TextInput } from "react-native";
@@ -8,6 +6,7 @@ import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler"
 import { XStack, YStack } from "tamagui";
 import { type TableOrderSummary, useTablesListWithOrders } from "../../../sync";
 import { useAuth } from "../../auth/context";
+import { createOrder, updateOrderPax } from "../../orders/services/orderMutations";
 import { Text } from "../../shared/components/ui";
 import { EmptyState, Header, TableCard } from "../components";
 import { TabSelectionModal } from "../components/TabSelectionModal";
@@ -29,8 +28,6 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
   } | null>(null);
   const [isCreatingTab, setIsCreatingTab] = useState(false);
   const [isUpdatingPax, setIsUpdatingPax] = useState(false);
-  const updatePaxMutation = useMutation(api.orders.updatePax);
-  const createOrderMutation = useMutation(api.orders.create);
 
   // Query tables with multi-tab order information
   const tablesWithOrders = useTablesListWithOrders(user?.storeId);
@@ -71,14 +68,14 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     setIsUpdatingPax(true);
     setShowPaxModal(false);
     try {
-      await updatePaxMutation({ orderId: paxOrderId, pax });
+      await updateOrderPax({ orderId: paxOrderId as string, pax });
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to update PAX");
     } finally {
       setIsUpdatingPax(false);
       setPaxOrderId(null);
     }
-  }, [paxInput, paxOrderId, updatePaxMutation, isUpdatingPax]);
+  }, [paxInput, paxOrderId, isUpdatingPax]);
 
   const handleSelectTable = useCallback(
     (tableId: Id<"tables">, tableName: string) => {
@@ -150,16 +147,16 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     setSelectedTable(null);
 
     try {
-      const orderId = await createOrderMutation({
-        storeId,
+      const orderId = await createOrder({
+        storeId: storeId as string,
         orderType: "dine_in",
-        tableId,
+        tableId: tableId as string,
         pax: 1,
         requestId: Crypto.randomUUID(),
       });
 
       navigation.navigate("OrderScreen", {
-        orderId,
+        orderId: orderId as Id<"orders">,
         tableId,
         tableName,
         storeId,
@@ -169,7 +166,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
     } finally {
       setIsCreatingTab(false);
     }
-  }, [user?.storeId, selectedTable, createOrderMutation, navigation, isCreatingTab]);
+  }, [user?.storeId, selectedTable, navigation, isCreatingTab]);
 
   if (isLoading || !isAuthenticated) {
     return (

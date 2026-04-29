@@ -1,6 +1,6 @@
 import { appSchema, tableSchema } from "@nozbe/watermelondb";
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 /**
  * WatermelonDB schema mirroring the synced Convex tables.
@@ -150,6 +150,7 @@ export const watermelonSchema = appSchema({
         { name: "table_name", type: "string", isOptional: true },
         { name: "item_count", type: "number", isOptional: true },
         { name: "origin_device_id", type: "string", isOptional: true },
+        { name: "refunded_from_order_id", type: "string", isOptional: true, isIndexed: true },
         { name: "updated_at", type: "number" },
       ],
     }),
@@ -303,6 +304,22 @@ export const watermelonSchema = appSchema({
         { name: "key", type: "string", isIndexed: true },
         { name: "value", type: "string" },
         { name: "store_id", type: "string", isOptional: true },
+        { name: "updated_at", type: "number" },
+      ],
+    }),
+
+    // ===== Audit (push-only on the tablet) =====
+    tableSchema({
+      name: "audit_logs",
+      columns: [
+        { name: "server_id", type: "string", isOptional: true, isIndexed: true },
+        { name: "store_id", type: "string", isIndexed: true },
+        { name: "action", type: "string", isIndexed: true },
+        { name: "entity_type", type: "string" },
+        { name: "entity_id", type: "string", isIndexed: true },
+        { name: "details", type: "string" },
+        { name: "user_id", type: "string" },
+        { name: "created_at", type: "number" },
         { name: "updated_at", type: "number" },
       ],
     }),

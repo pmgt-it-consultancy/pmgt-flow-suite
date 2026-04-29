@@ -1,21 +1,7 @@
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useMemo } from "react";
 import { getDatabase, type Store } from "../../db";
 import { useObservable } from "../../db/useObservable";
-import { isFlagEnabled } from "../featureFlags";
-
-// ─── Shared view interface ───────────────────────────────────
-//
-// Both `api.stores.get` and the WatermelonDB path produce values
-// structurally satisfying this type. `Doc<"stores">` (Convex's
-// return type) has every field listed here plus extras — TypeScript
-// structural typing accepts the wider type as assignable.
-//
-// The only `as` casts below are on branded ID fields (Id<"stores">,
-// Id<"_storage">). These are sound: /sync/pull translates Convex _ids
-// to clientId UUIDs, and the tablet receives the exact same values.
 
 export interface StoreData {
   readonly _id: Id<"stores">;
@@ -51,22 +37,15 @@ export interface StoreScheduleData {
   readonly sunday: DaySlotData;
 }
 
-// ─── Hook ─────────────────────────────────────────────────────
-
 export function useStore(storeId: Id<"stores"> | undefined): StoreData | null | undefined {
-  const offline = isFlagEnabled("useWatermelon.stores");
-
-  const convexResult = useQuery(api.stores.get, !offline && storeId ? { storeId } : "skip");
-
   const watermelonStores = useObservable<Store>(
     () => getDatabase().collections.get<Store>("stores").query(),
-    [offline],
+    [],
   );
 
-  const watermelonResult = useMemo((): StoreData | null | undefined => {
-    if (!offline) return undefined;
-    if (!watermelonStores) return undefined;
+  return useMemo((): StoreData | null | undefined => {
     if (!storeId) return undefined;
+    if (!watermelonStores) return undefined;
 
     const store = watermelonStores.find((s) => s.id === storeId);
     if (!store) return null;
@@ -91,12 +70,8 @@ export function useStore(storeId: Id<"stores"> | undefined): StoreData | null | 
       socials: undefined,
       schedule,
     };
-  }, [offline, storeId, watermelonStores]);
-
-  return offline ? watermelonResult : convexResult;
+  }, [storeId, watermelonStores]);
 }
-
-// ─── Helpers ──────────────────────────────────────────────────
 
 function parseSchedule(json: string | undefined): StoreScheduleData | undefined {
   if (!json) return undefined;

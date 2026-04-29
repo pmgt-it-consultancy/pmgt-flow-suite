@@ -1,11 +1,8 @@
 import { Q } from "@nozbe/watermelondb";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useMemo } from "react";
 import { type Category, getDatabase, type Product } from "../../db";
 import { useObservable } from "../../db/useObservable";
-import { isFlagEnabled } from "../featureFlags";
 
 export type CategoryChild = {
   _id: Id<"categories">;
@@ -15,7 +12,6 @@ export type CategoryChild = {
   productCount: number;
 };
 
-/** Two-level tree matching `api.categories.getTree` shape. */
 export interface CategoryTreeNode extends CategoryChild {
   children: CategoryChild[];
 }
@@ -23,10 +19,6 @@ export interface CategoryTreeNode extends CategoryChild {
 const ROOT_KEY = "__root__";
 
 export function useCategoryTree(storeId: Id<"stores"> | undefined): CategoryTreeNode[] | undefined {
-  const offline = isFlagEnabled("useWatermelon.categories");
-
-  const convexResult = useQuery(api.categories.getTree, !offline && storeId ? { storeId } : "skip");
-
   const watermelonCategories = useObservable<Category>(
     () =>
       getDatabase()
@@ -36,7 +28,7 @@ export function useCategoryTree(storeId: Id<"stores"> | undefined): CategoryTree
             ? [Q.where("store_id", storeId), Q.where("is_active", true)]
             : [Q.where("store_id", "__none__")]),
         ),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonProducts = useObservable<Product>(
@@ -44,11 +36,11 @@ export function useCategoryTree(storeId: Id<"stores"> | undefined): CategoryTree
       getDatabase()
         .collections.get<Product>("products")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
-    [offline, storeId],
+    [storeId],
   );
 
-  const watermelonResult = useMemo((): CategoryTreeNode[] | undefined => {
-    if (!offline) return undefined;
+  return useMemo((): CategoryTreeNode[] | undefined => {
+    if (!storeId) return undefined;
     if (!watermelonCategories || !watermelonProducts) return undefined;
 
     const productCountByCategoryId = new Map<string, number>();
@@ -84,7 +76,5 @@ export function useCategoryTree(storeId: Id<"stores"> | undefined): CategoryTree
     rootList.sort((a, b) => a.sortOrder - b.sortOrder);
 
     return rootList.map(buildNode);
-  }, [offline, watermelonCategories, watermelonProducts]);
-
-  return offline ? watermelonResult : convexResult;
+  }, [storeId, watermelonCategories, watermelonProducts]);
 }

@@ -1,13 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import * as Crypto from "expo-crypto";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Modal, TextInput } from "react-native";
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
-import { useModifiersForProduct, useProducts } from "../../../sync";
+import { useModifiersForProduct, useOrderDetail, useProducts } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { cancelOrder } from "../../checkout/services/checkoutMutations";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
@@ -127,8 +125,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const [showTransferTable, setShowTransferTable] = useState(false);
   const [showEditTabName, setShowEditTabName] = useState(false);
 
-  // Queries
-  const order = useQuery(api.orders.get, currentOrderId ? { orderId: currentOrderId } : "skip");
+  // Queries — local-first via WatermelonDB
+  const order = useOrderDetail(currentOrderId);
   // Reads from WatermelonDB when EXPO_PUBLIC_OFFLINE_PRODUCTS=1, else falls
   // through to api.products.list — same shape either way.
   const products = useProducts(storeId);

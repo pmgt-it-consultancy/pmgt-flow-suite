@@ -1,11 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, ScrollView, TextInput } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
+import { useOrderHistoryQuery } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Badge, Chip, Text } from "../../shared/components/ui";
@@ -59,18 +58,13 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
 
   const dateRange = useMemo(() => getDateRange(datePreset), [datePreset]);
 
-  const orders = useQuery(
-    api.orders.getOrderHistory,
-    user?.storeId
-      ? {
-          storeId: user.storeId,
-          startDate: dateRange.start,
-          endDate: dateRange.end,
-          search: searchQuery || undefined,
-          status: statusFilter === "all" ? undefined : statusFilter,
-        }
-      : "skip",
-  );
+  const orders = useOrderHistoryQuery({
+    storeId: user?.storeId,
+    startDate: dateRange.start,
+    endDate: dateRange.end,
+    search: searchQuery || undefined,
+    status: statusFilter === "all" ? undefined : statusFilter,
+  });
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);

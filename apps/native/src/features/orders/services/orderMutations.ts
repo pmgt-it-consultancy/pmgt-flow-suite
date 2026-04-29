@@ -287,6 +287,69 @@ export async function sendToKitchen(params: { orderId: string }): Promise<void> 
   syncManager.triggerPush();
 }
 
+// ─── transferOrderTable ────────────────────────────────────────
+//
+// Move an open dine-in order to a different table. Handles tab
+// numbering at the destination, releases the source table when
+// empty, and marks the destination occupied when receiving its
+// first order. Snapshots tableName for receipts.
+
+export async function transferOrderTable(params: {
+  orderId: string;
+  newTableId: string;
+}): Promise<void> {
+  const db = getDatabase();
+
+  await db.write(async () => {
+    const order = await db.get<Order>("orders").find(params.orderId);
+    if (order.status !== "open") throw new Error("Order is not open");
+    if (!order.tableId) throw new Error("Order is not a dine-in order");
+    const sourceTableId = order.tableId;
+
+    const newTable = await db.get<TableModel>("tables").find(params.newTableId);
+
+    const destOpenOrders = await db
+      .get<Order>("orders")
+      .query(Q.where("table_id", params.newTableId), Q.where("status", "open"))
+      .fetch();
+
+    const maxDestTabNumber = destOpenOrders.reduce((max, o) => Math.max(max, o.tabNumber ?? 1), 0);
+    const newTabNumber = maxDestTabNumber + 1;
+    const shouldMarkDestOccupied = destOpenOrders.length === 0;
+
+    const sourceOpenOrders = await db
+      .get<Order>("orders")
+      .query(Q.where("table_id", sourceTableId), Q.where("status", "open"))
+      .fetch();
+    const shouldReleaseSource =
+      sourceOpenOrders.filter((o) => o.id !== params.orderId).length === 0;
+
+    if (shouldReleaseSource) {
+      const sourceTable = await db.get<TableModel>("tables").find(sourceTableId);
+      await sourceTable.update((t) => {
+        t.status = "available";
+        t.currentOrderId = undefined;
+      });
+    }
+
+    if (shouldMarkDestOccupied) {
+      await newTable.update((t) => {
+        t.status = "occupied";
+        t.currentOrderId = params.orderId;
+      });
+    }
+
+    await order.update((o) => {
+      o.tableId = params.newTableId;
+      o.tableNameSnapshot = newTable.name;
+      o.tabNumber = newTabNumber;
+      o.tabName = `Tab ${newTabNumber}`;
+    });
+  });
+
+  syncManager.triggerPush();
+}
+
 // ─── createAndSendToKitchen ───────────────────────────────────
 
 type DraftItem = {

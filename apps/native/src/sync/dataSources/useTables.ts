@@ -1,11 +1,8 @@
 import { Q } from "@nozbe/watermelondb";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useMemo } from "react";
 import { getDatabase, type Order, type OrderItem, type TableModel } from "../../db";
 import { useObservable } from "../../db/useObservable";
-import { isFlagEnabled } from "../featureFlags";
 
 export type TableOrderSummary = {
   _id: Id<"orders">;
@@ -39,13 +36,6 @@ export type AvailableTable = {
 export function useTablesListWithOrders(
   storeId: Id<"stores"> | undefined,
 ): TableWithOrders[] | undefined {
-  const offline = isFlagEnabled("useWatermelon.tables");
-
-  const convexResult = useQuery(
-    api.tables.listWithOrders,
-    !offline && storeId ? { storeId } : "skip",
-  );
-
   const watermelonTables = useObservable<TableModel>(
     () =>
       getDatabase()
@@ -55,7 +45,7 @@ export function useTablesListWithOrders(
             ? [Q.where("store_id", storeId), Q.where("is_active", true)]
             : [Q.where("store_id", "__none__")]),
         ),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonOrders = useObservable<Order>(
@@ -67,16 +57,16 @@ export function useTablesListWithOrders(
             ? [Q.where("store_id", storeId), Q.where("status", "open")]
             : [Q.where("store_id", "__none__")]),
         ),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonOrderItems = useObservable<OrderItem>(
     () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [offline],
+    [],
   );
 
-  const watermelonResult = useMemo(() => {
-    if (!offline) return undefined;
+  return useMemo(() => {
+    if (!storeId) return undefined;
     if (!watermelonTables || !watermelonOrders || !watermelonOrderItems) return undefined;
 
     const activeItems = watermelonOrderItems.filter((i) => !i.isVoided);
@@ -128,21 +118,12 @@ export function useTablesListWithOrders(
           totalNetSales,
         };
       });
-  }, [offline, watermelonTables, watermelonOrders, watermelonOrderItems]);
-
-  return offline ? watermelonResult : convexResult;
+  }, [storeId, watermelonTables, watermelonOrders, watermelonOrderItems]);
 }
 
 export function useTablesAvailable(
   storeId: Id<"stores"> | undefined,
 ): AvailableTable[] | undefined {
-  const offline = isFlagEnabled("useWatermelon.tables");
-
-  const convexResult = useQuery(
-    api.tables.getAvailable,
-    !offline && storeId ? { storeId } : "skip",
-  );
-
   const watermelonTables = useObservable<TableModel>(
     () =>
       getDatabase()
@@ -156,11 +137,11 @@ export function useTablesAvailable(
               ]
             : [Q.where("store_id", "__none__")]),
         ),
-    [offline, storeId],
+    [storeId],
   );
 
-  const watermelonResult = useMemo(() => {
-    if (!offline) return undefined;
+  return useMemo(() => {
+    if (!storeId) return undefined;
     if (!watermelonTables) return undefined;
     return watermelonTables
       .slice()
@@ -170,7 +151,5 @@ export function useTablesAvailable(
         name: t.name,
         capacity: t.capacity,
       }));
-  }, [offline, watermelonTables]);
-
-  return offline ? watermelonResult : convexResult;
+  }, [storeId, watermelonTables]);
 }

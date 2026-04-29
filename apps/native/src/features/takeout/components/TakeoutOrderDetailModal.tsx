@@ -1,11 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAction, useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 import { Alert, FlatList, TextInput } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { useStore } from "../../../sync";
+import {
+  syncManager,
+  useOrderDetail,
+  useOrderDiscountsQuery,
+  useOrderReceipt,
+  useStore,
+} from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { ManagerPinModal, ReceiptPreviewModal } from "../../checkout/components";
 import { RefundItemModal } from "../../order-history/components/RefundItemModal";
@@ -14,6 +18,7 @@ import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { Badge, Button, LoadingState, Modal, Separator, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 import type { ReceiptData } from "../../shared/utils/receipt";
+import { voidOrder, voidPaidOrderRefund } from "../../voids/services";
 
 type TakeoutStatus = "pending" | "preparing" | "ready_for_pickup" | "completed" | "cancelled";
 
@@ -56,15 +61,10 @@ export const TakeoutOrderDetailModal = ({
   } | null>(null);
   const [showRefundPinModal, setShowRefundPinModal] = useState(false);
 
-  const order = useQuery(api.orders.get, orderId ? { orderId } : "skip");
-  const receipt = useQuery(
-    api.checkout.getReceipt,
-    orderId && order?.status === "paid" ? { orderId } : "skip",
-  );
+  const order = useOrderDetail(orderId ?? undefined);
+  const receipt = useOrderReceipt(orderId && order?.status === "paid" ? orderId : undefined);
   const store = useStore(order?.storeId);
-  const discounts = useQuery(api.discounts.getOrderDiscounts, orderId ? { orderId } : "skip");
-  const voidOrderAction = useAction(api.voids.voidOrder);
-  const voidPaidOrderAction = useAction(api.voids.voidPaidOrder);
+  const discounts = useOrderDiscountsQuery(orderId ?? undefined);
 
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
   const takeoutStatus = (order?.takeoutStatus as TakeoutStatus | undefined) ?? "pending";
@@ -170,27 +170,22 @@ export const TakeoutOrderDetailModal = ({
   }, [voidReason]);
 
   const handleManagerPinSuccess = useCallback(
-    async (managerId: Id<"users">, pin: string) => {
+    async (managerId: Id<"users">, _pin: string) => {
+      if (!orderId) return;
       setShowManagerPinModal(false);
       try {
-        const result = await voidOrderAction({
-          orderId: orderId!,
+        await voidOrder({
+          orderId: orderId as string,
           reason: voidReason.trim(),
-          managerId,
-          managerPin: pin,
+          managerId: managerId as string,
         });
-
-        if (result.success) {
-          Alert.alert("Success", "Order has been voided", [{ text: "OK", onPress: onClose }]);
-        } else {
-          const errorResult = result as { success: false; error: string };
-          Alert.alert("Error", errorResult.error);
-        }
+        void syncManager.syncNow();
+        Alert.alert("Success", "Order has been voided", [{ text: "OK", onPress: onClose }]);
       } catch (error: any) {
         Alert.alert("Error", error.message || "Failed to void order");
       }
     },
-    [voidOrderAction, orderId, voidReason, onClose],
+    [orderId, voidReason, onClose],
   );
 
   const handleRefundConfirm = useCallback(
@@ -203,45 +198,34 @@ export const TakeoutOrderDetailModal = ({
   );
 
   const handleRefundPinSuccess = useCallback(
-    async (managerId: Id<"users">, pin: string) => {
+    async (managerId: Id<"users">, _pin: string) => {
       if (!refundData || !orderId) return;
       setShowRefundPinModal(false);
       try {
-        const result = await voidPaidOrderAction({
-          orderId,
-          refundedItemIds: refundData.itemIds,
+        const result = await voidPaidOrderRefund({
+          orderId: orderId as string,
+          refundedItemIds: refundData.itemIds.map((id) => id as string),
           reason: refundData.reason,
           refundMethod: refundData.refundMethod,
-          managerId,
-          managerPin: pin,
+          managerId: managerId as string,
         });
-
-        if (result.success) {
-          const successResult = result as {
-            success: true;
-            refundAmount: number;
-            replacementOrderId?: Id<"orders">;
-          };
-          Alert.alert(
-            "Refund Processed",
-            `Refund of ${formatCurrency(successResult.refundAmount)} has been processed.${
-              successResult.replacementOrderId
-                ? " A new order has been created with the remaining items."
-                : ""
-            }`,
-            [{ text: "OK", onPress: onClose }],
-          );
-        } else {
-          const errorResult = result as { success: false; error: string };
-          Alert.alert("Error", errorResult.error);
-        }
+        void syncManager.syncNow();
+        Alert.alert(
+          "Refund Processed",
+          `Refund of ${formatCurrency(result.refundAmount)} has been processed.${
+            result.replacementOrderId
+              ? " A new order has been created with the remaining items."
+              : ""
+          }`,
+          [{ text: "OK", onPress: onClose }],
+        );
       } catch (error: any) {
         Alert.alert("Error", error.message || "Failed to process refund");
       } finally {
         setRefundData(null);
       }
     },
-    [voidPaidOrderAction, orderId, refundData, formatCurrency, onClose],
+    [orderId, refundData, formatCurrency, onClose],
   );
 
   if (!order) {

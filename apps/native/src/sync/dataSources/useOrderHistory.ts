@@ -1,11 +1,8 @@
 import { Q } from "@nozbe/watermelondb";
-import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
 import { useMemo } from "react";
 import { getDatabase, type Order, type OrderItem } from "../../db";
 import { useObservable } from "../../db/useObservable";
-import { isFlagEnabled } from "../featureFlags";
 
 export type ActiveOrderSummary = {
   _id: Id<"orders">;
@@ -37,10 +34,6 @@ export type TakeoutOrderSummary = {
 export function useActiveOrders(
   storeId: Id<"stores"> | undefined,
 ): ActiveOrderSummary[] | undefined {
-  const offline = isFlagEnabled("useWatermelon.orderHistory");
-
-  const convexResult = useQuery(api.orders.listActive, !offline && storeId ? { storeId } : "skip");
-
   const watermelonOrders = useObservable<Order>(
     () =>
       getDatabase()
@@ -50,16 +43,16 @@ export function useActiveOrders(
             ? [Q.where("store_id", storeId), Q.where("status", "open")]
             : [Q.where("store_id", "__none__")]),
         ),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonOrderItems = useObservable<OrderItem>(
     () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [offline],
+    [],
   );
 
-  const watermelonResult = useMemo(() => {
-    if (!offline) return undefined;
+  return useMemo(() => {
+    if (!storeId) return undefined;
     if (!watermelonOrders || !watermelonOrderItems) return undefined;
 
     const activeItems = watermelonOrderItems.filter((i) => !i.isVoided);
@@ -85,9 +78,7 @@ export function useActiveOrders(
         itemCount: itemCountByOrderId.get(o.id) ?? 0,
         createdAt: o.createdAt,
       }));
-  }, [offline, watermelonOrders, watermelonOrderItems]);
-
-  return offline ? watermelonResult : convexResult;
+  }, [storeId, watermelonOrders, watermelonOrderItems]);
 }
 
 export function useTakeoutOrders(
@@ -95,13 +86,6 @@ export function useTakeoutOrders(
   startDate?: number,
   endDate?: number,
 ): TakeoutOrderSummary[] | undefined {
-  const offline = isFlagEnabled("useWatermelon.orderHistory");
-
-  const convexResult = useQuery(
-    api.orders.getTakeoutOrders,
-    !offline && storeId ? { storeId, startDate, endDate } : "skip",
-  );
-
   const watermelonOrders = useObservable<Order>(
     () =>
       getDatabase()
@@ -115,16 +99,16 @@ export function useTakeoutOrders(
               ]
             : [Q.where("store_id", "__none__")]),
         ),
-    [offline, storeId],
+    [storeId],
   );
 
   const watermelonOrderItems = useObservable<OrderItem>(
     () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [offline],
+    [],
   );
 
-  const watermelonResult = useMemo((): TakeoutOrderSummary[] | undefined => {
-    if (!offline) return undefined;
+  return useMemo((): TakeoutOrderSummary[] | undefined => {
+    if (!storeId) return undefined;
     if (!watermelonOrders || !watermelonOrderItems) return undefined;
 
     const activeItems = watermelonOrderItems.filter((i) => !i.isVoided);
@@ -157,7 +141,5 @@ export function useTakeoutOrders(
         createdAt: o.createdAt,
         refundedFromOrderId: undefined,
       }));
-  }, [offline, watermelonOrders, watermelonOrderItems, startDate, endDate]);
-
-  return offline ? watermelonResult : convexResult;
+  }, [storeId, watermelonOrders, watermelonOrderItems, startDate, endDate]);
 }
