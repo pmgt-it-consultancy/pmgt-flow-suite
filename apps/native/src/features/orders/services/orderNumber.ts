@@ -1,3 +1,4 @@
+import { getOrCreateDeviceId } from "../../../auth/deviceId";
 import { getDatabase } from "../../../db";
 import { generateUUID } from "../../../sync/idBridge";
 import { syncManager } from "../../../sync/SyncManager";
@@ -11,7 +12,7 @@ export async function getNextOrderNumber(
   orderType: "dine_in" | "takeout",
 ): Promise<string> {
   const prefix = orderType === "dine_in" ? "D" : "T";
-  const deviceCode = syncManager.getDeviceCode() || "X";
+  const deviceCode = syncManager.getDeviceCode() || (await getFallbackDeviceCode());
   const today = getTodayKey();
 
   const counterKey = `orderCounter.${orderType}.${today}`;
@@ -19,6 +20,16 @@ export async function getNextOrderNumber(
 
   const padded = String(next).padStart(3, "0");
   return `${prefix}-${deviceCode}${padded}`;
+}
+
+async function getFallbackDeviceCode(): Promise<string> {
+  const deviceId = await getOrCreateDeviceId();
+  return (
+    deviceId
+      .replace(/[^a-z0-9]/gi, "")
+      .slice(0, 4)
+      .toUpperCase() || "X"
+  );
 }
 
 function getTodayKey(): string {

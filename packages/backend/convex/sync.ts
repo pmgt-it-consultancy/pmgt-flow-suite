@@ -88,8 +88,6 @@ export const registerDevice = httpAction(async (ctx, request) => {
 // /sync/pull — Watermelon-shaped diff
 // ---------------------------------------------------------------------------
 
-const PULL_BATCH_SIZE = 500;
-
 type WatermelonRow = {
   id: string; // clientId UUID — the tablet's primary key
   server_id: string; // the Convex _id, used by push to recognize the same row
@@ -140,6 +138,7 @@ async function toWatermelon(
   const out: WatermelonRow = {
     id: doc.clientId ?? (doc._id as string), // pre-backfill rows fall back to _id
     server_id: doc._id as string,
+    updated_at: (doc.updatedAt as number | undefined) ?? doc._creationTime,
   };
   for (const [k, val] of Object.entries(doc)) {
     if (k.startsWith("_") || k === "clientId") continue;
@@ -207,7 +206,7 @@ export const syncPullCore = internalQuery({
     for (const { table, fkFields } of storeIdScopedTables) {
       const bucket = emptyBucket();
       await pullTable(ctx, table, args.storeId, since, fkFields, fkCache, bucket);
-      changes[table] = bucket;
+      changes[table] = dedupePulledBucket(bucket);
     }
 
     // Roles — global, no storeId; always full scan to avoid undefined-index issue
@@ -220,7 +219,7 @@ export const syncPullCore = internalQuery({
         await toWatermelon(ctx, r, [], fkCache),
       );
     }
-    changes.roles = rolesBucket;
+    changes.roles = dedupePulledBucket(rolesBucket);
 
     // Stores — only the one this user is scoped to
     const storesBucket = emptyBucket();
@@ -234,7 +233,7 @@ export const syncPullCore = internalQuery({
         );
       }
     }
-    changes.stores = storesBucket;
+    changes.stores = dedupePulledBucket(storesBucket);
 
     return { changes, timestamp: now };
   },
@@ -278,7 +277,7 @@ export const getUserStoreScopeInternal = internalQuery({
 type PushChange = { id: string; [k: string]: unknown };
 type PushPayload = {
   lastPulledAt: number;
-  changes: Record<string, { created: PushChange[]; updated: PushChange[] }>;
+  changes: Record<string, { created: PushChange[]; updated: PushChange[]; deleted?: string[] }>;
   clientMutationId: string;
 };
 type PushRejection = { table: string; clientId: string; reason: string };
@@ -286,6 +285,7 @@ type PushResponse = { success: true } | { rejected: PushRejection[] };
 
 const PUSH_TABLE_ORDER = [
   "orders",
+  "tables",
   "orderItems",
   "orderItemModifiers",
   "orderDiscounts",
@@ -293,6 +293,48 @@ const PUSH_TABLE_ORDER = [
   "orderVoids",
   "auditLogs",
 ] as const;
+
+function dedupePulledBucket(bucket: ChangeBucket): ChangeBucket {
+  const chosen = new Map<string, { row: WatermelonRow; bucketName: "created" | "updated" }>();
+
+  for (const bucketName of ["created", "updated"] as const) {
+    for (const row of bucket[bucketName] ?? []) {
+      const previous = chosen.get(row.id);
+      if (!previous || shouldPreferPulledRow(row, previous.row)) {
+        chosen.set(row.id, { row, bucketName });
+      }
+    }
+  }
+
+  const out = emptyBucket();
+  for (const { row, bucketName } of chosen.values()) {
+    out[bucketName].push(row);
+  }
+  out.deleted = bucket.deleted;
+  return out;
+}
+
+function shouldPreferPulledRow(candidate: WatermelonRow, current: WatermelonRow): boolean {
+  const candidateUpdatedAt = rowSyncTimestamp(candidate);
+  const currentUpdatedAt = rowSyncTimestamp(current);
+  if (candidateUpdatedAt !== currentUpdatedAt) {
+    return candidateUpdatedAt > currentUpdatedAt;
+  }
+
+  // If a legacy document lacks clientId and a newer duplicate was created with
+  // clientId equal to that legacy _id, both map to the same Watermelon id.
+  // Prefer the document that has a distinct Convex server id because it is the
+  // row future pushes will resolve through by_clientId.
+  return candidate.server_id !== candidate.id && current.server_id === current.id;
+}
+
+function rowSyncTimestamp(row: WatermelonRow): number {
+  const updatedAt = row.updated_at;
+  if (typeof updatedAt === "number") return updatedAt;
+  const createdAt = row.createdAt;
+  if (typeof createdAt === "number") return createdAt;
+  return 0;
+}
 
 export const syncPushCore = internalMutation({
   args: {
@@ -324,9 +366,7 @@ export const syncPushCore = internalMutation({
       if (!clientId) return undefined;
       const cacheKey = `${table}:${clientId}`;
       if (fkCache.has(cacheKey)) return fkCache.get(cacheKey);
-      const doc = await (ctx.db.query(table as any) as any)
-        .withIndex("by_clientId", (q: any) => q.eq("clientId", clientId))
-        .first();
+      const doc = await findSyncedDoc(ctx, table, clientId);
       const id = doc?._id as string | undefined;
       fkCache.set(cacheKey, id);
       return id;
@@ -335,6 +375,17 @@ export const syncPushCore = internalMutation({
     for (const table of PUSH_TABLE_ORDER) {
       const tableChanges = payload.changes?.[table];
       if (!tableChanges) continue;
+      for (const syncId of tableChanges.deleted ?? []) {
+        try {
+          await applyPushedDelete({ ctx, table, syncId });
+        } catch (e) {
+          rejected.push({
+            table,
+            clientId: syncId,
+            reason: e instanceof Error ? e.message : String(e),
+          });
+        }
+      }
       for (const row of [...(tableChanges.created ?? []), ...(tableChanges.updated ?? [])]) {
         try {
           await applyPushedRow({
@@ -377,6 +428,127 @@ type ApplyArgs = {
   resolveFk: (table: string, clientId: string | undefined) => Promise<string | undefined>;
 };
 
+type DeleteArgs = {
+  ctx: any;
+  table: (typeof PUSH_TABLE_ORDER)[number];
+  syncId: string;
+};
+
+async function findExistingSyncedRow(
+  ctx: any,
+  table: (typeof PUSH_TABLE_ORDER)[number],
+  syncId: string,
+): Promise<any | null> {
+  return findSyncedDoc(ctx, table, syncId);
+}
+
+async function findSyncedDoc(ctx: any, table: string, syncId: string): Promise<any | null> {
+  const byClientId = await ctx.db
+    .query(table as any)
+    .withIndex("by_clientId", (q: any) => q.eq("clientId", syncId))
+    .first();
+  if (byClientId) return byClientId;
+
+  let convexId: string | null = null;
+  try {
+    convexId = ctx.db.normalizeId(table, syncId);
+  } catch {
+    convexId = null;
+  }
+  if (!convexId) return null;
+
+  const byConvexId = await ctx.db.get(convexId);
+  if (!byConvexId) return null;
+  return byConvexId;
+}
+
+async function applyPushedDelete({ ctx, table, syncId }: DeleteArgs): Promise<void> {
+  if (table !== "orderDiscounts") return;
+
+  const existing = await findSyncedDoc(ctx, table, syncId);
+  if (!existing) return;
+  await ctx.db.delete(existing._id);
+}
+
+async function resolveActorId(
+  resolveFk: (table: string, clientId: string | undefined) => Promise<string | undefined>,
+  actorId: unknown,
+  fallbackUserId: Id<"users">,
+): Promise<Id<"users">> {
+  if (typeof actorId !== "string" || actorId.length === 0) return fallbackUserId;
+  const resolved = await resolveFk("users", actorId);
+  return (resolved ?? fallbackUserId) as Id<"users">;
+}
+
+async function resolveOrderNumber(
+  ctx: any,
+  args: {
+    storeId: Id<"stores">;
+    clientId: string;
+    deviceId: string;
+    orderType: Doc<"orders">["orderType"];
+    incomingOrderNumber?: string;
+  },
+): Promise<string> {
+  const incoming = args.incomingOrderNumber;
+  if (incoming && !(await orderNumberConflicts(ctx, args.storeId, incoming, args.clientId))) {
+    return incoming;
+  }
+
+  const prefix = args.orderType === "dine_in" ? "D" : "T";
+  const deviceCode = await resolveDeviceCode(ctx, args.storeId, args.deviceId);
+  const orders = await ctx.db
+    .query("orders")
+    .withIndex("by_store", (q: any) => q.eq("storeId", args.storeId))
+    .collect();
+
+  let max = 0;
+  const orderNumberPrefix = `${prefix}-${deviceCode}`;
+  for (const order of orders) {
+    const orderNumber = order.orderNumber as string | undefined;
+    if (!orderNumber?.startsWith(orderNumberPrefix)) continue;
+    const suffix = Number.parseInt(orderNumber.slice(orderNumberPrefix.length), 10);
+    if (Number.isFinite(suffix)) max = Math.max(max, suffix);
+  }
+
+  return `${orderNumberPrefix}${String(max + 1).padStart(3, "0")}`;
+}
+
+async function orderNumberConflicts(
+  ctx: any,
+  storeId: Id<"stores">,
+  orderNumber: string,
+  clientId: string,
+): Promise<boolean> {
+  const orders = await ctx.db
+    .query("orders")
+    .withIndex("by_store", (q: any) => q.eq("storeId", storeId))
+    .collect();
+
+  return orders.some(
+    (order: any) => order.orderNumber === orderNumber && order.clientId !== clientId,
+  );
+}
+
+async function resolveDeviceCode(
+  ctx: any,
+  storeId: Id<"stores">,
+  deviceId: string,
+): Promise<string> {
+  const device = await ctx.db
+    .query("syncDevices")
+    .withIndex("by_deviceId", (q: any) => q.eq("deviceId", deviceId))
+    .first();
+
+  if (device?.storeId === storeId && device.deviceCode) return device.deviceCode;
+  return (
+    deviceId
+      .replace(/[^a-z0-9]/gi, "")
+      .slice(0, 4)
+      .toUpperCase() || "X"
+  );
+}
+
 async function applyPushedRow({
   ctx,
   table,
@@ -389,10 +561,7 @@ async function applyPushedRow({
   const row = Object.fromEntries(
     Object.entries(rawRow).map(([k, v]) => [k, v ?? undefined]),
   ) as PushChange;
-  const existing = await ctx.db
-    .query(table)
-    .withIndex("by_clientId", (q: any) => q.eq("clientId", row.id))
-    .first();
+  const existing = await findExistingSyncedRow(ctx, table, row.id);
 
   switch (table) {
     case "orders": {
@@ -401,11 +570,22 @@ async function applyPushedRow({
       //   - voided → voided (idempotent no-op replay from a retry)
       const incomingStatus = row.status as Doc<"orders">["status"] | undefined;
       const isPaidToVoided = existing?.status === "paid" && incomingStatus === "voided";
+      const isPaidReplay =
+        existing?.status === "paid" &&
+        incomingStatus === "paid" &&
+        (!existing.originDeviceId || existing.originDeviceId === deviceId);
+      const isPaidWorkflowUpdate =
+        existing?.status === "paid" &&
+        incomingStatus === "paid" &&
+        existing.orderType === "takeout" &&
+        row.takeoutStatus !== undefined;
       const isVoidedReplay = existing?.status === "voided" && incomingStatus === "voided";
       if (
         existing &&
         (existing.status === "paid" || existing.status === "voided") &&
         !isPaidToVoided &&
+        !isPaidReplay &&
+        !isPaidWorkflowUpdate &&
         !isVoidedReplay
       ) {
         throw new Error("Order is closed");
@@ -413,13 +593,21 @@ async function applyPushedRow({
       // Origin tablet wins for open orders. For paid → voided we relax this
       // so a paid order can be refunded/voided from any device in the store.
       if (
-        existing &&
-        existing.originDeviceId &&
+        existing?.originDeviceId &&
         existing.originDeviceId !== deviceId &&
         !isPaidToVoided &&
+        !isPaidReplay &&
+        !isPaidWorkflowUpdate &&
         !isVoidedReplay
       ) {
         throw new Error(`Order is owned by another device (${existing.originDeviceId})`);
+      }
+      if (existing && isPaidWorkflowUpdate && !isPaidToVoided && !isPaidReplay) {
+        await ctx.db.patch(existing._id, {
+          takeoutStatus: row.takeoutStatus as Doc<"orders">["takeoutStatus"],
+          updatedAt: Date.now(),
+        });
+        return;
       }
       const tableId = (await resolveFk("tables", row.tableId as string | undefined)) as
         | Id<"tables">
@@ -430,7 +618,15 @@ async function applyPushedRow({
       )) as Id<"orders"> | undefined;
       const data: Partial<Doc<"orders">> = {
         storeId,
-        orderNumber: row.orderNumber as string | undefined,
+        orderNumber:
+          existing?.orderNumber ??
+          (await resolveOrderNumber(ctx, {
+            storeId,
+            clientId: row.id,
+            deviceId,
+            orderType: row.orderType as Doc<"orders">["orderType"],
+            incomingOrderNumber: row.orderNumber as string | undefined,
+          })),
         orderType: row.orderType as Doc<"orders">["orderType"],
         orderChannel: row.orderChannel as Doc<"orders">["orderChannel"],
         takeoutStatus: row.takeoutStatus as Doc<"orders">["takeoutStatus"],
@@ -452,10 +648,11 @@ async function applyPushedRow({
         cardReferenceNumber: row.cardReferenceNumber as string | undefined,
         orderCategory: row.orderCategory as Doc<"orders">["orderCategory"],
         tableMarker: row.tableMarker as string | undefined,
-        createdBy: userId,
+        createdBy: await resolveActorId(resolveFk, row.createdBy, userId),
         createdAt: (row.createdAt as number | undefined) ?? Date.now(),
         paidAt: row.paidAt as number | undefined,
-        paidBy: row.paidBy != null ? userId : undefined,
+        paidBy:
+          row.paidBy != null ? await resolveActorId(resolveFk, row.paidBy, userId) : undefined,
         pax: row.pax as number | undefined,
         tabNumber: row.tabNumber as number | undefined,
         tabName: row.tabName as string | undefined,
@@ -469,6 +666,20 @@ async function applyPushedRow({
       };
       if (existing) await ctx.db.patch(existing._id, data);
       else await ctx.db.insert("orders", data);
+      return;
+    }
+    case "tables": {
+      if (!existing) throw new Error("Missing table");
+      const currentOrderId = (await resolveFk(
+        "orders",
+        row.currentOrderId as string | undefined,
+      )) as Id<"orders"> | undefined;
+
+      await ctx.db.patch(existing._id, {
+        status: row.status as Doc<"tables">["status"],
+        currentOrderId,
+        updatedAt: Date.now(),
+      });
       return;
     }
     case "orderItems": {
@@ -492,7 +703,8 @@ async function applyPushedRow({
         serviceType: row.serviceType as Doc<"orderItems">["serviceType"],
         isVoided: (row.isVoided as boolean | undefined) ?? false,
         isSentToKitchen: row.isSentToKitchen as boolean | undefined,
-        voidedBy: row.voidedBy != null ? userId : undefined,
+        voidedBy:
+          row.voidedBy != null ? await resolveActorId(resolveFk, row.voidedBy, userId) : undefined,
         voidedAt: row.voidedAt as number | undefined,
         voidReason: row.voidReason as string | undefined,
         clientId: row.id,
@@ -539,7 +751,7 @@ async function applyPushedRow({
         quantityApplied: row.quantityApplied as number,
         discountAmount: row.discountAmount as number,
         vatExemptAmount: row.vatExemptAmount as number,
-        approvedBy: userId,
+        approvedBy: await resolveActorId(resolveFk, row.approvedBy, userId),
         createdAt: (row.createdAt as number | undefined) ?? Date.now(),
         clientId: row.id,
         updatedAt: Date.now(),
@@ -562,7 +774,7 @@ async function applyPushedRow({
         cardPaymentType: row.cardPaymentType as string | undefined,
         cardReferenceNumber: row.cardReferenceNumber as string | undefined,
         createdAt: (row.createdAt as number | undefined) ?? Date.now(),
-        createdBy: userId,
+        createdBy: await resolveActorId(resolveFk, row.createdBy, userId),
         clientId: row.id,
         updatedAt: Date.now(),
       });
@@ -587,8 +799,8 @@ async function applyPushedRow({
         voidType: row.voidType as Doc<"orderVoids">["voidType"],
         orderItemId,
         reason: row.reason as string,
-        approvedBy: userId,
-        requestedBy: userId,
+        approvedBy: await resolveActorId(resolveFk, row.approvedBy, userId),
+        requestedBy: await resolveActorId(resolveFk, row.requestedBy, userId),
         amount: row.amount as number,
         createdAt: (row.createdAt as number | undefined) ?? Date.now(),
         refundMethod: row.refundMethod as Doc<"orderVoids">["refundMethod"],
@@ -606,7 +818,7 @@ async function applyPushedRow({
         entityType: row.entityType as string,
         entityId: row.entityId as string,
         details: row.details as string,
-        userId,
+        userId: await resolveActorId(resolveFk, row.userId, userId),
         createdAt: (row.createdAt as number | undefined) ?? Date.now(),
         clientId: row.id,
         updatedAt: Date.now(),

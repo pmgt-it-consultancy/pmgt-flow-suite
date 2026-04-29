@@ -1,3 +1,4 @@
+import type { Collection, Database, Model } from "@nozbe/watermelondb";
 import { synchronize } from "@nozbe/watermelondb/sync";
 import { getOrCreateDeviceId } from "../auth/deviceId";
 import { getDatabase } from "../db";
@@ -65,8 +66,6 @@ class SyncManagerImpl {
       await adapter.setLocal("__watermelon_last_pulled_at", "0");
       await adapter.setLocal("__sync_cursor_reset_v2", "1");
     }
-    console.log("[SyncManager] deviceId:", this.deviceId);
-    console.log("[SyncManager] registering device with storeId:", storeId);
 
     try {
       const result = await callRegisterDevice(this.deviceId, storeId);
@@ -159,21 +158,24 @@ class SyncManagerImpl {
         database: getDatabase(),
         pullChanges: async ({ lastPulledAt }) => {
           const result = await callPull(lastPulledAt ?? null);
-          console.log("[SyncManager] raw pull response:", JSON.stringify(result, null, 2));
           // /sync/pull returns camelCase collection names AND camelCase row
           // fields (matching the Convex schema). WatermelonDB's local schema
           // uses snake_case for both, so translate at every level.
+          const mapped = mapPullChanges(
+            result.changes as Record<string, ChangeBucket>,
+          ) as unknown as Record<string, ChangeBucket>;
           return {
-            changes: mapPullChanges(
-              result.changes as Record<string, ChangeBucket>,
-            ) as unknown as Record<string, ChangeBucket>,
+            changes: await demoteExistingCreates(getDatabase(), mapped),
             timestamp: result.timestamp,
           };
         },
         pushChanges: async ({ changes, lastPulledAt }) => {
           if (
             allEmpty(
-              changes as Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }>,
+              changes as Record<
+                string,
+                { created: WatermelonRow[]; updated: WatermelonRow[]; deleted?: string[] }
+              >,
             )
           ) {
             return;
@@ -184,7 +186,10 @@ class SyncManagerImpl {
           // level. Strip Watermelon's internal `_status` / `_changed` markers
           // along the way — applyPushedRow on the backend doesn't read them.
           const mapped = mapPushChanges(
-            changes as Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }>,
+            changes as Record<
+              string,
+              { created: WatermelonRow[]; updated: WatermelonRow[]; deleted?: string[] }
+            >,
           );
           const response = await callPush(
             {
@@ -195,7 +200,6 @@ class SyncManagerImpl {
             this.deviceId,
           );
           if ("rejected" in response && response.rejected.length > 0) {
-            // biome-ignore lint/suspicious/noConsole: surface rejections to logs for ops
             console.warn("[SyncManager] push rejections:", response.rejected);
           }
         },
@@ -211,7 +215,6 @@ class SyncManagerImpl {
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      // biome-ignore lint/suspicious/noConsole: surface to logs for ops
       console.error("[SyncManager]", msg);
       this.setState({ status: "error", lastError: msg });
       this.scheduleRetry();
@@ -234,10 +237,13 @@ class SyncManagerImpl {
 }
 
 function allEmpty(
-  changes: Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }>,
+  changes: Record<
+    string,
+    { created: WatermelonRow[]; updated: WatermelonRow[]; deleted?: string[] }
+  >,
 ): boolean {
   for (const t of Object.values(changes)) {
-    if (t.created.length > 0 || t.updated.length > 0) return false;
+    if (t.created.length > 0 || t.updated.length > 0 || (t.deleted?.length ?? 0) > 0) return false;
   }
   return true;
 }
@@ -266,13 +272,20 @@ function mapPullChanges(changes: Record<string, ChangeBucket>): Record<string, C
  * shape /sync/push expects.
  */
 function mapPushChanges(
-  changes: Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }>,
-): Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }> {
-  const out: Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }> = {};
+  changes: Record<
+    string,
+    { created: WatermelonRow[]; updated: WatermelonRow[]; deleted?: string[] }
+  >,
+): Record<string, { created: WatermelonRow[]; updated: WatermelonRow[]; deleted?: string[] }> {
+  const out: Record<
+    string,
+    { created: WatermelonRow[]; updated: WatermelonRow[]; deleted?: string[] }
+  > = {};
   for (const [collection, bucket] of Object.entries(changes)) {
     out[snakeToCamel(collection)] = {
       created: (bucket.created ?? []).map((row) => translateRow(row, snakeToCamel, true)),
       updated: (bucket.updated ?? []).map((row) => translateRow(row, snakeToCamel, true)),
+      deleted: bucket.deleted ?? [],
     };
   }
   return out;
@@ -293,6 +306,72 @@ function translateRow(
     if (k === "id") continue;
     if (stripInternal && k.startsWith("_")) continue;
     out[translate(k)] = v;
+  }
+  return out;
+}
+
+/**
+ * After a successful push, the server creates a Convex document whose
+ * `_creationTime` is *after* the device's last pull cursor. On the next
+ * pull the server puts that row in the "created" bucket, but the row
+ * already exists in WatermelonDB (the device created it locally).
+ * A raw INSERT for "created" rows then fails with SQLITE_CONSTRAINT_PRIMARYKEY.
+ *
+ * Fix: scan each "created" list for IDs that already exist locally and
+ * move them to "updated" so WatermelonDB does an UPDATE instead.
+ */
+async function demoteExistingCreates(
+  database: Database,
+  changes: Record<string, ChangeBucket>,
+): Promise<Record<string, ChangeBucket>> {
+  const out: Record<string, ChangeBucket> = {};
+  for (const [table, bucket] of Object.entries(changes)) {
+    if (bucket.created.length === 0) {
+      out[table] = bucket;
+      continue;
+    }
+
+    let collection: Collection<Model> | undefined;
+    try {
+      collection = database.collections.get(table as any);
+    } catch {
+      out[table] = bucket;
+      continue;
+    }
+
+    const existingIds = new Set<string>();
+    const ids = bucket.created.map((r) => r.id);
+    // Batch-check existence. WatermelonDB will throw for missing IDs,
+    // so we check individually and swallow "not found" errors.
+    for (const id of ids) {
+      try {
+        await collection.find(id);
+        existingIds.add(id);
+      } catch {
+        // Record doesn't exist locally — keep it in "created"
+      }
+    }
+
+    if (existingIds.size === 0) {
+      out[table] = bucket;
+      continue;
+    }
+
+    const demoted: WatermelonRow[] = [];
+    const kept: WatermelonRow[] = [];
+    for (const row of bucket.created) {
+      if (existingIds.has(row.id)) {
+        demoted.push(row);
+      } else {
+        kept.push(row);
+      }
+    }
+
+    out[table] = {
+      created: kept,
+      updated: [...bucket.updated, ...demoted],
+      deleted: bucket.deleted,
+    };
   }
   return out;
 }

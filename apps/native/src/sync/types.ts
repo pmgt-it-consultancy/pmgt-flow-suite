@@ -28,7 +28,10 @@ export type PullResponse = {
 
 export type PushPayload = {
   lastPulledAt: number;
-  changes: Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }>;
+  changes: Record<
+    string,
+    { created: WatermelonRow[]; updated: WatermelonRow[]; deleted?: string[] }
+  >;
   clientMutationId: string;
 };
 

@@ -133,7 +133,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
         });
       }
     },
-    [updateTakeoutStatus],
+    [],
   );
 
   const handleNewOrder = useCallback(async () => {
@@ -154,7 +154,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
       setIsCreating(false);
       Alert.alert("Error", "Failed to create order. Please try again.");
     }
-  }, [user?.storeId, navigation, createDraftOrder]);
+  }, [user?.storeId, navigation]);
 
   const handleResumeDraft = useCallback(
     (orderId: Id<"orders">) => {
@@ -220,23 +220,20 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
 
   const [_discardingId, setDiscardingId] = useState<Id<"orders"> | null>(null);
 
-  const handleDiscardDraft = useCallback(
-    async (orderId: Id<"orders">) => {
-      if (discardLockRef.current.has(orderId)) return;
+  const handleDiscardDraft = useCallback(async (orderId: Id<"orders">) => {
+    if (discardLockRef.current.has(orderId)) return;
 
-      discardLockRef.current.add(orderId);
-      setDiscardingId(orderId);
-      try {
-        await discardDraft({ orderId: orderId as string });
-      } catch (_error) {
-        Alert.alert("Error", "Failed to discard draft. Please try again.");
-      } finally {
-        discardLockRef.current.delete(orderId);
-        setDiscardingId(null);
-      }
-    },
-    [discardDraft],
-  );
+    discardLockRef.current.add(orderId);
+    setDiscardingId(orderId);
+    try {
+      await discardDraft({ orderId: orderId as string });
+    } catch (_error) {
+      Alert.alert("Error", "Failed to discard draft. Please try again.");
+    } finally {
+      discardLockRef.current.delete(orderId);
+      setDiscardingId(null);
+    }
+  }, []);
 
   const handlePrevDay = useCallback(() => {
     setSelectedDate((prev) => {

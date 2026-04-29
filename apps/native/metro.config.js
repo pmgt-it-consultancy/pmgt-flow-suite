@@ -5,11 +5,16 @@ const config = getDefaultConfig(__dirname);
 
 config.resolver.sourceExts.push("mjs");
 
-// Ensure @tamagui/core resolves to the same instance used by tamagui
-const tamaguiCore = path.dirname(require.resolve("@tamagui/core/package.json"));
+const sharedRoot = path.resolve(__dirname, "../../packages/shared");
+
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
-  "@tamagui/core": tamaguiCore,
+  "@tamagui/core": path.dirname(require.resolve("@tamagui/core/package.json")),
 };
+
+config.resolver.blockList = [
+  ...config.resolver.blockList,
+  new RegExp(sharedRoot + "/node_modules/.*"),
+];
 
 module.exports = config;
