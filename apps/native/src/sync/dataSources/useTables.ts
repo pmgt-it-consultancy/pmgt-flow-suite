@@ -120,7 +120,7 @@ export function useTablesListWithOrders(
           _id: table.id as Id<"tables">,
           name: table.name,
           capacity: table.capacity,
-          status: tableOrders.length > 0 ? "occupied" : "available",
+          status: (tableOrders.length > 0 ? "occupied" : "available") as "available" | "occupied",
           sortOrder: table.sortOrder,
           orders: orderSummaries,
           totalTabs,

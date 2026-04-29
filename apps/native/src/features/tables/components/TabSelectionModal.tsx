@@ -4,25 +4,15 @@ import { Modal as RNModal, ScrollView, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
+import type { TableOrderSummary } from "../../../sync";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
-
-interface TabOrder {
-  _id: Id<"orders">;
-  orderNumber: string;
-  tabNumber: number;
-  tabName: string;
-  itemCount: number;
-  netSales: number;
-  pax?: number;
-  createdAt: number;
-}
 
 interface TabSelectionModalProps {
   visible: boolean;
   onClose: () => void;
   tableName: string;
-  orders: TabOrder[];
+  orders: readonly TableOrderSummary[];
   onSelectOrder: (orderId: Id<"orders">) => void;
   onAddNewTab: () => void;
   isCreating?: boolean;

@@ -7,14 +7,18 @@ import { type Category, getDatabase, type Product } from "../../db";
 import { useObservable } from "../../db/useObservable";
 import { isFlagEnabled } from "../featureFlags";
 
-export type CategoryTreeNode = {
+export type CategoryChild = {
   _id: Id<"categories">;
   name: string;
   sortOrder: number;
   isActive: boolean;
   productCount: number;
-  children: CategoryTreeNode[];
 };
+
+/** Two-level tree matching `api.categories.getTree` shape. */
+export interface CategoryTreeNode extends CategoryChild {
+  children: CategoryChild[];
+}
 
 const ROOT_KEY = "__root__";
 
@@ -43,7 +47,7 @@ export function useCategoryTree(storeId: Id<"stores"> | undefined): CategoryTree
     [offline, storeId],
   );
 
-  const watermelonResult = useMemo(() => {
+  const watermelonResult = useMemo((): CategoryTreeNode[] | undefined => {
     if (!offline) return undefined;
     if (!watermelonCategories || !watermelonProducts) return undefined;
 
@@ -64,14 +68,16 @@ export function useCategoryTree(storeId: Id<"stores"> | undefined): CategoryTree
     const buildNode = (cat: Category): CategoryTreeNode => {
       const childList = childrenByParentId.get(cat.id) ?? [];
       childList.sort((a, b) => a.sortOrder - b.sortOrder);
-      return {
+      const node: CategoryTreeNode = {
         _id: cat.id as Id<"categories">,
         name: cat.name,
         sortOrder: cat.sortOrder,
         isActive: cat.isActive,
         productCount: productCountByCategoryId.get(cat.id) ?? 0,
-        children: childList.map(buildNode),
+        children: [],
       };
+      node.children = childList.map(buildNode);
+      return node;
     };
 
     const rootList = childrenByParentId.get(ROOT_KEY) ?? [];

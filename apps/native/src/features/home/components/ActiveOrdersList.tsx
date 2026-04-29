@@ -1,24 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
-import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { memo, useCallback } from "react";
 import { FlatList } from "react-native";
 import { XStack, YStack } from "tamagui";
+import type { ActiveOrderSummary } from "../../../sync";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
 
-interface ActiveOrder {
-  _id: Id<"orders">;
-  orderNumber: string;
-  orderType: "dine_in" | "takeout";
-  tableName?: string;
-  customerName?: string;
-  itemCount: number;
-  subtotal: number;
-  createdAt: number;
-}
-
 interface ActiveOrdersListProps {
-  orders: ActiveOrder[];
+  orders: readonly ActiveOrderSummary[];
 }
 
 function getTimeAgo(createdAt: number): string {
@@ -54,7 +43,7 @@ const ORDER_STYLES = {
   },
 };
 
-const ActiveOrderItem = memo(({ order }: { order: ActiveOrder }) => {
+const ActiveOrderItem = memo(({ order }: { order: ActiveOrderSummary }) => {
   const formatCurrency = useFormatCurrency();
   const style = ORDER_STYLES[order.orderType];
   const timeAgo = getTimeAgo(order.createdAt);
@@ -204,11 +193,11 @@ const emptyComponent = (
 
 export const ActiveOrdersList = ({ orders }: ActiveOrdersListProps) => {
   const renderItem = useCallback(
-    ({ item }: { item: ActiveOrder }) => <ActiveOrderItem order={item} />,
+    ({ item }: { item: ActiveOrderSummary }) => <ActiveOrderItem order={item} />,
     [],
   );
 
-  const keyExtractor = useCallback((item: ActiveOrder) => item._id, []);
+  const keyExtractor = useCallback((item: ActiveOrderSummary) => item._id, []);
 
   return (
     <FlatList

@@ -16,7 +16,7 @@ export {
   useTakeoutOrders,
 } from "./useOrderHistory";
 export { type ProductListItem, useProducts } from "./useProducts";
-export { useStore } from "./useStores";
+export { useStore } from "./useStore";
 export {
   type AvailableTable,
   type TableOrderSummary,

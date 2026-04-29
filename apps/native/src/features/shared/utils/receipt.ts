@@ -26,7 +26,7 @@ export interface ReceiptData {
   storeTelephone?: string;
   storeEmail?: string;
   storeWebsite?: string;
-  storeSocials?: { platform: string; url: string }[];
+  storeSocials?: readonly { platform: string; url: string }[];
   storeFooter?: string;
   orderNumber: string;
   tableName?: string;

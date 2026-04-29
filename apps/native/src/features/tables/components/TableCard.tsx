@@ -3,29 +3,19 @@ import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { memo } from "react";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
+import type { TableOrderSummary } from "../../../sync";
 import { Badge, Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
-
-interface OrderInfo {
-  _id: Id<"orders">;
-  orderNumber: string;
-  tabNumber: number;
-  tabName: string;
-  itemCount: number;
-  netSales: number;
-  pax?: number;
-  createdAt: number;
-}
 
 interface TableCardProps {
   id: Id<"tables">;
   name: string;
   capacity: number;
   isOccupied: boolean;
-  orders?: OrderInfo[];
-  totalTabs?: number;
-  totalItemCount?: number;
-  totalNetSales?: number;
+  orders: readonly TableOrderSummary[];
+  totalTabs: number;
+  totalItemCount: number;
+  totalNetSales: number;
   onPress: (id: Id<"tables">, name: string) => void;
   onUpdatePax?: (id: Id<"tables">) => void;
 }

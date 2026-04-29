@@ -24,13 +24,14 @@ export type ActiveOrderSummary = {
 export type TakeoutOrderSummary = {
   _id: Id<"orders">;
   orderNumber?: string;
-  orderType: "dine_in" | "takeout";
+  orderType?: "dine_in" | "takeout";
   takeoutStatus: string;
   customerName?: string;
   status: "draft" | "open" | "paid" | "voided";
-  subtotal: number;
+  netSales: number;
   itemCount: number;
   createdAt: number;
+  refundedFromOrderId?: Id<"orders">;
 };
 
 export function useActiveOrders(
@@ -122,7 +123,7 @@ export function useTakeoutOrders(
     [offline],
   );
 
-  const watermelonResult = useMemo(() => {
+  const watermelonResult = useMemo((): TakeoutOrderSummary[] | undefined => {
     if (!offline) return undefined;
     if (!watermelonOrders || !watermelonOrderItems) return undefined;
 
@@ -151,9 +152,10 @@ export function useTakeoutOrders(
         takeoutStatus: o.takeoutStatus ?? "pending",
         customerName: o.customerName,
         status: o.status as "draft" | "open" | "paid" | "voided",
-        subtotal: o.netSales,
+        netSales: o.netSales,
         itemCount: itemCountByOrderId.get(o.id) ?? 0,
         createdAt: o.createdAt,
+        refundedFromOrderId: undefined,
       }));
   }, [offline, watermelonOrders, watermelonOrderItems, startDate, endDate]);
 

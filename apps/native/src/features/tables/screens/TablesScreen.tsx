@@ -6,7 +6,7 @@ import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Modal, RefreshControl, TextInput } from "react-native";
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
-import { useTablesListWithOrders } from "../../../sync";
+import { type TableOrderSummary, useTablesListWithOrders } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { Text } from "../../shared/components/ui";
 import { EmptyState, Header, TableCard } from "../components";
@@ -25,16 +25,7 @@ export const TablesScreen = ({ navigation }: TablesScreenProps) => {
   const [selectedTable, setSelectedTable] = useState<{
     id: Id<"tables">;
     name: string;
-    orders: Array<{
-      _id: Id<"orders">;
-      orderNumber: string;
-      tabNumber: number;
-      tabName: string;
-      itemCount: number;
-      netSales: number;
-      pax?: number;
-      createdAt: number;
-    }>;
+    orders: readonly TableOrderSummary[];
   } | null>(null);
   const [isCreatingTab, setIsCreatingTab] = useState(false);
   const [isUpdatingPax, setIsUpdatingPax] = useState(false);
