@@ -13,12 +13,12 @@
  * Flag names follow `useWatermelon.<table>` shape from the spec.
  */
 export const featureFlags = {
-  /** OrderScreen + CategoryGrid product list reads from WatermelonDB */
   "useWatermelon.products": process.env.EXPO_PUBLIC_OFFLINE_PRODUCTS === "1",
   "useWatermelon.categories": process.env.EXPO_PUBLIC_OFFLINE_CATEGORIES === "1",
   "useWatermelon.modifiers": process.env.EXPO_PUBLIC_OFFLINE_MODIFIERS === "1",
   "useWatermelon.tables": process.env.EXPO_PUBLIC_OFFLINE_TABLES === "1",
-  "useWatermelon.orders": process.env.EXPO_PUBLIC_OFFLINE_ORDERS === "1",
+  "useWatermelon.stores": process.env.EXPO_PUBLIC_OFFLINE_STORES === "1",
+  "useWatermelon.orderHistory": process.env.EXPO_PUBLIC_OFFLINE_ORDER_HISTORY === "1",
 } as const;
 
 export type FeatureFlag = keyof typeof featureFlags;
