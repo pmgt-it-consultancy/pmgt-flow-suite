@@ -1,8 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
-import * as Crypto from "expo-crypto";
+import { useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ActivityIndicator, Alert, FlatList, RefreshControl } from "react-native";
@@ -12,6 +11,7 @@ import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Button, IconButton, Text } from "../../shared/components/ui";
 import { DraftOrderCard, TakeoutOrderCard, TakeoutOrderDetailModal } from "../components";
+import { createDraftOrder, discardDraft, updateTakeoutStatus } from "../services/takeoutMutations";
 
 type TakeoutStatus = "pending" | "preparing" | "ready_for_pickup" | "completed" | "cancelled";
 
@@ -66,9 +66,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
     getEndOfDay(selectedDate),
   );
 
-  const updateStatus = useMutation(api.orders.updateTakeoutStatus);
-  const createDraftMutation = useMutation(api.orders.createDraftOrder);
-  const discardDraftMutation = useMutation(api.orders.discardDraft);
+  // Mutations — all use WatermelonDB service functions imported above
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -127,7 +125,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
       advanceLocksRef.current.add(orderId);
       setAdvancingOrderIds((prev) => new Set(prev).add(orderId));
       try {
-        await updateStatus({ orderId, newStatus: nextStatus });
+        await updateTakeoutStatus({ orderId: orderId as string, status: nextStatus });
       } catch (error: any) {
         console.error("Update takeout status error:", error);
         Alert.alert("Error", error.message || "Failed to update takeout status");
@@ -140,7 +138,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
         });
       }
     },
-    [updateStatus],
+    [updateTakeoutStatus],
   );
 
   const handleNewOrder = useCallback(async () => {
@@ -149,9 +147,8 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
     creatingLockRef.current = true;
     setIsCreating(true);
     try {
-      const orderId = await createDraftMutation({
-        storeId: user.storeId,
-        requestId: Crypto.randomUUID(),
+      const orderId = await createDraftOrder({
+        storeId: user.storeId as string,
       });
       navigation.navigate("TakeoutOrderScreen", {
         storeId: user.storeId,
@@ -162,7 +159,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
       setIsCreating(false);
       Alert.alert("Error", "Failed to create order. Please try again.");
     }
-  }, [user?.storeId, navigation, createDraftMutation]);
+  }, [user?.storeId, navigation, createDraftOrder]);
 
   const handleResumeDraft = useCallback(
     (orderId: Id<"orders">) => {
@@ -235,7 +232,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
       discardLockRef.current.add(orderId);
       setDiscardingId(orderId);
       try {
-        await discardDraftMutation({ orderId });
+        await discardDraft({ orderId: orderId as string });
       } catch (_error) {
         Alert.alert("Error", "Failed to discard draft. Please try again.");
       } finally {
@@ -243,7 +240,7 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
         setDiscardingId(null);
       }
     },
-    [discardDraftMutation],
+    [discardDraft],
   );
 
   const handlePrevDay = useCallback(() => {
