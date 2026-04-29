@@ -337,6 +337,18 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     [updateItemQuantity, removeItemFromOrder],
   );
 
+  const handleSetQuantity = useCallback(
+    async (itemId: Id<"orderItems">, targetQty: number) => {
+      try {
+        await updateItemQuantity({ orderItemId: itemId as string, quantity: targetQty });
+      } catch (error) {
+        if (__DEV__) console.error("Update quantity error:", error);
+        Alert.alert("Error", "Failed to update quantity");
+      }
+    },
+    [updateItemQuantity],
+  );
+
   const handleVoidItem = useCallback(
     (itemId: Id<"orderItems">) => {
       const item = activeItems.find((i) => i._id === itemId);
@@ -782,6 +794,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 onServiceTypeChange={handleServiceTypeChange}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
+                onSetQuantity={handleSetQuantity}
                 onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
               />
             )}

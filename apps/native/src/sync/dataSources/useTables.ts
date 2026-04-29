@@ -33,6 +33,20 @@ export type AvailableTable = {
   capacity?: number;
 };
 
+const TABLE_COLUMNS = ["name", "capacity", "status", "sort_order", "is_active"];
+
+const TABLE_ORDER_COLUMNS = [
+  "table_id",
+  "net_sales",
+  "order_number",
+  "tab_number",
+  "tab_name",
+  "pax",
+  "created_at",
+];
+
+const TABLE_ITEM_COUNT_COLUMNS = ["order_id", "quantity", "is_voided"];
+
 export function useTablesListWithOrders(
   storeId: Id<"stores"> | undefined,
 ): TableWithOrders[] | undefined {
@@ -46,6 +60,7 @@ export function useTablesListWithOrders(
             : [Q.where("store_id", "__none__")]),
         ),
     [storeId],
+    TABLE_COLUMNS,
   );
 
   const watermelonOrders = useObservable<Order>(
@@ -58,11 +73,13 @@ export function useTablesListWithOrders(
             : [Q.where("store_id", "__none__")]),
         ),
     [storeId],
+    TABLE_ORDER_COLUMNS,
   );
 
   const watermelonOrderItems = useObservable<OrderItem>(
     () => getDatabase().collections.get<OrderItem>("order_items").query(),
     [],
+    TABLE_ITEM_COUNT_COLUMNS,
   );
 
   return useMemo(() => {
@@ -138,6 +155,7 @@ export function useTablesAvailable(
             : [Q.where("store_id", "__none__")]),
         ),
     [storeId],
+    TABLE_COLUMNS,
   );
 
   return useMemo(() => {

@@ -3,6 +3,23 @@ import { useMemo } from "react";
 import { getDatabase, type Store } from "../../db";
 import { useObservable } from "../../db/useObservable";
 
+const STORE_COLUMNS = [
+  "name",
+  "address1",
+  "address2",
+  "tin",
+  "min",
+  "vat_rate",
+  "contact_number",
+  "telephone",
+  "email",
+  "website",
+  "footer",
+  "is_active",
+  "schedule_json",
+  "logo",
+];
+
 export interface StoreData {
   readonly _id: Id<"stores">;
   readonly name: string;
@@ -41,6 +58,7 @@ export function useStore(storeId: Id<"stores"> | undefined): StoreData | null | 
   const watermelonStores = useObservable<Store>(
     () => getDatabase().collections.get<Store>("stores").query(),
     [],
+    STORE_COLUMNS,
   );
 
   return useMemo((): StoreData | null | undefined => {

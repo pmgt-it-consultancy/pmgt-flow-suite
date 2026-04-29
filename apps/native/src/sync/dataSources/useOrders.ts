@@ -168,6 +168,149 @@ export interface OrderReceiptView {
 
 const NEVER = "__none__";
 
+const ORDER_DETAIL_COLUMNS = [
+  "order_number",
+  "order_type",
+  "takeout_status",
+  "table_id",
+  "table_name",
+  "customer_name",
+  "draft_label",
+  "status",
+  "gross_sales",
+  "vatable_sales",
+  "vat_amount",
+  "vat_exempt_sales",
+  "non_vat_sales",
+  "discount_amount",
+  "net_sales",
+  "payment_method",
+  "cash_received",
+  "change_given",
+  "card_payment_type",
+  "card_reference_number",
+  "order_category",
+  "table_marker",
+  "created_by",
+  "created_at",
+  "paid_at",
+  "paid_by",
+  "pax",
+  "tab_number",
+  "tab_name",
+  "refunded_from_order_id",
+];
+
+const ORDER_ITEM_DETAIL_COLUMNS = [
+  "order_id",
+  "product_id",
+  "product_name",
+  "product_price",
+  "quantity",
+  "notes",
+  "service_type",
+  "is_voided",
+  "is_sent_to_kitchen",
+];
+
+const ORDER_ITEM_MODIFIER_COLUMNS = [
+  "order_item_id",
+  "modifier_group_name",
+  "modifier_option_name",
+  "price_adjustment",
+];
+
+const ORDER_DISCOUNT_COLUMNS = [
+  "order_id",
+  "order_item_id",
+  "discount_type",
+  "customer_name",
+  "customer_id",
+  "quantity_applied",
+  "discount_amount",
+  "vat_exempt_amount",
+  "approved_by",
+  "created_at",
+];
+
+const ORDER_VOID_COLUMNS = [
+  "order_id",
+  "void_type",
+  "order_item_id",
+  "reason",
+  "approved_by",
+  "requested_by",
+  "amount",
+  "created_at",
+];
+
+const ORDER_PAYMENT_COLUMNS = [
+  "order_id",
+  "payment_method",
+  "amount",
+  "cash_received",
+  "change_given",
+  "card_payment_type",
+  "card_reference_number",
+];
+
+const TABLE_SUMMARY_COLUMNS = ["name", "status"];
+const PRODUCT_SUMMARY_COLUMNS = ["is_vatable"];
+const USER_SUMMARY_COLUMNS = ["name"];
+
+const ORDER_HISTORY_COLUMNS = [
+  "order_number",
+  "order_type",
+  "table_id",
+  "table_name",
+  "customer_name",
+  "status",
+  "net_sales",
+  "payment_method",
+  "created_at",
+  "refunded_from_order_id",
+];
+
+const ORDER_ITEM_COUNT_COLUMNS = ["order_id", "quantity", "is_voided"];
+
+const DRAFT_ORDER_COLUMNS = [
+  "order_number",
+  "draft_label",
+  "customer_name",
+  "status",
+  "net_sales",
+  "created_at",
+];
+
+const RECEIPT_ORDER_COLUMNS = [
+  "order_number",
+  "order_type",
+  "table_id",
+  "table_name",
+  "customer_name",
+  "pax",
+  "order_category",
+  "table_marker",
+  "status",
+  "gross_sales",
+  "vatable_sales",
+  "vat_amount",
+  "vat_exempt_sales",
+  "non_vat_sales",
+  "discount_amount",
+  "net_sales",
+  "payment_method",
+  "cash_received",
+  "change_given",
+  "card_payment_type",
+  "card_reference_number",
+  "created_by",
+  "created_at",
+  "paid_at",
+];
+
+const STORE_RECEIPT_COLUMNS = ["name", "address1", "address2", "tin", "min", "vat_rate"];
+
 // ─── useOrderDetail ───────────────────────────────────────────────
 // Mirrors the shape of api.orders.get for a drop-in swap.
 
@@ -180,6 +323,7 @@ export function useOrderDetail(
         .collections.get<Order>("orders")
         .query(orderId ? Q.where("id", String(orderId)) : Q.where("id", NEVER)),
     [orderId],
+    ORDER_DETAIL_COLUMNS,
   );
 
   const items = useObservable<OrderItem>(
@@ -188,6 +332,7 @@ export function useOrderDetail(
         .collections.get<OrderItem>("order_items")
         .query(orderId ? Q.where("order_id", String(orderId)) : Q.where("order_id", NEVER)),
     [orderId],
+    ORDER_ITEM_DETAIL_COLUMNS,
   );
 
   const itemIds = useMemo(() => (items ?? []).map((i) => i.id), [items]);
@@ -202,6 +347,7 @@ export function useOrderDetail(
             : Q.where("order_item_id", NEVER),
         ),
     [itemIds.join(",")],
+    ORDER_ITEM_MODIFIER_COLUMNS,
   );
 
   const discounts = useObservable<OrderDiscount>(
@@ -210,6 +356,7 @@ export function useOrderDetail(
         .collections.get<OrderDiscount>("order_discounts")
         .query(orderId ? Q.where("order_id", String(orderId)) : Q.where("order_id", NEVER)),
     [orderId],
+    ORDER_DISCOUNT_COLUMNS,
   );
 
   const voids = useObservable<OrderVoid>(
@@ -218,19 +365,26 @@ export function useOrderDetail(
         .collections.get<OrderVoid>("order_voids")
         .query(orderId ? Q.where("order_id", String(orderId)) : Q.where("order_id", NEVER)),
     [orderId],
+    ORDER_VOID_COLUMNS,
   );
 
   const tables = useObservable<TableModel>(
     () => getDatabase().collections.get<TableModel>("tables").query(),
     [],
+    TABLE_SUMMARY_COLUMNS,
   );
 
   const products = useObservable<Product>(
     () => getDatabase().collections.get<Product>("products").query(),
     [],
+    PRODUCT_SUMMARY_COLUMNS,
   );
 
-  const users = useObservable<User>(() => getDatabase().collections.get<User>("users").query(), []);
+  const users = useObservable<User>(
+    () => getDatabase().collections.get<User>("users").query(),
+    [],
+    USER_SUMMARY_COLUMNS,
+  );
 
   return useMemo<OrderDetailView | null | undefined>(() => {
     if (!orderId) return undefined;
@@ -365,16 +519,19 @@ export function useOrderHistoryQuery(params: {
             : [Q.where("store_id", NEVER)]),
         ),
     [storeId, startDate, endDate],
+    ORDER_HISTORY_COLUMNS,
   );
 
   const orderItems = useObservable<OrderItem>(
     () => getDatabase().collections.get<OrderItem>("order_items").query(),
     [],
+    ORDER_ITEM_COUNT_COLUMNS,
   );
 
   const tables = useObservable<TableModel>(
     () => getDatabase().collections.get<TableModel>("tables").query(),
     [],
+    TABLE_SUMMARY_COLUMNS,
   );
 
   return useMemo<OrderHistoryEntry[] | undefined>(() => {
@@ -437,14 +594,20 @@ export function useOrderDiscountsQuery(
         .collections.get<OrderDiscount>("order_discounts")
         .query(orderId ? Q.where("order_id", String(orderId)) : Q.where("order_id", NEVER)),
     [orderId],
+    ORDER_DISCOUNT_COLUMNS,
   );
 
   const items = useObservable<OrderItem>(
     () => getDatabase().collections.get<OrderItem>("order_items").query(),
     [],
+    ["product_name"],
   );
 
-  const users = useObservable<User>(() => getDatabase().collections.get<User>("users").query(), []);
+  const users = useObservable<User>(
+    () => getDatabase().collections.get<User>("users").query(),
+    [],
+    USER_SUMMARY_COLUMNS,
+  );
 
   return useMemo<OrderDiscountView[] | undefined>(() => {
     if (!orderId) return undefined;
@@ -491,11 +654,13 @@ export function useDraftOrders(storeId: Id<"stores"> | undefined): DraftOrderEnt
             : [Q.where("store_id", NEVER)]),
         ),
     [storeId],
+    DRAFT_ORDER_COLUMNS,
   );
 
   const items = useObservable<OrderItem>(
     () => getDatabase().collections.get<OrderItem>("order_items").query(),
     [],
+    ORDER_ITEM_COUNT_COLUMNS,
   );
 
   return useMemo<DraftOrderEntry[] | undefined>(() => {
@@ -535,6 +700,7 @@ export function useOrderReceipt(
         .collections.get<Order>("orders")
         .query(orderId ? Q.where("id", String(orderId)) : Q.where("id", NEVER)),
     [orderId],
+    RECEIPT_ORDER_COLUMNS,
   );
 
   const items = useObservable<OrderItem>(
@@ -543,6 +709,7 @@ export function useOrderReceipt(
         .collections.get<OrderItem>("order_items")
         .query(orderId ? Q.where("order_id", String(orderId)) : Q.where("order_id", NEVER)),
     [orderId],
+    ORDER_ITEM_DETAIL_COLUMNS,
   );
 
   const payments = useObservable<OrderPayment>(
@@ -551,19 +718,26 @@ export function useOrderReceipt(
         .collections.get<OrderPayment>("order_payments")
         .query(orderId ? Q.where("order_id", String(orderId)) : Q.where("order_id", NEVER)),
     [orderId],
+    ORDER_PAYMENT_COLUMNS,
   );
 
   const stores = useObservable<Store>(
     () => getDatabase().collections.get<Store>("stores").query(),
     [],
+    STORE_RECEIPT_COLUMNS,
   );
 
   const tables = useObservable<TableModel>(
     () => getDatabase().collections.get<TableModel>("tables").query(),
     [],
+    TABLE_SUMMARY_COLUMNS,
   );
 
-  const users = useObservable<User>(() => getDatabase().collections.get<User>("users").query(), []);
+  const users = useObservable<User>(
+    () => getDatabase().collections.get<User>("users").query(),
+    [],
+    USER_SUMMARY_COLUMNS,
+  );
 
   return useMemo<OrderReceiptView | null | undefined>(() => {
     if (!orderId) return undefined;

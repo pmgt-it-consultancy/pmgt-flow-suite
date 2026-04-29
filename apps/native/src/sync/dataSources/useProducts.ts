@@ -4,6 +4,29 @@ import { useMemo } from "react";
 import { type Category, getDatabase, type ModifierGroupAssignment, type Product } from "../../db";
 import { useObservable } from "../../db/useObservable";
 
+const PRODUCT_COLUMNS = [
+  "name",
+  "category_id",
+  "price",
+  "is_vatable",
+  "is_active",
+  "is_open_price",
+  "min_price",
+  "max_price",
+  "sort_order",
+];
+
+const CATEGORY_COLUMNS = ["name", "parent_id", "sort_order", "is_active"];
+
+const ASSIGNMENT_COLUMNS = [
+  "modifier_group_id",
+  "product_id",
+  "category_id",
+  "sort_order",
+  "min_selections_override",
+  "max_selections_override",
+];
+
 export type ProductListItem = {
   _id: Id<"products">;
   storeId: Id<"stores">;
@@ -33,6 +56,7 @@ export function useProducts(storeId: Id<"stores"> | undefined): ProductListItem[
             : [Q.where("store_id", "__none__")]),
         ),
     [storeId],
+    PRODUCT_COLUMNS,
   );
 
   const watermelonCategories = useObservable<Category>(
@@ -41,6 +65,7 @@ export function useProducts(storeId: Id<"stores"> | undefined): ProductListItem[
         .collections.get<Category>("categories")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
     [storeId],
+    CATEGORY_COLUMNS,
   );
 
   const watermelonAssignments = useObservable<ModifierGroupAssignment>(
@@ -49,6 +74,7 @@ export function useProducts(storeId: Id<"stores"> | undefined): ProductListItem[
         .collections.get<ModifierGroupAssignment>("modifier_group_assignments")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
     [storeId],
+    ASSIGNMENT_COLUMNS,
   );
 
   return useMemo<ProductListItem[] | undefined>(() => {

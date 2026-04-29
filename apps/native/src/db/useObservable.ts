@@ -22,14 +22,19 @@ import { useEffect, useState } from "react";
 export function useObservable<T extends Model>(
   factory: () => Query<T>,
   deps: ReadonlyArray<unknown>,
+  observedColumns: string[] = [],
 ): T[] | undefined {
   const [value, setValue] = useState<T[] | undefined>(undefined);
+  const observedColumnsKey = observedColumns.join("|");
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: factory is intentionally keyed by caller-provided deps
   useEffect(() => {
     setValue(undefined);
     let cancelled = false;
     let sub: { unsubscribe: () => void } | null = null;
-    const observable = factory().observeWithColumns([]);
+    const columns = observedColumnsKey ? observedColumnsKey.split("|") : [];
+    const query = factory();
+    const observable = columns.length > 0 ? query.observeWithColumns(columns) : query.observe();
     sub = observable.subscribe({
       next: (rows: T[]) => {
         if (!cancelled) setValue(rows);
@@ -39,8 +44,7 @@ export function useObservable<T extends Model>(
       cancelled = true;
       sub?.unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  }, [observedColumnsKey, ...deps]);
 
   return value;
 }

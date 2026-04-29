@@ -11,6 +11,36 @@ import {
 } from "../../db";
 import { useObservable } from "../../db/useObservable";
 
+const MODIFIER_GROUP_COLUMNS = [
+  "name",
+  "selection_type",
+  "min_selections",
+  "max_selections",
+  "is_active",
+  "sort_order",
+];
+
+const MODIFIER_OPTION_COLUMNS = [
+  "modifier_group_id",
+  "name",
+  "price_adjustment",
+  "is_default",
+  "is_available",
+  "sort_order",
+];
+
+const MODIFIER_ASSIGNMENT_COLUMNS = [
+  "modifier_group_id",
+  "product_id",
+  "category_id",
+  "sort_order",
+  "min_selections_override",
+  "max_selections_override",
+];
+
+const MODIFIER_PRODUCT_COLUMNS = ["store_id", "category_id"];
+const MODIFIER_CATEGORY_COLUMNS = ["parent_id"];
+
 export type ModifierOptionItem = {
   optionId: Id<"modifierOptions">;
   name: string;
@@ -166,6 +196,7 @@ export function useModifiersForStore(
             : [Q.where("store_id", "__none__")]),
         ),
     [storeId],
+    MODIFIER_GROUP_COLUMNS,
   );
 
   const watermelonOptions = useObservable<ModifierOption>(
@@ -174,6 +205,7 @@ export function useModifiersForStore(
         .collections.get<ModifierOption>("modifier_options")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
     [storeId],
+    MODIFIER_OPTION_COLUMNS,
   );
 
   const watermelonAssignments = useObservable<ModifierGroupAssignment>(
@@ -182,6 +214,7 @@ export function useModifiersForStore(
         .collections.get<ModifierGroupAssignment>("modifier_group_assignments")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
     [storeId],
+    MODIFIER_ASSIGNMENT_COLUMNS,
   );
 
   const watermelonProducts = useObservable<Product>(
@@ -190,6 +223,7 @@ export function useModifiersForStore(
         .collections.get<Product>("products")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
     [storeId],
+    MODIFIER_PRODUCT_COLUMNS,
   );
 
   const watermelonCategories = useObservable<Category>(
@@ -198,6 +232,7 @@ export function useModifiersForStore(
         .collections.get<Category>("categories")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
     [storeId],
+    MODIFIER_CATEGORY_COLUMNS,
   );
 
   return useMemo(() => {
@@ -237,27 +272,32 @@ export function useModifiersForProduct(
   const watermelonGroups = useObservable<ModifierGroup>(
     () => getDatabase().collections.get<ModifierGroup>("modifier_groups").query(),
     [],
+    MODIFIER_GROUP_COLUMNS,
   );
 
   const watermelonOptions = useObservable<ModifierOption>(
     () => getDatabase().collections.get<ModifierOption>("modifier_options").query(),
     [],
+    MODIFIER_OPTION_COLUMNS,
   );
 
   const watermelonAssignments = useObservable<ModifierGroupAssignment>(
     () =>
       getDatabase().collections.get<ModifierGroupAssignment>("modifier_group_assignments").query(),
     [],
+    MODIFIER_ASSIGNMENT_COLUMNS,
   );
 
   const watermelonProducts = useObservable<Product>(
     () => getDatabase().collections.get<Product>("products").query(),
     [],
+    MODIFIER_PRODUCT_COLUMNS,
   );
 
   const watermelonCategories = useObservable<Category>(
     () => getDatabase().collections.get<Category>("categories").query(),
     [],
+    MODIFIER_CATEGORY_COLUMNS,
   );
 
   return useMemo(() => {

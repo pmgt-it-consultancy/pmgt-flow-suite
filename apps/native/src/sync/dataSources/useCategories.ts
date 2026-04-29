@@ -4,6 +4,9 @@ import { useMemo } from "react";
 import { type Category, getDatabase, type Product } from "../../db";
 import { useObservable } from "../../db/useObservable";
 
+const CATEGORY_TREE_COLUMNS = ["name", "parent_id", "sort_order", "is_active"];
+const PRODUCT_COUNT_COLUMNS = ["category_id"];
+
 export type CategoryChild = {
   _id: Id<"categories">;
   name: string;
@@ -29,6 +32,7 @@ export function useCategoryTree(storeId: Id<"stores"> | undefined): CategoryTree
             : [Q.where("store_id", "__none__")]),
         ),
     [storeId],
+    CATEGORY_TREE_COLUMNS,
   );
 
   const watermelonProducts = useObservable<Product>(
@@ -37,6 +41,7 @@ export function useCategoryTree(storeId: Id<"stores"> | undefined): CategoryTree
         .collections.get<Product>("products")
         .query(...(storeId ? [Q.where("store_id", storeId)] : [Q.where("store_id", "__none__")])),
     [storeId],
+    PRODUCT_COUNT_COLUMNS,
   );
 
   return useMemo((): CategoryTreeNode[] | undefined => {

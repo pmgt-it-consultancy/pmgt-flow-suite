@@ -4,6 +4,21 @@ import { useMemo } from "react";
 import { getDatabase, type Order, type OrderItem } from "../../db";
 import { useObservable } from "../../db/useObservable";
 
+const ORDER_SUMMARY_COLUMNS = [
+  "order_number",
+  "takeout_status",
+  "customer_name",
+  "status",
+  "net_sales",
+  "item_count",
+  "created_at",
+  "table_id",
+  "table_name",
+  "pax",
+];
+
+const ORDER_ITEM_SUMMARY_COLUMNS = ["order_id", "quantity", "is_voided"];
+
 export type ActiveOrderSummary = {
   _id: Id<"orders">;
   orderNumber?: string;
@@ -44,11 +59,13 @@ export function useActiveOrders(
             : [Q.where("store_id", "__none__")]),
         ),
     [storeId],
+    ORDER_SUMMARY_COLUMNS,
   );
 
   const watermelonOrderItems = useObservable<OrderItem>(
     () => getDatabase().collections.get<OrderItem>("order_items").query(),
     [],
+    ORDER_ITEM_SUMMARY_COLUMNS,
   );
 
   return useMemo(() => {
@@ -100,11 +117,13 @@ export function useTakeoutOrders(
             : [Q.where("store_id", "__none__")]),
         ),
     [storeId],
+    ORDER_SUMMARY_COLUMNS,
   );
 
   const watermelonOrderItems = useObservable<OrderItem>(
     () => getDatabase().collections.get<OrderItem>("order_items").query(),
     [],
+    ORDER_ITEM_SUMMARY_COLUMNS,
   );
 
   return useMemo((): TakeoutOrderSummary[] | undefined => {
