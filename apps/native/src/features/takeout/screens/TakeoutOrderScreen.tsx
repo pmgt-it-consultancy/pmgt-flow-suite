@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, TextInput } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
+import { useModifiersForStore, useProducts } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import type { SelectedModifier } from "../../orders/components";
 import {
@@ -71,10 +72,10 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
   // Queries
   const order = useQuery(api.orders.get, { orderId });
-  const products = useQuery(api.products.list, { storeId });
+  const products = useProducts(storeId);
 
   // Prefetch all modifier data for the store — available instantly on product tap
-  const allModifiers = useQuery(api.modifierAssignments.getForStore, { storeId });
+  const allModifiers = useModifiersForStore(storeId);
   const modifiersByProduct = useMemo(() => {
     const map = new Map<string, NonNullable<typeof allModifiers>[number]["groups"]>();
     if (allModifiers) {
