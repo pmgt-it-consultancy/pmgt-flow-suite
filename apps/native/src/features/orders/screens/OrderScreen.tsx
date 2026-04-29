@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Modal, TextInput } from "react-native";
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
-import { useProducts } from "../../../sync";
+import { useModifiersForProduct, useProducts } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
@@ -123,10 +123,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
   const products = useProducts(storeId);
 
   // Fetch modifier groups for the selected product on demand
-  const modifierGroups = useQuery(
-    api.modifierAssignments.getForProduct,
-    selectedProduct ? { productId: selectedProduct.id } : "skip",
-  );
+  const modifierGroups = useModifiersForProduct(selectedProduct ? selectedProduct.id : undefined);
 
   // Mutations
   const {
