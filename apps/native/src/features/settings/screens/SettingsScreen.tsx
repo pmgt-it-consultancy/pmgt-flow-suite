@@ -122,6 +122,53 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
           <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
         </Pressable>
 
+        {/* Force Resync */}
+        <Pressable
+          android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: "#FFFFFF",
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              flexDirection: "row",
+              alignItems: "center",
+              borderBottomWidth: 1,
+              borderBottomColor: "#F3F4F6",
+            },
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
+          onPress={() => {
+            Alert.alert(
+              "Force Resync",
+              "This will re-download all data from the server. Any unsynced local changes will still be pushed first. Continue?",
+              [
+                { text: "Cancel", style: "cancel" },
+                {
+                  text: "Resync",
+                  style: "destructive",
+                  onPress: () => void syncManager.forceFullResync(),
+                },
+              ],
+            );
+          }}
+        >
+          <YStack
+            width={40}
+            height={40}
+            borderRadius={20}
+            backgroundColor="#FEF2F2"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Ionicons name="refresh-outline" size={20} color="#EF4444" />
+          </YStack>
+          <YStack flex={1} marginLeft={12}>
+            <Text style={{ fontSize: 16, fontWeight: "600" }}>Force Resync</Text>
+            <Text style={{ fontSize: 14, color: "#6B7280" }}>Re-download all data from server</Text>
+          </YStack>
+          <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+        </Pressable>
+
         {/* Check for Updates */}
         <Pressable
           android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}

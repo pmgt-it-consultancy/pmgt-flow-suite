@@ -65,6 +65,8 @@ class SyncManagerImpl {
       await adapter.setLocal("__watermelon_last_pulled_at", "0");
       await adapter.setLocal("__sync_cursor_reset_v2", "1");
     }
+    console.log("[SyncManager] deviceId:", this.deviceId);
+    console.log("[SyncManager] registering device with storeId:", storeId);
 
     try {
       const result = await callRegisterDevice(this.deviceId, storeId);
@@ -132,6 +134,21 @@ class SyncManagerImpl {
     return this.syncOnce();
   }
 
+  /**
+   * Force a full re-sync from scratch. Resets the WatermelonDB pull cursor
+   * to zero, so the next pull fetches all rows from the server. Used when
+   * the local data is stale or incomplete (e.g. after a schema migration
+   * or a sync bug that left the catalog empty).
+   */
+  async forceFullResync(): Promise<void> {
+    const adapter = getDatabase().adapter as unknown as {
+      getLocal: (k: string) => Promise<string | null>;
+      setLocal: (k: string, v: string) => Promise<void>;
+    };
+    await adapter.setLocal("__watermelon_last_pulled_at", "0");
+    return this.syncOnce();
+  }
+
   private async syncOnce(): Promise<void> {
     if (this.inFlight) return;
     this.inFlight = true;
@@ -142,6 +159,7 @@ class SyncManagerImpl {
         database: getDatabase(),
         pullChanges: async ({ lastPulledAt }) => {
           const result = await callPull(lastPulledAt ?? null);
+          console.log("[SyncManager] raw pull response:", JSON.stringify(result, null, 2));
           // /sync/pull returns camelCase collection names AND camelCase row
           // fields (matching the Convex schema). WatermelonDB's local schema
           // uses snake_case for both, so translate at every level.
@@ -231,6 +249,7 @@ function allEmpty(
  */
 function mapPullChanges(changes: Record<string, ChangeBucket>): Record<string, ChangeBucket> {
   const out: Record<string, ChangeBucket> = {};
+
   for (const [collection, bucket] of Object.entries(changes)) {
     out[camelToSnake(collection)] = {
       created: (bucket.created ?? []).map((row) => translateRow(row, camelToSnake, true)),

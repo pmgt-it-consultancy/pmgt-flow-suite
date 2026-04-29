@@ -33,7 +33,7 @@ export const backfillClientIds = internalMutation({
         if (!(row as { clientId?: string }).clientId) {
           patches.clientId = newClientId();
         }
-        if (!(row as { updatedAt?: number }).updatedAt) {
+        if ((row as { updatedAt?: number }).updatedAt === undefined) {
           patches.updatedAt = row._creationTime;
         }
         if (Object.keys(patches).length > 0) {

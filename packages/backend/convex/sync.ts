@@ -114,12 +114,17 @@ async function pullTable(
   fkCache: Map<string, string | undefined>,
   bucket: ChangeBucket,
 ): Promise<void> {
-  const rows = await ctx.db
-    .query(table)
-    .withIndex("by_store_updatedAt", (q: any) => q.eq("storeId", storeId).gt("updatedAt", since))
-    .take(PULL_BATCH_SIZE);
+  // Always scan all rows and filter in JS.
+  // Convex excludes documents where an indexed field is undefined from that index,
+  // so by_store_updatedAt silently misses rows where updatedAt is undefined
+  // (e.g. pre-sync rows, auth-created users, rows from mutations that forgot updatedAt).
+  // A POS tablet is scoped to one store — data volume is manageable for full scan.
+  const all = await ctx.db.query(table).collect();
+  const rows = all.filter((r: any) => r.storeId === storeId);
 
   for (const r of rows) {
+    const effectiveUpdatedAt = (r.updatedAt as number | undefined) ?? r._creationTime;
+    if (effectiveUpdatedAt <= since) continue;
     bucket[r._creationTime > since ? "created" : "updated"].push(
       await toWatermelon(ctx, r, fkFields, fkCache),
     );
@@ -205,13 +210,12 @@ export const syncPullCore = internalQuery({
       changes[table] = bucket;
     }
 
-    // Roles — global, no storeId; pull all changed since `since`
-    const roles = await ctx.db
-      .query("roles")
-      .withIndex("by_updatedAt", (q) => q.gt("updatedAt", since))
-      .take(PULL_BATCH_SIZE);
+    // Roles — global, no storeId; always full scan to avoid undefined-index issue
+    const roles = await ctx.db.query("roles").collect();
     const rolesBucket = emptyBucket();
     for (const r of roles) {
+      const effectiveUpdatedAt = (r.updatedAt as number | undefined) ?? r._creationTime;
+      if (effectiveUpdatedAt <= since) continue;
       rolesBucket[r._creationTime > since ? "created" : "updated"].push(
         await toWatermelon(ctx, r, [], fkCache),
       );
@@ -376,12 +380,15 @@ type ApplyArgs = {
 async function applyPushedRow({
   ctx,
   table,
-  row,
+  row: rawRow,
   storeId,
   userId,
   deviceId,
   resolveFk,
 }: ApplyArgs): Promise<void> {
+  const row = Object.fromEntries(
+    Object.entries(rawRow).map(([k, v]) => [k, v ?? undefined]),
+  ) as PushChange;
   const existing = await ctx.db
     .query(table)
     .withIndex("by_clientId", (q: any) => q.eq("clientId", row.id))
