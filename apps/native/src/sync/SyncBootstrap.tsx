@@ -36,6 +36,7 @@ export function SyncBootstrap() {
   useEffect(() => {
     if (isAuthenticated && token) {
       if (user?.storeId) {
+        console.log("Starting sync with storeId:", user.storeId);
         void syncManager.start(user.storeId as string);
       }
       return () => {

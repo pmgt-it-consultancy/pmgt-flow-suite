@@ -39,3 +39,6 @@ yarn-error.log*
 
 # superpowers
 .superpowers/
+
+# Terminal Paste Image folder
+.cp-images/
