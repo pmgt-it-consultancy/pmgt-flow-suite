@@ -1,6 +1,7 @@
 import { synchronize } from "@nozbe/watermelondb/sync";
 import { getOrCreateDeviceId } from "../auth/deviceId";
 import { getDatabase } from "../db";
+import { generateUUID } from "./idBridge";
 import { subscribeToNetworkChanges } from "./networkStatus";
 import { callPull, callPush, callRegisterDevice } from "./syncEndpoints";
 import type { ChangeBucket, SyncState, WatermelonRow } from "./types";
@@ -143,7 +144,7 @@ class SyncManagerImpl {
           ) {
             return;
           }
-          const clientMutationId = crypto.randomUUID();
+          const clientMutationId = generateUUID();
           // WatermelonDB pushes snake_case keys; /sync/push expects camelCase.
           const mapped = mapSnakeToCamel(
             changes as Record<string, { created: WatermelonRow[]; updated: WatermelonRow[] }>,
