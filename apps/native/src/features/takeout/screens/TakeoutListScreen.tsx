@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ActivityIndicator, Alert, FlatList, RefreshControl } from "react-native";
 import { XStack, YStack } from "tamagui";
+import { useTakeoutOrders } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Button, IconButton, Text } from "../../shared/components/ui";
@@ -59,15 +60,10 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
 
   const isToday = getStartOfDay(selectedDate) === getStartOfDay(new Date());
 
-  const takeoutOrders = useQuery(
-    api.orders.getTakeoutOrders,
-    user?.storeId
-      ? {
-          storeId: user.storeId,
-          startDate: getStartOfDay(selectedDate),
-          endDate: getEndOfDay(selectedDate),
-        }
-      : "skip",
+  const takeoutOrders = useTakeoutOrders(
+    user?.storeId,
+    getStartOfDay(selectedDate),
+    getEndOfDay(selectedDate),
   );
 
   const updateStatus = useMutation(api.orders.updateTakeoutStatus);
