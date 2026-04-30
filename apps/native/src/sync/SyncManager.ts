@@ -1,4 +1,5 @@
 import type { Collection, Database, Model } from "@nozbe/watermelondb";
+import { Q } from "@nozbe/watermelondb";
 import { synchronize } from "@nozbe/watermelondb/sync";
 import { getOrCreateDeviceId } from "../auth/deviceId";
 import { getDatabase } from "../db";
@@ -319,59 +320,57 @@ function translateRow(
  *
  * Fix: scan each "created" list for IDs that already exist locally and
  * move them to "updated" so WatermelonDB does an UPDATE instead.
+ *
+ * Uses a single query per table (Q.oneOf) instead of N individual
+ * collection.find() calls, reducing SQLite round-trips from O(N) to O(1).
  */
 async function demoteExistingCreates(
   database: Database,
   changes: Record<string, ChangeBucket>,
 ): Promise<Record<string, ChangeBucket>> {
   const out: Record<string, ChangeBucket> = {};
-  for (const [table, bucket] of Object.entries(changes)) {
-    if (bucket.created.length === 0) {
-      out[table] = bucket;
-      continue;
-    }
 
-    let collection: Collection<Model> | undefined;
-    try {
-      collection = database.collections.get(table as any);
-    } catch {
-      out[table] = bucket;
-      continue;
-    }
+  // Process all tables in parallel — each table gets one batch query.
+  const entries = await Promise.all(
+    Object.entries(changes).map(async ([table, bucket]): Promise<[string, ChangeBucket]> => {
+      if (bucket.created.length === 0) return [table, bucket];
 
-    const existingIds = new Set<string>();
-    const ids = bucket.created.map((r) => r.id);
-    // Batch-check existence. WatermelonDB will throw for missing IDs,
-    // so we check individually and swallow "not found" errors.
-    for (const id of ids) {
+      let collection: Collection<Model>;
       try {
-        await collection.find(id);
-        existingIds.add(id);
+        collection = database.collections.get(table as any);
       } catch {
-        // Record doesn't exist locally — keep it in "created"
+        return [table, bucket];
       }
-    }
 
-    if (existingIds.size === 0) {
-      out[table] = bucket;
-      continue;
-    }
+      const ids = bucket.created.map((r) => r.id);
+      const existing = await collection.query(Q.where("id", Q.oneOf(ids))).fetch();
+      const existingIds = new Set(existing.map((r) => r.id));
 
-    const demoted: WatermelonRow[] = [];
-    const kept: WatermelonRow[] = [];
-    for (const row of bucket.created) {
-      if (existingIds.has(row.id)) {
-        demoted.push(row);
-      } else {
-        kept.push(row);
+      if (existingIds.size === 0) return [table, bucket];
+
+      const demoted: WatermelonRow[] = [];
+      const kept: WatermelonRow[] = [];
+      for (const row of bucket.created) {
+        if (existingIds.has(row.id)) {
+          demoted.push(row);
+        } else {
+          kept.push(row);
+        }
       }
-    }
 
-    out[table] = {
-      created: kept,
-      updated: [...bucket.updated, ...demoted],
-      deleted: bucket.deleted,
-    };
+      return [
+        table,
+        {
+          created: kept,
+          updated: [...bucket.updated, ...demoted],
+          deleted: bucket.deleted,
+        },
+      ];
+    }),
+  );
+
+  for (const [table, bucket] of entries) {
+    out[table] = bucket;
   }
   return out;
 }
