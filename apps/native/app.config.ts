@@ -18,7 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   newArchEnabled: true,
   name: getAppName(),
   slug: "pmgt-flow",
-  version: "3.23.3",
+  version: "3.24.0",
   orientation: "landscape",
   icon: "./assets/app-icon.png",
   userInterfaceStyle: "light",
