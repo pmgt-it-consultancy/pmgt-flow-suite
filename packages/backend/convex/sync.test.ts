@@ -99,6 +99,83 @@ describe("sync pull", () => {
     expect(pulledOrders[0].server_id).not.toBe(legacyOrderId);
     expect(pulledOrders[0].status).toBe("voided");
   });
+
+  it("pulls legacy order items that are missing denormalized storeId", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupSyncTestData(t);
+    const now = Date.now();
+
+    const categoryId = await t.run(async (ctx: any) =>
+      ctx.db.insert("categories", {
+        storeId,
+        name: "Food",
+        sortOrder: 0,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
+
+    const productId = await t.run(async (ctx: any) =>
+      ctx.db.insert("products", {
+        storeId,
+        name: "Burger",
+        categoryId,
+        price: 200,
+        isVatable: true,
+        isActive: true,
+        sortOrder: 0,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
+
+    const orderId = await t.run(async (ctx: any) =>
+      ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "T-001",
+        orderType: "takeout",
+        status: "paid",
+        grossSales: 200,
+        vatableSales: 178.57,
+        vatAmount: 21.43,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 200,
+        paymentMethod: "cash",
+        createdBy: userId,
+        createdAt: now,
+        paidAt: now + 1,
+        paidBy: userId,
+        updatedAt: now + 2,
+      }),
+    );
+
+    const itemId = await t.run(async (ctx: any) =>
+      ctx.db.insert("orderItems", {
+        orderId,
+        productId,
+        productName: "Burger",
+        productPrice: 200,
+        quantity: 1,
+        isVoided: false,
+        updatedAt: now + 3,
+      }),
+    );
+
+    const result = await t.query(internal.sync.syncPullCore, { storeId, lastPulledAt: 0 });
+
+    expect(result.changes.orderItems.created).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          server_id: itemId,
+          productName: "Burger",
+          quantity: 1,
+        }),
+      ]),
+    );
+  });
 });
 
 describe("sync push", () => {
@@ -249,6 +326,89 @@ describe("sync push", () => {
     expect(items).toHaveLength(1);
     expect(items[0].orderId).toBe(orderId);
     expect(items[0].productId).toBe(productId);
+  });
+
+  it("resolves pushed order item products by snapshot name when the local product id is stale", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupSyncTestData(t);
+    const now = Date.now();
+
+    const categoryId = await t.run(async (ctx: any) =>
+      ctx.db.insert("categories", {
+        storeId,
+        name: "Food",
+        sortOrder: 0,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
+
+    const productId = await t.run(async (ctx: any) =>
+      ctx.db.insert("products", {
+        storeId,
+        name: "Burger",
+        categoryId,
+        price: 200,
+        isVatable: true,
+        isActive: true,
+        sortOrder: 0,
+        createdAt: now,
+        updatedAt: now,
+        clientId: "server-burger-client-id",
+      }),
+    );
+
+    const response = await t.mutation(internal.sync.syncPushCore, {
+      storeId,
+      userId,
+      deviceId: "tablet-a",
+      payload: {
+        lastPulledAt: now,
+        clientMutationId: "stale-product-order-item-1",
+        changes: {
+          orders: {
+            created: [
+              {
+                id: "new-order-client-id",
+                orderNumber: "T-001",
+                orderType: "takeout",
+                status: "open",
+                grossSales: 200,
+                vatableSales: 178.57,
+                vatAmount: 21.43,
+                vatExemptSales: 0,
+                nonVatSales: 0,
+                discountAmount: 0,
+                netSales: 200,
+                createdAt: now,
+              },
+            ],
+            updated: [],
+          },
+          orderItems: {
+            created: [
+              {
+                id: "order-item-client-id",
+                orderId: "new-order-client-id",
+                productId: "stale-local-product-id",
+                productName: "Burger",
+                productPrice: 200,
+                quantity: 1,
+                isVoided: false,
+              },
+            ],
+            updated: [],
+          },
+        },
+      },
+    });
+
+    expect(response).toEqual({ success: true });
+    const item = await t.run(async (ctx: any) => ctx.db.query("orderItems").first());
+
+    expect(item?.productId).toBe(productId);
+    expect(item?.productName).toBe("Burger");
   });
 
   it("accepts idempotent paid-order replays so Watermelon can clear retried pushes", async () => {

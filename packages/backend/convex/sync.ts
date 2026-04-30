@@ -118,7 +118,12 @@ async function pullTable(
   // (e.g. pre-sync rows, auth-created users, rows from mutations that forgot updatedAt).
   // A POS tablet is scoped to one store — data volume is manageable for full scan.
   const all = await ctx.db.query(table).collect();
-  const rows = all.filter((r: any) => r.storeId === storeId);
+  const rows: any[] = [];
+  for (const row of all) {
+    if (await rowBelongsToStore(ctx, table, row, storeId)) {
+      rows.push(row);
+    }
+  }
 
   for (const r of rows) {
     const effectiveUpdatedAt = (r.updatedAt as number | undefined) ?? r._creationTime;
@@ -127,6 +132,39 @@ async function pullTable(
       await toWatermelon(ctx, r, fkFields, fkCache),
     );
   }
+}
+
+async function rowBelongsToStore(
+  ctx: any,
+  table: string,
+  row: any,
+  storeId: Id<"stores">,
+): Promise<boolean> {
+  if (row.storeId === storeId) return true;
+  if (row.storeId !== undefined) return false;
+
+  if (
+    table === "orderItems" ||
+    table === "orderDiscounts" ||
+    table === "orderVoids" ||
+    table === "orderPayments"
+  ) {
+    if (!row.orderId) return false;
+    const order = await ctx.db.get(row.orderId);
+    return order?.storeId === storeId;
+  }
+
+  if (table === "orderItemModifiers") {
+    if (!row.orderItemId) return false;
+    const item = await ctx.db.get(row.orderItemId);
+    if (!item) return false;
+    if (item.storeId === storeId) return true;
+    if (!item.orderId) return false;
+    const order = await ctx.db.get(item.orderId);
+    return order?.storeId === storeId;
+  }
+
+  return false;
 }
 
 async function toWatermelon(
@@ -480,6 +518,37 @@ async function resolveActorId(
   return (resolved ?? fallbackUserId) as Id<"users">;
 }
 
+async function resolveProductIdForOrderItem(
+  ctx: any,
+  args: {
+    resolveFk: (table: string, clientId: string | undefined) => Promise<string | undefined>;
+    productId: unknown;
+    productName: unknown;
+    storeId: Id<"stores">;
+  },
+): Promise<Id<"products"> | undefined> {
+  const resolved = (await args.resolveFk("products", args.productId as string | undefined)) as
+    | Id<"products">
+    | undefined;
+  if (resolved) return resolved;
+
+  if (typeof args.productName !== "string" || args.productName.trim().length === 0) {
+    return undefined;
+  }
+
+  const products = await ctx.db
+    .query("products")
+    .withIndex("by_store", (q: any) => q.eq("storeId", args.storeId))
+    .collect();
+  const matchingProducts = products.filter((product: any) => product.name === args.productName);
+
+  if (matchingProducts.length === 1) {
+    return matchingProducts[0]._id as Id<"products">;
+  }
+
+  return undefined;
+}
+
 async function resolveOrderNumber(
   ctx: any,
   args: {
@@ -686,9 +755,12 @@ async function applyPushedRow({
       const orderId = (await resolveFk("orders", row.orderId as string | undefined)) as
         | Id<"orders">
         | undefined;
-      const productId = (await resolveFk("products", row.productId as string | undefined)) as
-        | Id<"products">
-        | undefined;
+      const productId = await resolveProductIdForOrderItem(ctx, {
+        resolveFk,
+        productId: row.productId,
+        productName: row.productName,
+        storeId,
+      });
       if (!orderId || !productId) {
         throw new Error("Missing FK: orderId or productId");
       }
