@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { internalMutation } from "../_generated/server";
-import { newClientId, SYNCED_TABLES } from "../lib/sync";
+import { SYNCED_TABLES } from "../lib/sync";
 
 /**
  * One-shot backfill: assigns a clientId UUID to every row in synced tables
@@ -30,8 +30,13 @@ export const backfillClientIds = internalMutation({
       let count = 0;
       for (const row of rows) {
         const patches: Record<string, unknown> = {};
+        // Use _id as the clientId for legacy rows. WatermelonDB keys local
+        // rows by `clientId ?? _id` (see toWatermelon in convex/sync.ts), so
+        // any tablet that pulled this row before the backfill stored it
+        // under `_id`. Minting a random UUID would change the WM row id
+        // and produce duplicates on the next pull.
         if (!(row as { clientId?: string }).clientId) {
-          patches.clientId = newClientId();
+          patches.clientId = row._id;
         }
         if ((row as { updatedAt?: number }).updatedAt === undefined) {
           patches.updatedAt = row._creationTime;
