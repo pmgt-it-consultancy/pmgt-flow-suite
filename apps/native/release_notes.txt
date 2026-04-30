@@ -1,12 +1,12 @@
 ## What's New
 
-- Offline-first sync with WatermelonDB — all catalog reads, order writes, and mutations now go through local SQLite first, then sync to Convex in the background.
-- Quantity +/- buttons now debounced (300ms) so rapid taps don't fire individual mutations.
-- Takeout status changes (pending → preparing → ready → completed) now re-render immediately without navigating away.
-- Sync layer handles push deletions, pull deduplication, and existing-row conflict resolution.
-- Batch sync performance — existing-row detection during pull uses a single SQL query per table instead of N individual lookups.
+- Sync no longer crashes on busy stores — pull is now paginated, so tablets that have been offline for a while (or stores with thousands of orders) can sync without hitting Convex's per-query read limit.
+- Faster, more reliable order pushes — order numbers and product lookups use indexed queries instead of full-table scans, so closing a busy bill no longer slows down with catalog size.
+- Live order data (admin and POS edits) is now correctly tagged for sync — every item, modifier, discount, and void written through the standard order flow carries its store and updated-at timestamp, so future offline-first sessions see all changes.
+- Improved sync recovery tooling — backend operators can now diagnose and clean up legacy sync data via maintenance commands.
 
 ## Notes
 
 - Requires backend deploy of the updated /sync/pull and /sync/push endpoints.
-- First launch after upgrade triggers a full re-pull to refresh local catalog data.
+- After upgrading, the first sync may take longer than usual as the tablet pages through any catch-up data.
+- Existing tablets do not need a full re-pull; their saved cursor remains valid.
