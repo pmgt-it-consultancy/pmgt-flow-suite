@@ -21,8 +21,19 @@ export type ChangeBucket = {
   deleted: string[];
 };
 
+export type TableCursor = {
+  cursor: string | null;
+  isDone: boolean;
+};
+export type CursorMap = Record<string, TableCursor>;
+
+// Single-page response from /sync/pull. The native client pages until
+// `complete: true`, merging buckets across pages, then hands one combined
+// payload to WatermelonDB.
 export type PullResponse = {
   changes: Record<string, ChangeBucket>;
+  cursors: CursorMap;
+  complete: boolean;
   timestamp: number;
 };
 

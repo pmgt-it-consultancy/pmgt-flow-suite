@@ -137,6 +137,7 @@ export default defineSchema({
     .index("by_category", ["categoryId"])
     .index("by_store_active", ["storeId", "isActive"])
     .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_store_name", ["storeId", "name"])
     .index("by_clientId", ["clientId"]),
 
   // ===== MODIFIERS =====
@@ -288,6 +289,7 @@ export default defineSchema({
     .index("by_tableId_status", ["tableId", "status"])
     .index("by_requestId", ["requestId"])
     .index("by_store_updatedAt", ["storeId", "updatedAt"])
+    .index("by_store_orderNumber", ["storeId", "orderNumber"])
     .index("by_clientId", ["clientId"]),
 
   orderItems: defineTable({
@@ -525,6 +527,10 @@ export default defineSchema({
     deviceCode: v.string(), // "A", "B", ..., "Z", "AA", "AB", ...
     registeredAt: v.number(),
     lastSeenAt: v.number(),
+    // Per-prefix counter for offline-assigned order numbers (T-A, D-A, ...).
+    // Backs resolveOrderNumber's O(1) hot path: increment in place on each new
+    // pushed order instead of scanning all orders for the store.
+    orderNumberCounters: v.optional(v.record(v.string(), v.number())),
   })
     .index("by_storeId_deviceCode", ["storeId", "deviceCode"])
     .index("by_deviceId", ["deviceId"]),

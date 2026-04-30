@@ -25,7 +25,7 @@ export async function recomputeOrderItemCount(
   const itemCount = items
     .filter((i: any) => !i.isVoided)
     .reduce((sum: number, i: any) => sum + i.quantity, 0);
-  await ctx.db.patch(orderId, { itemCount });
+  await ctx.db.patch(orderId, { itemCount, updatedAt: Date.now() });
 }
 
 // Generate next order number for today's business day (respects store schedule).
@@ -170,6 +170,7 @@ export const create = mutation({
       await ctx.db.patch(args.tableId, {
         status: "occupied",
         currentOrderId: orderId,
+        updatedAt: Date.now(),
       });
     }
 
@@ -280,6 +281,7 @@ export const submitDraft = mutation({
       orderNumber,
       orderChannel: "walk_in_takeout",
       takeoutStatus: "pending",
+      updatedAt: Date.now(),
     });
     return { orderNumber };
   },
@@ -915,9 +917,14 @@ export const addItem = mutation({
           ? "dine_in"
           : "takeout");
 
-    // Create order item with product snapshot
+    // Create order item with product snapshot.
+    // storeId + updatedAt are required for sync to surface this row via the
+    // by_store_updatedAt index. Sourced from the parent order so cross-table
+    // consistency is guaranteed.
+    const now = Date.now();
     const itemId = await ctx.db.insert("orderItems", {
       orderId: args.orderId,
+      storeId: order.storeId,
       productId: args.productId,
       productName: product.name,
       productPrice: itemPrice,
@@ -929,6 +936,7 @@ export const addItem = mutation({
       voidedBy: undefined,
       voidedAt: undefined,
       voidReason: undefined,
+      updatedAt: now,
     });
 
     // Insert modifier snapshots
@@ -936,9 +944,11 @@ export const addItem = mutation({
       for (const mod of args.modifiers) {
         await ctx.db.insert("orderItemModifiers", {
           orderItemId: itemId,
+          storeId: order.storeId,
           modifierGroupName: mod.modifierGroupName,
           modifierOptionName: mod.modifierOptionName,
           priceAdjustment: mod.priceAdjustment,
+          updatedAt: now,
         });
       }
     }
@@ -984,7 +994,7 @@ export const updateItemQuantity = mutation({
       throw new Error("Quantity must be positive");
     }
 
-    await ctx.db.patch(args.orderItemId, { quantity: args.quantity });
+    await ctx.db.patch(args.orderItemId, { quantity: args.quantity, updatedAt: Date.now() });
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, item.orderId);
@@ -1016,7 +1026,7 @@ export const updateItemNotes = mutation({
       throw new Error("Cannot modify items in a closed order");
     }
 
-    await ctx.db.patch(args.orderItemId, { notes: args.notes });
+    await ctx.db.patch(args.orderItemId, { notes: args.notes, updatedAt: Date.now() });
     return null;
   },
 });
@@ -1044,7 +1054,10 @@ export const updateItemServiceType = mutation({
       throw new Error("Cannot modify service type of kitchen-sent items");
     }
 
-    await ctx.db.patch(args.orderItemId, { serviceType: args.serviceType });
+    await ctx.db.patch(args.orderItemId, {
+      serviceType: args.serviceType,
+      updatedAt: Date.now(),
+    });
     return null;
   },
 });
@@ -1069,9 +1082,10 @@ export const bulkUpdateItemServiceType = mutation({
       .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
       .collect();
 
+    const now = Date.now();
     for (const item of items) {
       if (!item.isSentToKitchen && !item.isVoided) {
-        await ctx.db.patch(item._id, { serviceType: args.serviceType });
+        await ctx.db.patch(item._id, { serviceType: args.serviceType, updatedAt: now });
       }
     }
     return null;
@@ -1107,11 +1121,13 @@ export const removeItem = mutation({
       if (!args.voidReason?.trim()) {
         throw new Error("Void reason required for kitchen-sent items");
       }
+      const now = Date.now();
       await ctx.db.patch(args.orderItemId, {
         isVoided: true,
         voidedBy: user._id,
-        voidedAt: Date.now(),
+        voidedAt: now,
         voidReason: args.voidReason.trim(),
+        updatedAt: now,
       });
     } else {
       // Unsent items can be deleted or reduced
@@ -1122,6 +1138,7 @@ export const removeItem = mutation({
       } else {
         await ctx.db.patch(args.orderItemId, {
           quantity: item.quantity - quantityToRemove,
+          updatedAt: Date.now(),
         });
       }
     }
@@ -1183,6 +1200,7 @@ async function recalculateOrderTotals(ctx: { db: any }, orderId: Id<"orders">): 
     nonVatSales: totals.nonVatSales,
     discountAmount: totals.discountAmount,
     netSales: totals.netSales,
+    updatedAt: Date.now(),
   });
 }
 
@@ -1205,7 +1223,7 @@ export const updateCustomerName = mutation({
       throw new Error("Cannot modify a closed order");
     }
 
-    const updates: Record<string, unknown> = {};
+    const updates: Record<string, unknown> = { updatedAt: Date.now() };
     if (args.customerName !== undefined) updates.customerName = args.customerName;
     if (args.tableMarker !== undefined) updates.tableMarker = args.tableMarker;
     if (args.orderCategory !== undefined) updates.orderCategory = args.orderCategory;
@@ -1236,7 +1254,7 @@ export const updatePax = mutation({
       throw new Error("PAX must be at least 1");
     }
 
-    await ctx.db.patch(args.orderId, { pax: args.pax });
+    await ctx.db.patch(args.orderId, { pax: args.pax, updatedAt: Date.now() });
     return null;
   },
 });
@@ -1287,7 +1305,7 @@ export const updateTakeoutStatus = mutation({
       }
     }
 
-    await ctx.db.patch(args.orderId, { takeoutStatus: args.newStatus });
+    await ctx.db.patch(args.orderId, { takeoutStatus: args.newStatus, updatedAt: Date.now() });
     return null;
   },
 });
@@ -1559,8 +1577,9 @@ export const sendToKitchen = mutation({
     if (unsentItems.length === 0) throw new Error("No new items to send");
 
     const sentItemIds: Id<"orderItems">[] = [];
+    const now = Date.now();
     for (const item of unsentItems) {
-      await ctx.db.patch(item._id, { isSentToKitchen: true });
+      await ctx.db.patch(item._id, { isSentToKitchen: true, updatedAt: now });
       sentItemIds.push(item._id);
     }
 
@@ -1594,12 +1613,13 @@ export const sendToKitchenWithoutPayment = mutation({
     const unsentItems = items.filter((i) => !i.isVoided && !i.isSentToKitchen);
     if (unsentItems.length === 0) throw new Error("No items to send to kitchen");
 
+    const sendNow = Date.now();
     for (const item of unsentItems) {
-      await ctx.db.patch(item._id, { isSentToKitchen: true });
+      await ctx.db.patch(item._id, { isSentToKitchen: true, updatedAt: sendNow });
     }
 
     // Advance takeout status to preparing (order stays "open"/unpaid)
-    await ctx.db.patch(args.orderId, { takeoutStatus: "preparing" });
+    await ctx.db.patch(args.orderId, { takeoutStatus: "preparing", updatedAt: sendNow });
 
     // Audit log
     await ctx.db.insert("auditLogs", {
@@ -1706,6 +1726,7 @@ export const createAndSendToKitchen = mutation({
       pax: args.pax,
       tabNumber,
       tabName,
+      updatedAt: now,
     });
 
     // Mark table as occupied only if this is the first tab
@@ -1713,6 +1734,7 @@ export const createAndSendToKitchen = mutation({
       await ctx.db.patch(args.tableId, {
         status: "occupied",
         currentOrderId: orderId,
+        updatedAt: now,
       });
     }
 
@@ -1745,6 +1767,7 @@ export const createAndSendToKitchen = mutation({
 
       const itemId = await ctx.db.insert("orderItems", {
         orderId,
+        storeId: args.storeId,
         productId: item.productId,
         productName: product.name,
         productPrice: itemPrice,
@@ -1756,6 +1779,7 @@ export const createAndSendToKitchen = mutation({
         voidedBy: undefined,
         voidedAt: undefined,
         voidReason: undefined,
+        updatedAt: now,
       });
 
       // Insert modifier snapshots
@@ -1763,9 +1787,11 @@ export const createAndSendToKitchen = mutation({
         for (const mod of item.modifiers) {
           await ctx.db.insert("orderItemModifiers", {
             orderItemId: itemId,
+            storeId: args.storeId,
             modifierGroupName: mod.modifierGroupName,
             modifierOptionName: mod.modifierOptionName,
             priceAdjustment: mod.priceAdjustment,
+            updatedAt: now,
           });
         }
       }
@@ -1857,6 +1883,7 @@ export const updateTabName = mutation({
 
     await ctx.db.patch(args.orderId, {
       tabName: args.tabName.trim() || `Tab ${order.tabNumber ?? 1}`,
+      updatedAt: Date.now(),
     });
     return null;
   },
@@ -1903,11 +1930,13 @@ export const transferTable = mutation({
     const remainingSourceOrders = sourceOpenOrders.filter((o) => o._id !== args.orderId);
     const shouldReleaseSource = remainingSourceOrders.length === 0;
 
+    const transferNow = Date.now();
     // Release source table only if no other open orders remain
     if (shouldReleaseSource) {
       await ctx.db.patch(sourceTableId, {
         status: "available",
         currentOrderId: undefined,
+        updatedAt: transferNow,
       });
     }
 
@@ -1916,6 +1945,7 @@ export const transferTable = mutation({
       await ctx.db.patch(args.newTableId, {
         status: "occupied",
         currentOrderId: args.orderId,
+        updatedAt: transferNow,
       });
     }
 
@@ -1925,6 +1955,7 @@ export const transferTable = mutation({
       tableName: newTable.name,
       tabNumber: newTabNumber,
       tabName: newTabName,
+      updatedAt: transferNow,
     });
 
     return null;

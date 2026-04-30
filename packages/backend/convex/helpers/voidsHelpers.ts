@@ -90,6 +90,7 @@ async function recalculateOrderTotals(ctx: { db: any }, orderId: Id<"orders">): 
     nonVatSales: totals.nonVatSales,
     discountAmount: totals.discountAmount,
     netSales: totals.netSales,
+    updatedAt: Date.now(),
   });
 }
 
@@ -118,17 +119,20 @@ export const voidOrderItemInternal = internalMutation({
     const now = Date.now();
     const voidAmount = item.productPrice * item.quantity;
 
-    // Mark item as voided
+    // Mark item as voided. updatedAt is required for sync to surface this row
+    // via the by_store_updatedAt index.
     await ctx.db.patch(args.orderItemId, {
       isVoided: true,
       voidedBy: args.approvedBy,
       voidedAt: now,
       voidReason: args.reason,
+      updatedAt: now,
     });
 
     // Create void record
     const voidId = await ctx.db.insert("orderVoids", {
       orderId: item.orderId,
+      storeId: order.storeId,
       voidType: "item",
       orderItemId: args.orderItemId,
       reason: args.reason,
@@ -136,6 +140,7 @@ export const voidOrderItemInternal = internalMutation({
       requestedBy: args.requestedBy,
       amount: voidAmount,
       createdAt: now,
+      updatedAt: now,
     });
 
     // Recalculate order totals
@@ -189,6 +194,7 @@ export const voidOrderInternal = internalMutation({
     // Create void record
     const voidId = await ctx.db.insert("orderVoids", {
       orderId: args.orderId,
+      storeId: order.storeId,
       voidType: "full_order",
       orderItemId: undefined,
       reason: args.reason,
@@ -196,12 +202,14 @@ export const voidOrderInternal = internalMutation({
       requestedBy: args.requestedBy,
       amount: order.netSales,
       createdAt: now,
+      updatedAt: now,
     });
 
     // Update order status (and takeout status if applicable)
     await ctx.db.patch(args.orderId, {
       status: "voided",
       ...(order.orderType === "takeout" ? { takeoutStatus: "cancelled" } : {}),
+      updatedAt: now,
     });
 
     // Release table if dine-in
@@ -212,6 +220,7 @@ export const voidOrderInternal = internalMutation({
         await ctx.db.patch(order.tableId, {
           status: "available",
           currentOrderId: undefined,
+          updatedAt: Date.now(),
         });
       }
     }
@@ -376,6 +385,7 @@ export const voidPaidOrderInternal = internalMutation({
         paidAt: now,
         paidBy: args.approvedBy,
         refundedFromOrderId: args.orderId,
+        updatedAt: now,
       });
 
       // Copy remaining items and their modifiers
@@ -384,6 +394,7 @@ export const voidPaidOrderInternal = internalMutation({
       for (const item of remainingItems) {
         const newItemId = await ctx.db.insert("orderItems", {
           orderId: replacementOrderId,
+          storeId: order.storeId,
           productId: item.productId,
           productName: item.productName,
           productPrice: item.productPrice,
@@ -392,6 +403,7 @@ export const voidPaidOrderInternal = internalMutation({
           serviceType: item.serviceType,
           isVoided: false,
           isSentToKitchen: item.isSentToKitchen,
+          updatedAt: now,
         });
         oldItemToNewItem.set(item._id.toString(), newItemId);
 
@@ -404,9 +416,11 @@ export const voidPaidOrderInternal = internalMutation({
         for (const mod of modifiers) {
           await ctx.db.insert("orderItemModifiers", {
             orderItemId: newItemId,
+            storeId: order.storeId,
             modifierGroupName: mod.modifierGroupName,
             modifierOptionName: mod.modifierOptionName,
             priceAdjustment: mod.priceAdjustment,
+            updatedAt: now,
           });
         }
       }
@@ -424,6 +438,7 @@ export const voidPaidOrderInternal = internalMutation({
           if (newItemId) {
             await ctx.db.insert("orderDiscounts", {
               orderId: replacementOrderId,
+              storeId: order.storeId,
               orderItemId: newItemId,
               discountType: discount.discountType,
               customerName: discount.customerName,
@@ -433,12 +448,14 @@ export const voidPaidOrderInternal = internalMutation({
               vatExemptAmount: discount.vatExemptAmount,
               approvedBy: discount.approvedBy,
               createdAt: now,
+              updatedAt: now,
             });
           }
         } else {
           // Order-level discount — copy as-is
           await ctx.db.insert("orderDiscounts", {
             orderId: replacementOrderId,
+            storeId: order.storeId,
             orderItemId: undefined,
             discountType: discount.discountType,
             customerName: discount.customerName,
@@ -448,6 +465,7 @@ export const voidPaidOrderInternal = internalMutation({
             vatExemptAmount: discount.vatExemptAmount,
             approvedBy: discount.approvedBy,
             createdAt: now,
+            updatedAt: now,
           });
         }
       }
@@ -513,6 +531,7 @@ export const voidPaidOrderInternal = internalMutation({
         nonVatSales: totals.nonVatSales,
         discountAmount: totalDiscountAmount,
         netSales: netSales,
+        updatedAt: Date.now(),
       });
 
       // Update denormalized item count on replacement order
@@ -535,11 +554,13 @@ export const voidPaidOrderInternal = internalMutation({
     // Void the original order
     await ctx.db.patch(args.orderId, {
       status: "voided",
+      updatedAt: now,
     });
 
     // Create void record
     const voidId = await ctx.db.insert("orderVoids", {
       orderId: args.orderId,
+      storeId: order.storeId,
       voidType: "refund",
       orderItemId: undefined,
       reason: args.reason,
@@ -549,6 +570,7 @@ export const voidPaidOrderInternal = internalMutation({
       createdAt: now,
       refundMethod: args.refundMethod,
       replacementOrderId,
+      updatedAt: now,
     });
 
     // Audit log

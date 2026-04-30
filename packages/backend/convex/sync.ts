@@ -2,7 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
-import { httpAction, internalMutation, internalQuery } from "./_generated/server";
+import { httpAction, internalAction, internalMutation, internalQuery } from "./_generated/server";
 import { deviceCodeFromIndex, newClientId } from "./lib/sync";
 
 /**
@@ -85,8 +85,16 @@ export const registerDevice = httpAction(async (ctx, request) => {
 });
 
 // ---------------------------------------------------------------------------
-// /sync/pull — Watermelon-shaped diff
+// /sync/pull — Watermelon-shaped diff (paged)
 // ---------------------------------------------------------------------------
+//
+// The pull is split into per-table internalQueries so each table gets its own
+// 4096-read budget. Within a table we use Convex .paginate() with a continuation
+// cursor; the orchestrator (action) calls pages across tables in sequence,
+// stopping at a per-request row budget so a single HTTP response stays bounded.
+//
+// Cursor shape (sent by client and echoed back):
+//   { [tableName]: { cursor: string | null; isDone: boolean } }
 
 type WatermelonRow = {
   id: string; // clientId UUID — the tablet's primary key
@@ -95,77 +103,87 @@ type WatermelonRow = {
 };
 
 type ChangeBucket = { created: WatermelonRow[]; updated: WatermelonRow[]; deleted: string[] };
-type PullPayload = { changes: Record<string, ChangeBucket>; timestamp: number };
 
-/**
- * Reads rows by `by_store_updatedAt` cursor, fetches each FK target's clientId
- * once (deduped via cache), and emits a Watermelon-shaped row. The `ctx`
- * parameter is typed as `any` because the table names are dynamic and can't
- * be expressed as TableNamesInDataModel literals at runtime.
- */
-async function pullTable(
-  ctx: any,
-  table: string,
-  storeId: Id<"stores">,
-  since: number,
-  fkFields: readonly string[],
-  fkCache: Map<string, string | undefined>,
-  bucket: ChangeBucket,
-): Promise<void> {
-  // Always scan all rows and filter in JS.
-  // Convex excludes documents where an indexed field is undefined from that index,
-  // so by_store_updatedAt silently misses rows where updatedAt is undefined
-  // (e.g. pre-sync rows, auth-created users, rows from mutations that forgot updatedAt).
-  // A POS tablet is scoped to one store — data volume is manageable for full scan.
-  const all = await ctx.db.query(table).collect();
-  const rows: any[] = [];
-  for (const row of all) {
-    if (await rowBelongsToStore(ctx, table, row, storeId)) {
-      rows.push(row);
-    }
-  }
+type TableCursor = {
+  cursor: string | null; // paginated query continuation
+  isDone: boolean; // table fully streamed
+};
+type CursorMap = Record<string, TableCursor>;
 
-  for (const r of rows) {
-    const effectiveUpdatedAt = (r.updatedAt as number | undefined) ?? r._creationTime;
-    if (effectiveUpdatedAt <= since) continue;
-    bucket[r._creationTime > since ? "created" : "updated"].push(
-      await toWatermelon(ctx, r, fkFields, fkCache),
-    );
-  }
-}
+type PullPagePayload = {
+  changes: Record<string, ChangeBucket>;
+  cursors: CursorMap;
+  complete: boolean;
+  timestamp: number;
+};
 
-async function rowBelongsToStore(
-  ctx: any,
-  table: string,
-  row: any,
-  storeId: Id<"stores">,
-): Promise<boolean> {
-  if (row.storeId === storeId) return true;
-  if (row.storeId !== undefined) return false;
+const emptyBucket = (): ChangeBucket => ({ created: [], updated: [], deleted: [] });
+const emptyCursor = (): TableCursor => ({ cursor: null, isDone: false });
 
-  if (
-    table === "orderItems" ||
-    table === "orderDiscounts" ||
-    table === "orderVoids" ||
-    table === "orderPayments"
-  ) {
-    if (!row.orderId) return false;
-    const order = await ctx.db.get(row.orderId);
-    return order?.storeId === storeId;
-  }
+// Paginated table fetch: numItems per page, capped per HTTP request by the
+// orchestrator. Smaller pages reduce per-query reads (each row + its FK gets
+// charge against the 4096 budget); 250 leaves headroom for FK lookups even
+// with 5+ FK fields per row.
+const TABLE_PAGE_SIZE = 250;
 
-  if (table === "orderItemModifiers") {
-    if (!row.orderItemId) return false;
-    const item = await ctx.db.get(row.orderItemId);
-    if (!item) return false;
-    if (item.storeId === storeId) return true;
-    if (!item.orderId) return false;
-    const order = await ctx.db.get(item.orderId);
-    return order?.storeId === storeId;
-  }
+// Per-HTTP-request row budget. Once hit, orchestrator stops paging more tables
+// and returns; client loops with the returned cursors.
+const PER_REQUEST_ROW_BUDGET = 1500;
 
-  return false;
-}
+const STORE_SCOPED_TABLES: ReadonlyArray<{
+  table: SyncTableName;
+  fkFields: readonly string[];
+}> = [
+  { table: "categories", fkFields: ["parentId"] },
+  { table: "products", fkFields: ["categoryId"] },
+  { table: "modifierGroups", fkFields: [] },
+  { table: "modifierOptions", fkFields: ["modifierGroupId"] },
+  {
+    table: "modifierGroupAssignments",
+    fkFields: ["modifierGroupId", "productId", "categoryId"],
+  },
+  { table: "tables", fkFields: ["currentOrderId"] },
+  {
+    table: "orders",
+    fkFields: ["tableId", "createdBy", "paidBy", "refundedFromOrderId"],
+  },
+  { table: "orderItems", fkFields: ["orderId", "productId", "voidedBy"] },
+  { table: "orderItemModifiers", fkFields: ["orderItemId"] },
+  { table: "orderDiscounts", fkFields: ["orderId", "orderItemId", "approvedBy"] },
+  {
+    table: "orderVoids",
+    fkFields: ["orderId", "orderItemId", "approvedBy", "requestedBy", "replacementOrderId"],
+  },
+  { table: "orderPayments", fkFields: ["orderId", "createdBy"] },
+  { table: "settings", fkFields: ["updatedBy"] },
+  { table: "appConfig", fkFields: [] },
+  { table: "users", fkFields: ["roleId", "storeId"] },
+];
+
+type SyncTableName =
+  | "categories"
+  | "products"
+  | "modifierGroups"
+  | "modifierOptions"
+  | "modifierGroupAssignments"
+  | "tables"
+  | "orders"
+  | "orderItems"
+  | "orderItemModifiers"
+  | "orderDiscounts"
+  | "orderVoids"
+  | "orderPayments"
+  | "settings"
+  | "appConfig"
+  | "users"
+  | "roles"
+  | "stores";
+
+const SYNC_TABLES: ReadonlyArray<SyncTableName> = [
+  ...STORE_SCOPED_TABLES.map((t) => t.table),
+  "roles",
+  "stores",
+];
 
 async function toWatermelon(
   ctx: any,
@@ -199,83 +217,189 @@ async function toWatermelon(
   return out;
 }
 
-const emptyBucket = (): ChangeBucket => ({ created: [], updated: [], deleted: [] });
+// ---------------------------------------------------------------------------
+// Per-table page query — runs in its own 4096-read budget
+// ---------------------------------------------------------------------------
 
-export const syncPullCore = internalQuery({
-  args: { storeId: v.id("stores"), lastPulledAt: v.optional(v.number()) },
+type TablePageResult = {
+  bucket: ChangeBucket;
+  continueCursor: string | null;
+  isDone: boolean;
+};
+
+export const pullTablePage = internalQuery({
+  args: {
+    storeId: v.id("stores"),
+    table: v.string(),
+    since: v.number(),
+    cursor: v.union(v.string(), v.null()),
+    fkFields: v.array(v.string()),
+  },
   returns: v.any(),
-  handler: async (ctx, args): Promise<PullPayload> => {
-    const since = args.lastPulledAt ?? 0;
-    const now = Date.now();
+  handler: async (ctx, args): Promise<TablePageResult> => {
+    // Single-phase paginated read on by_store_updatedAt. With since>0 we add a
+    // gt(updatedAt) range so the index filters at the DB layer; with since===0
+    // we drop the range so legacy rows that lack updatedAt still surface (their
+    // _creationTime backstops the ordering). All four order-child tables now
+    // require storeId in the schema, so there is no longer a "rows missing
+    // storeId" path to worry about.
     const fkCache = new Map<string, string | undefined>();
-    const changes: Record<string, ChangeBucket> = {};
+    const bucket = emptyBucket();
 
-    // Tables filtered by `by_store_updatedAt` cursor
-    const storeIdScopedTables: ReadonlyArray<{ table: string; fkFields: readonly string[] }> = [
-      { table: "categories", fkFields: ["parentId"] },
-      { table: "products", fkFields: ["categoryId"] },
-      { table: "modifierGroups", fkFields: [] },
-      { table: "modifierOptions", fkFields: ["modifierGroupId"] },
-      {
-        table: "modifierGroupAssignments",
-        fkFields: ["modifierGroupId", "productId", "categoryId"],
-      },
-      { table: "tables", fkFields: ["currentOrderId"] },
-      {
-        table: "orders",
-        fkFields: ["tableId", "createdBy", "paidBy", "refundedFromOrderId"],
-      },
-      { table: "orderItems", fkFields: ["orderId", "productId", "voidedBy"] },
-      { table: "orderItemModifiers", fkFields: ["orderItemId"] },
-      {
-        table: "orderDiscounts",
-        fkFields: ["orderId", "orderItemId", "approvedBy"],
-      },
-      {
-        table: "orderVoids",
-        fkFields: ["orderId", "orderItemId", "approvedBy", "requestedBy", "replacementOrderId"],
-      },
-      { table: "orderPayments", fkFields: ["orderId", "createdBy"] },
-      { table: "settings", fkFields: ["updatedBy"] },
-      { table: "appConfig", fkFields: [] },
-      { table: "users", fkFields: ["roleId", "storeId"] },
-    ];
+    const directPage = await ctx.db
+      .query(args.table as any)
+      .withIndex("by_store_updatedAt", (q: any) =>
+        args.since > 0
+          ? q.eq("storeId", args.storeId).gt("updatedAt", args.since)
+          : q.eq("storeId", args.storeId),
+      )
+      .paginate({ cursor: args.cursor, numItems: TABLE_PAGE_SIZE });
 
-    for (const { table, fkFields } of storeIdScopedTables) {
-      const bucket = emptyBucket();
-      await pullTable(ctx, table, args.storeId, since, fkFields, fkCache, bucket);
-      changes[table] = dedupePulledBucket(bucket);
+    for (const r of directPage.page) {
+      const effectiveUpdatedAt = (r.updatedAt as number | undefined) ?? r._creationTime;
+      if (effectiveUpdatedAt <= args.since) continue;
+      bucket[r._creationTime > args.since ? "created" : "updated"].push(
+        await toWatermelon(ctx, r, args.fkFields, fkCache),
+      );
     }
 
-    // Roles — global, no storeId; always full scan to avoid undefined-index issue
+    return {
+      bucket: dedupePulledBucket(bucket),
+      continueCursor: directPage.isDone ? null : directPage.continueCursor,
+      isDone: directPage.isDone,
+    };
+  },
+});
+
+// ---------------------------------------------------------------------------
+// Roles + the user's own store row — non-store-scoped, always one tiny page
+// ---------------------------------------------------------------------------
+
+export const pullRolesAndStorePage = internalQuery({
+  args: { storeId: v.id("stores"), since: v.number() },
+  returns: v.any(),
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{ rolesBucket: ChangeBucket; storesBucket: ChangeBucket }> => {
+    const fkCache = new Map<string, string | undefined>();
+
     const roles = await ctx.db.query("roles").collect();
     const rolesBucket = emptyBucket();
     for (const r of roles) {
       const effectiveUpdatedAt = (r.updatedAt as number | undefined) ?? r._creationTime;
-      if (effectiveUpdatedAt <= since) continue;
-      rolesBucket[r._creationTime > since ? "created" : "updated"].push(
+      if (effectiveUpdatedAt <= args.since) continue;
+      rolesBucket[r._creationTime > args.since ? "created" : "updated"].push(
         await toWatermelon(ctx, r, [], fkCache),
       );
     }
-    changes.roles = dedupePulledBucket(rolesBucket);
 
-    // Stores — only the one this user is scoped to
     const storesBucket = emptyBucket();
     const storeDoc = await ctx.db.get(args.storeId);
     if (storeDoc) {
-      const isCreated = storeDoc._creationTime > since;
+      const isCreated = storeDoc._creationTime > args.since;
       const lastTouched = storeDoc.updatedAt ?? storeDoc._creationTime;
-      if (lastTouched > since) {
+      if (lastTouched > args.since) {
         storesBucket[isCreated ? "created" : "updated"].push(
           await toWatermelon(ctx, storeDoc, ["parentId"], fkCache),
         );
       }
     }
-    changes.stores = dedupePulledBucket(storesBucket);
 
-    return { changes, timestamp: now };
+    return {
+      rolesBucket: dedupePulledBucket(rolesBucket),
+      storesBucket: dedupePulledBucket(storesBucket),
+    };
   },
 });
+
+// ---------------------------------------------------------------------------
+// Orchestrator — one HTTP request worth of pages
+// ---------------------------------------------------------------------------
+
+export const syncPullPage = internalAction({
+  args: {
+    storeId: v.id("stores"),
+    lastPulledAt: v.optional(v.number()),
+    cursors: v.optional(v.any()),
+    serverNow: v.optional(v.number()),
+  },
+  returns: v.any(),
+  handler: async (ctx, args): Promise<PullPagePayload> => {
+    const since = args.lastPulledAt ?? 0;
+    const inputCursors = (args.cursors ?? {}) as CursorMap;
+
+    // Stamp the server timestamp on the FIRST page only. Client echoes it back
+    // on subsequent pages, so the lastPulledAt the client commits is always the
+    // moment the pull started — anything written during pull is captured next time.
+    const isFirstPage = !args.cursors || Object.keys(inputCursors).length === 0;
+    const timestamp = isFirstPage ? Date.now() : (args.serverNow ?? Date.now());
+
+    const outCursors: CursorMap = { ...inputCursors };
+    const changes: Record<string, ChangeBucket> = {};
+    let rowsThisRequest = 0;
+
+    // First-page only: roles + store doc (cheap, single query, never paginated)
+    if (isFirstPage) {
+      const { rolesBucket, storesBucket } = (await ctx.runQuery(
+        internal.sync.pullRolesAndStorePage,
+        { storeId: args.storeId, since },
+      )) as { rolesBucket: ChangeBucket; storesBucket: ChangeBucket };
+      changes.roles = rolesBucket;
+      changes.stores = storesBucket;
+      outCursors.roles = { cursor: null, isDone: true };
+      outCursors.stores = { cursor: null, isDone: true };
+      rowsThisRequest +=
+        rolesBucket.created.length +
+        rolesBucket.updated.length +
+        storesBucket.created.length +
+        storesBucket.updated.length;
+    }
+
+    // Page each store-scoped table in declaration order, stopping when
+    // the per-request row budget is hit.
+    for (const { table, fkFields } of STORE_SCOPED_TABLES) {
+      const cursorState = outCursors[table] ?? emptyCursor();
+      if (cursorState.isDone) {
+        outCursors[table] = cursorState;
+        continue;
+      }
+      if (rowsThisRequest >= PER_REQUEST_ROW_BUDGET) {
+        outCursors[table] = cursorState;
+        continue;
+      }
+
+      const result = (await ctx.runQuery(internal.sync.pullTablePage, {
+        storeId: args.storeId,
+        table,
+        since,
+        cursor: cursorState.cursor,
+        fkFields: [...fkFields],
+      })) as TablePageResult;
+
+      const existing = changes[table] ?? emptyBucket();
+      changes[table] = mergeBuckets(existing, result.bucket);
+      outCursors[table] = {
+        cursor: result.continueCursor,
+        isDone: result.isDone,
+      };
+      rowsThisRequest += result.bucket.created.length + result.bucket.updated.length;
+    }
+
+    const complete = SYNC_TABLES.every((t) => (outCursors[t] ?? emptyCursor()).isDone);
+
+    return { changes, cursors: outCursors, complete, timestamp };
+  },
+});
+
+function mergeBuckets(a: ChangeBucket, b: ChangeBucket): ChangeBucket {
+  const out: ChangeBucket = {
+    created: [...a.created, ...b.created],
+    updated: [...a.updated, ...b.updated],
+    deleted: [...a.deleted, ...b.deleted],
+  };
+  return dedupePulledBucket(out);
+}
 
 export const syncPull = httpAction(async (ctx, request) => {
   const userId = await getAuthUserId(ctx);
@@ -286,12 +410,21 @@ export const syncPull = httpAction(async (ctx, request) => {
   } | null;
   if (!user?.storeId) return forbidden("User has no store");
 
-  const body = (await request.json()) as { lastPulledAt?: unknown };
+  const body = (await request.json()) as {
+    lastPulledAt?: unknown;
+    cursors?: unknown;
+    serverNow?: unknown;
+  };
   const lastPulledAt = typeof body.lastPulledAt === "number" ? body.lastPulledAt : undefined;
+  const cursors =
+    body.cursors && typeof body.cursors === "object" ? (body.cursors as CursorMap) : undefined;
+  const serverNow = typeof body.serverNow === "number" ? body.serverNow : undefined;
 
-  const result = await ctx.runQuery(internal.sync.syncPullCore, {
+  const result = await ctx.runAction(internal.sync.syncPullPage, {
     storeId: user.storeId,
     lastPulledAt,
+    cursors,
+    serverNow,
   });
   return json(result);
 });
@@ -536,11 +669,15 @@ async function resolveProductIdForOrderItem(
     return undefined;
   }
 
-  const products = await ctx.db
+  // Indexed lookup by (storeId, name). Reads only rows that match the name —
+  // the previous .collect() on by_store scanned every product in the store,
+  // which exceeds the 4096-read mutation budget on large catalogs.
+  const matchingProducts = await ctx.db
     .query("products")
-    .withIndex("by_store", (q: any) => q.eq("storeId", args.storeId))
+    .withIndex("by_store_name", (q: any) =>
+      q.eq("storeId", args.storeId).eq("name", args.productName),
+    )
     .collect();
-  const matchingProducts = products.filter((product: any) => product.name === args.productName);
 
   if (matchingProducts.length === 1) {
     return matchingProducts[0]._id as Id<"products">;
@@ -559,28 +696,70 @@ async function resolveOrderNumber(
     incomingOrderNumber?: string;
   },
 ): Promise<string> {
+  // 1. Honor an incoming order number if it doesn't conflict with an existing
+  //    order owned by a different clientId. Indexed eq lookup, O(1).
   const incoming = args.incomingOrderNumber;
   if (incoming && !(await orderNumberConflicts(ctx, args.storeId, incoming, args.clientId))) {
     return incoming;
   }
 
-  const prefix = args.orderType === "dine_in" ? "D" : "T";
+  // 2. Otherwise, generate the next number using a counter on the device doc.
+  //    First call per (device, prefix) bootstraps the counter with one indexed
+  //    .first() read; subsequent calls are O(1) read + 1 patch.
+  const device = await ctx.db
+    .query("syncDevices")
+    .withIndex("by_deviceId", (q: any) => q.eq("deviceId", args.deviceId))
+    .first();
   const deviceCode = await resolveDeviceCode(ctx, args.storeId, args.deviceId);
-  const orders = await ctx.db
-    .query("orders")
-    .withIndex("by_store", (q: any) => q.eq("storeId", args.storeId))
-    .collect();
+  const prefix = `${args.orderType === "dine_in" ? "D" : "T"}-${deviceCode}`;
 
-  let max = 0;
-  const orderNumberPrefix = `${prefix}-${deviceCode}`;
-  for (const order of orders) {
-    const orderNumber = order.orderNumber as string | undefined;
-    if (!orderNumber?.startsWith(orderNumberPrefix)) continue;
-    const suffix = Number.parseInt(orderNumber.slice(orderNumberPrefix.length), 10);
-    if (Number.isFinite(suffix)) max = Math.max(max, suffix);
+  let nextSuffix: number;
+  if (device) {
+    const counters = device.orderNumberCounters ?? {};
+    let current = counters[prefix];
+    if (current === undefined) {
+      // Bootstrap: lex-greatest order number with this prefix has the largest
+      // numeric suffix as long as padding is consistent (we always pad to 3
+      // digits). One read.
+      const last = await ctx.db
+        .query("orders")
+        .withIndex("by_store_orderNumber", (q: any) =>
+          q
+            .eq("storeId", args.storeId)
+            .gte("orderNumber", prefix)
+            .lt("orderNumber", `${prefix}\uffff`),
+        )
+        .order("desc")
+        .first();
+      const parsed = last?.orderNumber
+        ? Number.parseInt((last.orderNumber as string).slice(prefix.length), 10)
+        : 0;
+      current = Number.isFinite(parsed) ? parsed : 0;
+    }
+    nextSuffix = current + 1;
+    await ctx.db.patch(device._id, {
+      orderNumberCounters: { ...counters, [prefix]: nextSuffix },
+    });
+  } else {
+    // Device row missing — should never happen post-registerDevice, but fall
+    // back to the indexed bootstrap so we still produce a non-colliding number.
+    const last = await ctx.db
+      .query("orders")
+      .withIndex("by_store_orderNumber", (q: any) =>
+        q
+          .eq("storeId", args.storeId)
+          .gte("orderNumber", prefix)
+          .lt("orderNumber", `${prefix}\uffff`),
+      )
+      .order("desc")
+      .first();
+    const parsed = last?.orderNumber
+      ? Number.parseInt((last.orderNumber as string).slice(prefix.length), 10)
+      : 0;
+    nextSuffix = (Number.isFinite(parsed) ? parsed : 0) + 1;
   }
 
-  return `${orderNumberPrefix}${String(max + 1).padStart(3, "0")}`;
+  return `${prefix}${String(nextSuffix).padStart(3, "0")}`;
 }
 
 async function orderNumberConflicts(
@@ -589,14 +768,14 @@ async function orderNumberConflicts(
   orderNumber: string,
   clientId: string,
 ): Promise<boolean> {
-  const orders = await ctx.db
+  // Indexed eq lookup on (storeId, orderNumber) — at most one row matches.
+  const existing = await ctx.db
     .query("orders")
-    .withIndex("by_store", (q: any) => q.eq("storeId", storeId))
-    .collect();
-
-  return orders.some(
-    (order: any) => order.orderNumber === orderNumber && order.clientId !== clientId,
-  );
+    .withIndex("by_store_orderNumber", (q: any) =>
+      q.eq("storeId", storeId).eq("orderNumber", orderNumber),
+    )
+    .first();
+  return !!existing && existing.clientId !== clientId;
 }
 
 async function resolveDeviceCode(

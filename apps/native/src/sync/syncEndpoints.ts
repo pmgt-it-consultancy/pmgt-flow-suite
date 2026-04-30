@@ -1,4 +1,4 @@
-import type { PullResponse, PushPayload, PushResponse } from "./types";
+import type { CursorMap, PullResponse, PushPayload, PushResponse } from "./types";
 
 /**
  * HTTP client for the three Convex sync endpoints.
@@ -50,8 +50,12 @@ async function postJson<T>(
   return (await res.json()) as T;
 }
 
-export async function callPull(lastPulledAt: number | null): Promise<PullResponse> {
-  return postJson<PullResponse>("/sync/pull", { lastPulledAt });
+export async function callPull(
+  lastPulledAt: number | null,
+  cursors?: CursorMap,
+  serverNow?: number,
+): Promise<PullResponse> {
+  return postJson<PullResponse>("/sync/pull", { lastPulledAt, cursors, serverNow });
 }
 
 export async function callPush(payload: PushPayload, deviceId: string): Promise<PushResponse> {

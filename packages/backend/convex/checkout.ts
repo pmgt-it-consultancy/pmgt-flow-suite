@@ -27,6 +27,7 @@ async function releaseTableIfLastOrder(
     await ctx.db.patch(tableId, {
       status: "available",
       currentOrderId: undefined,
+      updatedAt: Date.now(),
     });
   }
 }
@@ -84,10 +85,12 @@ async function processPaymentCore(
     });
   }
 
+  const paidNow = Date.now();
   await ctx.db.patch(orderId, {
     status: "paid",
-    paidAt: Date.now(),
+    paidAt: paidNow,
     paidBy: userId,
+    updatedAt: paidNow,
   });
 
   if (order.tableId) {
@@ -95,7 +98,7 @@ async function processPaymentCore(
   }
 
   if (order.orderType === "takeout" && order.takeoutStatus === "pending") {
-    await ctx.db.patch(orderId, { takeoutStatus: "preparing" });
+    await ctx.db.patch(orderId, { takeoutStatus: "preparing", updatedAt: Date.now() });
   }
 
   return { success: true, totalChange };
@@ -173,6 +176,7 @@ export const processCashPayment = mutation({
       paymentMethod: "cash",
       cashReceived: args.cashReceived,
       changeGiven,
+      updatedAt: Date.now(),
     });
 
     return {
@@ -231,6 +235,7 @@ export const processCardPayment = mutation({
       changeGiven: undefined,
       cardPaymentType: args.paymentType,
       cardReferenceNumber: args.referenceNumber,
+      updatedAt: Date.now(),
     });
 
     return {
@@ -476,6 +481,7 @@ export const cancelOrder = mutation({
         await ctx.db.patch(order.tableId, {
           status: "available",
           currentOrderId: undefined,
+          updatedAt: Date.now(),
         });
       }
     }

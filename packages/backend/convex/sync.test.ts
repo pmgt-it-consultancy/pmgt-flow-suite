@@ -5,6 +5,41 @@ import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
 
+// Drives the paged sync until the orchestrator reports complete:true and
+// returns a flat { changes, timestamp } shape so tests don't have to know
+// about the cursor protocol. Mirrors what the native client does.
+async function pullAll(
+  t: any,
+  storeId: string,
+  lastPulledAt = 0,
+): Promise<{ changes: Record<string, any>; timestamp: number }> {
+  const merged: Record<string, any> = {};
+  let cursors: Record<string, any> | undefined;
+  let serverNow: number | undefined;
+  // Bound iterations defensively so an unfinished isDone state can't loop forever
+  for (let i = 0; i < 50; i++) {
+    const page = await t.action(internal.sync.syncPullPage, {
+      storeId,
+      lastPulledAt,
+      cursors,
+      serverNow,
+    });
+    if (serverNow === undefined) serverNow = page.timestamp;
+    for (const [table, bucket] of Object.entries(page.changes ?? {})) {
+      const b = bucket as { created: any[]; updated: any[]; deleted: string[] };
+      const existing = merged[table] ?? { created: [], updated: [], deleted: [] };
+      merged[table] = {
+        created: [...existing.created, ...b.created],
+        updated: [...existing.updated, ...b.updated],
+        deleted: [...existing.deleted, ...(b.deleted ?? [])],
+      };
+    }
+    if (page.complete) return { changes: merged, timestamp: page.timestamp };
+    cursors = page.cursors;
+  }
+  throw new Error("pullAll: did not complete within 50 pages");
+}
+
 async function setupSyncTestData(t: any) {
   const roleId = await t.run(async (ctx: any) =>
     ctx.db.insert("roles", {
@@ -90,7 +125,7 @@ describe("sync pull", () => {
       }),
     );
 
-    const result = await t.query(internal.sync.syncPullCore, { storeId, lastPulledAt: 0 });
+    const result = await pullAll(t, storeId, 0);
     const pulledOrders = result.changes.orders.created.filter(
       (row: any) => row.id === legacyOrderId,
     );
@@ -100,7 +135,7 @@ describe("sync pull", () => {
     expect(pulledOrders[0].status).toBe("voided");
   });
 
-  it("pulls legacy order items that are missing denormalized storeId", async () => {
+  it("pulls order items via the by_store_updatedAt index", async () => {
     const t = convexTest(schema, modules);
     const { storeId, userId } = await setupSyncTestData(t);
     const now = Date.now();
@@ -155,6 +190,7 @@ describe("sync pull", () => {
     const itemId = await t.run(async (ctx: any) =>
       ctx.db.insert("orderItems", {
         orderId,
+        storeId,
         productId,
         productName: "Burger",
         productPrice: 200,
@@ -164,7 +200,7 @@ describe("sync pull", () => {
       }),
     );
 
-    const result = await t.query(internal.sync.syncPullCore, { storeId, lastPulledAt: 0 });
+    const result = await pullAll(t, storeId, 0);
 
     expect(result.changes.orderItems.created).toEqual(
       expect.arrayContaining([
@@ -175,6 +211,111 @@ describe("sync pull", () => {
         }),
       ]),
     );
+  });
+
+  it("pages large catalogs across multiple HTTP requests and merges into one result", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId } = await setupSyncTestData(t);
+    const now = Date.now();
+
+    // Seed > TABLE_PAGE_SIZE products so pagination kicks in (page size is 250).
+    const PRODUCT_COUNT = 320;
+    const categoryId = await t.run(async (ctx: any) =>
+      ctx.db.insert("categories", {
+        storeId,
+        name: "Food",
+        sortOrder: 0,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
+    await t.run(async (ctx: any) => {
+      for (let i = 0; i < PRODUCT_COUNT; i++) {
+        await ctx.db.insert("products", {
+          storeId,
+          name: `Product ${i}`,
+          categoryId,
+          price: 100,
+          isVatable: true,
+          isActive: true,
+          sortOrder: i,
+          createdAt: now + i,
+          updatedAt: now + i,
+        });
+      }
+    });
+
+    // Drive the loop manually so we can assert it took >1 page for products.
+    let cursors: Record<string, any> | undefined;
+    let serverNow: number | undefined;
+    let pageCount = 0;
+    let productPagesWithRows = 0;
+    const merged: Record<string, any> = {};
+    while (pageCount < 50) {
+      pageCount++;
+      const page = await t.action(internal.sync.syncPullPage, {
+        storeId,
+        lastPulledAt: 0,
+        cursors,
+        serverNow,
+      });
+      if (serverNow === undefined) serverNow = page.timestamp;
+      const productBucket = page.changes?.products;
+      if (productBucket && productBucket.created.length > 0) productPagesWithRows++;
+      for (const [table, bucket] of Object.entries(page.changes ?? {})) {
+        const b = bucket as { created: any[]; updated: any[]; deleted: string[] };
+        const existing = merged[table] ?? { created: [], updated: [], deleted: [] };
+        merged[table] = {
+          created: [...existing.created, ...b.created],
+          updated: [...existing.updated, ...b.updated],
+          deleted: [...existing.deleted, ...(b.deleted ?? [])],
+        };
+      }
+      if (page.complete) break;
+      cursors = page.cursors;
+    }
+
+    expect(merged.products.created).toHaveLength(PRODUCT_COUNT);
+    expect(productPagesWithRows).toBeGreaterThan(1);
+  });
+
+  it("incremental pull returns no rows when nothing has changed since lastPulledAt", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId } = await setupSyncTestData(t);
+    const now = Date.now();
+
+    const categoryId = await t.run(async (ctx: any) =>
+      ctx.db.insert("categories", {
+        storeId,
+        name: "Drinks",
+        sortOrder: 0,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("products", {
+        storeId,
+        name: "Coffee",
+        categoryId,
+        price: 80,
+        isVatable: true,
+        isActive: true,
+        sortOrder: 0,
+        createdAt: now,
+        updatedAt: now,
+      });
+    });
+
+    // First pull captures everything; second pull (since=now+1) should be empty.
+    const first = await pullAll(t, storeId, 0);
+    expect(first.changes.products.created.length).toBeGreaterThan(0);
+
+    const second = await pullAll(t, storeId, now + 1);
+    expect(second.changes.products?.created ?? []).toHaveLength(0);
+    expect(second.changes.products?.updated ?? []).toHaveLength(0);
   });
 });
 
@@ -852,5 +993,150 @@ describe("sync push", () => {
     );
 
     expect(newOrder?.orderNumber).toBe("T-B001");
+  });
+
+  it("increments the per-device order-number counter without rescanning the orders table", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupSyncTestData(t);
+    const now = Date.now();
+
+    await t.run(async (ctx: any) =>
+      ctx.db.insert("syncDevices", {
+        deviceId: "tablet-c",
+        storeId,
+        deviceCode: "C",
+        registeredAt: now,
+        lastSeenAt: now,
+      }),
+    );
+
+    // Push three new orders without pre-assigned order numbers.
+    // Each call to resolveOrderNumber should advance the counter once and
+    // produce T-C001, T-C002, T-C003.
+    const newOrder = (i: number) => ({
+      id: `counter-order-${i}`,
+      orderType: "takeout",
+      status: "open",
+      grossSales: 0,
+      vatableSales: 0,
+      vatAmount: 0,
+      vatExemptSales: 0,
+      nonVatSales: 0,
+      discountAmount: 0,
+      netSales: 0,
+      createdAt: now + i,
+    });
+
+    const response = await t.mutation(internal.sync.syncPushCore, {
+      storeId,
+      userId,
+      deviceId: "tablet-c",
+      payload: {
+        lastPulledAt: now,
+        clientMutationId: "counter-test-1",
+        changes: {
+          orders: { created: [newOrder(1), newOrder(2), newOrder(3)], updated: [] },
+        },
+      },
+    });
+    expect(response).toEqual({ success: true });
+
+    const orders = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("orders")
+        .withIndex("by_store_orderNumber", (q: any) =>
+          q.eq("storeId", storeId).gte("orderNumber", "T-C").lt("orderNumber", "T-C￿"),
+        )
+        .collect(),
+    );
+    const numbers = orders.map((o: any) => o.orderNumber).sort();
+    expect(numbers).toEqual(["T-C001", "T-C002", "T-C003"]);
+
+    // Counter on the device doc should reflect the last assigned suffix.
+    const device = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("syncDevices")
+        .withIndex("by_deviceId", (q: any) => q.eq("deviceId", "tablet-c"))
+        .first(),
+    );
+    expect(device?.orderNumberCounters?.["T-C"]).toBe(3);
+  });
+
+  it("bootstraps the order-number counter from existing orders on first push", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupSyncTestData(t);
+    const now = Date.now();
+
+    await t.run(async (ctx: any) =>
+      ctx.db.insert("syncDevices", {
+        deviceId: "tablet-d",
+        storeId,
+        deviceCode: "D",
+        registeredAt: now,
+        lastSeenAt: now,
+      }),
+    );
+
+    // Pre-existing orders for device D — counter should bootstrap from these.
+    await t.run(async (ctx: any) => {
+      for (const num of ["T-D001", "T-D002", "T-D015"]) {
+        await ctx.db.insert("orders", {
+          storeId,
+          orderNumber: num,
+          orderType: "takeout",
+          status: "paid",
+          grossSales: 0,
+          vatableSales: 0,
+          vatAmount: 0,
+          vatExemptSales: 0,
+          nonVatSales: 0,
+          discountAmount: 0,
+          netSales: 0,
+          createdBy: userId,
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+    });
+
+    const response = await t.mutation(internal.sync.syncPushCore, {
+      storeId,
+      userId,
+      deviceId: "tablet-d",
+      payload: {
+        lastPulledAt: now,
+        clientMutationId: "counter-bootstrap-1",
+        changes: {
+          orders: {
+            created: [
+              {
+                id: "bootstrap-order-1",
+                orderType: "takeout",
+                status: "open",
+                grossSales: 0,
+                vatableSales: 0,
+                vatAmount: 0,
+                vatExemptSales: 0,
+                nonVatSales: 0,
+                discountAmount: 0,
+                netSales: 0,
+                createdAt: now + 1,
+              },
+            ],
+            updated: [],
+          },
+        },
+      },
+    });
+    expect(response).toEqual({ success: true });
+
+    const newOrder = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("orders")
+        .withIndex("by_clientId", (q: any) => q.eq("clientId", "bootstrap-order-1"))
+        .first(),
+    );
+    // Bootstrap should pick T-D015 as the lex-max → counter starts at 15 → next is 16.
+    expect(newOrder?.orderNumber).toBe("T-D016");
   });
 });

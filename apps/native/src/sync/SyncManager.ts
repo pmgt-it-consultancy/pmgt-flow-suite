@@ -6,7 +6,35 @@ import { getDatabase } from "../db";
 import { generateUUID } from "./idBridge";
 import { subscribeToNetworkChanges } from "./networkStatus";
 import { callPull, callPush, callRegisterDevice } from "./syncEndpoints";
-import type { ChangeBucket, SyncState, WatermelonRow } from "./types";
+import type { ChangeBucket, CursorMap, SyncState, WatermelonRow } from "./types";
+
+// Bound the pull loop so a server bug returning complete:false forever can't
+// hang the client. 50 pages * 1500 rows-per-request = 75k rows, far above any
+// realistic store's first-pull volume.
+const MAX_PULL_PAGES = 50;
+
+async function pullAllPages(
+  lastPulledAt: number | null,
+): Promise<{ changes: Record<string, ChangeBucket>; timestamp: number }> {
+  const merged: Record<string, ChangeBucket> = {};
+  let cursors: CursorMap | undefined;
+  let serverNow: number | undefined;
+  for (let i = 0; i < MAX_PULL_PAGES; i++) {
+    const page = await callPull(lastPulledAt, cursors, serverNow);
+    if (serverNow === undefined) serverNow = page.timestamp;
+    for (const [table, bucket] of Object.entries(page.changes ?? {})) {
+      const existing = merged[table] ?? { created: [], updated: [], deleted: [] };
+      merged[table] = {
+        created: [...existing.created, ...bucket.created],
+        updated: [...existing.updated, ...bucket.updated],
+        deleted: [...existing.deleted, ...(bucket.deleted ?? [])],
+      };
+    }
+    if (page.complete) return { changes: merged, timestamp: page.timestamp };
+    cursors = page.cursors;
+  }
+  throw new Error(`pullAllPages: did not complete within ${MAX_PULL_PAGES} pages`);
+}
 
 const PULL_PERIOD_MS = 60_000;
 const RETRY_BACKOFF_MS = [2_000, 5_000, 15_000, 60_000];
@@ -158,7 +186,7 @@ class SyncManagerImpl {
       await synchronize({
         database: getDatabase(),
         pullChanges: async ({ lastPulledAt }) => {
-          const result = await callPull(lastPulledAt ?? null);
+          const result = await pullAllPages(lastPulledAt ?? null);
           // /sync/pull returns camelCase collection names AND camelCase row
           // fields (matching the Convex schema). WatermelonDB's local schema
           // uses snake_case for both, so translate at every level.

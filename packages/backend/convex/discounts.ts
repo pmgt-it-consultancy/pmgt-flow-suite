@@ -104,8 +104,10 @@ export const applyScPwdDiscount = mutation({
     const vatExemptAmount = scPwd.vatExemptAmount * args.quantityApplied;
 
     // Create discount record
+    const now = Date.now();
     const discountId = await ctx.db.insert("orderDiscounts", {
       orderId: args.orderId,
+      storeId: order.storeId,
       orderItemId: args.orderItemId,
       discountType: args.discountType,
       customerName: args.customerName,
@@ -114,7 +116,8 @@ export const applyScPwdDiscount = mutation({
       discountAmount,
       vatExemptAmount,
       approvedBy: args.managerId,
-      createdAt: Date.now(),
+      createdAt: now,
+      updatedAt: now,
     });
 
     // Recalculate order totals
@@ -210,8 +213,10 @@ export const applyBulkScPwdDiscount = mutation({
       const discountAmount = scPwd.discountAmount * item.quantityApplied;
       const vatExemptAmount = scPwd.vatExemptAmount * item.quantityApplied;
 
+      const now = Date.now();
       const discountId = await ctx.db.insert("orderDiscounts", {
         orderId: args.orderId,
+        storeId: order.storeId,
         orderItemId: item.orderItemId,
         discountType: args.discountType,
         customerName: args.customerName,
@@ -220,7 +225,8 @@ export const applyBulkScPwdDiscount = mutation({
         discountAmount,
         vatExemptAmount,
         approvedBy: args.managerId,
-        createdAt: Date.now(),
+        createdAt: now,
+        updatedAt: now,
       });
 
       discountIds.push(discountId);
@@ -263,8 +269,10 @@ export const applyOrderDiscount = mutation({
     }
 
     // Create discount record (order-level, no orderItemId)
+    const now = Date.now();
     const discountId = await ctx.db.insert("orderDiscounts", {
       orderId: args.orderId,
+      storeId: order.storeId,
       orderItemId: undefined,
       discountType: args.discountType,
       customerName: args.customerName,
@@ -273,7 +281,8 @@ export const applyOrderDiscount = mutation({
       discountAmount: args.discountAmount,
       vatExemptAmount: 0, // Promo/manual don't exempt VAT
       approvedBy: args.managerId,
-      createdAt: Date.now(),
+      createdAt: now,
+      updatedAt: now,
     });
 
     // Recalculate order totals
@@ -456,6 +465,7 @@ async function recalculateOrderTotalsWithDiscounts(
     nonVatSales: totals.nonVatSales,
     discountAmount: totalDiscountAmount,
     netSales: netSalesAfterOrderDiscount,
+    updatedAt: Date.now(),
   });
 }
 
