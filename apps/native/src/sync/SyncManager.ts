@@ -13,27 +13,22 @@ import type { ChangeBucket, CursorMap, SyncState, WatermelonRow } from "./types"
 // realistic store's first-pull volume.
 const MAX_PULL_PAGES = 50;
 
-async function pullAllPages(
-  lastPulledAt: number | null,
-): Promise<{ changes: Record<string, ChangeBucket>; timestamp: number }> {
-  const merged: Record<string, ChangeBucket> = {};
-  let cursors: CursorMap | undefined;
-  let serverNow: number | undefined;
-  for (let i = 0; i < MAX_PULL_PAGES; i++) {
-    const page = await callPull(lastPulledAt, cursors, serverNow);
-    if (serverNow === undefined) serverNow = page.timestamp;
-    for (const [table, bucket] of Object.entries(page.changes ?? {})) {
-      const existing = merged[table] ?? { created: [], updated: [], deleted: [] };
-      merged[table] = {
-        created: [...existing.created, ...bucket.created],
-        updated: [...existing.updated, ...bucket.updated],
-        deleted: [...existing.deleted, ...(bucket.deleted ?? [])],
-      };
-    }
-    if (page.complete) return { changes: merged, timestamp: page.timestamp };
-    cursors = page.cursors;
-  }
-  throw new Error(`pullAllPages: did not complete within ${MAX_PULL_PAGES} pages`);
+/**
+ * Hands control back to the event loop so the JS thread can render a frame
+ * between page applies. `setTimeout(0)` queues at the end of the macrotask
+ * queue; `Promise.resolve()` would not yield far enough.
+ */
+function yieldToEventLoop(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+/**
+ * Maps camelCase Convex collection names to the snake_case WatermelonDB
+ * table names used in `tablesApplied`. The pull payload uses camelCase, so
+ * we translate before counting.
+ */
+function camelCollectionToSnake(name: string): string {
+  return name.replace(/[A-Z]/g, (ch) => `_${ch.toLowerCase()}`);
 }
 
 const PULL_PERIOD_MS = 60_000;
@@ -66,6 +61,7 @@ class SyncManagerImpl {
     lastPushedAt: null,
     pendingMutationCount: 0,
     lastError: null,
+    progress: null,
   };
   private listeners = new Set<Listener>();
   private periodicTimer: ReturnType<typeof setInterval> | null = null;
@@ -177,63 +173,166 @@ class SyncManagerImpl {
     return this.syncOnce();
   }
 
+  /**
+   * One sync run. Drives WatermelonDB's `synchronize()` once per server page
+   * so the apply phase commits in small SQLite transactions and yields to
+   * the event loop between pages — keeps the JS thread responsive on a
+   * Force Resync against a populated store.
+   *
+   * Server cursors and `serverNow` are threaded through closure variables
+   * so each iteration's `since` matches the original pull start (matches
+   * existing protocol; no backend change). Push runs once per `syncOnce()`
+   * invocation, on the first iteration only.
+   *
+   * Progress is stamped on `state.progress` at every meaningful boundary:
+   * before each pull, after each apply, and during the push step.
+   */
   private async syncOnce(): Promise<void> {
     if (this.inFlight) return;
     this.inFlight = true;
-    this.setState({ status: "syncing" });
+    this.setState({
+      status: "syncing",
+      progress: {
+        phase: "pull",
+        pageIndex: 1,
+        rowsApplied: 0,
+        currentTable: null,
+        tablesApplied: {},
+      },
+    });
+
+    let pageIndex = 1;
+    let rowsApplied = 0;
+    const tablesApplied: Record<string, number> = {};
+    let cursors: CursorMap | undefined;
+    let serverNow: number | undefined;
+    let pushDone = false;
 
     try {
-      await synchronize({
-        database: getDatabase(),
-        pullChanges: async ({ lastPulledAt }) => {
-          const result = await pullAllPages(lastPulledAt ?? null);
-          // /sync/pull returns camelCase collection names AND camelCase row
-          // fields (matching the Convex schema). WatermelonDB's local schema
-          // uses snake_case for both, so translate at every level.
-          const mapped = mapPullChanges(
-            result.changes as Record<string, ChangeBucket>,
-          ) as unknown as Record<string, ChangeBucket>;
-          return {
-            changes: await demoteExistingCreates(getDatabase(), mapped),
-            timestamp: result.timestamp,
-          };
-        },
-        pushChanges: async ({ changes, lastPulledAt }) => {
-          if (
-            allEmpty(
-              changes as Record<
-                string,
-                { created: WatermelonRow[]; updated: WatermelonRow[]; deleted?: string[] }
-              >,
-            )
-          ) {
-            return;
-          }
-          const clientMutationId = generateUUID();
-          // WatermelonDB hands rows in snake_case (its schema's column names);
-          // /sync/push expects camelCase keys at both the collection and row
-          // level. Strip Watermelon's internal `_status` / `_changed` markers
-          // along the way — applyPushedRow on the backend doesn't read them.
-          const mapped = mapPushChanges(
-            changes as Record<
+      while (true) {
+        let pageComplete = false;
+        let thisPageRows = 0;
+        let thisPageTopTable: string | null = null;
+
+        await synchronize({
+          database: getDatabase(),
+          pullChanges: async ({ lastPulledAt }) => {
+            // Use the SyncManager-tracked cursor/serverNow rather than
+            // WatermelonDB's `lastPulledAt`. After the first page applies,
+            // WatermelonDB advances `lastPulledAt` to the same `serverNow`
+            // we returned, so reading it back would also work — but the
+            // cursors are not part of WatermelonDB's protocol, so we have
+            // to thread them ourselves anyway.
+            const page = await callPull(lastPulledAt ?? null, cursors, serverNow);
+            if (serverNow === undefined) serverNow = page.timestamp;
+            cursors = page.cursors;
+            pageComplete = page.complete;
+
+            const counts = countRows(page.changes as Record<string, ChangeBucket>);
+            thisPageRows = counts.total;
+            // Pick the table with the most rows in this page as
+            // `currentTable` — the user-visible signal of what's being
+            // applied right now. Tables map from camelCase (server) to
+            // snake_case (WM) so the UI label matches the local schema.
+            let topRows = 0;
+            for (const [table, n] of Object.entries(counts.perTable)) {
+              const snake = camelCollectionToSnake(table);
+              tablesApplied[snake] = (tablesApplied[snake] ?? 0) + n;
+              if (n > topRows) {
+                topRows = n;
+                thisPageTopTable = snake;
+              }
+            }
+
+            this.setState({
+              progress: {
+                phase: "apply",
+                pageIndex,
+                rowsApplied: rowsApplied + thisPageRows,
+                currentTable: thisPageTopTable,
+                tablesApplied: { ...tablesApplied },
+              },
+            });
+
+            // /sync/pull returns camelCase collection names AND camelCase row
+            // fields (matching the Convex schema). WatermelonDB's local schema
+            // uses snake_case for both, so translate at every level.
+            const mapped = mapPullChanges(
+              page.changes as Record<string, ChangeBucket>,
+            ) as unknown as Record<string, ChangeBucket>;
+            return {
+              changes: await demoteExistingCreates(getDatabase(), mapped),
+              timestamp: page.timestamp,
+            };
+          },
+          pushChanges: async ({ changes, lastPulledAt }) => {
+            // Push outgoing mutations once per `syncOnce()` invocation, on
+            // the first page only. Subsequent pages skip push: the local
+            // outbox is unchanged across pages, and re-sending mutations
+            // the server already accepted would produce noisy duplicates
+            // even if they're idempotent.
+            if (pushDone) return;
+            const typedChanges = changes as Record<
               string,
-              { created: WatermelonRow[]; updated: WatermelonRow[]; deleted?: string[] }
-            >,
-          );
-          const response = await callPush(
-            {
-              lastPulledAt: lastPulledAt ?? 0,
-              changes: mapped,
-              clientMutationId,
-            },
-            this.deviceId,
-          );
-          if ("rejected" in response && response.rejected.length > 0) {
-            console.warn("[SyncManager] push rejections:", response.rejected);
-          }
-        },
-        sendCreatedAsUpdated: false,
-      });
+              {
+                created: WatermelonRow[];
+                updated: WatermelonRow[];
+                deleted?: string[];
+              }
+            >;
+            if (allEmpty(typedChanges)) {
+              pushDone = true;
+              return;
+            }
+            this.setState({
+              progress: {
+                phase: "push",
+                pageIndex,
+                rowsApplied,
+                currentTable: null,
+                tablesApplied: { ...tablesApplied },
+              },
+            });
+            const clientMutationId = generateUUID();
+            // WatermelonDB hands rows in snake_case (its schema's column names);
+            // /sync/push expects camelCase keys at both the collection and row
+            // level. Strip Watermelon's internal `_status` / `_changed` markers
+            // along the way — applyPushedRow on the backend doesn't read them.
+            const mapped = mapPushChanges(typedChanges);
+            const response = await callPush(
+              {
+                lastPulledAt: lastPulledAt ?? 0,
+                changes: mapped,
+                clientMutationId,
+              },
+              this.deviceId,
+            );
+            if ("rejected" in response && response.rejected.length > 0) {
+              console.warn("[SyncManager] push rejections:", response.rejected);
+            }
+            pushDone = true;
+          },
+          sendCreatedAsUpdated: false,
+        });
+
+        rowsApplied += thisPageRows;
+        if (pageComplete) break;
+
+        pageIndex += 1;
+        if (pageIndex > MAX_PULL_PAGES) {
+          throw new Error(`syncOnce: did not complete within ${MAX_PULL_PAGES} pages`);
+        }
+        this.setState({
+          progress: {
+            phase: "pull",
+            pageIndex,
+            rowsApplied,
+            currentTable: thisPageTopTable,
+            tablesApplied: { ...tablesApplied },
+          },
+        });
+        await yieldToEventLoop();
+      }
 
       this.retryAttempt = 0;
       this.setState({
@@ -241,11 +340,12 @@ class SyncManagerImpl {
         lastPulledAt: Date.now(),
         lastPushedAt: Date.now(),
         lastError: null,
+        progress: null,
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       console.error("[SyncManager]", msg);
-      this.setState({ status: "error", lastError: msg });
+      this.setState({ status: "error", lastError: msg, progress: null });
       this.scheduleRetry();
     } finally {
       this.inFlight = false;
