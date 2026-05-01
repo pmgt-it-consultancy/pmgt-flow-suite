@@ -265,6 +265,29 @@ class SyncManagerImpl {
   }
 }
 
+export type PageRowCounts = {
+  total: number;
+  perTable: Record<string, number>;
+};
+
+/**
+ * Count rows in a single /sync/pull page payload. Returns the grand total
+ * (created + updated + deleted across all tables) plus a per-table
+ * breakdown that excludes tables with zero activity in this page. Drives
+ * `SyncProgress.rowsApplied` and `SyncProgress.tablesApplied`.
+ */
+export function countRows(changes: Record<string, ChangeBucket>): PageRowCounts {
+  let total = 0;
+  const perTable: Record<string, number> = {};
+  for (const [table, bucket] of Object.entries(changes)) {
+    const n = bucket.created.length + bucket.updated.length + (bucket.deleted?.length ?? 0);
+    if (n === 0) continue;
+    perTable[table] = n;
+    total += n;
+  }
+  return { total, perTable };
+}
+
 function allEmpty(
   changes: Record<
     string,
