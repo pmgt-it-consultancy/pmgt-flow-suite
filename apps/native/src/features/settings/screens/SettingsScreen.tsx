@@ -3,11 +3,12 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import Constants from "expo-constants";
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Modal as RNModal, ScrollView, View } from "react-native";
+import { ActivityIndicator, Alert, Modal as RNModal, ScrollView, View } from "react-native";
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { getOrCreateDeviceId } from "../../../auth/deviceId";
 import { syncManager } from "../../../sync/SyncManager";
+import type { SyncState } from "../../../sync/types";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Text } from "../../shared/components/ui";
@@ -17,16 +18,59 @@ interface SettingsScreenProps {
   navigation: any;
 }
 
+/** "modifier_options" → "Modifier Options" */
+function humanizeTableName(snake: string): string {
+  return snake
+    .split("_")
+    .map((w) => (w.length > 0 ? w[0].toUpperCase() + w.slice(1) : w))
+    .join(" ");
+}
+
 export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
   const { user, hasPermission } = useAuth();
   const printers = usePrinterStore((s) => s.printers);
   const storeId = user?.storeId;
   const [deviceCode, setDeviceCode] = useState(syncManager.getDeviceCode());
   const [deviceId, setDeviceId] = useState("");
+  const [syncState, setSyncState] = useState<SyncState>(syncManager.getState());
 
   useEffect(() => {
     getOrCreateDeviceId().then(setDeviceId);
   }, []);
+
+  useEffect(() => syncManager.subscribe(setSyncState), []);
+
+  const isSyncing = syncState.status === "syncing";
+  const syncProgress = syncState.progress;
+  const resyncTitle = isSyncing
+    ? syncProgress?.phase === "push"
+      ? "Pushing changes…"
+      : `Syncing… page ${syncProgress?.pageIndex ?? 1}`
+    : "Force Resync";
+  const resyncSubtitle = (() => {
+    if (!isSyncing) return "Re-download all data from server";
+    const p = syncProgress;
+    if (!p) return "Starting…";
+    if (p.phase === "push") return "Sending pending mutations to the server";
+    if (p.rowsApplied === 0) {
+      return p.currentTable
+        ? `Fetching ${humanizeTableName(p.currentTable)}…`
+        : "Fetching first page…";
+    }
+    const table = p.currentTable ? `${humanizeTableName(p.currentTable)} · ` : "";
+    return `${table}${p.rowsApplied.toLocaleString()} rows applied`;
+  })();
+  const resyncBreakdown = (() => {
+    if (!isSyncing || !syncProgress) return null;
+    const entries = Object.entries(syncProgress.tablesApplied)
+      .filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4);
+    if (entries.length === 0) return null;
+    return entries
+      .map(([table, n]) => `${humanizeTableName(table)} ${n.toLocaleString()}`)
+      .join(" · ");
+  })();
   const [showTimeoutPicker, setShowTimeoutPicker] = useState(false);
   const autoLockTimeout = useQuery(
     api.screenLock.getAutoLockTimeout,
@@ -125,6 +169,7 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
         {/* Force Resync */}
         <Pressable
           android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
+          disabled={isSyncing}
           style={({ pressed }) => [
             {
               backgroundColor: "#FFFFFF",
@@ -135,9 +180,10 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
               borderBottomWidth: 1,
               borderBottomColor: "#F3F4F6",
             },
-            { opacity: pressed ? 0.7 : 1 },
+            { opacity: pressed || isSyncing ? 0.7 : 1 },
           ]}
           onPress={() => {
+            if (isSyncing) return;
             Alert.alert(
               "Force Resync",
               "This will re-download all data from the server. Any unsynced local changes will still be pushed first. Continue?",
@@ -163,10 +209,19 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
             <Ionicons name="refresh-outline" size={20} color="#EF4444" />
           </YStack>
           <YStack flex={1} marginLeft={12}>
-            <Text style={{ fontSize: 16, fontWeight: "600" }}>Force Resync</Text>
-            <Text style={{ fontSize: 14, color: "#6B7280" }}>Re-download all data from server</Text>
+            <Text style={{ fontSize: 16, fontWeight: "600" }}>{resyncTitle}</Text>
+            <Text style={{ fontSize: 14, color: "#6B7280" }}>{resyncSubtitle}</Text>
+            {resyncBreakdown ? (
+              <Text style={{ fontSize: 12, color: "#9CA3AF", marginTop: 2 }}>
+                {resyncBreakdown}
+              </Text>
+            ) : null}
           </YStack>
-          <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          {isSyncing ? (
+            <ActivityIndicator size="small" color="#9CA3AF" />
+          ) : (
+            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          )}
         </Pressable>
 
         {/* Check for Updates */}
