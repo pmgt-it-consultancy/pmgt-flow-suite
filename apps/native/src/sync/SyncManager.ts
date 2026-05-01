@@ -207,6 +207,14 @@ class SyncManagerImpl {
     let cursors: CursorMap | undefined;
     let serverNow: number | undefined;
     let pushDone = false;
+    // Capture the original `lastPulledAt` once. WatermelonDB advances its
+    // own lastPulledAt after every synchronize() apply (to the timestamp we
+    // returned, i.e. `serverNow`), so on iter 2+ the parameter passed to
+    // pullChanges is `serverNow`, not the original since. Convex
+    // pagination cursors are only valid against the index range they were
+    // generated for — we MUST keep `since` constant across the loop.
+    let initialSince: number | null = null;
+    let initialSinceCaptured = false;
 
     try {
       while (true) {
@@ -217,13 +225,14 @@ class SyncManagerImpl {
         await synchronize({
           database: getDatabase(),
           pullChanges: async ({ lastPulledAt }) => {
-            // Use the SyncManager-tracked cursor/serverNow rather than
-            // WatermelonDB's `lastPulledAt`. After the first page applies,
-            // WatermelonDB advances `lastPulledAt` to the same `serverNow`
-            // we returned, so reading it back would also work — but the
-            // cursors are not part of WatermelonDB's protocol, so we have
-            // to thread them ourselves anyway.
-            const page = await callPull(lastPulledAt ?? null, cursors, serverNow);
+            if (!initialSinceCaptured) {
+              initialSince = lastPulledAt ?? null;
+              initialSinceCaptured = true;
+            }
+            // Always send the captured initialSince to the server — never
+            // the per-iter `lastPulledAt`, which advances after each apply
+            // and would invalidate our pagination cursors.
+            const page = await callPull(initialSince, cursors, serverNow);
             if (serverNow === undefined) serverNow = page.timestamp;
             cursors = page.cursors;
             pageComplete = page.complete;
