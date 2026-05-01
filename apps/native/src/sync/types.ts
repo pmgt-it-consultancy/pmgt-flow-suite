@@ -1,11 +1,36 @@
 export type SyncStatus = "idle" | "syncing" | "offline" | "error";
 
+export type SyncPhase = "pull" | "apply" | "push";
+
+export type SyncProgress = {
+  /** Current phase of the sync run. */
+  phase: SyncPhase;
+  /** 1-based index of the page currently being fetched or applied. */
+  pageIndex: number;
+  /** Cumulative created+updated+deleted rows applied so far this run. */
+  rowsApplied: number;
+  /**
+   * Snake_case table name of the most recent collection that produced rows
+   * in the current page. Null when the run hasn't seen any rows yet (e.g. an
+   * empty incremental pull) or during push.
+   */
+  currentTable: string | null;
+  /**
+   * Per-table cumulative count for this run, snake_case keys matching
+   * WatermelonDB collection names. Rendered as a breakdown in the Force
+   * Resync row.
+   */
+  tablesApplied: Record<string, number>;
+};
+
 export type SyncState = {
   status: SyncStatus;
   lastPulledAt: number | null;
   lastPushedAt: number | null;
   pendingMutationCount: number;
   lastError: string | null;
+  /** Live progress while `status === "syncing"`. Null in every other state. */
+  progress: SyncProgress | null;
 };
 
 export type WatermelonRow = {
