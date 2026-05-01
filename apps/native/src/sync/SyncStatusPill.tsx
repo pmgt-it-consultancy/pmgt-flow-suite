@@ -26,11 +26,7 @@ function formatStatus(state: SyncState): string {
     if (p.currentTable) return `Syncing ${humanizeTable(p.currentTable)} · page ${p.pageIndex}`;
     return `Syncing… page ${p.pageIndex}`;
   }
-  if (state.status === "offline") {
-    return state.pendingMutationCount > 0
-      ? `Offline (${state.pendingMutationCount} pending)`
-      : "Offline";
-  }
+  if (state.status === "offline") return "Offline";
   if (state.status === "error") return "Sync failed — tap to retry";
   // idle
   if (!state.lastPulledAt) return "Not synced";

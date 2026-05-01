@@ -27,7 +27,6 @@ export type SyncState = {
   status: SyncStatus;
   lastPulledAt: number | null;
   lastPushedAt: number | null;
-  pendingMutationCount: number;
   lastError: string | null;
   /** Live progress while `status === "syncing"`. Null in every other state. */
   progress: SyncProgress | null;

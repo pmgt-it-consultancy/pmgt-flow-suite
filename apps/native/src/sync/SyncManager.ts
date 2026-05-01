@@ -51,15 +51,13 @@ type Listener = (s: SyncState) => void;
  *               Z-Report-precondition gate).
  *
  * State: subscribers see a SyncState reflecting current status, last
- * sync timestamps, and pending queue depth (TODO: wire from
- * WatermelonDB's outbox).
+ * sync timestamps, error, and live per-page progress.
  */
 class SyncManagerImpl {
   private state: SyncState = {
     status: "idle",
     lastPulledAt: null,
     lastPushedAt: null,
-    pendingMutationCount: 0,
     lastError: null,
     progress: null,
   };
