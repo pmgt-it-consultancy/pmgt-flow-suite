@@ -1,12 +1,12 @@
 ## What's New
 
-- Sync no longer crashes on busy stores — pull is now paginated, so tablets that have been offline for a while (or stores with thousands of orders) can sync without hitting Convex's per-query read limit.
-- Faster, more reliable order pushes — order numbers and product lookups use indexed queries instead of full-table scans, so closing a busy bill no longer slows down with catalog size.
-- Live order data (admin and POS edits) is now correctly tagged for sync — every item, modifier, discount, and void written through the standard order flow carries its store and updated-at timestamp, so future offline-first sessions see all changes.
-- Improved sync recovery tooling — backend operators can now diagnose and clean up legacy sync data via maintenance commands.
+- Live sync progress everywhere — the header pill now shows the current table and page ("Syncing Products · page 2", "Pushing changes…") instead of a generic "Syncing…", and the Force Resync row in Settings shows a live counter, the active table, and a top-4 breakdown of how many rows have been applied per table.
+- Force Resync no longer freezes the app — pull-and-apply is now chunked one transaction per server page with the JS thread yielding between pages, so a fresh resync against a populated store stays responsive and you can scroll/tap menu items while it runs.
+- Crash-resume on partial syncs — if a sync is interrupted mid-pull, the next run resumes from the last completed page instead of restarting from zero.
+- Fixed a paginated-pull bug where pages 2+ silently broke after the apply phase was chunked — the server's `since` is now held constant across iterations so cursors stay valid.
+- Backend: legacy modifier catalog rows that were missing `storeId` (and so invisible to /sync/pull) now backfill correctly; future client-id backfills use the Convex `_id` so they never produce duplicate rows on already-synced tablets.
 
 ## Notes
 
-- Requires backend deploy of the updated /sync/pull and /sync/push endpoints.
-- After upgrading, the first sync may take longer than usual as the tablet pages through any catch-up data.
-- Existing tablets do not need a full re-pull; their saved cursor remains valid.
+- Requires the matching backend deploy.
+- The Force Resync button is disabled while a sync is in progress and re-enables on completion.
