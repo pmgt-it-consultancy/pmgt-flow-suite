@@ -10,8 +10,22 @@ const COLORS: Record<SyncStatus, { bg: string; fg: string }> = {
   error: { bg: "#FEE2E2", fg: "#991B1B" },
 };
 
+/** "modifier_options" → "Modifier Options" */
+function humanizeTable(snake: string): string {
+  return snake
+    .split("_")
+    .map((w) => (w.length > 0 ? w[0].toUpperCase() + w.slice(1) : w))
+    .join(" ");
+}
+
 function formatStatus(state: SyncState): string {
-  if (state.status === "syncing") return "Syncing…";
+  if (state.status === "syncing") {
+    const p = state.progress;
+    if (!p) return "Syncing…";
+    if (p.phase === "push") return "Pushing changes…";
+    if (p.currentTable) return `Syncing ${humanizeTable(p.currentTable)} · page ${p.pageIndex}`;
+    return `Syncing… page ${p.pageIndex}`;
+  }
   if (state.status === "offline") {
     return state.pendingMutationCount > 0
       ? `Offline (${state.pendingMutationCount} pending)`
