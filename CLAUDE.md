@@ -35,6 +35,12 @@ cd apps/web && pnpm lint
 cd apps/native && pnpm ios
 cd apps/native && pnpm android
 cd apps/native && pnpm start
+
+# Convex CLI flag asymmetry (subtle):
+#   `npx convex deploy` defaults to PROD (does NOT accept --prod flag)
+#   `npx convex run <fn>` defaults to whatever local .env points to (DEV)
+# Pass --prod explicitly when invoking maintenance commands against production:
+cd packages/backend && npx convex run --prod syncMaintenance:countLegacyOrphans
 ```
 
 ## Development Tooling
@@ -224,6 +230,10 @@ Current config notes:
 ### Key Patterns
 - **Auth**: `@convex-dev/auth` with auth tables spread into schema; most functions use `requireAuth`, `getAuthenticatedUser`, or `getAuthenticatedUserWithRole` from `packages/backend/convex/lib/auth.ts`
 - **Store scoping**: Most queries/mutations take `storeId` and use `by_store` indexes
+- **Sync write invariants** (critical for offline-first sync correctness — every write path must follow these):
+  - Every insert into `orderItems`, `orderItemModifiers`, `orderDiscounts`, `orderVoids` MUST set `storeId` (sourced from the parent order) and `updatedAt: Date.now()`. The schema marks `storeId` as `v.optional(...)` to support legacy data, but no new code path may rely on that — pull queries `by_store_updatedAt` and silently skips rows without `storeId`.
+  - Every `ctx.db.patch()` on `orders` / `orderItems` / `orderItemModifiers` / `orderDiscounts` / `orderVoids` / `tables` MUST include `updatedAt: Date.now()`. Without it, the change is invisible to incremental pull.
+  - These invariants apply to BOTH sync push handlers (`sync.ts:applyPushedRow`) AND the live admin/POS mutations (`orders.ts`, `checkout.ts`, `discounts.ts`, `helpers/voidsHelpers.ts`). Adding a new mutation that writes order child rows? Re-read this rule.
 - **Tax model**: Philippine VAT (12%) with vatable/non-vat/VAT-exempt classification; calculations in `lib/taxCalculations.ts`
   - VAT rates may be stored as either `12` or `0.12`; normalize before using them in formulas
   - Money values are currently treated as peso amounts with decimal precision, not integer centavos
@@ -235,6 +245,13 @@ Current config notes:
 - **Kitchen ticket fields**: `KitchenTicketData` uses `tableMarker`, `customerName`, `orderCategory` (never `tableName` — that was removed to fix a bug where customer name overwrote the order type display)
 - **Order snapshots**: Product names and prices are snapshotted into order items at creation time
 - **Audit logging**: Operations tracked in `auditLogs` table with store, action, entity references
+- **Offline-first sync architecture** (`convex/sync.ts` + `apps/native/src/sync/`):
+  - **Pull** is paginated. The HTTP `/sync/pull` action calls `syncPullPage` (an `internalAction`), which dispatches to per-table `internalQuery` calls (`pullTablePage`). Each table paginates `by_store_updatedAt` with `.gt("updatedAt", since)` for incremental pulls. Per-table page size is 250; per-HTTP-request row budget is 1500. The native client (`SyncManager.pullChanges`) wraps WatermelonDB with a `pullAllPages()` loop that calls `/sync/pull` repeatedly until `complete: true`, merging buckets across pages.
+  - **Push** order numbers use a per-(device, prefix) counter on `syncDevices.orderNumberCounters`, lazy-bootstrapped via the `by_store_orderNumber` index. Conflict checks use indexed eq lookups. Product-name fallback in `resolveProductIdForOrderItem` uses `by_store_name`. No more full-table scans in the push hot path.
+  - **Maintenance commands** in `convex/syncMaintenance.ts` (run via `npx convex run --prod syncMaintenance:<fn>`):
+    - `countLegacyOrphans` — diagnostic; counts rows with `storeId === undefined` per table.
+    - `cleanupOrphanedLegacyRows` — deletes confirmed orphans (parent gone). Idempotent.
+    - `backfillAllStoreIds` — one-shot backfill that copies `storeId` from parent into legacy child rows.
 
 ## Convex Development Guidelines
 
