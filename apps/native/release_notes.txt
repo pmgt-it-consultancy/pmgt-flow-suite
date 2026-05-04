@@ -1,12 +1,8 @@
 ## What's New
 
-- Live sync progress everywhere — the header pill now shows the current table and page ("Syncing Products · page 2", "Pushing changes…") instead of a generic "Syncing…", and the Force Resync row in Settings shows a live counter, the active table, and a top-4 breakdown of how many rows have been applied per table.
-- Force Resync no longer freezes the app — pull-and-apply is now chunked one transaction per server page with the JS thread yielding between pages, so a fresh resync against a populated store stays responsive and you can scroll/tap menu items while it runs.
-- Crash-resume on partial syncs — if a sync is interrupted mid-pull, the next run resumes from the last completed page instead of restarting from zero.
-- Fixed a paginated-pull bug where pages 2+ silently broke after the apply phase was chunked — the server's `since` is now held constant across iterations so cursors stay valid.
-- Backend: legacy modifier catalog rows that were missing `storeId` (and so invisible to /sync/pull) now backfill correctly; future client-id backfills use the Convex `_id` so they never produce duplicate rows on already-synced tablets.
+- Fixed SC/PWD discount lines showing -₱0.00 in checkout, on receipts, and in reports — discount amounts are now computed at the moment the discount is applied, mirroring the backend formula (20% off VAT-exclusive price for VAT items, 20% off the full price for non-VAT items or non-VAT stores), and include modifier price adjustments in the calculation.
 
 ## Notes
 
-- Requires the matching backend deploy.
-- The Force Resync button is disabled while a sync is in progress and re-enables on completion.
+- Already-applied discounts on existing open orders will still show ₱0.00 because the server's append-only sync rule blocks back-patching — remove and re-add the discount to refresh the value.
+- No backend changes required; the fix lives entirely in the local-first write path.
