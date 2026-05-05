@@ -27,6 +27,7 @@ fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
 const appConfigPath = path.resolve(__dirname, "../app.config.ts");
 let appConfig = fs.readFileSync(appConfigPath, "utf8");
 appConfig = appConfig.replace(/version:\s*"[^"]+"/, `version: "${versionStr}"`);
+appConfig = appConfig.replace(/versionCode:\s*\d+/, `versionCode: ${versionCode}`);
 fs.writeFileSync(appConfigPath, appConfig);
 
 // 3. Update build.gradle

@@ -1,8 +1,8 @@
 ## What's New
 
-- Fixed SC/PWD discount lines showing -₱0.00 in checkout, on receipts, and in reports — discount amounts are now computed at the moment the discount is applied, mirroring the backend formula (20% off VAT-exclusive price for VAT items, 20% off the full price for non-VAT items or non-VAT stores), and include modifier price adjustments in the calculation.
+- Takeout opens more smoothly from the home screen by letting the transition paint before loading the takeout queue.
+- Active order, takeout, and draft item counts now read only the items they need, reducing unnecessary local database work on busy stores.
 
 ## Notes
 
-- Already-applied discounts on existing open orders will still show ₱0.00 because the server's append-only sync rule blocks back-patching — remove and re-add the discount to refresh the value.
-- No backend changes required; the fix lives entirely in the local-first write path.
+- This is a responsiveness-focused patch with no expected changes to order data or checkout behavior.
