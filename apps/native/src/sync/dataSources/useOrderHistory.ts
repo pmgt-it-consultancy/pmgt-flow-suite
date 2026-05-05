@@ -18,6 +18,7 @@ const ORDER_SUMMARY_COLUMNS = [
 ];
 
 const ORDER_ITEM_SUMMARY_COLUMNS = ["order_id", "quantity", "is_voided"];
+const NEVER = "__none__";
 
 export type ActiveOrderSummary = {
   _id: Id<"orders">;
@@ -62,9 +63,16 @@ export function useActiveOrders(
     ORDER_SUMMARY_COLUMNS,
   );
 
+  const orderIds = useMemo(() => (watermelonOrders ?? []).map((o) => o.id), [watermelonOrders]);
+
   const watermelonOrderItems = useObservable<OrderItem>(
-    () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [],
+    () =>
+      getDatabase()
+        .collections.get<OrderItem>("order_items")
+        .query(
+          orderIds.length > 0 ? Q.where("order_id", Q.oneOf(orderIds)) : Q.where("order_id", NEVER),
+        ),
+    [orderIds.join(",")],
     ORDER_ITEM_SUMMARY_COLUMNS,
   );
 
@@ -120,9 +128,16 @@ export function useTakeoutOrders(
     ORDER_SUMMARY_COLUMNS,
   );
 
+  const orderIds = useMemo(() => (watermelonOrders ?? []).map((o) => o.id), [watermelonOrders]);
+
   const watermelonOrderItems = useObservable<OrderItem>(
-    () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [],
+    () =>
+      getDatabase()
+        .collections.get<OrderItem>("order_items")
+        .query(
+          orderIds.length > 0 ? Q.where("order_id", Q.oneOf(orderIds)) : Q.where("order_id", NEVER),
+        ),
+    [orderIds.join(",")],
     ORDER_ITEM_SUMMARY_COLUMNS,
   );
 

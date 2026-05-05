@@ -657,9 +657,16 @@ export function useDraftOrders(storeId: Id<"stores"> | undefined): DraftOrderEnt
     DRAFT_ORDER_COLUMNS,
   );
 
+  const orderIds = useMemo(() => (orders ?? []).map((o) => o.id), [orders]);
+
   const items = useObservable<OrderItem>(
-    () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [],
+    () =>
+      getDatabase()
+        .collections.get<OrderItem>("order_items")
+        .query(
+          orderIds.length > 0 ? Q.where("order_id", Q.oneOf(orderIds)) : Q.where("order_id", NEVER),
+        ),
+    [orderIds.join(",")],
     ORDER_ITEM_COUNT_COLUMNS,
   );
 

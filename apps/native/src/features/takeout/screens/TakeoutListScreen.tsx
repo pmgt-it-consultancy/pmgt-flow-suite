@@ -2,7 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ActivityIndicator, Alert, FlatList, RefreshControl } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  InteractionManager,
+  RefreshControl,
+} from "react-native";
 import { XStack, YStack } from "tamagui";
 import { useDraftOrders, useTakeoutOrders } from "../../../sync";
 import { useAuth } from "../../auth/context";
@@ -51,15 +57,17 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
   const [selectedOrderId, setSelectedOrderId] = useState<Id<"orders"> | null>(null);
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [isCreating, setIsCreating] = useState(false);
+  const [canLoadOrders, setCanLoadOrders] = useState(false);
   const creatingLockRef = useRef(false);
   const advanceLocksRef = useRef<Set<string>>(new Set());
   const [advancingOrderIds, setAdvancingOrderIds] = useState<Set<string>>(new Set());
   const discardLockRef = useRef<Set<string>>(new Set());
 
   const isToday = getStartOfDay(selectedDate) === getStartOfDay(new Date());
+  const dataStoreId = canLoadOrders ? user?.storeId : undefined;
 
   const takeoutOrders = useTakeoutOrders(
-    user?.storeId,
+    dataStoreId,
     getStartOfDay(selectedDate),
     getEndOfDay(selectedDate),
   );
@@ -75,7 +83,17 @@ export const TakeoutListScreen = ({ navigation }: TakeoutListScreenProps) => {
     return unsubscribe;
   }, [navigation]);
 
-  const drafts = useDraftOrders(user?.storeId);
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      setCanLoadOrders(true);
+    });
+
+    return () => {
+      task.cancel();
+    };
+  }, []);
+
+  const drafts = useDraftOrders(dataStoreId);
 
   const { attentionOrders, kitchenOrders, completedOrders } = useMemo(() => {
     if (!takeoutOrders) return { attentionOrders: [], kitchenOrders: [], completedOrders: [] };
