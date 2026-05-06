@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, TextInput } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
@@ -8,6 +8,8 @@ import { XStack, YStack } from "tamagui";
 import { useOrderDetail, useOrderDiscountsQuery, useStore } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { applyBulkScPwdDiscount, removeDiscount } from "../../discounts/services/discountMutations";
+import { buildCheckoutTotals } from "../../orders/services/orderTotals";
+import { recalculateOrderTotals } from "../../orders/services/recalculateOrder";
 import type { KitchenTicketData } from "../../settings/services/escposFormatter";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { type ReceiptData, useFormatCurrency } from "../../shared";
@@ -102,6 +104,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
   // Computed values
   const activeItems = useMemo(() => order?.items.filter((i) => !i.isVoided) ?? [], [order]);
+  const recalculatedOrderIdRef = useRef<string | null>(null);
   const discountedQtyByItem = useMemo(() => {
     const map = new Map<string, number>();
     for (const d of discounts ?? []) {
@@ -112,8 +115,35 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     return map;
   }, [discounts]);
 
+  useEffect(() => {
+    if (!order || order.status !== "open" || activeItems.length === 0) return;
+    if (recalculatedOrderIdRef.current === String(orderId)) return;
+
+    recalculatedOrderIdRef.current = String(orderId);
+    recalculateOrderTotals(String(orderId)).catch((error) => {
+      recalculatedOrderIdRef.current = null;
+      if (__DEV__) console.error("Failed to recalculate checkout totals:", error);
+    });
+  }, [order, orderId, activeItems.length]);
+
   // Payment calculations
-  const netSales = order?.netSales ?? 0;
+  const checkoutTotals = useMemo(
+    () =>
+      buildCheckoutTotals({
+        items: activeItems.map((item) => ({
+          id: item._id,
+          productPrice: item.productPrice,
+          quantity: item.quantity,
+          isVatable: item.isVatable,
+          modifiers: item.modifiers,
+        })),
+        discounts: discounts ?? [],
+        vatRate: store?.vatRate ?? 0.12,
+      }),
+    [activeItems, discounts, store?.vatRate],
+  );
+  const { discountAmount, grossSales, netSales, vatAmount, vatExemptSales, vatableSales } =
+    checkoutTotals;
 
   // Effective amount per line: cash uses cashReceived, card uses amount
   const getLineAmount = useCallback((line: PaymentLine) => {
@@ -316,7 +346,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     const totalCardAmt = paymentLines
       .filter((l) => l.paymentMethod === "card_ewallet")
       .reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
-    const cashPortion = (order?.netSales ?? 0) - totalCardAmt;
+    const cashPortion = netSales - totalCardAmt;
     const totalCashRecv = paymentLines
       .filter((l) => l.paymentMethod === "cash")
       .reduce((sum, l) => sum + (parseFloat(l.cashReceived) || 0), 0);
@@ -359,12 +389,12 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
           priceAdjustment: m.priceAdjustment,
         })),
       })),
-      subtotal: order?.grossSales ?? 0,
+      subtotal: grossSales,
       discounts: discountsList,
-      vatableSales: order?.vatableSales ?? 0,
-      vatAmount: order?.vatAmount ?? 0,
-      vatExemptSales: order?.vatExemptSales ?? 0,
-      total: order?.netSales ?? 0,
+      vatableSales,
+      vatAmount,
+      vatExemptSales,
+      total: netSales,
       paymentMethod:
         paymentLines.length === 1 && primaryLine?.paymentMethod === "card_ewallet"
           ? "card_ewallet"
@@ -405,7 +435,21 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
       transactionDate: new Date(),
       receiptNumber: order?.orderNumber,
     };
-  }, [discounts, store, order, tableName, user?.name, activeItems, paymentLines]);
+  }, [
+    discounts,
+    store,
+    order,
+    tableName,
+    user?.name,
+    activeItems,
+    paymentLines,
+    grossSales,
+    isTakeout,
+    netSales,
+    vatAmount,
+    vatExemptSales,
+    vatableSales,
+  ]);
 
   const handleProcessPayment = useCallback(async () => {
     if (!order) return;
@@ -446,14 +490,13 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
 
     setIsProcessing(true);
     try {
+      await recalculateOrderTotals(orderId as string);
+
       // Build payments: for cash lines, amount = cashReceived (capped at cash portion of bill)
       const totalCardAmount = paymentLines
         .filter((l) => l.paymentMethod === "card_ewallet")
         .reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
       const cashPortionOfBill = netSales - totalCardAmount;
-      const totalCashReceived = paymentLines
-        .filter((l) => l.paymentMethod === "cash")
-        .reduce((sum, l) => sum + (parseFloat(l.cashReceived) || 0), 0);
 
       const payments = paymentLines.map((line) => {
         if (line.paymentMethod === "cash") {
@@ -530,7 +573,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     remaining,
     activeItems,
     isTakeout,
-    processPayment,
+    netSales,
     orderId,
     createReceiptData,
     cashDrawerEnabled,
@@ -583,7 +626,6 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
               line={line}
               lineIndex={index}
               totalLines={paymentLines.length}
-              orderNetSales={order.netSales}
               remainingBalance={remaining}
               onUpdate={(updates) => updatePaymentLine(line.id, updates)}
               onRemove={() => removePaymentLine(line.id)}
@@ -665,10 +707,10 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         </YStack>
 
         <TotalsSummary
-          grossSales={order.grossSales}
-          vatAmount={order.vatAmount}
-          discountAmount={order.discountAmount}
-          netSales={order.netSales}
+          grossSales={grossSales}
+          vatAmount={vatAmount}
+          discountAmount={discountAmount}
+          netSales={netSales}
           change={totalChange}
           showChange={totalChange > 0}
         />
@@ -682,7 +724,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
               Amount Due
             </Text>
             <Text style={{ color: "#0F172A", fontWeight: "700", fontSize: 22 }}>
-              {formatCurrency(order.netSales)}
+              {formatCurrency(netSales)}
             </Text>
           </YStack>
           {paymentLines.length === 1 ? (
@@ -792,7 +834,6 @@ interface PaymentLineCardProps {
   line: PaymentLine;
   lineIndex: number;
   totalLines: number;
-  orderNetSales: number;
   remainingBalance: number;
   onUpdate: (updates: Partial<PaymentLine>) => void;
   onRemove: () => void;
@@ -802,7 +843,6 @@ const PaymentLineCard = ({
   line,
   lineIndex,
   totalLines,
-  orderNetSales,
   remainingBalance,
   onUpdate,
   onRemove,

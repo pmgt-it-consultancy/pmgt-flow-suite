@@ -33,16 +33,17 @@ const formatCurrency = (amount: number): string => {
   return `P ${formatted}`;
 };
 
-const formatDate = (date: Date): string =>
-  new Intl.DateTimeFormat("en-PH", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  }).format(date);
+const pad2 = (value: number): string => value.toString().padStart(2, "0");
+
+export const formatReceiptDateTime = (date: Date): string => {
+  const hours24 = date.getHours();
+  const hours12 = hours24 % 12 || 12;
+  const meridiem = hours24 >= 12 ? "PM" : "AM";
+
+  return `${pad2(date.getMonth() + 1)}/${pad2(date.getDate())}/${date.getFullYear()}, ${hours12}:${pad2(
+    date.getMinutes(),
+  )}:${pad2(date.getSeconds())} ${meridiem}`;
+};
 
 const orderTypeLabel = (type: "dine_in" | "take_out" | "delivery"): string =>
   type === "dine_in" ? "Dine-In" : type === "take_out" ? "Take-Out" : "Delivery";
@@ -84,7 +85,7 @@ export async function printReceiptToThermal(
     ? `${data.receiptNumber ?? data.orderNumber} | ${data.tableMarker}`
     : data.receiptNumber;
   if (receiptNumber) await p.printText(`Receipt #: ${receiptNumber}\n`, normal());
-  await p.printText(`Date: ${formatDate(data.transactionDate)}\n`, normal());
+  await p.printText(`Date: ${formatReceiptDateTime(data.transactionDate)}\n`, normal());
   const typeLabel = data.orderCategory
     ? data.orderCategory === "dine_in"
       ? "Dine-In"
@@ -276,7 +277,7 @@ export async function printKitchenTicketToThermal(
 
   // Timestamp
   await p.printerAlign(ALIGN.LEFT);
-  await p.printText(`${formatDate(data.timestamp)}\n`, normal());
+  await p.printText(`${formatReceiptDateTime(data.timestamp)}\n`, normal());
   await p.printText(`${line("-", w)}\n`, normal());
 
   // Items — group by service type for mixed orders

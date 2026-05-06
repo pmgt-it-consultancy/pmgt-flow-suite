@@ -1,4 +1,9 @@
-import { calculateItemTotals, type ItemCalculation } from "@packages/shared";
+import {
+  aggregateOrderTotals,
+  calculateItemTotals,
+  type ItemCalculation,
+  type OrderTotals,
+} from "@packages/shared";
 
 export interface TotalOrderItem {
   id: string;
@@ -34,6 +39,20 @@ export interface TotalLineItem {
   quantity: number;
 }
 
+export interface CheckoutTotalItem {
+  id: string;
+  productPrice: number;
+  quantity: number;
+  isVatable: boolean;
+  modifiers?: TotalOrderItemModifier[];
+}
+
+export interface CheckoutTotalDiscount {
+  orderItemId?: string;
+  quantityApplied: number;
+  discountAmount: number;
+}
+
 export function calculateLineTotal({
   item,
   modifiersByItemId,
@@ -45,6 +64,46 @@ export function calculateLineTotal({
     modifiersByItemId.get(item.id)?.reduce((sum, modifier) => sum + modifier.priceAdjustment, 0) ??
     0;
   return (item.productPrice + modifierTotal) * item.quantity;
+}
+
+export function buildCheckoutTotals({
+  items,
+  discounts,
+  vatRate,
+}: {
+  items: CheckoutTotalItem[];
+  discounts: CheckoutTotalDiscount[];
+  vatRate: number;
+}): OrderTotals {
+  const itemCalculations = items.map((item) => {
+    const modifierTotal =
+      item.modifiers?.reduce((sum, modifier) => sum + modifier.priceAdjustment, 0) ?? 0;
+    const effectivePrice = item.productPrice + modifierTotal;
+    const discountedQuantity = discounts
+      .filter((discount) => discount.orderItemId === item.id)
+      .reduce((sum, discount) => sum + discount.quantityApplied, 0);
+
+    return calculateItemTotals(
+      effectivePrice,
+      item.quantity,
+      item.isVatable,
+      discountedQuantity,
+      vatRate,
+    );
+  });
+
+  const totals = aggregateOrderTotals(itemCalculations);
+  const globalDiscountAmount = discounts
+    .filter((discount) => !discount.orderItemId)
+    .reduce((sum, discount) => sum + discount.discountAmount, 0);
+
+  if (globalDiscountAmount <= 0) return totals;
+
+  return {
+    ...totals,
+    discountAmount: totals.discountAmount + globalDiscountAmount,
+    netSales: Math.max(0, totals.netSales - globalDiscountAmount),
+  };
 }
 
 export function buildItemCalculations({

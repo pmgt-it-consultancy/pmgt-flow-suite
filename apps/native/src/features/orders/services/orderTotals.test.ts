@@ -1,4 +1,9 @@
-import { buildItemCalculations, buildLineTotalByOrderId, calculateLineTotal } from "./orderTotals";
+import {
+  buildCheckoutTotals,
+  buildItemCalculations,
+  buildLineTotalByOrderId,
+  calculateLineTotal,
+} from "./orderTotals";
 
 describe("calculateLineTotal", () => {
   it("adds modifier adjustments before multiplying quantity", () => {
@@ -95,5 +100,32 @@ describe("buildLineTotalByOrderId", () => {
     });
 
     expect(totals.get("order-1")).toBe(35);
+  });
+});
+
+describe("buildCheckoutTotals", () => {
+  it("uses modifier-aware totals for receipt and payment amounts", () => {
+    const totals = buildCheckoutTotals({
+      items: [
+        {
+          id: "item-1",
+          productPrice: 25,
+          quantity: 1,
+          isVatable: false,
+          modifiers: [
+            {
+              priceAdjustment: 10,
+            },
+          ],
+        },
+      ],
+      discounts: [],
+      vatRate: 0.12,
+    });
+
+    expect(totals.grossSales).toBe(35);
+    expect(totals.nonVatSales).toBe(35);
+    expect(totals.discountAmount).toBe(0);
+    expect(totals.netSales).toBe(35);
   });
 });
