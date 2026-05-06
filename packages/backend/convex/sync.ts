@@ -478,7 +478,7 @@ function dedupePulledBucket(bucket: ChangeBucket): ChangeBucket {
   }
 
   const out = emptyBucket();
-  for (const { row, bucketName } of chosen.values()) {
+  for (const { row, bucketName } of Array.from(chosen.values())) {
     out[bucketName].push(row);
   }
   out.deleted = bucket.deleted;
