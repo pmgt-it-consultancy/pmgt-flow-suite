@@ -9,6 +9,10 @@ interface OrderItem {
   quantity: number;
   lineTotal: number;
   serviceType?: "dine_in" | "takeout";
+  modifiers?: Array<{
+    optionName: string;
+    priceAdjustment: number;
+  }>;
 }
 
 interface OrderSummaryProps {
@@ -68,6 +72,18 @@ export const OrderSummary = ({ items, orderDefaultServiceType }: OrderSummaryPro
               <Text variant="muted" size="xs" style={{ marginTop: 2 }}>
                 Qty {item.quantity}
               </Text>
+              {item.modifiers?.length ? (
+                <YStack marginTop={4} gap={2}>
+                  {item.modifiers.map((modifier, modifierIndex) => (
+                    <Text key={`${modifier.optionName}-${modifierIndex}`} variant="muted" size="xs">
+                      + {modifier.optionName}
+                      {modifier.priceAdjustment > 0
+                        ? ` (${formatCurrency(modifier.priceAdjustment)})`
+                        : ""}
+                    </Text>
+                  ))}
+                </YStack>
+              ) : null}
             </YStack>
             <Text style={{ color: "#111827", fontWeight: "600" }}>
               {formatCurrency(item.lineTotal)}

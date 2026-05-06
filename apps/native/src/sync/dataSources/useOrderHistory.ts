@@ -1,8 +1,9 @@
 import { Q } from "@nozbe/watermelondb";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMemo } from "react";
-import { getDatabase, type Order, type OrderItem } from "../../db";
+import { getDatabase, type Order, type OrderItem, type OrderItemModifier } from "../../db";
 import { useObservable } from "../../db/useObservable";
+import { buildLineTotalByOrderId } from "../../features/orders/services/orderTotals";
 
 const ORDER_SUMMARY_COLUMNS = [
   "order_number",
@@ -17,7 +18,8 @@ const ORDER_SUMMARY_COLUMNS = [
   "pax",
 ];
 
-const ORDER_ITEM_SUMMARY_COLUMNS = ["order_id", "quantity", "is_voided"];
+const ORDER_ITEM_SUMMARY_COLUMNS = ["order_id", "product_price", "quantity", "is_voided"];
+const ORDER_ITEM_MODIFIER_SUMMARY_COLUMNS = ["order_item_id", "price_adjustment"];
 const NEVER = "__none__";
 
 export type ActiveOrderSummary = {
@@ -141,9 +143,28 @@ export function useTakeoutOrders(
     ORDER_ITEM_SUMMARY_COLUMNS,
   );
 
+  const orderItemIds = useMemo(
+    () => (watermelonOrderItems ?? []).map((item) => item.id),
+    [watermelonOrderItems],
+  );
+
+  const watermelonOrderItemModifiers = useObservable<OrderItemModifier>(
+    () =>
+      getDatabase()
+        .collections.get<OrderItemModifier>("order_item_modifiers")
+        .query(
+          orderItemIds.length > 0
+            ? Q.where("order_item_id", Q.oneOf(orderItemIds))
+            : Q.where("order_item_id", NEVER),
+        ),
+    [orderItemIds.join(",")],
+    ORDER_ITEM_MODIFIER_SUMMARY_COLUMNS,
+  );
+
   return useMemo((): TakeoutOrderSummary[] | undefined => {
     if (!storeId) return undefined;
-    if (!watermelonOrders || !watermelonOrderItems) return undefined;
+    if (!watermelonOrders || !watermelonOrderItems || !watermelonOrderItemModifiers)
+      return undefined;
 
     const activeItems = watermelonOrderItems.filter((i) => !i.isVoided);
     const itemCountByOrderId = new Map<string, number>();
@@ -151,6 +172,18 @@ export function useTakeoutOrders(
       const count = itemCountByOrderId.get(item.orderId) ?? 0;
       itemCountByOrderId.set(item.orderId, count + item.quantity);
     }
+
+    const modifiersByItemId = new Map<string, OrderItemModifier[]>();
+    for (const modifier of watermelonOrderItemModifiers) {
+      const list = modifiersByItemId.get(modifier.orderItemId);
+      if (list) list.push(modifier);
+      else modifiersByItemId.set(modifier.orderItemId, [modifier]);
+    }
+
+    const lineTotalByOrderId = buildLineTotalByOrderId({
+      items: watermelonOrderItems,
+      modifiersByItemId,
+    });
 
     let filtered = watermelonOrders;
     if (startDate !== undefined) {
@@ -170,10 +203,20 @@ export function useTakeoutOrders(
         takeoutStatus: o.takeoutStatus ?? "pending",
         customerName: o.customerName,
         status: o.status as "draft" | "open" | "paid" | "voided",
-        netSales: o.netSales,
+        netSales:
+          o.status === "paid" || o.status === "voided"
+            ? o.netSales
+            : (lineTotalByOrderId.get(o.id) ?? o.netSales),
         itemCount: itemCountByOrderId.get(o.id) ?? 0,
         createdAt: o.createdAt,
         refundedFromOrderId: undefined,
       }));
-  }, [storeId, watermelonOrders, watermelonOrderItems, startDate, endDate]);
+  }, [
+    storeId,
+    watermelonOrders,
+    watermelonOrderItems,
+    watermelonOrderItemModifiers,
+    startDate,
+    endDate,
+  ]);
 }

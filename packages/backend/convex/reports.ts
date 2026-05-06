@@ -1316,16 +1316,25 @@ export const getTopSellingProductsLive = query({
 
       for (const item of items) {
         if (item.isVoided) continue;
+        const modifiers = await ctx.db
+          .query("orderItemModifiers")
+          .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", item._id))
+          .collect();
+        const modifierTotal = modifiers.reduce(
+          (sum: number, modifier: Doc<"orderItemModifiers">) => sum + modifier.priceAdjustment,
+          0,
+        );
+        const lineTotal = (item.productPrice + modifierTotal) * item.quantity;
         const existing = productMap.get(item.productId);
         if (existing) {
           existing.quantitySold += item.quantity;
-          existing.grossAmount += item.productPrice * item.quantity;
+          existing.grossAmount += lineTotal;
         } else {
           productMap.set(item.productId, {
             productId: item.productId,
             productName: item.productName,
             quantitySold: item.quantity,
-            grossAmount: item.productPrice * item.quantity,
+            grossAmount: lineTotal,
           });
         }
       }

@@ -1,8 +1,9 @@
 ## What's New
 
-- Takeout opens more smoothly from the home screen by letting the transition paint before loading the takeout queue.
-- Active order, takeout, and draft item counts now read only the items they need, reducing unnecessary local database work on busy stores.
+- Takeout order cards now show the correct total when items include modifiers.
+- Checkout, order history, receipts, voids, and sales reports now include modifier price adjustments consistently.
+- Modifier selections now appear clearly in checkout and order history item summaries.
 
 ## Notes
 
-- This is a responsiveness-focused patch with no expected changes to order data or checkout behavior.
+- This patch improves display and calculation accuracy for orders that use product modifiers.

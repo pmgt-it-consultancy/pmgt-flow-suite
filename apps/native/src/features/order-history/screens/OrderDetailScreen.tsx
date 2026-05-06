@@ -101,6 +101,7 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
             total: i.lineTotal,
             serviceType:
               orderItem?.serviceType ?? (receipt.orderType === "dine_in" ? "dine_in" : "takeout"),
+            modifiers: i.modifiers,
           };
         }),
         subtotal: receipt.grossSales,
@@ -385,6 +386,22 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
                   <Text variant="muted" size="xs">
                     {item.notes}
                   </Text>
+                ) : null}
+                {item.modifiers?.length ? (
+                  <YStack marginTop={4} gap={2}>
+                    {item.modifiers.map((modifier, modifierIndex) => (
+                      <Text
+                        key={`${modifier.optionName}-${modifierIndex}`}
+                        variant="muted"
+                        size="xs"
+                      >
+                        + {modifier.optionName}
+                        {modifier.priceAdjustment > 0
+                          ? ` (${formatCurrency(modifier.priceAdjustment)})`
+                          : ""}
+                      </Text>
+                    ))}
+                  </YStack>
                 ) : null}
               </YStack>
               <Text style={{ color: "#111827", fontWeight: "500", fontSize: 14 }}>

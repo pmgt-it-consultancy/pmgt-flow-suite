@@ -15,6 +15,7 @@ import {
   type User,
 } from "../../db";
 import { useObservable } from "../../db/useObservable";
+import { calculateLineTotal } from "../../features/orders/services/orderTotals";
 
 export interface OrderItemView {
   _id: Id<"orderItems">;
@@ -143,6 +144,10 @@ export interface OrderReceiptView {
     quantity: number;
     unitPrice: number;
     lineTotal: number;
+    modifiers?: Array<{
+      optionName: string;
+      priceAdjustment: number;
+    }>;
   }>;
   grossSales: number;
   vatableSales: number;
@@ -335,7 +340,7 @@ export function useOrderDetail(
     ORDER_ITEM_DETAIL_COLUMNS,
   );
 
-  const itemIds = useMemo(() => (items ?? []).map((i) => i.id), [items]);
+  const itemIds = useMemo(() => (items ?? []).map((item) => item.id), [items]);
 
   const modifiers = useObservable<OrderItemModifier>(
     () =>
@@ -719,6 +724,21 @@ export function useOrderReceipt(
     ORDER_ITEM_DETAIL_COLUMNS,
   );
 
+  const receiptItemIds = useMemo(() => (items ?? []).map((item) => item.id), [items]);
+
+  const receiptModifiers = useObservable<OrderItemModifier>(
+    () =>
+      getDatabase()
+        .collections.get<OrderItemModifier>("order_item_modifiers")
+        .query(
+          receiptItemIds.length > 0
+            ? Q.where("order_item_id", Q.oneOf(receiptItemIds))
+            : Q.where("order_item_id", NEVER),
+        ),
+    [receiptItemIds.join(",")],
+    ORDER_ITEM_MODIFIER_COLUMNS,
+  );
+
   const payments = useObservable<OrderPayment>(
     () =>
       getDatabase()
@@ -748,7 +768,7 @@ export function useOrderReceipt(
 
   return useMemo<OrderReceiptView | null | undefined>(() => {
     if (!orderId) return undefined;
-    if (!orders || !items || !payments) return undefined;
+    if (!orders || !items || !receiptModifiers || !payments) return undefined;
     const order = orders.find((o) => o.id === String(orderId));
     if (!order) return null;
     const store = stores?.find((s) => s.id === order.storeId);
@@ -757,6 +777,13 @@ export function useOrderReceipt(
     const tableName = order.tableId
       ? (tables?.find((t) => t.id === order.tableId)?.name ?? order.tableNameSnapshot)
       : order.tableNameSnapshot;
+
+    const modifiersByItemId = new Map<string, OrderItemModifier[]>();
+    for (const modifier of receiptModifiers) {
+      const list = modifiersByItemId.get(modifier.orderItemId);
+      if (list) list.push(modifier);
+      else modifiersByItemId.set(modifier.orderItemId, [modifier]);
+    }
 
     const paymentArray =
       payments.length > 0
@@ -804,7 +831,11 @@ export function useOrderReceipt(
           name: i.productName,
           quantity: i.quantity,
           unitPrice: i.productPrice,
-          lineTotal: i.productPrice * i.quantity,
+          lineTotal: calculateLineTotal({ item: i, modifiersByItemId }),
+          modifiers: modifiersByItemId.get(i.id)?.map((modifier) => ({
+            optionName: modifier.modifierOptionName,
+            priceAdjustment: modifier.priceAdjustment,
+          })),
         })),
       grossSales: order.grossSales,
       vatableSales: order.vatableSales,
@@ -820,5 +851,5 @@ export function useOrderReceipt(
       cardReferenceNumber: order.cardReferenceNumber,
       payments: paymentArray,
     };
-  }, [orderId, orders, items, payments, stores, tables, users]);
+  }, [orderId, orders, items, receiptModifiers, payments, stores, tables, users]);
 }

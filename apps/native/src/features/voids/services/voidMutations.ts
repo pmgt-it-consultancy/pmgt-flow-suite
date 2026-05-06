@@ -13,6 +13,7 @@ import {
 import { generateUUID } from "../../../sync/idBridge";
 import { syncManager } from "../../../sync/SyncManager";
 import { getNextOrderNumber } from "../../orders/services/orderNumber";
+import { calculateLineTotal } from "../../orders/services/orderTotals";
 import { recalculateOrderTotals } from "../../orders/services/recalculateOrder";
 
 function uid(): string {
@@ -152,7 +153,14 @@ export async function voidOrderItem(params: {
     }
 
     orderId = item.orderId;
-    const voidAmount = item.productPrice * item.quantity;
+    const itemModifiers = await db
+      .get<OrderItemModifier>("order_item_modifiers")
+      .query(Q.where("order_item_id", item.id))
+      .fetch();
+    const voidAmount = calculateLineTotal({
+      item,
+      modifiersByItemId: new Map([[item.id, itemModifiers]]),
+    });
 
     await item.update((oi) => {
       oi.isVoided = true;

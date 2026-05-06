@@ -278,6 +278,14 @@ export const getReceipt = query({
           quantity: v.number(),
           unitPrice: v.number(),
           lineTotal: v.number(),
+          modifiers: v.optional(
+            v.array(
+              v.object({
+                optionName: v.string(),
+                priceAdjustment: v.number(),
+              }),
+            ),
+          ),
         }),
       ),
 
@@ -344,14 +352,27 @@ export const getReceipt = query({
       .withIndex("by_order", (q) => q.eq("orderId", args.orderId))
       .collect();
 
-    const items = orderItems
-      .filter((i) => !i.isVoided)
-      .map((i) => ({
-        name: i.productName,
-        quantity: i.quantity,
-        unitPrice: i.productPrice,
-        lineTotal: i.productPrice * i.quantity,
-      }));
+    const items = await Promise.all(
+      orderItems
+        .filter((i) => !i.isVoided)
+        .map(async (i) => {
+          const modifiers = await ctx.db
+            .query("orderItemModifiers")
+            .withIndex("by_orderItem", (q) => q.eq("orderItemId", i._id))
+            .collect();
+          const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceAdjustment, 0);
+          return {
+            name: i.productName,
+            quantity: i.quantity,
+            unitPrice: i.productPrice,
+            lineTotal: (i.productPrice + modifierTotal) * i.quantity,
+            modifiers: modifiers.map((m) => ({
+              optionName: m.modifierOptionName,
+              priceAdjustment: m.priceAdjustment,
+            })),
+          };
+        }),
+    );
 
     // Fetch payment rows from orderPayments table
     const paymentRows = await ctx.db

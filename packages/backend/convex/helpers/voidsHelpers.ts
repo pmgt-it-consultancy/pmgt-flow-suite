@@ -117,7 +117,15 @@ export const voidOrderItemInternal = internalMutation({
     }
 
     const now = Date.now();
-    const voidAmount = item.productPrice * item.quantity;
+    const modifiers = await ctx.db
+      .query("orderItemModifiers")
+      .withIndex("by_orderItem", (q: any) => q.eq("orderItemId", item._id))
+      .collect();
+    const modifierTotal = modifiers.reduce(
+      (sum: number, modifier: Doc<"orderItemModifiers">) => sum + modifier.priceAdjustment,
+      0,
+    );
+    const voidAmount = (item.productPrice + modifierTotal) * item.quantity;
 
     // Mark item as voided. updatedAt is required for sync to surface this row
     // via the by_store_updatedAt index.

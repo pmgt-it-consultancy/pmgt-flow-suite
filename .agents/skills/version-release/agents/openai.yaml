@@ -1,0 +1,4 @@
+interface:
+  display_name: "Version Release"
+  short_description: "Bump native app versions and release notes"
+  default_prompt: "Use $version-release to prepare a patch release for the native app."

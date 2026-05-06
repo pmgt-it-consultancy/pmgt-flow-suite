@@ -1,5 +1,5 @@
 import { Q } from "@nozbe/watermelondb";
-import { aggregateOrderTotals, calculateItemTotals, type ItemCalculation } from "@packages/shared";
+import { aggregateOrderTotals } from "@packages/shared";
 import {
   getDatabase,
   type Order,
@@ -9,6 +9,7 @@ import {
   type Product,
   type Store,
 } from "../../../db";
+import { buildItemCalculations } from "./orderTotals";
 
 /**
  * Recomputes order totals (grossSales, vatableSales, vatAmount, etc.)
@@ -51,26 +52,13 @@ export async function recalculateOrderTotals(orderId: string): Promise<void> {
   const store = await db.collections.get<Store>("stores").find(order.storeId);
   const vatRate = store?.vatRate ?? 0.12;
 
-  // Calculate per-item tax breakdown
-  const itemCalcs: ItemCalculation[] = [];
-  for (const item of lineItems) {
-    const product = productById.get(item.productId);
-    const isVatable = product?.isVatable ?? false;
-
-    // Count SC/PWD discounts applied to this item
-    const itemDiscounts = discountRecords.filter((d) => d.orderItemId === item.id);
-    const scPwdQuantity = itemDiscounts.reduce((sum, d) => sum + d.quantityApplied, 0);
-
-    const calc = calculateItemTotals(
-      item.productPrice,
-      item.quantity,
-      isVatable,
-      scPwdQuantity,
-      vatRate,
-    );
-
-    itemCalcs.push(calc);
-  }
+  const itemCalcs = buildItemCalculations({
+    items: lineItems,
+    modifiersByItemId,
+    productById,
+    discountRecords,
+    vatRate,
+  });
 
   // Add manual/promo discounts (those without orderItemId) to discount totals
   const globalDiscountAmount = discountRecords
