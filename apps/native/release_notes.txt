@@ -1,9 +1,9 @@
 ## What's New
 
-- Takeout order cards now show the correct total when items include modifiers.
-- Checkout, order history, receipts, voids, and sales reports now include modifier price adjustments consistently.
-- Modifier selections now appear clearly in checkout and order history item summaries.
+- Checkout receipts now show the correct totals when items include modifiers.
+- Thermal receipt timestamps now print cleanly without stray characters before AM/PM.
+- Takeout order cards and order summaries continue to display modifier selections and modifier-inclusive totals.
 
 ## Notes
 
-- This patch improves display and calculation accuracy for orders that use product modifiers.
+- This patch improves receipt accuracy for orders that use product modifiers.
