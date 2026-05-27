@@ -14,7 +14,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,23 +52,33 @@ export default function ReportsPage() {
   const [dateRangeEnd, setDateRangeEnd] = useState(formatDateString(new Date()));
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
+  const [activeTab, setActiveTab] = useState("daily");
+
+  const canQueryReports = isAuthenticated && selectedStoreId;
+  const isDailyTab = activeTab === "daily";
+  const isProductsTab = activeTab === "products";
+  const isHourlyTab = activeTab === "hourly";
+  const isRangeTab = activeTab === "range";
 
   // Queries
   const dailyReport = useQuery(
     api.reports.getDailyReport,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId, reportDate } : "skip",
+    canQueryReports && isDailyTab ? { storeId: selectedStoreId, reportDate } : "skip",
   );
+  const shouldQueryDailyDetails = canQueryReports && isDailyTab && !!dailyReport;
   const productSales = useQuery(
     api.reports.getDailyProductSales,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId, reportDate } : "skip",
+    canQueryReports && (isProductsTab || shouldQueryDailyDetails)
+      ? { storeId: selectedStoreId, reportDate }
+      : "skip",
   );
   const categorySales = useQuery(
     api.reports.getCategorySales,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId, reportDate } : "skip",
+    shouldQueryDailyDetails ? { storeId: selectedStoreId, reportDate } : "skip",
   );
   const hourlySales = useQuery(
     api.reports.getHourlySales,
-    isAuthenticated && selectedStoreId
+    (canQueryReports && isHourlyTab) || shouldQueryDailyDetails
       ? {
           storeId: selectedStoreId,
           reportDate,
@@ -79,17 +89,17 @@ export default function ReportsPage() {
   );
   const dateRangeReport = useQuery(
     api.reports.getDateRangeReport,
-    isAuthenticated && selectedStoreId
+    canQueryReports && isRangeTab
       ? { storeId: selectedStoreId, startDate: dateRangeStart, endDate: dateRangeEnd }
       : "skip",
   );
   const paymentTransactions = useQuery(
     api.reports.getDailyPaymentTransactions,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId, reportDate } : "skip",
+    shouldQueryDailyDetails ? { storeId: selectedStoreId, reportDate } : "skip",
   );
   const store = useQuery(
     api.stores.get,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
+    shouldQueryDailyDetails ? { storeId: selectedStoreId } : "skip",
   );
 
   // Mutations
@@ -126,8 +136,51 @@ export default function ReportsPage() {
     }
   };
 
+  const groupedProductSales = useMemo(() => {
+    if (!productSales) return [];
+
+    const categoryMap = new Map<
+      string,
+      {
+        products: typeof productSales;
+        totalQty: number;
+        totalGross: number;
+        totalVoidedQty: number;
+      }
+    >();
+
+    for (const product of productSales) {
+      const key = product.categoryName ?? "Uncategorized";
+      if (!categoryMap.has(key)) {
+        categoryMap.set(key, {
+          products: [],
+          totalQty: 0,
+          totalGross: 0,
+          totalVoidedQty: 0,
+        });
+      }
+      const group = categoryMap.get(key)!;
+      group.products.push(product);
+      group.totalQty += product.quantitySold;
+      group.totalGross += product.grossAmount;
+      group.totalVoidedQty += product.voidedQuantity;
+    }
+
+    const sortedCategories = Array.from(categoryMap.entries()).sort(([a], [b]) =>
+      a.localeCompare(b),
+    );
+    for (const [, group] of sortedCategories) {
+      group.products.sort((a, b) => b.quantitySold - a.quantitySold);
+    }
+
+    return sortedCategories;
+  }, [productSales]);
+
   // Find max hourly sales for bar chart scaling
-  const maxHourlySales = hourlySales ? Math.max(...hourlySales.map((h) => h.netSales), 1) : 1;
+  const maxHourlySales = useMemo(
+    () => (hourlySales ? Math.max(...hourlySales.map((h) => h.netSales), 1) : 1),
+    [hourlySales],
+  );
 
   return (
     <div className="space-y-6">
@@ -201,7 +254,7 @@ export default function ReportsPage() {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="daily" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList>
           <TabsTrigger value="daily">
             <FileText className="mr-2 h-4 w-4" />
@@ -529,103 +582,64 @@ export default function ReportsPage() {
                   <p>No product sales for this date.</p>
                 </div>
               ) : (
-                (() => {
-                  // Group products by category
-                  const categoryMap = new Map<
-                    string,
-                    {
-                      products: typeof productSales;
-                      totalQty: number;
-                      totalGross: number;
-                      totalVoidedQty: number;
-                    }
-                  >();
-                  for (const product of productSales) {
-                    const key = product.categoryName ?? "Uncategorized";
-                    if (!categoryMap.has(key)) {
-                      categoryMap.set(key, {
-                        products: [],
-                        totalQty: 0,
-                        totalGross: 0,
-                        totalVoidedQty: 0,
-                      });
-                    }
-                    const group = categoryMap.get(key)!;
-                    group.products.push(product);
-                    group.totalQty += product.quantitySold;
-                    group.totalGross += product.grossAmount;
-                    group.totalVoidedQty += product.voidedQuantity;
-                  }
-                  // Sort categories alphabetically
-                  const sortedCategories = Array.from(categoryMap.entries()).sort(([a], [b]) =>
-                    a.localeCompare(b),
-                  );
-                  // Sort products within each category by qty descending
-                  for (const [, group] of sortedCategories) {
-                    group.products.sort((a, b) => b.quantitySold - a.quantitySold);
-                  }
-                  return (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Product</TableHead>
-                          <TableHead className="text-right">Qty Sold</TableHead>
-                          <TableHead className="text-right">Gross Amount</TableHead>
-                          <TableHead className="text-right">Voided</TableHead>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product</TableHead>
+                      <TableHead className="text-right">Qty Sold</TableHead>
+                      <TableHead className="text-right">Gross Amount</TableHead>
+                      <TableHead className="text-right">Voided</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {groupedProductSales.map(([categoryName, group]) => (
+                      <Fragment key={categoryName}>
+                        {/* Category header row */}
+                        <TableRow className="bg-blue-50/50">
+                          <TableCell colSpan={4} className="font-bold text-blue-900 py-2">
+                            {categoryName}
+                          </TableCell>
                         </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {sortedCategories.map(([categoryName, group]) => (
-                          <>
-                            {/* Category header row */}
-                            <TableRow key={`cat-${categoryName}`} className="bg-blue-50/50">
-                              <TableCell colSpan={4} className="font-bold text-blue-900 py-2">
-                                {categoryName}
-                              </TableCell>
-                            </TableRow>
-                            {/* Product rows */}
-                            {group.products.map((product) => (
-                              <TableRow key={product.productId}>
-                                <TableCell className="pl-8 font-medium">
-                                  {product.productName}
-                                </TableCell>
-                                <TableCell className="text-right">{product.quantitySold}</TableCell>
-                                <TableCell className="text-right">
-                                  {formatCurrency(product.grossAmount)}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  {product.voidedQuantity > 0 ? (
-                                    <span className="text-red-600">
-                                      {product.voidedQuantity} (
-                                      {formatCurrency(product.voidedAmount)})
-                                    </span>
-                                  ) : (
-                                    "-"
-                                  )}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                            {/* Category subtotal row */}
-                            <TableRow key={`subtotal-${categoryName}`} className="bg-sky-50/50">
-                              <TableCell className="pl-8 text-sky-800 font-semibold text-sm">
-                                Subtotal
-                              </TableCell>
-                              <TableCell className="text-right text-sky-800 font-semibold text-sm">
-                                {group.totalQty}
-                              </TableCell>
-                              <TableCell className="text-right text-sky-800 font-semibold text-sm">
-                                {formatCurrency(group.totalGross)}
-                              </TableCell>
-                              <TableCell className="text-right text-sky-800 font-semibold text-sm">
-                                {group.totalVoidedQty > 0 ? group.totalVoidedQty : "-"}
-                              </TableCell>
-                            </TableRow>
-                          </>
+                        {/* Product rows */}
+                        {group.products.map((product) => (
+                          <TableRow key={product.productId}>
+                            <TableCell className="pl-8 font-medium">
+                              {product.productName}
+                            </TableCell>
+                            <TableCell className="text-right">{product.quantitySold}</TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(product.grossAmount)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {product.voidedQuantity > 0 ? (
+                                <span className="text-red-600">
+                                  {product.voidedQuantity} ({formatCurrency(product.voidedAmount)})
+                                </span>
+                              ) : (
+                                "-"
+                              )}
+                            </TableCell>
+                          </TableRow>
                         ))}
-                      </TableBody>
-                    </Table>
-                  );
-                })()
+                        {/* Category subtotal row */}
+                        <TableRow className="bg-sky-50/50">
+                          <TableCell className="pl-8 text-sky-800 font-semibold text-sm">
+                            Subtotal
+                          </TableCell>
+                          <TableCell className="text-right text-sky-800 font-semibold text-sm">
+                            {group.totalQty}
+                          </TableCell>
+                          <TableCell className="text-right text-sky-800 font-semibold text-sm">
+                            {formatCurrency(group.totalGross)}
+                          </TableCell>
+                          <TableCell className="text-right text-sky-800 font-semibold text-sm">
+                            {group.totalVoidedQty > 0 ? group.totalVoidedQty : "-"}
+                          </TableCell>
+                        </TableRow>
+                      </Fragment>
+                    ))}
+                  </TableBody>
+                </Table>
               )}
             </CardContent>
           </Card>
