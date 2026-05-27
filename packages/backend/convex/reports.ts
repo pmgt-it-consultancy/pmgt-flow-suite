@@ -21,12 +21,17 @@ async function calculatePaymentTotals(
   let cashTotal = 0;
   let cardEwalletTotal = 0;
 
-  for (const order of paidOrders) {
-    const paymentRows = await ctx.db
-      .query("orderPayments")
-      .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
-      .collect();
+  const paymentsByOrder = await Promise.all(
+    paidOrders.map(async (order) => ({
+      order,
+      paymentRows: await ctx.db
+        .query("orderPayments")
+        .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
+        .collect(),
+    })),
+  );
 
+  for (const { order, paymentRows } of paymentsByOrder) {
     if (paymentRows.length > 0) {
       // Split payment: sum by method from orderPayments
       for (const p of paymentRows) {
@@ -241,12 +246,17 @@ async function aggregateDailyData(
   let voidAmount = 0;
   let voidCount = voidedOrders.length;
 
-  for (const order of voidedOrders) {
-    // Check if this was a refund void (has replacement order)
-    const voids = await ctx.db
-      .query("orderVoids")
-      .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
-      .collect();
+  const voidsByVoidedOrder = await Promise.all(
+    voidedOrders.map(async (order: Doc<"orders">) => ({
+      order,
+      voids: await ctx.db
+        .query("orderVoids")
+        .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
+        .collect(),
+    })),
+  );
+
+  for (const { order, voids } of voidsByVoidedOrder) {
     const refundVoid = voids.find((v: any) => v.voidType === "refund");
 
     if (refundVoid) {
@@ -259,13 +269,14 @@ async function aggregateDailyData(
   }
 
   // Also get item-level voids from paid orders
-  const orderVoids = await ctx.db.query("orderVoids").collect();
-  const dayVoids = orderVoids.filter((v: any) => {
-    return v.createdAt >= startOfDay && v.createdAt < endOfDay;
-  });
+  const paidOrderIds = new Set(paidOrders.map((order: any) => order._id));
+  const dayVoids = await ctx.db
+    .query("orderVoids")
+    .withIndex("by_createdAt", (q: any) => q.gte("createdAt", startOfDay).lt("createdAt", endOfDay))
+    .collect();
 
   for (const v of dayVoids) {
-    if (v.voidType === "item") {
+    if (v.voidType === "item" && paidOrderIds.has(v.orderId)) {
       voidAmount += v.amount;
       voidCount++;
     }
@@ -278,12 +289,16 @@ async function aggregateDailyData(
   let manualDiscounts = 0;
 
   // Get discounts from paid orders
-  for (const order of paidOrders) {
-    const discounts = await ctx.db
-      .query("orderDiscounts")
-      .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
-      .collect();
+  const discountRows = await Promise.all(
+    paidOrders.map((order: Doc<"orders">) =>
+      ctx.db
+        .query("orderDiscounts")
+        .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
+        .collect(),
+    ),
+  );
 
+  for (const discounts of discountRows) {
     for (const discount of discounts) {
       switch (discount.discountType) {
         case "senior_citizen":
@@ -865,14 +880,15 @@ export const getDateRangeReport = query({
     await requirePermission(ctx, currentUser._id, "reports.all_dates");
 
     // Get all reports in date range
-    const allReports = await ctx.db
+    const reports = await ctx.db
       .query("dailyReports")
-      .withIndex("by_store_date", (q) => q.eq("storeId", args.storeId))
+      .withIndex("by_store_date", (q) =>
+        q
+          .eq("storeId", args.storeId)
+          .gte("reportDate", args.startDate)
+          .lte("reportDate", args.endDate),
+      )
       .collect();
-
-    const reports = allReports.filter(
-      (r) => r.reportDate >= args.startDate && r.reportDate <= args.endDate,
-    );
 
     // Aggregate totals
     let totalGrossSales = 0;
