@@ -1,9 +1,10 @@
 ## What's New
 
-- Checkout receipts now show the correct totals when items include modifiers.
-- Thermal receipt timestamps now print cleanly without stray characters before AM/PM.
-- Takeout order cards and order summaries continue to display modifier selections and modifier-inclusive totals.
+- Faster order recalculation — order totals now query only the current order's local items, modifiers, and products.
+- Modifier-inclusive totals — order, VAT, and SC/PWD discount calculations now include modifier price adjustments consistently.
+- More accurate reports — SC/PWD discount rows are recalculated for synced native orders and cleared when discounted items are voided.
+- Faster reports — admin report screens avoid unnecessary live subscriptions and date-range reports use bounded indexed queries.
 
 ## Notes
 
-- This patch improves receipt accuracy for orders that use product modifiers.
+- This update corrects accounting for orders with modifiers and SC/PWD discounts.
