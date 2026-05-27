@@ -1,12 +1,10 @@
 ## What's New
 
-- Offline-first sync with WatermelonDB — all catalog reads, order writes, and mutations now go through local SQLite first, then sync to Convex in the background.
-- Quantity +/- buttons now debounced (300ms) so rapid taps don't fire individual mutations.
-- Takeout status changes (pending → preparing → ready → completed) now re-render immediately without navigating away.
-- Sync layer handles push deletions, pull deduplication, and existing-row conflict resolution.
-- Batch sync performance — existing-row detection during pull uses a single SQL query per table instead of N individual lookups.
+- Faster order recalculation — order totals now query only the current order's local items, modifiers, and products.
+- Modifier-inclusive totals — order, VAT, and SC/PWD discount calculations now include modifier price adjustments consistently.
+- More accurate reports — SC/PWD discount rows are recalculated for synced native orders and cleared when discounted items are voided.
+- Faster reports — admin report screens avoid unnecessary live subscriptions and date-range reports use bounded indexed queries.
 
 ## Notes
 
-- Requires backend deploy of the updated /sync/pull and /sync/push endpoints.
-- First launch after upgrade triggers a full re-pull to refresh local catalog data.
+- This update corrects accounting for orders with modifiers and SC/PWD discounts.
