@@ -120,58 +120,27 @@ export function TableFormDialog({
               }}
             />
 
-            {/* Capacity & Sort Order side by side */}
-            <div className="grid grid-cols-2 gap-4">
-              <form.Field
-                name="capacity"
-                children={(field) => {
-                  const hasErrors =
-                    field.state.meta.isTouched && field.state.meta.errors.length > 0;
-                  return (
-                    <Field data-invalid={hasErrors || undefined}>
-                      <FieldLabel htmlFor="table-capacity">Capacity (seats)</FieldLabel>
-                      <Input
-                        id="table-capacity"
-                        type="number"
-                        min={1}
-                        aria-invalid={hasErrors || undefined}
-                        value={field.state.value}
-                        onChange={(e) =>
-                          field.handleChange(Number.parseInt(e.target.value, 10) || 1)
-                        }
-                        onBlur={field.handleBlur}
-                      />
-                      <FieldError errors={normalizeErrors(field.state.meta.errors)} />
-                    </Field>
-                  );
-                }}
-              />
-
-              <form.Field
-                name="sortOrder"
-                children={(field) => {
-                  const hasErrors =
-                    field.state.meta.isTouched && field.state.meta.errors.length > 0;
-                  return (
-                    <Field data-invalid={hasErrors || undefined}>
-                      <FieldLabel htmlFor="table-sortOrder">Sort Order</FieldLabel>
-                      <Input
-                        id="table-sortOrder"
-                        type="number"
-                        min={0}
-                        aria-invalid={hasErrors || undefined}
-                        value={field.state.value}
-                        onChange={(e) =>
-                          field.handleChange(Number.parseInt(e.target.value, 10) || 0)
-                        }
-                        onBlur={field.handleBlur}
-                      />
-                      <FieldError errors={normalizeErrors(field.state.meta.errors)} />
-                    </Field>
-                  );
-                }}
-              />
-            </div>
+            <form.Field
+              name="capacity"
+              children={(field) => {
+                const hasErrors = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                return (
+                  <Field data-invalid={hasErrors || undefined}>
+                    <FieldLabel htmlFor="table-capacity">Capacity (seats)</FieldLabel>
+                    <Input
+                      id="table-capacity"
+                      type="number"
+                      min={1}
+                      aria-invalid={hasErrors || undefined}
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(Number.parseInt(e.target.value, 10) || 1)}
+                      onBlur={field.handleBlur}
+                    />
+                    <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+                  </Field>
+                );
+              }}
+            />
 
             {/* Active toggle (edit mode only) */}
             {isEditing && (

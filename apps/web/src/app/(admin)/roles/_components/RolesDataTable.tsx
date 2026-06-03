@@ -1,7 +1,8 @@
 "use client";
 
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { Copy, MoreHorizontal, Pencil, Search, Shield } from "lucide-react";
+import { Copy, MoreHorizontal, Pencil, Shield } from "lucide-react";
+import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -20,6 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AdminDataControls } from "../../_shared/AdminDataControls";
 
 type ScopeLevel = "system" | "parent" | "branch";
 
@@ -33,9 +41,19 @@ interface RoleData {
 
 interface RolesDataTableProps {
   roles: RoleData[];
+  totalRoles: number;
   loading: boolean;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  scopeFilter: "all" | ScopeLevel;
+  onScopeFilterChange: (value: "all" | ScopeLevel) => void;
+  typeFilter: "all" | "seeded" | "custom";
+  onTypeFilterChange: (value: "all" | "seeded" | "custom") => void;
+  permissionFilter: "all" | "broad" | "limited";
+  onPermissionFilterChange: (value: "all" | "broad" | "limited") => void;
+  sortBy: "name" | "scope" | "permissions";
+  onSortByChange: (value: "name" | "scope" | "permissions") => void;
+  onResetFilters: () => void;
   onEdit: (role: RoleData) => void;
   onDuplicate: (role: RoleData) => void;
 }
@@ -48,28 +66,96 @@ const scopeLabels: Record<ScopeLevel, string> = {
 
 export function RolesDataTable({
   roles,
+  totalRoles,
   loading,
   searchQuery,
   onSearchChange,
+  scopeFilter,
+  onScopeFilterChange,
+  typeFilter,
+  onTypeFilterChange,
+  permissionFilter,
+  onPermissionFilterChange,
+  sortBy,
+  onSortByChange,
+  onResetFilters,
   onEdit,
   onDuplicate,
 }: RolesDataTableProps) {
+  const activeFilterCount = useMemo(() => {
+    return [
+      searchQuery,
+      scopeFilter !== "all",
+      typeFilter !== "all",
+      permissionFilter !== "all",
+      sortBy !== "name",
+    ].filter(Boolean).length;
+  }, [searchQuery, scopeFilter, typeFilter, permissionFilter, sortBy]);
+
   return (
     <div className="flex flex-col gap-6">
-      {/* Search */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <Input
-              value={searchQuery}
-              onChange={(event) => onSearchChange(event.target.value)}
-              placeholder="Search roles by name, scope, or permission..."
-              className="pl-10"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <AdminDataControls
+        searchValue={searchQuery}
+        searchPlaceholder="Search role, scope, or permission..."
+        onSearchChange={onSearchChange}
+        activeFilterCount={activeFilterCount}
+        onReset={onResetFilters}
+        resultLabel={`${roles.length} of ${totalRoles} roles`}
+      >
+        <Select
+          value={scopeFilter}
+          onValueChange={(value) => onScopeFilterChange(value as "all" | ScopeLevel)}
+        >
+          <SelectTrigger className="h-11 w-full md:w-[150px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Scopes</SelectItem>
+            <SelectItem value="system">System</SelectItem>
+            <SelectItem value="parent">Parent</SelectItem>
+            <SelectItem value="branch">Branch</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={typeFilter}
+          onValueChange={(value) => onTypeFilterChange(value as "all" | "seeded" | "custom")}
+        >
+          <SelectTrigger className="h-11 w-full md:w-[150px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="seeded">Seeded</SelectItem>
+            <SelectItem value="custom">Custom</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={permissionFilter}
+          onValueChange={(value) => onPermissionFilterChange(value as "all" | "broad" | "limited")}
+        >
+          <SelectTrigger className="h-11 w-full md:w-[170px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Permission Sets</SelectItem>
+            <SelectItem value="broad">Broad Access</SelectItem>
+            <SelectItem value="limited">Limited Access</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={sortBy}
+          onValueChange={(value) => onSortByChange(value as "name" | "scope" | "permissions")}
+        >
+          <SelectTrigger className="h-11 w-full md:w-[160px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="name">Name</SelectItem>
+            <SelectItem value="scope">Scope</SelectItem>
+            <SelectItem value="permissions">Permissions</SelectItem>
+          </SelectContent>
+        </Select>
+      </AdminDataControls>
 
       {/* Data Table */}
       <Card>

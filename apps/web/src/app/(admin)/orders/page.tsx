@@ -3,8 +3,8 @@
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useAction, useQuery } from "convex/react";
-import { Eye, Receipt, Search, ShoppingBag, UtensilsCrossed } from "lucide-react";
-import { useState } from "react";
+import { Eye, Receipt, ShoppingBag, UtensilsCrossed } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,8 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -35,6 +33,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency } from "@/lib/format";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { AdminDataControls } from "../_shared/AdminDataControls";
 import {
   BulkVoidConfirmDialog,
   BulkVoidFooter,
@@ -44,12 +43,30 @@ import {
 import { useBulkVoid } from "./_hooks";
 
 type OrderStatus = "open" | "paid" | "voided";
+type OrderTypeFilter = "all" | "dine_in" | "takeout";
+type DateFilter = "all" | "today" | "7d" | "30d";
+type AmountFilter = "all" | "zero" | "under500" | "500to2000" | "over2000";
+type OrderSort = "newest" | "oldest" | "amount-high" | "amount-low" | "items";
+
+function isSameLocalDay(firstTimestamp: number, secondTimestamp: number) {
+  const first = new Date(firstTimestamp);
+  const second = new Date(secondTimestamp);
+  return (
+    first.getFullYear() === second.getFullYear() &&
+    first.getMonth() === second.getMonth() &&
+    first.getDate() === second.getDate()
+  );
+}
 
 export default function OrdersPage() {
   const { isAuthenticated } = useAuth();
   const { selectedStoreId } = useAdminStore();
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<OrderTypeFilter>("all");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+  const [amountFilter, setAmountFilter] = useState<AmountFilter>("all");
+  const [sortBy, setSortBy] = useState<OrderSort>("newest");
   const [selectedOrderId, setSelectedOrderId] = useState<Id<"orders"> | null>(null);
   const bulkVoid = useBulkVoid();
 
@@ -88,16 +105,82 @@ export default function OrdersPage() {
     selectedOrderId && orderDetails?.status === "paid" ? { orderId: selectedOrderId } : "skip",
   );
 
-  // Filter orders by search query
-  const filteredOrders = orders?.filter((order) => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      (order.orderNumber?.toLowerCase().includes(query) ?? false) ||
-      order.customerName?.toLowerCase().includes(query) ||
-      order.tableName?.toLowerCase().includes(query)
-    );
-  });
+  const filteredOrders = useMemo(() => {
+    const now = Date.now();
+    const query = searchQuery.toLowerCase().trim();
+
+    const filtered = orders?.filter((order) => {
+      if (typeFilter !== "all" && order.orderType !== typeFilter) return false;
+
+      if (dateFilter !== "all") {
+        const ageMs = now - order.createdAt;
+        if (dateFilter === "today" && !isSameLocalDay(order.createdAt, now)) return false;
+        if (dateFilter === "7d" && ageMs > 7 * 24 * 60 * 60 * 1000) return false;
+        if (dateFilter === "30d" && ageMs > 30 * 24 * 60 * 60 * 1000) return false;
+      }
+
+      if (amountFilter === "zero" && order.netSales !== 0) return false;
+      if (amountFilter === "under500" && (order.netSales <= 0 || order.netSales >= 500)) {
+        return false;
+      }
+      if (amountFilter === "500to2000" && (order.netSales < 500 || order.netSales > 2000)) {
+        return false;
+      }
+      if (amountFilter === "over2000" && order.netSales <= 2000) return false;
+
+      if (query) {
+        const haystack = [
+          order.orderNumber,
+          order.customerName,
+          order.tableName,
+          order.tabName,
+          order.orderType === "dine_in" ? "dine in dine-in table" : "takeout take out customer",
+          order.status,
+        ]
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
+
+      return true;
+    });
+
+    return filtered?.toSorted((a, b) => {
+      switch (sortBy) {
+        case "oldest":
+          return a.createdAt - b.createdAt;
+        case "amount-high":
+          return b.netSales - a.netSales || b.createdAt - a.createdAt;
+        case "amount-low":
+          return a.netSales - b.netSales || b.createdAt - a.createdAt;
+        case "items":
+          return b.itemCount - a.itemCount || b.createdAt - a.createdAt;
+        default:
+          return b.createdAt - a.createdAt;
+      }
+    });
+  }, [orders, searchQuery, typeFilter, dateFilter, amountFilter, sortBy]);
+
+  const activeFilterCount = useMemo(() => {
+    return [
+      searchQuery,
+      statusFilter !== "all",
+      typeFilter !== "all",
+      dateFilter !== "all",
+      amountFilter !== "all",
+      sortBy !== "newest",
+    ].filter(Boolean).length;
+  }, [searchQuery, statusFilter, typeFilter, dateFilter, amountFilter, sortBy]);
+
+  const orderSummary = useMemo(() => {
+    const list = filteredOrders ?? [];
+    return {
+      totalSales: list.reduce((sum, order) => sum + order.netSales, 0),
+      openCount: list.filter((order) => order.status === "open").length,
+      paidCount: list.filter((order) => order.status === "paid").length,
+      voidedCount: list.filter((order) => order.status === "voided").length,
+    };
+  }, [filteredOrders]);
 
   const getStatusBadge = (status: string, voids?: Array<{ voidType: string }>) => {
     if (status === "voided" && voids?.some((v) => v.voidType === "refund")) {
@@ -122,6 +205,16 @@ export default function OrdersPage() {
       hour: "numeric",
       minute: "2-digit",
     }).format(new Date(timestamp));
+  };
+
+  const resetFilters = () => {
+    setStatusFilter("all");
+    setSearchQuery("");
+    setTypeFilter("all");
+    setDateFilter("all");
+    setAmountFilter("all");
+    setSortBy("newest");
+    bulkVoid.exitSelectionMode();
   };
 
   const handleRefundConfirm = (
@@ -172,67 +265,137 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="status" className="whitespace-nowrap">
-                Status:
-              </Label>
-              <Select
-                value={statusFilter}
-                onValueChange={(value) => {
-                  setStatusFilter(value as OrderStatus | "all");
-                  if (value !== "open") bulkVoid.exitSelectionMode();
-                }}
-              >
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="voided">Voided</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-              <Search className="h-4 w-4 text-gray-500" />
-              <Input
-                placeholder="Search by order #, customer, or table..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1"
-              />
-            </div>
-
-            {statusFilter === "open" && (
-              <Button
-                variant={bulkVoid.isSelectionMode ? "destructive" : "outline"}
-                size="sm"
-                onClick={
-                  bulkVoid.isSelectionMode
-                    ? bulkVoid.exitSelectionMode
-                    : bulkVoid.enterSelectionMode
-                }
-              >
-                {bulkVoid.isSelectionMode ? "Cancel Selection" : "Select"}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <AdminDataControls
+        searchValue={searchQuery}
+        searchPlaceholder="Search order #, table, tab, customer, type, or status..."
+        onSearchChange={setSearchQuery}
+        activeFilterCount={activeFilterCount}
+        onReset={resetFilters}
+        resultLabel={`${filteredOrders?.length ?? 0} of ${orders?.length ?? 0} orders`}
+      >
+        <Select
+          value={statusFilter}
+          onValueChange={(value) => {
+            setStatusFilter(value as OrderStatus | "all");
+            if (value !== "open") bulkVoid.exitSelectionMode();
+          }}
+        >
+          <SelectTrigger className="h-11 w-full md:w-[150px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="open">Open</SelectItem>
+            <SelectItem value="paid">Paid</SelectItem>
+            <SelectItem value="voided">Voided</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={typeFilter}
+          onValueChange={(value) => setTypeFilter(value as OrderTypeFilter)}
+        >
+          <SelectTrigger className="h-11 w-full md:w-[150px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="dine_in">Dine-in</SelectItem>
+            <SelectItem value="takeout">Takeout</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={dateFilter} onValueChange={(value) => setDateFilter(value as DateFilter)}>
+          <SelectTrigger className="h-11 w-full md:w-[150px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Dates</SelectItem>
+            <SelectItem value="today">Today</SelectItem>
+            <SelectItem value="7d">Last 7 Days</SelectItem>
+            <SelectItem value="30d">Last 30 Days</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={amountFilter}
+          onValueChange={(value) => setAmountFilter(value as AmountFilter)}
+        >
+          <SelectTrigger className="h-11 w-full md:w-[170px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Totals</SelectItem>
+            <SelectItem value="zero">Zero Total</SelectItem>
+            <SelectItem value="under500">Under ₱500</SelectItem>
+            <SelectItem value="500to2000">₱500-₱2,000</SelectItem>
+            <SelectItem value="over2000">Over ₱2,000</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={sortBy} onValueChange={(value) => setSortBy(value as OrderSort)}>
+          <SelectTrigger className="h-11 w-full md:w-[160px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest</SelectItem>
+            <SelectItem value="oldest">Oldest</SelectItem>
+            <SelectItem value="amount-high">Total High-Low</SelectItem>
+            <SelectItem value="amount-low">Total Low-High</SelectItem>
+            <SelectItem value="items">Most Items</SelectItem>
+          </SelectContent>
+        </Select>
+        {statusFilter === "open" && (
+          <Button
+            variant={bulkVoid.isSelectionMode ? "destructive" : "outline"}
+            size="sm"
+            className="h-11"
+            onClick={
+              bulkVoid.isSelectionMode ? bulkVoid.exitSelectionMode : bulkVoid.enterSelectionMode
+            }
+          >
+            {bulkVoid.isSelectionMode ? "Cancel Selection" : "Select Orders"}
+          </Button>
+        )}
+        {statusFilter !== "open" && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-11"
+            onClick={() => {
+              setStatusFilter("open");
+              bulkVoid.enterSelectionMode();
+            }}
+          >
+            Bulk select open orders
+          </Button>
+        )}
+      </AdminDataControls>
 
       {/* Orders List */}
       <Card>
         <CardHeader>
-          <CardTitle>Order History</CardTitle>
-          <CardDescription>{filteredOrders?.length ?? 0} order(s) found</CardDescription>
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <CardTitle>Order History</CardTitle>
+              <CardDescription>
+                Latest 100 orders. Filter by operational state, type, total, and date.
+              </CardDescription>
+            </div>
+            <div className="flex flex-wrap gap-2 text-sm">
+              <Badge variant="outline">Open {orderSummary.openCount}</Badge>
+              <Badge variant="outline">Paid {orderSummary.paidCount}</Badge>
+              <Badge variant="outline">Voided {orderSummary.voidedCount}</Badge>
+              <Badge variant="default">{formatCurrency(orderSummary.totalSales)}</Badge>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
+          {selectedStoreId && orders && (
+            <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+              {bulkVoid.isSelectionMode
+                ? "Select open orders using the checkboxes, then use the sticky footer to bulk void abandoned orders."
+                : statusFilter === "open"
+                  ? "Open orders can be selected for bulk void. Use Select Orders in the filter bar."
+                  : "Need to void abandoned orders? Use Bulk select open orders in the filter bar."}
+            </div>
+          )}
           {!selectedStoreId ? (
             <div className="flex flex-col items-center justify-center h-32 text-gray-500">
               <Receipt className="h-8 w-8 mb-2" />
@@ -248,91 +411,96 @@ export default function OrdersPage() {
               <p>No orders found.</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {bulkVoid.isSelectionMode && (
-                    <TableHead className="w-10">
-                      <input
-                        type="checkbox"
-                        checked={
-                          (filteredOrders?.length ?? 0) > 0 &&
-                          bulkVoid.selectedIds.size === (filteredOrders?.length ?? 0)
-                        }
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            bulkVoid.selectAll(filteredOrders?.map((o) => o._id) ?? []);
-                          } else {
-                            bulkVoid.deselectAll();
-                          }
-                        }}
-                        className="rounded border-gray-300"
-                      />
-                    </TableHead>
-                  )}
-                  <TableHead>Order #</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Table/Customer</TableHead>
-                  <TableHead>Items</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOrders?.map((order) => (
-                  <TableRow key={order._id}>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
                     {bulkVoid.isSelectionMode && (
-                      <TableCell>
+                      <TableHead className="w-10">
                         <input
+                          aria-label="Select all visible orders"
                           type="checkbox"
-                          checked={bulkVoid.selectedIds.has(order._id)}
-                          onChange={() => bulkVoid.toggleSelection(order._id)}
-                          className="rounded border-gray-300"
+                          checked={
+                            (filteredOrders?.length ?? 0) > 0 &&
+                            bulkVoid.selectedIds.size === (filteredOrders?.length ?? 0)
+                          }
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              bulkVoid.selectAll(filteredOrders?.map((o) => o._id) ?? []);
+                            } else {
+                              bulkVoid.deselectAll();
+                            }
+                          }}
+                          className="h-5 w-5 rounded border-gray-300"
                         />
-                      </TableCell>
+                      </TableHead>
                     )}
-                    <TableCell className="font-medium">{order.orderNumber}</TableCell>
-                    <TableCell>{formatDate(order.createdAt)}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        {order.orderType === "dine_in" ? (
-                          <UtensilsCrossed className="h-3 w-3" />
-                        ) : (
-                          <ShoppingBag className="h-3 w-3" />
-                        )}
-                        {order.orderType === "dine_in" ? "Dine-in" : "Takeout"}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {order.orderType === "dine_in" ? (
-                        <div className="flex flex-col">
-                          <span>{order.tableName || "-"}</span>
-                          {order.tabName && (
-                            <span className="text-xs text-gray-500">{order.tabName}</span>
-                          )}
-                        </div>
-                      ) : (
-                        order.customerName || "-"
-                      )}
-                    </TableCell>
-                    <TableCell>{order.itemCount}</TableCell>
-                    <TableCell>{formatCurrency(order.netSales)}</TableCell>
-                    <TableCell>{getStatusBadge(order.status)}</TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setSelectedOrderId(order._id)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
+                    <TableHead>Order #</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Table/Customer</TableHead>
+                    <TableHead>Items</TableHead>
+                    <TableHead>Total</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredOrders?.map((order) => (
+                    <TableRow key={order._id}>
+                      {bulkVoid.isSelectionMode && (
+                        <TableCell>
+                          <input
+                            type="checkbox"
+                            checked={bulkVoid.selectedIds.has(order._id)}
+                            onChange={() => bulkVoid.toggleSelection(order._id)}
+                            aria-label={`Select order ${order.orderNumber ?? order._id}`}
+                            className="h-5 w-5 rounded border-gray-300"
+                          />
+                        </TableCell>
+                      )}
+                      <TableCell className="font-medium">{order.orderNumber}</TableCell>
+                      <TableCell>{formatDate(order.createdAt)}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          {order.orderType === "dine_in" ? (
+                            <UtensilsCrossed className="h-3 w-3" />
+                          ) : (
+                            <ShoppingBag className="h-3 w-3" />
+                          )}
+                          {order.orderType === "dine_in" ? "Dine-in" : "Takeout"}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {order.orderType === "dine_in" ? (
+                          <div className="flex flex-col">
+                            <span>{order.tableName || "-"}</span>
+                            {order.tabName && (
+                              <span className="text-xs text-gray-500">{order.tabName}</span>
+                            )}
+                          </div>
+                        ) : (
+                          order.customerName || "-"
+                        )}
+                      </TableCell>
+                      <TableCell>{order.itemCount}</TableCell>
+                      <TableCell>{formatCurrency(order.netSales)}</TableCell>
+                      <TableCell>{getStatusBadge(order.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`View order ${order.orderNumber ?? order._id}`}
+                          onClick={() => setSelectedOrderId(order._id)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

@@ -245,22 +245,47 @@ export function ProductFormDialog({
                 )}
               />
 
-              {/* Price & Sort Order (non-open-price) */}
+              {/* Price (non-open-price) */}
               <form.Subscribe
                 selector={(state) => state.values.isOpenPrice}
                 children={(isOpenPrice) =>
                   !isOpenPrice ? (
+                    <form.Field
+                      name="price"
+                      children={(field) => {
+                        const hasErrors =
+                          field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                        return (
+                          <Field data-invalid={hasErrors || undefined}>
+                            <FieldLabel htmlFor="product-price">Price (VAT-inclusive)</FieldLabel>
+                            <Input
+                              id="product-price"
+                              type="number"
+                              step="0.01"
+                              aria-invalid={hasErrors || undefined}
+                              value={field.state.value}
+                              onChange={(e) =>
+                                field.handleChange(Number.parseFloat(e.target.value) || 0)
+                              }
+                              onBlur={field.handleBlur}
+                            />
+                            <FieldError errors={normalizeErrors(field.state.meta.errors)} />
+                          </Field>
+                        );
+                      }}
+                    />
+                  ) : (
                     <div className="grid grid-cols-2 gap-4">
                       <form.Field
-                        name="price"
+                        name="minPrice"
                         children={(field) => {
                           const hasErrors =
                             field.state.meta.isTouched && field.state.meta.errors.length > 0;
                           return (
                             <Field data-invalid={hasErrors || undefined}>
-                              <FieldLabel htmlFor="product-price">Price (VAT-inclusive)</FieldLabel>
+                              <FieldLabel htmlFor="product-minPrice">Minimum Price</FieldLabel>
                               <Input
-                                id="product-price"
+                                id="product-minPrice"
                                 type="number"
                                 step="0.01"
                                 aria-invalid={hasErrors || undefined}
@@ -276,21 +301,21 @@ export function ProductFormDialog({
                         }}
                       />
                       <form.Field
-                        name="sortOrder"
+                        name="maxPrice"
                         children={(field) => {
                           const hasErrors =
                             field.state.meta.isTouched && field.state.meta.errors.length > 0;
                           return (
                             <Field data-invalid={hasErrors || undefined}>
-                              <FieldLabel htmlFor="product-sortOrder">Sort Order</FieldLabel>
+                              <FieldLabel htmlFor="product-maxPrice">Maximum Price</FieldLabel>
                               <Input
-                                id="product-sortOrder"
+                                id="product-maxPrice"
                                 type="number"
-                                min={0}
+                                step="0.01"
                                 aria-invalid={hasErrors || undefined}
                                 value={field.state.value}
                                 onChange={(e) =>
-                                  field.handleChange(Number.parseInt(e.target.value, 10) || 0)
+                                  field.handleChange(Number.parseFloat(e.target.value) || 0)
                                 }
                                 onBlur={field.handleBlur}
                               />
@@ -300,85 +325,6 @@ export function ProductFormDialog({
                         }}
                       />
                     </div>
-                  ) : (
-                    <>
-                      {/* Min Price & Max Price */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <form.Field
-                          name="minPrice"
-                          children={(field) => {
-                            const hasErrors =
-                              field.state.meta.isTouched && field.state.meta.errors.length > 0;
-                            return (
-                              <Field data-invalid={hasErrors || undefined}>
-                                <FieldLabel htmlFor="product-minPrice">Minimum Price</FieldLabel>
-                                <Input
-                                  id="product-minPrice"
-                                  type="number"
-                                  step="0.01"
-                                  aria-invalid={hasErrors || undefined}
-                                  value={field.state.value}
-                                  onChange={(e) =>
-                                    field.handleChange(Number.parseFloat(e.target.value) || 0)
-                                  }
-                                  onBlur={field.handleBlur}
-                                />
-                                <FieldError errors={normalizeErrors(field.state.meta.errors)} />
-                              </Field>
-                            );
-                          }}
-                        />
-                        <form.Field
-                          name="maxPrice"
-                          children={(field) => {
-                            const hasErrors =
-                              field.state.meta.isTouched && field.state.meta.errors.length > 0;
-                            return (
-                              <Field data-invalid={hasErrors || undefined}>
-                                <FieldLabel htmlFor="product-maxPrice">Maximum Price</FieldLabel>
-                                <Input
-                                  id="product-maxPrice"
-                                  type="number"
-                                  step="0.01"
-                                  aria-invalid={hasErrors || undefined}
-                                  value={field.state.value}
-                                  onChange={(e) =>
-                                    field.handleChange(Number.parseFloat(e.target.value) || 0)
-                                  }
-                                  onBlur={field.handleBlur}
-                                />
-                                <FieldError errors={normalizeErrors(field.state.meta.errors)} />
-                              </Field>
-                            );
-                          }}
-                        />
-                      </div>
-                      {/* Sort Order (open price) */}
-                      <form.Field
-                        name="sortOrder"
-                        children={(field) => {
-                          const hasErrors =
-                            field.state.meta.isTouched && field.state.meta.errors.length > 0;
-                          return (
-                            <Field data-invalid={hasErrors || undefined}>
-                              <FieldLabel htmlFor="product-sortOrder-open">Sort Order</FieldLabel>
-                              <Input
-                                id="product-sortOrder-open"
-                                type="number"
-                                min={0}
-                                aria-invalid={hasErrors || undefined}
-                                value={field.state.value}
-                                onChange={(e) =>
-                                  field.handleChange(Number.parseInt(e.target.value, 10) || 0)
-                                }
-                                onBlur={field.handleBlur}
-                              />
-                              <FieldError errors={normalizeErrors(field.state.meta.errors)} />
-                            </Field>
-                          );
-                        }}
-                      />
-                    </>
                   )
                 }
               />

@@ -4,7 +4,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { Plus } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,6 +27,11 @@ export default function TablesPage() {
   const [editingId, setEditingId] = useState<Id<"tables"> | null>(null);
   const [formInitialValues, setFormInitialValues] = useState<TableFormValues | undefined>();
   const [editingTab, setEditingTab] = useState<EditingTab | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "available" | "occupied">("all");
+  const [capacityFilter, setCapacityFilter] = useState<"all" | "small" | "medium" | "large">("all");
+  const [activityFilter, setActivityFilter] = useState<"all" | "with-tabs" | "empty">("all");
+  const [sortBy, setSortBy] = useState<"floor" | "name" | "capacity" | "tabs" | "sales">("floor");
 
   // Queries
   const tablesWithOrders = useQuery(
@@ -36,6 +41,38 @@ export default function TablesPage() {
 
   // Mutations
   const updateTabName = useMutation(api.orders.updateTabName);
+  const reorderTables = useMutation(api.tables.reorder);
+
+  const filteredTables = useMemo(() => {
+    const filtered = tablesWithOrders?.filter((table) => {
+      if (statusFilter !== "all" && table.status !== statusFilter) return false;
+      if (activityFilter === "with-tabs" && table.totalTabs === 0) return false;
+      if (activityFilter === "empty" && table.totalTabs > 0) return false;
+      const capacity = table.capacity ?? 4;
+      if (capacityFilter === "small" && capacity > 2) return false;
+      if (capacityFilter === "medium" && (capacity < 3 || capacity > 4)) return false;
+      if (capacityFilter === "large" && capacity < 5) return false;
+      if (searchQuery && !table.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      return true;
+    });
+
+    return filtered?.toSorted((a, b) => {
+      switch (sortBy) {
+        case "name":
+          return a.name.localeCompare(b.name);
+        case "capacity":
+          return (b.capacity ?? 4) - (a.capacity ?? 4) || a.name.localeCompare(b.name);
+        case "tabs":
+          return b.totalTabs - a.totalTabs || a.name.localeCompare(b.name);
+        case "sales":
+          return b.totalNetSales - a.totalNetSales || a.name.localeCompare(b.name);
+        default:
+          return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name);
+      }
+    });
+  }, [tablesWithOrders, statusFilter, activityFilter, capacityFilter, searchQuery, sortBy]);
 
   // Calculate next sort order from current data
   const getNextSortOrder = useCallback(() => {
@@ -113,7 +150,28 @@ export default function TablesPage() {
       {/* Tables List */}
       <TablesDataTable
         tablesWithOrders={tablesWithOrders}
+        filteredTables={filteredTables}
         selectedStoreId={selectedStoreId}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        capacityFilter={capacityFilter}
+        onCapacityFilterChange={setCapacityFilter}
+        activityFilter={activityFilter}
+        onActivityFilterChange={setActivityFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+        onResetFilters={() => {
+          setSearchQuery("");
+          setStatusFilter("all");
+          setCapacityFilter("all");
+          setActivityFilter("all");
+          setSortBy("floor");
+        }}
+        onReorder={async (tableIds) => {
+          await reorderTables({ tableIds });
+        }}
         onEdit={handleOpenEdit}
         onDuplicate={handleDuplicate}
         onEditTab={setEditingTab}

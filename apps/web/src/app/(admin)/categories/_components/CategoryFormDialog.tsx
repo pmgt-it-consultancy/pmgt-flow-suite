@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -188,33 +188,6 @@ export function CategoryFormDialog({
                     </Select>
                   </Field>
                 )}
-              />
-
-              {/* Sort Order */}
-              <form.Field
-                name="sortOrder"
-                children={(field) => {
-                  const hasErrors =
-                    field.state.meta.isTouched && field.state.meta.errors.length > 0;
-                  return (
-                    <Field data-invalid={hasErrors || undefined}>
-                      <FieldLabel htmlFor="category-sortOrder">Sort Order</FieldLabel>
-                      <Input
-                        id="category-sortOrder"
-                        type="number"
-                        min={0}
-                        aria-invalid={hasErrors || undefined}
-                        value={field.state.value}
-                        onChange={(e) =>
-                          field.handleChange(Number.parseInt(e.target.value, 10) || 0)
-                        }
-                        onBlur={field.handleBlur}
-                      />
-                      <FieldDescription>Lower numbers appear first.</FieldDescription>
-                      <FieldError errors={normalizeErrors(field.state.meta.errors)} />
-                    </Field>
-                  );
-                }}
               />
 
               {/* Status (edit mode only) */}

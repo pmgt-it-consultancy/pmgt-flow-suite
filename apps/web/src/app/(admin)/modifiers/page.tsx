@@ -2,9 +2,9 @@
 
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Plus } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminStore } from "@/stores/useAdminStore";
@@ -20,6 +20,11 @@ export default function ModifiersPage() {
   const [editingId, setEditingId] = useState<Id<"modifierGroups"> | null>(null);
   const [formInitialValues, setFormInitialValues] = useState<ModifierGroupFormValues | undefined>();
   const [originalOptionIds, setOriginalOptionIds] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"active" | "inactive" | "all">("active");
+  const [selectionFilter, setSelectionFilter] = useState<"all" | "single" | "multi">("all");
+  const [optionFilter, setOptionFilter] = useState<"all" | "empty" | "configured">("all");
+  const [sortBy, setSortBy] = useState<"menu" | "name" | "options">("menu");
 
   // Used to load group data before opening the dialog (for edit and duplicate)
   const [loadingGroupId, setLoadingGroupId] = useState<Id<"modifierGroups"> | null>(null);
@@ -32,6 +37,31 @@ export default function ModifiersPage() {
       ? { storeId: selectedStoreId, includeInactive: true }
       : "skip",
   );
+  const reorderGroups = useMutation(api.modifierGroups.reorder);
+
+  const filteredGroups = useMemo(() => {
+    const filtered = groups?.filter((group) => {
+      if (statusFilter !== "all" && group.isActive !== (statusFilter === "active")) return false;
+      if (selectionFilter !== "all" && group.selectionType !== selectionFilter) return false;
+      if (optionFilter === "empty" && group.optionCount > 0) return false;
+      if (optionFilter === "configured" && group.optionCount === 0) return false;
+      if (searchQuery && !group.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      return true;
+    });
+
+    return filtered?.toSorted((a, b) => {
+      switch (sortBy) {
+        case "name":
+          return a.name.localeCompare(b.name);
+        case "options":
+          return b.optionCount - a.optionCount || a.name.localeCompare(b.name);
+        default:
+          return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name);
+      }
+    });
+  }, [groups, statusFilter, selectionFilter, optionFilter, searchQuery, sortBy]);
 
   // Query for the group being loaded (to populate form with options)
   const loadingGroup = useQuery(
@@ -135,7 +165,28 @@ export default function ModifiersPage() {
       {/* Groups Table */}
       <ModifiersDataTable
         groups={groups}
+        filteredGroups={filteredGroups}
         selectedStoreId={selectedStoreId}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        selectionFilter={selectionFilter}
+        onSelectionFilterChange={setSelectionFilter}
+        optionFilter={optionFilter}
+        onOptionFilterChange={setOptionFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+        onResetFilters={() => {
+          setSearchQuery("");
+          setStatusFilter("active");
+          setSelectionFilter("all");
+          setOptionFilter("all");
+          setSortBy("menu");
+        }}
+        onReorder={async (modifierGroupIds) => {
+          await reorderGroups({ modifierGroupIds });
+        }}
         onEdit={handleOpenEdit}
         onDuplicate={handleOpenDuplicate}
       />

@@ -2,7 +2,7 @@
 
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Plus } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,12 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<Id<"categories"> | "all">("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("active");
+  const [priceFilter, setPriceFilter] = useState<"all" | "fixed" | "open">("all");
+  const [vatFilter, setVatFilter] = useState<"all" | "vat" | "non-vat">("all");
+  const [modifierFilter, setModifierFilter] = useState<"all" | "with" | "without">("all");
+  const [sortBy, setSortBy] = useState<"menu" | "name" | "category" | "price" | "updated">("menu");
   const includeInactiveProducts = statusFilter !== "active";
+  const reorderProducts = useMutation(api.products.reorder);
 
   // Queries
   const store = useQuery(
@@ -47,16 +52,54 @@ export default function ProductsPage() {
   );
 
   // Filtered products
-  const filteredProducts = useMemo(
-    () =>
-      products?.filter((p) => {
-        if (statusFilter !== "all" && p.isActive !== (statusFilter === "active")) return false;
-        if (categoryFilter !== "all" && p.categoryId !== categoryFilter) return false;
-        if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-        return true;
-      }),
-    [products, statusFilter, categoryFilter, searchQuery],
-  );
+  const filteredProducts = useMemo(() => {
+    const filtered = products?.filter((p) => {
+      if (statusFilter !== "all" && p.isActive !== (statusFilter === "active")) return false;
+      if (categoryFilter !== "all" && p.categoryId !== categoryFilter) return false;
+      if (priceFilter !== "all" && (p.isOpenPrice ? "open" : "fixed") !== priceFilter) {
+        return false;
+      }
+      if (vatFilter !== "all" && p.isVatable !== (vatFilter === "vat")) return false;
+      if (modifierFilter !== "all" && p.hasModifiers !== (modifierFilter === "with")) {
+        return false;
+      }
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const matchesName = p.name.toLowerCase().includes(query);
+        const matchesCategory = p.categoryName.toLowerCase().includes(query);
+        if (!matchesName && !matchesCategory) return false;
+      }
+      return true;
+    });
+
+    return filtered?.toSorted((a, b) => {
+      switch (sortBy) {
+        case "name":
+          return a.name.localeCompare(b.name);
+        case "category":
+          return (
+            a.categoryName.localeCompare(b.categoryName) ||
+            a.sortOrder - b.sortOrder ||
+            a.name.localeCompare(b.name)
+          );
+        case "price":
+          return a.price - b.price || a.name.localeCompare(b.name);
+        case "updated":
+          return b.updatedAt - a.updatedAt;
+        default:
+          return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name);
+      }
+    });
+  }, [
+    products,
+    statusFilter,
+    categoryFilter,
+    priceFilter,
+    vatFilter,
+    modifierFilter,
+    searchQuery,
+    sortBy,
+  ]);
 
   const catalogPdfData = useMemo(() => {
     if (!filteredProducts || !store) return null;
@@ -265,6 +308,26 @@ export default function ProductsPage() {
         onCategoryFilterChange={setCategoryFilter}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
+        priceFilter={priceFilter}
+        onPriceFilterChange={setPriceFilter}
+        vatFilter={vatFilter}
+        onVatFilterChange={setVatFilter}
+        modifierFilter={modifierFilter}
+        onModifierFilterChange={setModifierFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+        onResetFilters={() => {
+          setSearchQuery("");
+          setCategoryFilter("all");
+          setStatusFilter("active");
+          setPriceFilter("all");
+          setVatFilter("all");
+          setModifierFilter("all");
+          setSortBy("menu");
+        }}
+        onReorder={async (productIds) => {
+          await reorderProducts({ productIds });
+        }}
         onEdit={handleOpenEdit}
         onDuplicate={handleDuplicate}
       />

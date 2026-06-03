@@ -4,7 +4,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminStore } from "@/stores/useAdminStore";
@@ -38,6 +38,11 @@ export default function UsersPage() {
 
   // Search
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"active" | "inactive" | "all">("active");
+  const [pinFilter, setPinFilter] = useState<"all" | "has-pin" | "needs-pin">("all");
+  const [storeFilter, setStoreFilter] = useState<"all" | "assigned" | "all-stores">("all");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"name" | "email" | "role" | "store">("name");
 
   // Queries
   const users = useQuery(
@@ -45,12 +50,41 @@ export default function UsersPage() {
     isAuthenticated ? { storeId: selectedStoreId ?? undefined } : "skip",
   );
 
-  // Filter users by search query
-  const filteredUsers = users?.filter(
-    (u) =>
-      (u.name?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()) ||
-      (u.email?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()),
-  );
+  const roleOptions = useMemo(() => {
+    return Array.from(new Set(users?.map((u) => u.roleName).filter(Boolean) ?? [])).toSorted();
+  }, [users]);
+
+  const filteredUsers = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    const filtered = users?.filter((u) => {
+      if (statusFilter !== "all" && u.isActive !== (statusFilter === "active")) return false;
+      if (pinFilter === "has-pin" && !u.hasPin) return false;
+      if (pinFilter === "needs-pin" && !u.pendingPinSetup) return false;
+      if (storeFilter === "assigned" && !u.storeId) return false;
+      if (storeFilter === "all-stores" && u.storeId) return false;
+      if (roleFilter !== "all" && u.roleName !== roleFilter) return false;
+      if (query) {
+        const haystack = [u.name, u.email, u.roleName, u.storeName ?? "All Stores"]
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
+      return true;
+    });
+
+    return filtered?.toSorted((a, b) => {
+      switch (sortBy) {
+        case "email":
+          return (a.email ?? "").localeCompare(b.email ?? "");
+        case "role":
+          return a.roleName.localeCompare(b.roleName) || (a.name ?? "").localeCompare(b.name ?? "");
+        case "store":
+          return (a.storeName ?? "All Stores").localeCompare(b.storeName ?? "All Stores");
+        default:
+          return (a.name ?? "").localeCompare(b.name ?? "");
+      }
+    });
+  }, [users, searchQuery, statusFilter, pinFilter, storeFilter, roleFilter, sortBy]);
 
   const handleOpenCreate = () => {
     setEditingId(null);
@@ -123,6 +157,25 @@ export default function UsersPage() {
         filteredUsers={filteredUsers}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        pinFilter={pinFilter}
+        onPinFilterChange={setPinFilter}
+        storeFilter={storeFilter}
+        onStoreFilterChange={setStoreFilter}
+        roleFilter={roleFilter}
+        roleOptions={roleOptions}
+        onRoleFilterChange={setRoleFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+        onResetFilters={() => {
+          setSearchQuery("");
+          setStatusFilter("active");
+          setPinFilter("all");
+          setStoreFilter("all");
+          setRoleFilter("all");
+          setSortBy("name");
+        }}
         onEdit={handleEdit}
         onDuplicate={handleDuplicate}
         onResetPassword={handleResetPassword}

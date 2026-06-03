@@ -2,9 +2,9 @@
 
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Plus } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminStore } from "@/stores/useAdminStore";
@@ -19,12 +19,48 @@ export default function CategoriesPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<Id<"categories"> | null>(null);
   const [formInitialValues, setFormInitialValues] = useState<CategoryFormValues | undefined>();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"active" | "inactive" | "all">("active");
+  const [typeFilter, setTypeFilter] = useState<"all" | "main" | "sub">("all");
+  const [contentFilter, setContentFilter] = useState<"all" | "with-products" | "empty">("all");
+  const [sortBy, setSortBy] = useState<"menu" | "name" | "products">("menu");
+  const reorderCategories = useMutation(api.categories.reorder);
 
   // Queries
   const categories = useQuery(
     api.categories.list,
-    isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
+    isAuthenticated && selectedStoreId
+      ? { storeId: selectedStoreId, includeInactive: statusFilter !== "active" }
+      : "skip",
   );
+
+  const filteredCategories = useMemo(() => {
+    const filtered = categories?.filter((category) => {
+      if (statusFilter !== "all" && category.isActive !== (statusFilter === "active")) {
+        return false;
+      }
+      if (typeFilter !== "all" && Boolean(category.parentId) !== (typeFilter === "sub")) {
+        return false;
+      }
+      if (contentFilter === "with-products" && category.productCount === 0) return false;
+      if (contentFilter === "empty" && category.productCount > 0) return false;
+      if (searchQuery && !category.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      return true;
+    });
+
+    return filtered?.toSorted((a, b) => {
+      switch (sortBy) {
+        case "name":
+          return a.name.localeCompare(b.name);
+        case "products":
+          return b.productCount - a.productCount || a.name.localeCompare(b.name);
+        default:
+          return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name);
+      }
+    });
+  }, [categories, statusFilter, typeFilter, contentFilter, searchQuery, sortBy]);
 
   // Calculate next sort order from current data
   const getNextSortOrder = useCallback(() => {
@@ -91,7 +127,28 @@ export default function CategoriesPage() {
       {/* Categories Table */}
       <CategoriesDataTable
         categories={categories}
+        filteredCategories={filteredCategories}
         selectedStoreId={selectedStoreId}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        typeFilter={typeFilter}
+        onTypeFilterChange={setTypeFilter}
+        contentFilter={contentFilter}
+        onContentFilterChange={setContentFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+        onResetFilters={() => {
+          setSearchQuery("");
+          setStatusFilter("active");
+          setTypeFilter("all");
+          setContentFilter("all");
+          setSortBy("menu");
+        }}
+        onReorder={async (categoryIds) => {
+          await reorderCategories({ categoryIds });
+        }}
         onEdit={handleOpenEdit}
         onDuplicate={handleDuplicate}
       />

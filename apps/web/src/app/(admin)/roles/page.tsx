@@ -15,6 +15,10 @@ import { type RoleFormValues, roleDefaults } from "./_schemas";
 export default function RolesPage() {
   const { isAuthenticated, hasPermission, user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [scopeFilter, setScopeFilter] = useState<"all" | "system" | "parent" | "branch">("all");
+  const [typeFilter, setTypeFilter] = useState<"all" | "seeded" | "custom">("all");
+  const [permissionFilter, setPermissionFilter] = useState<"all" | "broad" | "limited">("all");
+  const [sortBy, setSortBy] = useState<"name" | "scope" | "permissions">("name");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<Id<"roles"> | null>(null);
   const [formInitialValues, setFormInitialValues] = useState<RoleFormValues | undefined>();
@@ -35,14 +39,17 @@ export default function RolesPage() {
     );
   }, []);
 
-  // Filter roles by search
   const filteredRoles = useMemo(() => {
     if (!roles) return [];
 
     const query = searchQuery.toLowerCase().trim();
-    if (!query) return roles;
-
-    return roles.filter((role) => {
+    const filtered = roles.filter((role) => {
+      if (scopeFilter !== "all" && role.scopeLevel !== scopeFilter) return false;
+      if (typeFilter === "seeded" && !role.isSystem) return false;
+      if (typeFilter === "custom" && role.isSystem) return false;
+      if (permissionFilter === "broad" && role.permissions.length < 8) return false;
+      if (permissionFilter === "limited" && role.permissions.length >= 8) return false;
+      if (!query) return true;
       const haystack = [
         role.name,
         role.scopeLevel,
@@ -53,7 +60,18 @@ export default function RolesPage() {
         .toLowerCase();
       return haystack.includes(query);
     });
-  }, [roles, searchQuery]);
+
+    return filtered.toSorted((a, b) => {
+      switch (sortBy) {
+        case "scope":
+          return a.scopeLevel.localeCompare(b.scopeLevel) || a.name.localeCompare(b.name);
+        case "permissions":
+          return b.permissions.length - a.permissions.length || a.name.localeCompare(b.name);
+        default:
+          return a.name.localeCompare(b.name);
+      }
+    });
+  }, [roles, searchQuery, scopeFilter, typeFilter, permissionFilter, sortBy]);
 
   const canManageRoles = hasPermission("system.roles");
 
@@ -129,9 +147,25 @@ export default function RolesPage() {
       {/* Roles List */}
       <RolesDataTable
         roles={filteredRoles}
+        totalRoles={roles?.length ?? 0}
         loading={roles === undefined}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        scopeFilter={scopeFilter}
+        onScopeFilterChange={setScopeFilter}
+        typeFilter={typeFilter}
+        onTypeFilterChange={setTypeFilter}
+        permissionFilter={permissionFilter}
+        onPermissionFilterChange={setPermissionFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+        onResetFilters={() => {
+          setSearchQuery("");
+          setScopeFilter("all");
+          setTypeFilter("all");
+          setPermissionFilter("all");
+          setSortBy("name");
+        }}
         onEdit={handleOpenEdit}
         onDuplicate={handleDuplicate}
       />
