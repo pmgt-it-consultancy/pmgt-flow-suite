@@ -8,6 +8,7 @@ import {
   Clock,
   DollarSign,
   FileText,
+  Layers3,
   Printer,
   RefreshCw,
   ShoppingCart,
@@ -166,15 +167,48 @@ export default function ReportsPage() {
       group.totalVoidedQty += product.voidedQuantity;
     }
 
-    const sortedCategories = Array.from(categoryMap.entries()).sort(([a], [b]) =>
-      a.localeCompare(b),
+    const categoryRank = new Map(
+      categorySales?.map((category, index) => [category.categoryName, index]) ?? [],
     );
+    const sortedCategories = Array.from(categoryMap.entries()).sort(([a], [b]) => {
+      const rankA = categoryRank.get(a) ?? Number.MAX_SAFE_INTEGER;
+      const rankB = categoryRank.get(b) ?? Number.MAX_SAFE_INTEGER;
+
+      if (rankA !== rankB) return rankA - rankB;
+      return a.localeCompare(b);
+    });
     for (const [, group] of sortedCategories) {
       group.products.sort((a, b) => b.quantitySold - a.quantitySold);
     }
 
     return sortedCategories;
-  }, [productSales]);
+  }, [productSales, categorySales]);
+
+  const categorySalesSummary = useMemo(() => {
+    if (!categorySales || categorySales.length === 0) {
+      return {
+        totalGross: 0,
+        totalQuantity: 0,
+        totalProducts: 0,
+        topCategoryName: "-",
+      };
+    }
+
+    return categorySales.reduce(
+      (summary, category, index) => ({
+        totalGross: summary.totalGross + category.totalGrossAmount,
+        totalQuantity: summary.totalQuantity + category.totalQuantitySold,
+        totalProducts: summary.totalProducts + category.productCount,
+        topCategoryName: index === 0 ? category.categoryName : summary.topCategoryName,
+      }),
+      {
+        totalGross: 0,
+        totalQuantity: 0,
+        totalProducts: 0,
+        topCategoryName: categorySales[0]?.categoryName ?? "-",
+      },
+    );
+  }, [categorySales]);
 
   // Find max hourly sales for bar chart scaling
   const maxHourlySales = useMemo(
@@ -533,30 +567,206 @@ export default function ReportsPage() {
                     )}
                   </CardContent>
                 </Card>
-
-                {/* Category Sales */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Sales by Category</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {categorySales && categorySales.length > 0 ? (
-                      <div className="space-y-3">
-                        {categorySales.slice(0, 5).map((cat) => (
-                          <div key={cat.categoryId} className="flex justify-between text-sm">
-                            <span className="truncate">{cat.categoryName}</span>
-                            <span className="font-medium">
-                              {formatCurrency(cat.totalGrossAmount)}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 text-sm">No category sales data</p>
-                    )}
-                  </CardContent>
-                </Card>
               </div>
+
+              <Card>
+                <CardHeader>
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <CardTitle className="text-lg">Category Sales Breakdown</CardTitle>
+                      <CardDescription>
+                        {categorySales?.length ?? 0} categor
+                        {categorySales?.length === 1 ? "y" : "ies"} with sales on {reportDate}
+                      </CardDescription>
+                    </div>
+                    <Badge variant="secondary" className="w-fit">
+                      Sorted by gross sales
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {!categorySales ? (
+                    <div className="flex items-center justify-center h-32">
+                      <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+                    </div>
+                  ) : categorySales.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-32 text-gray-500">
+                      <Layers3 className="h-8 w-8 mb-2" />
+                      <p>No category sales data for this report.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="grid gap-3 md:grid-cols-4">
+                        <div className="rounded-md border bg-slate-50 px-4 py-3">
+                          <p className="text-xs font-medium uppercase text-gray-500">
+                            Category Gross
+                          </p>
+                          <p className="mt-1 text-xl font-bold tabular-nums">
+                            {formatCurrency(categorySalesSummary.totalGross)}
+                          </p>
+                        </div>
+                        <div className="rounded-md border bg-slate-50 px-4 py-3">
+                          <p className="text-xs font-medium uppercase text-gray-500">Qty Sold</p>
+                          <p className="mt-1 text-xl font-bold tabular-nums">
+                            {categorySalesSummary.totalQuantity}
+                          </p>
+                        </div>
+                        <div className="rounded-md border bg-slate-50 px-4 py-3">
+                          <p className="text-xs font-medium uppercase text-gray-500">Products</p>
+                          <p className="mt-1 text-xl font-bold tabular-nums">
+                            {categorySalesSummary.totalProducts}
+                          </p>
+                        </div>
+                        <div className="rounded-md border bg-slate-50 px-4 py-3">
+                          <p className="text-xs font-medium uppercase text-gray-500">
+                            Top Category
+                          </p>
+                          <p className="mt-1 truncate text-xl font-bold">
+                            {categorySalesSummary.topCategoryName}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Category</TableHead>
+                              <TableHead>Parent</TableHead>
+                              <TableHead className="text-right">Products</TableHead>
+                              <TableHead className="text-right">Qty Sold</TableHead>
+                              <TableHead className="text-right">Gross Sales</TableHead>
+                              <TableHead className="min-w-36 text-right">Sales Share</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {categorySales.map((category) => {
+                              const share =
+                                categorySalesSummary.totalGross > 0
+                                  ? (category.totalGrossAmount / categorySalesSummary.totalGross) *
+                                    100
+                                  : 0;
+
+                              return (
+                                <TableRow key={category.categoryId}>
+                                  <TableCell className="font-medium">
+                                    {category.categoryName}
+                                  </TableCell>
+                                  <TableCell className="text-gray-500">
+                                    {category.parentCategoryName || "-"}
+                                  </TableCell>
+                                  <TableCell className="text-right tabular-nums">
+                                    {category.productCount}
+                                  </TableCell>
+                                  <TableCell className="text-right tabular-nums">
+                                    {category.totalQuantitySold}
+                                  </TableCell>
+                                  <TableCell className="text-right font-semibold tabular-nums">
+                                    {formatCurrency(category.totalGrossAmount)}
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    <div className="flex items-center justify-end gap-3">
+                                      <div
+                                        className="h-2 w-20 overflow-hidden rounded-full bg-gray-100"
+                                        aria-label={`${category.categoryName} sales share ${share.toFixed(1)} percent`}
+                                        aria-valuemax={100}
+                                        aria-valuemin={0}
+                                        aria-valuenow={Number(share.toFixed(1))}
+                                        role="progressbar"
+                                      >
+                                        <div
+                                          className="h-full rounded-full bg-primary"
+                                          style={{ width: `${share}%` }}
+                                        />
+                                      </div>
+                                      <span className="w-12 tabular-nums">{share.toFixed(1)}%</span>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </div>
+
+                      <div className="space-y-3 border-t pt-4">
+                        <div>
+                          <h3 className="font-semibold text-base">Products by Category</h3>
+                          <p className="text-gray-500 text-sm">
+                            Line-item product sales for the same daily report.
+                          </p>
+                        </div>
+
+                        {!productSales ? (
+                          <div className="flex items-center justify-center h-24">
+                            <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+                          </div>
+                        ) : groupedProductSales.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center h-24 text-gray-500">
+                            <ShoppingCart className="h-8 w-8 mb-2" />
+                            <p>No product sales for this report.</p>
+                          </div>
+                        ) : (
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Product</TableHead>
+                                  <TableHead className="text-right">Qty Sold</TableHead>
+                                  <TableHead className="text-right">Gross Sales</TableHead>
+                                  <TableHead className="text-right">Voided</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {groupedProductSales.map(([categoryName, group]) => (
+                                  <Fragment key={categoryName}>
+                                    <TableRow className="bg-blue-50/60">
+                                      <TableCell colSpan={4} className="py-2">
+                                        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                                          <span className="font-bold text-blue-900">
+                                            {categoryName}
+                                          </span>
+                                          <span className="text-blue-800 text-sm tabular-nums">
+                                            {group.totalQty} sold ·{" "}
+                                            {formatCurrency(group.totalGross)}
+                                          </span>
+                                        </div>
+                                      </TableCell>
+                                    </TableRow>
+                                    {group.products.map((product) => (
+                                      <TableRow key={product.productId}>
+                                        <TableCell className="pl-8 font-medium">
+                                          {product.productName}
+                                        </TableCell>
+                                        <TableCell className="text-right tabular-nums">
+                                          {product.quantitySold}
+                                        </TableCell>
+                                        <TableCell className="text-right tabular-nums">
+                                          {formatCurrency(product.grossAmount)}
+                                        </TableCell>
+                                        <TableCell className="text-right tabular-nums">
+                                          {product.voidedQuantity > 0 ? (
+                                            <span className="text-red-600">
+                                              {product.voidedQuantity} (
+                                              {formatCurrency(product.voidedAmount)})
+                                            </span>
+                                          ) : (
+                                            "-"
+                                          )}
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                                  </Fragment>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </>
           )}
         </TabsContent>
