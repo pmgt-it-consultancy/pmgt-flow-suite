@@ -27,8 +27,12 @@ jest.mock("../services/printerStorage", () => ({
   updatePrinter: jest.fn(),
 }));
 
+import type { ReceiptData } from "../../shared/utils/receipt";
 import { connectToDevice, disconnectDevice, unpairDevice } from "../services/bluetoothPrinter";
+import { printReceiptToThermal } from "../services/escposFormatter";
 import {
+  getPrinterSettings,
+  savePrinterSettings,
   addPrinter as storageAddPrinter,
   removePrinter as storageRemovePrinter,
   updatePrinter as storageUpdatePrinter,
@@ -46,6 +50,7 @@ describe("usePrinterStore.addPrinter", () => {
       kitchenPrintingEnabled: false,
       cashDrawerEnabled: false,
       useReceiptPrinterForKitchen: false,
+      minimalReceiptEnabled: false,
       isInitialized: false,
     });
   });
@@ -97,6 +102,7 @@ describe("usePrinterStore.removePrinter", () => {
       kitchenPrintingEnabled: false,
       cashDrawerEnabled: false,
       useReceiptPrinterForKitchen: false,
+      minimalReceiptEnabled: false,
       isInitialized: false,
     });
   });
@@ -139,5 +145,86 @@ describe("usePrinterStore.removePrinter", () => {
 
     resolveDisconnect?.();
     await removalPromise;
+  });
+});
+
+describe("usePrinterStore minimal receipt setting", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    usePrinterStore.setState({
+      printers: [],
+      connectionStatus: {},
+      reconnectAttempts: {},
+      isScanning: false,
+      kitchenPrintingEnabled: false,
+      cashDrawerEnabled: false,
+      useReceiptPrinterForKitchen: false,
+      minimalReceiptEnabled: false,
+      isInitialized: false,
+    });
+  });
+
+  it("loads minimal receipt mode from stored printer settings", async () => {
+    (getPrinterSettings as jest.Mock).mockResolvedValueOnce({
+      printers: [],
+      kitchenPrintingEnabled: false,
+      cashDrawerEnabled: false,
+      useReceiptPrinterForKitchen: false,
+      minimalReceiptEnabled: true,
+    });
+
+    await usePrinterStore.getState().initialize();
+
+    expect(usePrinterStore.getState().minimalReceiptEnabled).toBe(true);
+  });
+
+  it("persists minimal receipt mode with the other printer settings", async () => {
+    await usePrinterStore.getState().setMinimalReceiptEnabled(true);
+
+    expect(savePrinterSettings).toHaveBeenCalledWith({
+      printers: [],
+      kitchenPrintingEnabled: false,
+      cashDrawerEnabled: false,
+      useReceiptPrinterForKitchen: false,
+      minimalReceiptEnabled: true,
+    });
+    expect(usePrinterStore.getState().minimalReceiptEnabled).toBe(true);
+  });
+
+  it("passes minimal receipt mode to thermal receipt printing", async () => {
+    const receipt: ReceiptData = {
+      storeName: "PMGT Carinderia",
+      orderNumber: "ORD-1",
+      orderType: "dine_in",
+      cashierName: "Cashier",
+      items: [{ name: "Rice", quantity: 1, price: 15, total: 15 }],
+      subtotal: 15,
+      discounts: [],
+      vatableSales: 13.39,
+      vatAmount: 1.61,
+      vatExemptSales: 0,
+      total: 15,
+      paymentMethod: "cash",
+      transactionDate: new Date(2026, 4, 6, 16, 4, 15),
+    };
+
+    (connectToDevice as jest.Mock).mockResolvedValueOnce(true);
+    usePrinterStore.setState({
+      printers: [
+        {
+          id: "AA:BB:CC",
+          name: "Receipt Printer",
+          deviceName: "Receipt Printer",
+          role: "receipt",
+          paperWidth: 58,
+          isDefault: true,
+        },
+      ],
+      minimalReceiptEnabled: true,
+    });
+
+    await usePrinterStore.getState().printReceipt(receipt);
+
+    expect(printReceiptToThermal).toHaveBeenCalledWith(receipt, 32, true);
   });
 });

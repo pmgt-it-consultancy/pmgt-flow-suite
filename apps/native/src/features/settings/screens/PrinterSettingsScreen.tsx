@@ -22,9 +22,11 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
     kitchenPrintingEnabled,
     cashDrawerEnabled,
     useReceiptPrinterForKitchen,
+    minimalReceiptEnabled,
     setKitchenPrintingEnabled,
     setCashDrawerEnabled,
     setUseReceiptPrinterForKitchen,
+    setMinimalReceiptEnabled,
     openCashDrawer,
     testPrint,
     removePrinter,
@@ -132,6 +134,32 @@ export const PrinterSettingsScreen = ({ navigation }: { navigation: any }) => {
             />
           </XStack>
         )}
+
+        {/* Minimal Customer Receipt Toggle */}
+        <XStack
+          backgroundColor="#FFFFFF"
+          marginHorizontal={16}
+          marginTop={12}
+          borderRadius={12}
+          padding={16}
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <YStack flex={1} marginRight={16}>
+            <Text variant="heading" size="base">
+              Minimal Customer Receipt
+            </Text>
+            <Text variant="muted" size="sm" style={{ marginTop: 4 }}>
+              Print only product name, quantity, and price
+            </Text>
+          </YStack>
+          <Switch
+            value={minimalReceiptEnabled}
+            onValueChange={setMinimalReceiptEnabled}
+            trackColor={{ false: "#D1D5DB", true: "#3B82F6" }}
+            thumbColor="#FFFFFF"
+          />
+        </XStack>
 
         {/* Cash Drawer Toggle */}
         <XStack
