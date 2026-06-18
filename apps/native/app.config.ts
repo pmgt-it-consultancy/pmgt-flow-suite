@@ -18,7 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   newArchEnabled: true,
   name: getAppName(),
   slug: "pmgt-flow",
-  version: "3.26.5",
+  version: "3.27.0",
   orientation: "landscape",
   icon: "./assets/app-icon.png",
   userInterfaceStyle: "light",
@@ -40,7 +40,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "android.permission.BLUETOOTH_CONNECT",
       "android.permission.ACCESS_FINE_LOCATION",
     ],
-    versionCode: 32605,
+    versionCode: 32700,
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#2284E8",
