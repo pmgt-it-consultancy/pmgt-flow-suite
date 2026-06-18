@@ -1,0 +1,132 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_03_26_admin_forms_tanstack_migration_doc",
+      "label": "Admin Forms TanStack Migration Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_26_admin_forms_tanstack_migration_tanstack_form",
+      "label": "TanStack Form + Zod Forms",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_26_admin_forms_tanstack_migration_colocated",
+      "label": "Colocated Page Architecture",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_26_admin_forms_tanstack_migration_inline_create",
+      "label": "Inline Creation from Selects",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_26_admin_forms_tanstack_migration_combined_modifier",
+      "label": "Combined Modifier Group + Options Form",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_03_26_admin_forms_tanstack_migration_doc",
+      "target": "plans_2026_03_26_admin_forms_tanstack_migration_tanstack_form",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_admin_forms_tanstack_migration_doc",
+      "target": "plans_2026_03_26_admin_forms_tanstack_migration_colocated",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_admin_forms_tanstack_migration_doc",
+      "target": "plans_2026_03_26_admin_forms_tanstack_migration_inline_create",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_admin_forms_tanstack_migration_doc",
+      "target": "plans_2026_03_26_admin_forms_tanstack_migration_combined_modifier",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_admin_forms_tanstack_migration_combined_modifier",
+      "target": "plans_plan_product_modifiers_modifier_groups",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_admin_forms_tanstack_migration_combined_modifier",
+      "target": "plans_plan_product_modifiers_modifier_options",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_admin_forms_tanstack_migration_inline_create",
+      "target": "plans_2026_03_22_open_price_products_open_price",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

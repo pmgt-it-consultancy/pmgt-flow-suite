@@ -1,0 +1,1315 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_android_gradle_build_json",
+      "label": "android_gradle_build.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_buildfiles",
+      "label": "buildFiles",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_cleancommandscomponents",
+      "label": "cleanCommandsComponents",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L15"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_buildtargetscommandcomponents",
+      "label": "buildTargetsCommandComponents",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries",
+      "label": "libraries",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_appmodules_6890427a1f51a3e7e1df",
+      "label": "appmodules::@6890427a1f51a3e7e1df",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L30"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L31"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L32"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L33"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_output",
+      "label": "output",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_runtimefiles",
+      "label": "runtimeFiles",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L35"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3",
+      "label": "react_codegen_RNBackgroundDownloaderSpec::@6a921e4ededf661a84b3",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L46"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L47"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_rncwebviewspec_eb48929f9f7453740a6c",
+      "label": "react_codegen_RNCWebViewSpec::@eb48929f9f7453740a6c",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L49"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rncwebviewspec_eb48929f9f7453740a6c_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L50"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rncwebviewspec_eb48929f9f7453740a6c_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L51"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rncwebviewspec_eb48929f9f7453740a6c_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L52"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2",
+      "label": "react_codegen_RNDateTimePickerCGen::@59b70ddc31ba2f8ef1d2",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L54"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L55"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L56"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L57"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd",
+      "label": "react_codegen_reactnativekeyboardcontroller::@dc50c79f19fba14eeefd",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L59"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L60"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L61"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L62"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_output",
+      "label": "output",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L63"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_runtimefiles",
+      "label": "runtimeFiles",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L64"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe",
+      "label": "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L70"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L71"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L72"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L73"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec",
+      "label": "react_codegen_rngesturehandler_codegen::@39f233abcd2c728bc6ec",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L75"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L76"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L77"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L78"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnreanimated_8afabad14bfffa3f8b9a",
+      "label": "react_codegen_rnreanimated::@8afabad14bfffa3f8b9a",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L80"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnreanimated_8afabad14bfffa3f8b9a_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L81"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnreanimated_8afabad14bfffa3f8b9a_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L82"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnreanimated_8afabad14bfffa3f8b9a_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L83"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnscreens_25bcbd507e98d3a854ad",
+      "label": "react_codegen_rnscreens::@25bcbd507e98d3a854ad",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L85"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L86"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L87"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L88"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_output",
+      "label": "output",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L89"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_runtimefiles",
+      "label": "runtimeFiles",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L90"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnworklets_68f58d84d4754f193387",
+      "label": "react_codegen_rnworklets::@68f58d84d4754f193387",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L96"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnworklets_68f58d84d4754f193387_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L97"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnworklets_68f58d84d4754f193387_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L98"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_rnworklets_68f58d84d4754f193387_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L99"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_libraries_react_codegen_safeareacontext_7984cd80db47aa7b952a",
+      "label": "react_codegen_safeareacontext::@7984cd80db47aa7b952a",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L101"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L102"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_abi",
+      "label": "abi",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L103"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_artifactname",
+      "label": "artifactName",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L104"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_output",
+      "label": "output",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L105"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_runtimefiles",
+      "label": "runtimeFiles",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L106"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_toolchains",
+      "label": "toolchains",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L113"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_toolchains_toolchain",
+      "label": "toolchain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L114"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_toolchain_ccompilerexecutable",
+      "label": "cCompilerExecutable",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L115"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_toolchain_cppcompilerexecutable",
+      "label": "cppCompilerExecutable",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L116"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_cfileextensions",
+      "label": "cFileExtensions",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L119"
+    },
+    {
+      "id": "arm64_v8a_android_gradle_build_cppfileextensions",
+      "label": "cppFileExtensions",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L120"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_android_gradle_build_json",
+      "target": "arm64_v8a_android_gradle_build_buildfiles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_kesha_antonov_react_native_background_downloader_4_5_2_react_native_0_81_5_babel_core_9d6c823bb756fdf7f5f237e523e0cd2d_node_modules_kesha_antonov_react_native_background_downloader_android_build_generated_source_codegen_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_async_storage_async_storage_2_2_0_react_native_0_81_5_babel_core_7_28_5_2ad3ca87d21b6e959729e8babddf2871_node_modules_react_native_async_storage_async_storage_android_build_generated_source_codegen_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_community_datetimepicker_8_6_0_expo_54_0_32_babel_core_7_28_5_react_nati_27b26f8b285d6a3265910996d3f49d88_node_modules_react_native_community_datetimepicker_android_build_generated_source_codegen_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_gesture_handler_2_28_0_react_native_0_81_5_babel_core_7_28_5_types_react_6878821a9d189a2f0ab87558d9bf061a_node_modules_react_native_gesture_handler_android_build_generated_source_codegen_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_keyboard_controller_1_18_5_react_native_reanimated_4_1_6_babel_core_7_28_09c425051baff3eb390913286f0d1d91_node_modules_react_native_keyboard_controller_android_src_main_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_reanimated_4_1_6_babel_core_7_28_5_react_native_worklets_0_7_1_babel_cor_a51e1a02219c2078c15305e88020a39d_node_modules_react_native_reanimated_android_build_generated_source_codegen_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_safe_area_context_5_6_2_react_native_0_81_5_babel_core_7_28_5_types_reac_af391ae54fcf764d6174d128987d859a_node_modules_react_native_safe_area_context_android_src_main_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_screens_4_16_0_react_native_0_81_5_babel_core_7_28_5_types_react_19_1_17_react_19_1_0_react_19_1_0_node_modules_react_native_screens_android_src_main_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_webview_13_15_0_react_native_0_81_5_babel_core_7_28_5_types_react_19_1_17_react_19_1_0_react_19_1_0_node_modules_react_native_webview_android_build_generated_source_codegen_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_worklets_0_7_1_babel_core_7_28_5_react_native_0_81_5_babel_core_7_28_5_ef7bff3349d4a2a6c958408676ea3891_node_modules_react_native_worklets_android_build_generated_source_codegen_jni_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildfiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_0_81_5_babel_core_7_28_5_types_react_19_1_17_react_19_1_0_node_modules_react_native_reactandroid_cmake_utils_default_app_setup_cmakelists_txt",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_android_gradle_build_json",
+      "target": "arm64_v8a_android_gradle_build_cleancommandscomponents",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_android_gradle_build_json",
+      "target": "arm64_v8a_android_gradle_build_buildtargetscommandcomponents",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildtargetscommandcomponents",
+      "target": "ref_users_solstellar_library_android_sdk_cmake_3_22_1_bin_ninja",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildtargetscommandcomponents",
+      "target": "ref_c",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildtargetscommandcomponents",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_buildtargetscommandcomponents",
+      "target": "ref_list_of_targets_to_build",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_android_gradle_build_json",
+      "target": "arm64_v8a_android_gradle_build_libraries",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_appmodules_6890427a1f51a3e7e1df",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_appmodules_6890427a1f51a3e7e1df",
+      "target": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_appmodules_6890427a1f51a3e7e1df",
+      "target": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_appmodules_6890427a1f51a3e7e1df",
+      "target": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_appmodules_6890427a1f51a3e7e1df",
+      "target": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_appmodules_6890427a1f51a3e7e1df",
+      "target": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_runtimefiles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_runtimefiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_build_intermediates_cxx_debug_5t441f4f_obj_arm64_v8a_libreact_codegen_reactnativekeyboardcontroller_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L35",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_runtimefiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_build_intermediates_cxx_debug_5t441f4f_obj_arm64_v8a_libreact_codegen_safeareacontext_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L35",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_runtimefiles",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_build_intermediates_cxx_debug_5t441f4f_obj_arm64_v8a_libreact_codegen_rnscreens_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L35",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_c4ed38aee617328a15ca67287b31027e_transformed_fbjni_0_7_0_prefab_modules_fbjni_libs_android_arm64_v8a_libfbjni_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L35",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_b2680b08f1e2cb52f3dff51eef1dacfb_transformed_react_android_0_81_5_debug_prefab_modules_jsi_libs_android_arm64_v8a_libjsi_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L35",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_appmodules_6890427a1f51a3e7e1df_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_b2680b08f1e2cb52f3dff51eef1dacfb_transformed_react_android_0_81_5_debug_prefab_modules_reactnative_libs_android_arm64_v8a_libreactnative_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L35",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnbackgrounddownloaderspec_6a921e4ededf661a84b3_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_rncwebviewspec_eb48929f9f7453740a6c",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rncwebviewspec_eb48929f9f7453740a6c",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rncwebviewspec_eb48929f9f7453740a6c_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rncwebviewspec_eb48929f9f7453740a6c",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rncwebviewspec_eb48929f9f7453740a6c_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rncwebviewspec_eb48929f9f7453740a6c",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rncwebviewspec_eb48929f9f7453740a6c_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rndatetimepickercgen_59b70ddc31ba2f8ef1d2_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_runtimefiles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_b2680b08f1e2cb52f3dff51eef1dacfb_transformed_react_android_0_81_5_debug_prefab_modules_reactnative_libs_android_arm64_v8a_libreactnative_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L64",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_b2680b08f1e2cb52f3dff51eef1dacfb_transformed_react_android_0_81_5_debug_prefab_modules_jsi_libs_android_arm64_v8a_libjsi_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L64",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_react_codegen_reactnativekeyboardcontroller_dc50c79f19fba14eeefd_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_c4ed38aee617328a15ca67287b31027e_transformed_fbjni_0_7_0_prefab_modules_fbjni_libs_android_arm64_v8a_libfbjni_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L64",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnasyncstorage_1596841e19ec5b9eeffe_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rngesturehandler_codegen_39f233abcd2c728bc6ec_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnreanimated_8afabad14bfffa3f8b9a",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnreanimated_8afabad14bfffa3f8b9a",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnreanimated_8afabad14bfffa3f8b9a_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnreanimated_8afabad14bfffa3f8b9a",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnreanimated_8afabad14bfffa3f8b9a_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnreanimated_8afabad14bfffa3f8b9a",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnreanimated_8afabad14bfffa3f8b9a_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnscreens_25bcbd507e98d3a854ad",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnscreens_25bcbd507e98d3a854ad",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnscreens_25bcbd507e98d3a854ad",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnscreens_25bcbd507e98d3a854ad",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnscreens_25bcbd507e98d3a854ad",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnscreens_25bcbd507e98d3a854ad",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_runtimefiles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_b2680b08f1e2cb52f3dff51eef1dacfb_transformed_react_android_0_81_5_debug_prefab_modules_reactnative_libs_android_arm64_v8a_libreactnative_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L90",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_b2680b08f1e2cb52f3dff51eef1dacfb_transformed_react_android_0_81_5_debug_prefab_modules_jsi_libs_android_arm64_v8a_libjsi_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L90",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_react_codegen_rnscreens_25bcbd507e98d3a854ad_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_c4ed38aee617328a15ca67287b31027e_transformed_fbjni_0_7_0_prefab_modules_fbjni_libs_android_arm64_v8a_libfbjni_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L90",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnworklets_68f58d84d4754f193387",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnworklets_68f58d84d4754f193387",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnworklets_68f58d84d4754f193387_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnworklets_68f58d84d4754f193387",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnworklets_68f58d84d4754f193387_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_rnworklets_68f58d84d4754f193387",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_rnworklets_68f58d84d4754f193387_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries",
+      "target": "arm64_v8a_android_gradle_build_libraries_react_codegen_safeareacontext_7984cd80db47aa7b952a",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_safeareacontext_7984cd80db47aa7b952a",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_safeareacontext_7984cd80db47aa7b952a",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_abi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_safeareacontext_7984cd80db47aa7b952a",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_artifactname",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_safeareacontext_7984cd80db47aa7b952a",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_libraries_react_codegen_safeareacontext_7984cd80db47aa7b952a",
+      "target": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_runtimefiles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_c4ed38aee617328a15ca67287b31027e_transformed_fbjni_0_7_0_prefab_modules_fbjni_libs_android_arm64_v8a_libfbjni_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L106",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_b2680b08f1e2cb52f3dff51eef1dacfb_transformed_react_android_0_81_5_debug_prefab_modules_jsi_libs_android_arm64_v8a_libjsi_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L106",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_react_codegen_safeareacontext_7984cd80db47aa7b952a_runtimefiles",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_b2680b08f1e2cb52f3dff51eef1dacfb_transformed_react_android_0_81_5_debug_prefab_modules_reactnative_libs_android_arm64_v8a_libreactnative_so",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L106",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_android_gradle_build_json",
+      "target": "arm64_v8a_android_gradle_build_toolchains",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L113",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_toolchains",
+      "target": "arm64_v8a_android_gradle_build_toolchains_toolchain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_toolchains_toolchain",
+      "target": "arm64_v8a_android_gradle_build_toolchain_ccompilerexecutable",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_toolchains_toolchain",
+      "target": "arm64_v8a_android_gradle_build_toolchain_cppcompilerexecutable",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_android_gradle_build_json",
+      "target": "arm64_v8a_android_gradle_build_cfileextensions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_android_gradle_build_json",
+      "target": "arm64_v8a_android_gradle_build_cppfileextensions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_android_gradle_build_cppfileextensions",
+      "target": "ref_cpp",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json",
+      "source_location": "L120",
+      "weight": 1.0,
+      "context": "import"
+    }
+  ]
+}

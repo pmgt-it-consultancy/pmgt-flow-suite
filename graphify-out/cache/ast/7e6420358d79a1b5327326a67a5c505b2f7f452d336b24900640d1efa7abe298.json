@@ -1,0 +1,13 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_build_gradle",
+      "label": "build.gradle",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/build.gradle",
+      "source_location": "L1"
+    }
+  ],
+  "edges": [],
+  "raw_calls": []
+}

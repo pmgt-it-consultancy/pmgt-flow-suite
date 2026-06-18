@@ -1,0 +1,112 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_03_25_dashboard_real_trends_design_doc",
+      "label": "Dashboard Real Trends Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_dashboard_real_trends_design_compute_trend",
+      "label": "computeTrend Helper",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": "lines 20-28",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_dashboard_real_trends_design_two_query_approach",
+      "label": "Two Frontend Queries (today + yesterday)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": "lines 11-18",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_dashboard_real_trends_design_get_dashboard_summary",
+      "label": "getDashboardSummary Query",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_dashboard_real_trends_design_summary_card",
+      "label": "SummaryCard Component",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": "lines 45-54",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_03_25_dashboard_real_trends_design_doc",
+      "target": "specs_2026_03_25_dashboard_real_trends_design_compute_trend",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_dashboard_real_trends_design_doc",
+      "target": "specs_2026_03_25_dashboard_real_trends_design_two_query_approach",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_dashboard_real_trends_design_two_query_approach",
+      "target": "specs_2026_03_25_dashboard_real_trends_design_get_dashboard_summary",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_dashboard_real_trends_design_compute_trend",
+      "target": "specs_2026_03_25_dashboard_real_trends_design_get_dashboard_summary",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_dashboard_real_trends_design_summary_card",
+      "target": "specs_2026_03_25_dashboard_real_trends_design_compute_trend",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

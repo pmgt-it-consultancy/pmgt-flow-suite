@@ -1,0 +1,93 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_discovered_security_json",
+      "label": "security.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "discovered_security_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "discovered_security_category",
+      "label": "category",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "discovered_security_patterns",
+      "label": "patterns",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "discovered_security_lastupdated",
+      "label": "lastUpdated",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L634"
+    },
+    {
+      "id": "discovered_security_checksum",
+      "label": "checksum",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L635"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_discovered_security_json",
+      "target": "discovered_security_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_discovered_security_json",
+      "target": "discovered_security_category",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_discovered_security_json",
+      "target": "discovered_security_patterns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_discovered_security_json",
+      "target": "discovered_security_lastupdated",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L634",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_discovered_security_json",
+      "target": "discovered_security_checksum",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json",
+      "source_location": "L635",
+      "weight": 1.0
+    }
+  ]
+}

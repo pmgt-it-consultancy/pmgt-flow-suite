@@ -1,0 +1,2507 @@
+{
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json": {
+    "size": 800,
+    "mtime_ns": 1777517815430820191,
+    "hash": "72730cb5c7943d8d7016fcf054c7a6633a4cd61cff0047fafffc426c97dd985c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/convex/tsconfig.json": {
+    "size": 750,
+    "mtime_ns": 1773377363595094844,
+    "hash": "3df359f81bb891770562bdf2467eb945fcd4961fd72115d9b4cf5d883cef58f2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/shared/package.json": {
+    "size": 206,
+    "mtime_ns": 1777517815431182281,
+    "hash": "1c73066f75a9ece403fefae1af15a445ba3b99e898997e1023e32c19833c6059"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/shared/tsconfig.json": {
+    "size": 262,
+    "mtime_ns": 1768109655982439263,
+    "hash": "d6709e71045c9b028aaea851329fe03122476cda2f826b03db2b08406b887f33"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json": {
+    "size": 1288,
+    "mtime_ns": 1773377363555447080,
+    "hash": "ed3e42db2abe9bb0798f84ea3a2d1af6c4f6ebe15581f75c4c891c1118ad0f86"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json": {
+    "size": 4435,
+    "mtime_ns": 1779846551642080664,
+    "hash": "29f216bd14d54519c0b713f7575289c8c73a56965baa555dcb415fa64984db50"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/tsconfig.json": {
+    "size": 149,
+    "mtime_ns": 1777517815420526530,
+    "hash": "6f7f8ab27bd7f7a372091a2f3212b919f10ebda577a373336de7afc8ef72d689"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json": {
+    "size": 1079,
+    "mtime_ns": 1769677561711071278,
+    "hash": "e6d19ad375cbe2695b6455dba15282331acad124c391fa76cdece6633d8c72d1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/telemetry-queue.json": {
+    "size": 67,
+    "mtime_ns": 1769677561776690265,
+    "hash": "ff0f66aab55e5bfa980db75cb29c18de4539d1ca3676a7aacc59a9a1442df6ec"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/manifest.json": {
+    "size": 2300,
+    "mtime_ns": 1769677561711458820,
+    "hash": "1590d7608afbb08c99148b9ec31c5d2600e6803c2a71b50c769ec74d18184fa2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/logging.json": {
+    "size": 30779,
+    "mtime_ns": 1769677561740494022,
+    "hash": "91b6d9e4b7cccf4420e8e20d5e91928eafa4b481a72f355830c4af3b44e1eb3d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/testing.json": {
+    "size": 24014,
+    "mtime_ns": 1769677561740838814,
+    "hash": "7d646eae1972f01406ded2e317d97de09d1f42cdce4459e5b3350c57bc1b4e4b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/api.json": {
+    "size": 5753,
+    "mtime_ns": 1769677561734054857,
+    "hash": "3633021cf6f054597d6991f8861f42c47edad76c62703c591a4ebe70f3e9f897"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/structural.json": {
+    "size": 65451,
+    "mtime_ns": 1769677561743124855,
+    "hash": "73631b6cdd390247c244d9469b41ccd2dabaa34a3e3a459595f4544a691c8334"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/styling.json": {
+    "size": 112231,
+    "mtime_ns": 1769677561747221896,
+    "hash": "bdda0900bb0bc0e315fe58503bf21b08b7138d50ab6468c72419d91a30fb77e6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/errors.json": {
+    "size": 14783,
+    "mtime_ns": 1769677561737639065,
+    "hash": "403cff3ede832d5932c12e11e1c80613996d7b5831be8c5ba9ff2a2916be117b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/types.json": {
+    "size": 86415,
+    "mtime_ns": 1769677561750617979,
+    "hash": "80d0bdceef416d36d79791089052350a7745e0e14da745d45d97b3b48a042c4b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/config.json": {
+    "size": 26720,
+    "mtime_ns": 1769677561741870897,
+    "hash": "c58add0287aaf0f38bf3bc6b18041d65538cf253ea9e1beee47b22b211874387"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/security.json": {
+    "size": 16763,
+    "mtime_ns": 1769677561739312314,
+    "hash": "c19ddc9130645a9e3ce590ee648fbe11b0b21f2644f5958baba5d39221314e02"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/performance.json": {
+    "size": 43743,
+    "mtime_ns": 1769677561740811064,
+    "hash": "a885d6afad0de4ae31cfba9981c22af2f657aa1589fd3ead528f0a0f3a100d55"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/components.json": {
+    "size": 133807,
+    "mtime_ns": 1769677561742707939,
+    "hash": "7e19a963f8f960d4471789b571d8ba01198a75e5375e4ac31eff159de0d5f86b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/auth.json": {
+    "size": 6663,
+    "mtime_ns": 1769677561734680857,
+    "hash": "21f0e3ae48be92c42de8f1a38d77f5442d819c4c6e0df16f528609ae6a37c490"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/data-access.json": {
+    "size": 76512,
+    "mtime_ns": 1769677561740542189,
+    "hash": "267e48bb08ed53cdcf9267a5290ef25659fcd3000e87dc905bdc39a6d84bf3c7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/accessibility.json": {
+    "size": 14854,
+    "mtime_ns": 1769677561734529024,
+    "hash": "193032d340b59ec744c525852edcb3f388b35bd89e9621147e4580cfbe4e1179"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/documentation.json": {
+    "size": 5604,
+    "mtime_ns": 1769677561736256940,
+    "hash": "1536dd6218e5cebd8df7ef9da5d7a79f95ca459dec7599ad57480afd49e1f2c4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/types-2026-01-29T09-04-03-825Z.json": {
+    "size": 86415,
+    "mtime_ns": 1769677561744214355,
+    "hash": "1c3ec13135c3f6ecce154d972e701f4d06042aee2d3cd0e4415522e8422848a0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/config-2026-01-29T09-04-03-876Z.json": {
+    "size": 26720,
+    "mtime_ns": 1769677561716724569,
+    "hash": "9c9443eddf78d06899cc20752b92dc92f329f92b059f66292f2b38d1072ba5a7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/testing-2026-01-29T09-04-03-875Z.json": {
+    "size": 24014,
+    "mtime_ns": 1769677561733137274,
+    "hash": "78a7d9e5533e95e066b94b3febf38f69725273ae73290549e129f7ba697fd261"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/documentation-2026-01-29T09-04-03-879Z.json": {
+    "size": 2561,
+    "mtime_ns": 1769677561717177110,
+    "hash": "6598b8937049e2291fa77616de257b0001550fce6eba0727be2440d51149c0f7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-783Z.json": {
+    "size": 16763,
+    "mtime_ns": 1769677561725439400,
+    "hash": "372fe046cdbd4675dcd113d01bf4bb9c99cc66ca36b4c95a8a7dfe1f95c2bc27"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/structural-2026-01-29T09-04-03-869Z.json": {
+    "size": 65451,
+    "mtime_ns": 1769677561730819566,
+    "hash": "09da9d4eb05d74ddefd1c19066d9b41f61870e9b7f54608401c2baeb102743f8"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/types-2026-01-29T09-04-03-846Z.json": {
+    "size": 86415,
+    "mtime_ns": 1769677561738157273,
+    "hash": "aebed7e41a83a4e3f4778a6d624fd89f0d91737ffa6ef9001407f2dfcc3193dd"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/components-2026-01-29T09-04-03-817Z.json": {
+    "size": 133807,
+    "mtime_ns": 1769677561723196276,
+    "hash": "093b02d89ce5a7ea2d410ce2c4443643e11e49a66814b20d7c979339aa4df3e9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/logging-2026-01-29T09-04-03-823Z.json": {
+    "size": 30779,
+    "mtime_ns": 1769677561724328067,
+    "hash": "c1140c76d715fea58520c4cb7a6f4cf49c31742f20826a42da830d67b6fc821e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/structural-2026-01-29T09-04-03-837Z.json": {
+    "size": 65451,
+    "mtime_ns": 1769677561730729483,
+    "hash": "cfe3fe236eef07c56db8781d1a3da79cca440842a17b3012a1cbeed08ca31961"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-04-03-785Z.json": {
+    "size": 10894,
+    "mtime_ns": 1769677561711438778,
+    "hash": "4baa83b169e8f90a4230b249cb6dd911571e31cb05a79177a06dddc16e57b85b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/performance-2026-01-29T09-04-03-784Z.json": {
+    "size": 43743,
+    "mtime_ns": 1769677561731264524,
+    "hash": "52db5f7a9f3d1c6690ebce9da45516d3ac2bf75bf037638a7028b0829125e248"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/data-access-2026-01-29T09-04-03-802Z.json": {
+    "size": 76512,
+    "mtime_ns": 1769677561723940484,
+    "hash": "776033b0c268c9fcc1ee046b4352644c7f1f6dd2259283b628becf2e8aa6c9c6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/errors-2026-01-29T09-04-03-820Z.json": {
+    "size": 14783,
+    "mtime_ns": 1769677561718678985,
+    "hash": "e3aa13eb6f28b729a34b6d96166aa1ae351d01afa05ff340083f17dcb1c15d8b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/styling-2026-01-29T09-04-03-799Z.json": {
+    "size": 112231,
+    "mtime_ns": 1769677561738579773,
+    "hash": "1a1fa77e84139a03dcfcbf5753e85455dccd435b8d9ce4267365ec1ef2beff66"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/errors-2026-01-29T09-04-03-841Z.json": {
+    "size": 14783,
+    "mtime_ns": 1769677561719878985,
+    "hash": "fe63350e40d8261133c1044cefad0ea7e50f798a7cf7d576e7d3aa34568b158a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/logging-2026-01-29T09-04-03-803Z.json": {
+    "size": 30779,
+    "mtime_ns": 1769677561723452901,
+    "hash": "4e5751aa201b6b36b539de8288c968e577106788ca3d6e5290c8bac67e6714fa"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/logging-2026-01-29T09-04-03-844Z.json": {
+    "size": 30779,
+    "mtime_ns": 1769677561722482484,
+    "hash": "96953d51e6440ca7d9c268a6ad09f397506312cfa23b1a3f2521d0651bab4a03"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/types-2026-01-29T09-04-03-805Z.json": {
+    "size": 86415,
+    "mtime_ns": 1769677561738121231,
+    "hash": "9f8e0cf073fafbdb547f10096f5adba950a4a952b3198ffc266b30055933286b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/components-2026-01-29T09-04-03-870Z.json": {
+    "size": 133807,
+    "mtime_ns": 1769677561723568901,
+    "hash": "8fed5c192682cd5a1c4e412c9797e4c67afe0555558cc0578c7eebc656772a2e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/auth-2026-01-29T09-04-03-779Z.json": {
+    "size": 6663,
+    "mtime_ns": 1769677561712747361,
+    "hash": "ac5d816d078a0f25aeca04ca9117ac0cfa293659fb6cab967dab04fa39d064d0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/errors-2026-01-29T09-04-03-801Z.json": {
+    "size": 14783,
+    "mtime_ns": 1769677561718336235,
+    "hash": "589570e976702af85c1bc65a5e4f40f134b0940d2b9724b9bdddce0e74868528"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/styling-2026-01-29T09-04-03-778Z.json": {
+    "size": 112231,
+    "mtime_ns": 1769677561740020022,
+    "hash": "d5c80cf6cd36d9b6918f0d9d6836e1369ec4bf268e7725def095749f84242be2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/api-2026-01-29T09-04-03-799Z.json": {
+    "size": 5753,
+    "mtime_ns": 1769677561713652570,
+    "hash": "11598011698bc0916054d9abf761bdf43c945701b565738b98736a3900af1670"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/data-access-2026-01-29T09-04-03-842Z.json": {
+    "size": 76512,
+    "mtime_ns": 1769677561725713109,
+    "hash": "51e38ab6a27326c5324244a3e9d9f5f101c2aebc71b1c465dcc851725c5c4658"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/api-2026-01-29T09-04-03-872Z.json": {
+    "size": 5753,
+    "mtime_ns": 1769677561713349445,
+    "hash": "f24596ca458ed9d5809c151aac7d61e6dce8272dae8814be843582ec3b755c72"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/auth-2026-01-29T09-04-03-873Z.json": {
+    "size": 6663,
+    "mtime_ns": 1769677561713913194,
+    "hash": "2d3322650c9b8c93795d479617cb8cffee4d0228fb90fadd36bf6e772c53feac"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/data-access-2026-01-29T09-04-03-821Z.json": {
+    "size": 76512,
+    "mtime_ns": 1769677561724834026,
+    "hash": "45e19bf968b6f9af9782123e30d556588fb20e7d401bb921b2326dba168d7922"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/styling-2026-01-29T09-04-03-871Z.json": {
+    "size": 112231,
+    "mtime_ns": 1769677561741675814,
+    "hash": "be8dfc228060da1703338b6dba2d7c4bb893bedbfde57fc203431431e5ab6003"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/testing-2026-01-29T09-04-03-782Z.json": {
+    "size": 24014,
+    "mtime_ns": 1769677561733665107,
+    "hash": "e9a2c6abb54de9fd102d3e97d86c70a79abfc76a433236f6cb3473d69ad39e73"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json": {
+    "size": 16763,
+    "mtime_ns": 1769677561726410900,
+    "hash": "9331f9761f1069b0f467344a782de24f99566fbac8ce78c656dd7d966101930e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/api-2026-01-29T09-04-03-779Z.json": {
+    "size": 5753,
+    "mtime_ns": 1769677561712536486,
+    "hash": "842f5e5a5fa0271a83e91945b787930f9e17c42939e6da56ab3dc10200860ad6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/structural-2026-01-29T09-04-03-816Z.json": {
+    "size": 65451,
+    "mtime_ns": 1769677561730277274,
+    "hash": "38fcaf2c652c9456e2064e1e95c48244777e2400115d836bd4e2f261a807be0a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/config-2026-01-29T09-04-03-783Z.json": {
+    "size": 26720,
+    "mtime_ns": 1769677561718947527,
+    "hash": "7cb1684efb95898c297cc140225d49461eee9b4730971699e50ceb6a566c3155"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-04-03-806Z.json": {
+    "size": 12044,
+    "mtime_ns": 1769677561713628153,
+    "hash": "e021fad55041ce1dcfc410d3ff1622cb40458369d85aa84ce38addedd3801488"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/testing-2026-01-29T09-04-03-843Z.json": {
+    "size": 24014,
+    "mtime_ns": 1769677561733022982,
+    "hash": "38805a220c99e16241265030e37cb76d382b65ae7621a252843bc10110f2ab5b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/testing-2026-01-29T09-04-03-822Z.json": {
+    "size": 24014,
+    "mtime_ns": 1769677561732548066,
+    "hash": "9e597fccf882ce37c29a8700654219a859638a8d71dcfce23be61ad17ced2753"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/components-2026-01-29T09-04-03-838Z.json": {
+    "size": 133807,
+    "mtime_ns": 1769677561723039276,
+    "hash": "ebe78ad6c7d3577b07ae1d5c4aca757ec414b03988c9d38f0aa1a17b92f7cdf0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/structural-2026-01-29T09-04-03-776Z.json": {
+    "size": 65451,
+    "mtime_ns": 1769677561729638025,
+    "hash": "e85e716a8c461d0d24e18a8417cc72a93d409f511c60a2eb38344b0643228589"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/api-2026-01-29T09-04-03-819Z.json": {
+    "size": 5753,
+    "mtime_ns": 1769677561713336569,
+    "hash": "2e5a370d13211674471cab47e3659ea31427c0c586c03d13e67c6ad3d2cf31a1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/performance-2026-01-29T09-04-03-805Z.json": {
+    "size": 43743,
+    "mtime_ns": 1769677561725673192,
+    "hash": "d48e389f19aa8c39bd2f4862cb2a9f63ff4075194ba10e9f5650b30ef2ed720d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/errors-2026-01-29T09-04-03-873Z.json": {
+    "size": 14783,
+    "mtime_ns": 1769677561719882901,
+    "hash": "82f2ea04d9ba649f9bcb2b3eaf6b02bd4d90a91c17d573cae3a5ed558556985a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-04-03-878Z.json": {
+    "size": 14854,
+    "mtime_ns": 1769677561713702569,
+    "hash": "f56c86fcdb591038fda88f9641a5360852170ab31333943d251ad00e46d23701"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/styling-2026-01-29T09-04-03-818Z.json": {
+    "size": 112231,
+    "mtime_ns": 1769677561734730190,
+    "hash": "8ad11339f3cacb98b8551a4229274bbc1234dc2eac341dcfaf253f6b931e3a69"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/logging-2026-01-29T09-04-03-782Z.json": {
+    "size": 30779,
+    "mtime_ns": 1769677561721362818,
+    "hash": "bb0502dbd463d2232e4e96580a4018d5593f3fd538d7d33252d5bbce6168ba23"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/performance-2026-01-29T09-04-03-825Z.json": {
+    "size": 43743,
+    "mtime_ns": 1769677561731095108,
+    "hash": "4fd06deb1008c84ec80e17082e7d0b15fd69ed9fc03598d295751ef61bd60e60"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-804Z.json": {
+    "size": 16763,
+    "mtime_ns": 1769677561727240192,
+    "hash": "d744b25d17fb1cebd1f171abdf81c86031ce6ff66b0c8821d67f825a05f7f6a7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/types-2026-01-29T09-04-03-784Z.json": {
+    "size": 86415,
+    "mtime_ns": 1769677561737330981,
+    "hash": "7901104d6882584c60f93dba7c78d30078dc81e3700e56ce5f645a501a91448e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-04-03-826Z.json": {
+    "size": 13726,
+    "mtime_ns": 1769677561713921653,
+    "hash": "c020da26ba9afe4a85ce281339798ac0ee4e7f3834b2599b48062f39174dc493"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/testing-2026-01-29T09-04-03-802Z.json": {
+    "size": 24014,
+    "mtime_ns": 1769677561739852731,
+    "hash": "f334c24aa756130012d3da0439d469295ddc3584bf00d4e2e8dbfbfd1c335efd"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/data-access-2026-01-29T09-04-03-781Z.json": {
+    "size": 76512,
+    "mtime_ns": 1769677561721738193,
+    "hash": "5d7c6414bea2cb4a863f99ebb3fb45ad7d7e6f387c8b157972327e9152a90609"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-04-03-847Z.json": {
+    "size": 14854,
+    "mtime_ns": 1769677561713209028,
+    "hash": "125ae5039e4d0559b0f6b5c54b38a446da4f37dc82e5471f4c81e5856ade41c9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-844Z.json": {
+    "size": 16763,
+    "mtime_ns": 1769677561726015775,
+    "hash": "e7065fae24052fd7c881f378ac6019823f741efc944602d2425154762a8a63ed"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/styling-2026-01-29T09-04-03-839Z.json": {
+    "size": 112231,
+    "mtime_ns": 1769677561734950190,
+    "hash": "2676da1014cae7e05405fe2295f22ce5f355a7f020d3c49369f55e344c0ab6aa"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/components-2026-01-29T09-04-03-797Z.json": {
+    "size": 133807,
+    "mtime_ns": 1769677561722510609,
+    "hash": "529475f9d40861a6e9768a0578133eb262b5602a570c71dd2bf25c27be5b89de"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/errors-2026-01-29T09-04-03-780Z.json": {
+    "size": 14783,
+    "mtime_ns": 1769677561718336069,
+    "hash": "3ac65d633df2e31f2c3f607861e61ac13a7fa2563edee8b83c07c0f2a367e640"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/data-access-2026-01-29T09-04-03-874Z.json": {
+    "size": 76512,
+    "mtime_ns": 1769677561724440442,
+    "hash": "1600fee73def10b7b8cb2ddd17df1b6681d98e2a52a881d035956f6c3fe44878"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/logging-2026-01-29T09-04-03-875Z.json": {
+    "size": 30779,
+    "mtime_ns": 1769677561726956608,
+    "hash": "f4c2594d0dd9e8bb6a7214a893755c3d52b6cfbf98d4806b33eef7c0491d56e1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/auth-2026-01-29T09-04-03-800Z.json": {
+    "size": 6663,
+    "mtime_ns": 1769677561714202736,
+    "hash": "d7d18482214e2755e8f83023bc7b69157230a99cacf9a9ac15f119efefc1332d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/config-2026-01-29T09-04-03-804Z.json": {
+    "size": 26720,
+    "mtime_ns": 1769677561716336735,
+    "hash": "acbe5afd93ca595acdafeed6580b1f1ac71680197cd7a3c5b58e6af3744299cf"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/config-2026-01-29T09-04-03-845Z.json": {
+    "size": 26720,
+    "mtime_ns": 1769677561716327194,
+    "hash": "a1a72c1ed34e758c642e1df3a0a9f3768bca27886cd5ea898dd31e0ccc535d8a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/auth-2026-01-29T09-04-03-820Z.json": {
+    "size": 6663,
+    "mtime_ns": 1769677561712991361,
+    "hash": "354c4f6bd1cb7e5d9c9ae6b60ca4ac9789db03abb9c390e99deec4eb3f21da2c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-823Z.json": {
+    "size": 16763,
+    "mtime_ns": 1769677561725967400,
+    "hash": "92d11f83938d5500d9773d8697b1c40fe775c496c9b9767bd4b58b104dce5aa9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/config-2026-01-29T09-04-03-824Z.json": {
+    "size": 26720,
+    "mtime_ns": 1769677561716773319,
+    "hash": "0483208a6299f6ce00ff35673dcf33a601bfb6623addd0912bf6e18f9013fa28"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/types-2026-01-29T09-04-03-877Z.json": {
+    "size": 86415,
+    "mtime_ns": 1769677561738553273,
+    "hash": "65beeaa427f7b83f27dbcb9086ff3841f9b7cbf1b614951dc3dc80d6ff7fa6a1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/auth-2026-01-29T09-04-03-841Z.json": {
+    "size": 6663,
+    "mtime_ns": 1769677561713918611,
+    "hash": "03628d508b169f1c604afe9bb7d6f159c654c7a67e86060685c42f5d3b62554f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/performance-2026-01-29T09-04-03-847Z.json": {
+    "size": 43743,
+    "mtime_ns": 1769677561731741649,
+    "hash": "649e05e4e2e42b24b1642018442b38d395c8cd0e02de843f3a3751c9c4e1eaab"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/performance-2026-01-29T09-04-03-878Z.json": {
+    "size": 43743,
+    "mtime_ns": 1769677561727087400,
+    "hash": "0dfb50044a1f9fe6f2bd70912898866d8a0e9ed72390a7a0ba63b839794af10e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/components-2026-01-29T09-04-03-777Z.json": {
+    "size": 133807,
+    "mtime_ns": 1769677561735196023,
+    "hash": "70496a1a2983f62f2c32f3309b8833ddffda130c4adba7d749f56b53aa88ed81"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/structural-2026-01-29T09-04-03-797Z.json": {
+    "size": 65451,
+    "mtime_ns": 1769677561730082691,
+    "hash": "9ed38a1500a6005911a06d61f1a0d5809240640a453c13b1f74365e927a1493a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/api-2026-01-29T09-04-03-840Z.json": {
+    "size": 5753,
+    "mtime_ns": 1769677561712481570,
+    "hash": "da17bde399012b5a487c41c1e850c2273369359661576b55800c012b2195a34e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/logging.json": {
+    "size": 37221,
+    "mtime_ns": 1769677561774767141,
+    "hash": "a711f8e9f84576329e913379e59dde645cff4b4dece7961aec7296f14a3b37bc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/testing.json": {
+    "size": 43011,
+    "mtime_ns": 1769677561777902015,
+    "hash": "fc9cd35f7dd033277b1f137c48056c8bac5c3e50734b917f15622f122dc44945"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/structural.json": {
+    "size": 98811,
+    "mtime_ns": 1769677561785619639,
+    "hash": "388f0e3b4c50ae81e80abfab9c2b13874f561be23c4e37314b64ac9f962c34e4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/styling.json": {
+    "size": 82435,
+    "mtime_ns": 1769677561781130389,
+    "hash": "aa8afbe1a06e8853e423900598b8b54c7963b7e16c8c04f66cc5d585f38ddc35"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/errors.json": {
+    "size": 83812,
+    "mtime_ns": 1769677561779297556,
+    "hash": "261d4c12fe8c6e1ae4a31754294ce7c71594dd23f93109d2a4248b786884dbc0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/types.json": {
+    "size": 123334,
+    "mtime_ns": 1769677561789975554,
+    "hash": "3874bf9668d007fe1685ae65f5cb3f29a5eb3bfabf042e284db418c19060a6a5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/config.json": {
+    "size": 22663,
+    "mtime_ns": 1769677561772408683,
+    "hash": "ad8ce939ed94cf4e52468f9465cd619331870889c43874b858f9635f329d9ba6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/security.json": {
+    "size": 17659,
+    "mtime_ns": 1769677561776542432,
+    "hash": "bbb98609fb2dfe267a369659d8065ff8b6e9c63137c981c6b895aff93941ae4b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/performance.json": {
+    "size": 31715,
+    "mtime_ns": 1769677561774965265,
+    "hash": "8d3eea8bfc0df57e89b2253d5d67f509fcb6cd25ca4c2c8d4510b73376f80ced"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/components.json": {
+    "size": 98131,
+    "mtime_ns": 1769677561775831432,
+    "hash": "6a146c7d1e780de545b71df7ba98c00d0dba5d17bd498dcb2d51f76e6f6b4b19"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/auth.json": {
+    "size": 29536,
+    "mtime_ns": 1769677561772795808,
+    "hash": "e08af71a6b29a6d1378f8827cb887024d18c2cc897fb8b865d98542578eb70db"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/data-access.json": {
+    "size": 85524,
+    "mtime_ns": 1769677561779939848,
+    "hash": "2760517e195c57fcc321f204cebaed753af863681e2f73fc21d1272ba6117f92"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/accessibility.json": {
+    "size": 21219,
+    "mtime_ns": 1769677561770756725,
+    "hash": "04b1553c3c26ef2b55ef15e69e5daabc84d3b9061cff07028ade6240e3f1f275"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/documentation.json": {
+    "size": 20969,
+    "mtime_ns": 1769677561772740183,
+    "hash": "abf9125266ae1a48975a43c91bcab7417740f5e9fee387b82a1cf872cb56e8d0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/performance-2026-01-29T09-04-03-815Z.json": {
+    "size": 31715,
+    "mtime_ns": 1769677561760681893,
+    "hash": "4eccfd2e9a961a7ff5fba0829d20129177c12f0e5eca0b0258eb29bb6db34d48"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/logging-2026-01-29T09-04-03-772Z.json": {
+    "size": 37221,
+    "mtime_ns": 1769677561761088102,
+    "hash": "9a84415d32bb04b0af0de0fd23228ea2d82061cdc74b84b4ceb1dcbf29ed3c04"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/security-2026-01-29T09-04-03-834Z.json": {
+    "size": 17659,
+    "mtime_ns": 1769677561761420560,
+    "hash": "af8ccda643224b6c08b71d0b44bc4af028d95453ef174dc0643441b86cdbe6d2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/structural-2026-01-29T09-04-03-766Z.json": {
+    "size": 98811,
+    "mtime_ns": 1769677561767608559,
+    "hash": "5754fd3ae704f0e17c39f006864be8dd7a1753c5dcccc049ddbe349aa690b840"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-04-03-776Z.json": {
+    "size": 26318,
+    "mtime_ns": 1769677561750603270,
+    "hash": "c7aa9cee681d1d960bdab4367f08517610fa2e529467b8756eb0e99f026d913d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/components-2026-01-29T09-04-03-828Z.json": {
+    "size": 98131,
+    "mtime_ns": 1769677561758919060,
+    "hash": "523a4f9c926bd0c5198a2a27da7dfbc5813e7abddb5856a4272a24b409617a8a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/components-2026-01-29T09-04-03-850Z.json": {
+    "size": 98131,
+    "mtime_ns": 1769677561755204519,
+    "hash": "0a1396f0de5bcb3a3bbe345be5e63a7144a5f9189d7da351cea2de6eb35d1a96"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/testing-2026-01-29T09-04-03-832Z.json": {
+    "size": 43011,
+    "mtime_ns": 1769677561770370516,
+    "hash": "77c595d05afe99536338056ac43c6affd791d2cc8ea52d0cd7b7813ca3b13db4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/types-2026-01-29T09-04-03-774Z.json": {
+    "size": 123334,
+    "mtime_ns": 1769677561781116889,
+    "hash": "3d8be9b80c5138fce57046135e8fee709cd2034e1c5fb5b704ebdba028dbb937"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/testing-2026-01-29T09-04-03-812Z.json": {
+    "size": 43011,
+    "mtime_ns": 1769677561770342225,
+    "hash": "af32cf7a2fa0208494170e1d6ab3a4b7a4a749c665fe96dd1c61ed3066b50165"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/types-2026-01-29T09-04-03-794Z.json": {
+    "size": 123334,
+    "mtime_ns": 1769677561777407682,
+    "hash": "81bdb59c81bccc78394d98384e4a728fdbdad6dac5582aee1ff988f786b2e14b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-04-03-836Z.json": {
+    "size": 21219,
+    "mtime_ns": 1769677561742504522,
+    "hash": "a19882a710e1166f4359fc671e33585240beb8c652df625b8e9630cff1ff7dbd"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/api-2026-01-29T09-04-02-035Z.json": {
+    "size": 4122,
+    "mtime_ns": 1769677561742393355,
+    "hash": "56290fc5e9e57a323c83e6a7c7c0392a4a427cdd971786b8020e29f14257ce3a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/structural-2026-01-29T09-04-03-786Z.json": {
+    "size": 98811,
+    "mtime_ns": 1769677561768913934,
+    "hash": "f20a00f38e92aa0f1f80da56886704af4cd31285e77509833eae1acaab1efd01"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/config-2026-01-29T09-04-03-813Z.json": {
+    "size": 22663,
+    "mtime_ns": 1769677561747817563,
+    "hash": "99e6fd8b629babcbb29a4d733eebb21f336f43e204b830beab913ab6dce7b5f0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-04-03-796Z.json": {
+    "size": 26318,
+    "mtime_ns": 1769677561750625854,
+    "hash": "444cd87673e5e71021e3313deb8de4d081c0f5435acd17c43a0a3f30d8bb9848"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/performance-2026-01-29T09-04-03-835Z.json": {
+    "size": 31715,
+    "mtime_ns": 1769677561766526017,
+    "hash": "a3c1dc56a9a79a27a882b4d5e2d4f1390e78901f7ec5d3e458e0b48d1c4b79de"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/structural-2026-01-29T09-04-03-849Z.json": {
+    "size": 98811,
+    "mtime_ns": 1769677561768102350,
+    "hash": "3cbe92497cfee14d84bdfeb5faf115bd267174d005da9fb9a1eb7e2c7cd2b933"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-04-03-868Z.json": {
+    "size": 21219,
+    "mtime_ns": 1769677561742539480,
+    "hash": "79109ea97c8984242068787c0f207216977de8ce7cc3ea867757f1760e0db76a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/components-2026-01-29T09-04-03-808Z.json": {
+    "size": 98131,
+    "mtime_ns": 1769677561751139229,
+    "hash": "73d57f52cb4ebf9b4d24b8b8adf5c7c8a4dd1eec2cc1b87fd863ed85aa4997f4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/auth-2026-01-29T09-04-03-809Z.json": {
+    "size": 29536,
+    "mtime_ns": 1769677561747219313,
+    "hash": "51aad34718292593377c0b99c3025ff570bb6aaeff33560b249e7626bed960d4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/styling-2026-01-29T09-04-03-853Z.json": {
+    "size": 82435,
+    "mtime_ns": 1769677561771613100,
+    "hash": "4bbbfb7bfab890191f15f75715b88e1a7e2654c20a9c115f5e3eb67eeaffe946"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/security-2026-01-29T09-04-03-813Z.json": {
+    "size": 17659,
+    "mtime_ns": 1769677561760825143,
+    "hash": "6fbe601e28697d911ee26cc8d3ef1b45e631be779b13df734f837b4e3fadaa7a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-04-03-770Z.json": {
+    "size": 85524,
+    "mtime_ns": 1769677561753397061,
+    "hash": "eb5e46f0634c90130074f55fbdb8500721ee68d7ff5a4a86d6f866245467ea77"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/api-2026-01-29T09-04-02-051Z.json": {
+    "size": 2501,
+    "mtime_ns": 1769677561742707105,
+    "hash": "0cf40eb45d17cebe53daedeeb977de2ff86527fb266974f8ce59aca21f49acb0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-04-03-815Z.json": {
+    "size": 22297,
+    "mtime_ns": 1769677561743096772,
+    "hash": "6b4248c69414f6826586071da988f72f05074c6c02467304dc4d0d15c6a72b0c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/logging-2026-01-29T09-04-03-865Z.json": {
+    "size": 37221,
+    "mtime_ns": 1769677561759366435,
+    "hash": "3fdd7009f71ce13b154497e665660e760650954c59f293e57a1f7393b399e42c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/errors-2026-01-29T09-04-03-862Z.json": {
+    "size": 83812,
+    "mtime_ns": 1769677561759755727,
+    "hash": "a21e754e177033c67ddd7059a850e5bdace5b81f81eb6884e5a06e507566417e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/errors-2026-01-29T09-04-03-789Z.json": {
+    "size": 83812,
+    "mtime_ns": 1769677561757361061,
+    "hash": "bcb009cb98f205e5e791f242d0bd0e00a71e74e6e8e8e49de6a6110a3d7b75df"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/components-2026-01-29T09-04-03-787Z.json": {
+    "size": 98131,
+    "mtime_ns": 1769677561751010145,
+    "hash": "692e632533f874d28f40afb8e0aba07e408db7f7b3dbc951ee694ec9901a68f4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/styling-2026-01-29T09-04-03-829Z.json": {
+    "size": 82435,
+    "mtime_ns": 1769677561776250140,
+    "hash": "6f632a9b38b582b9f4f031b9459b72111179cab55093074ad8f03ebee599e52c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-04-03-864Z.json": {
+    "size": 85524,
+    "mtime_ns": 1769677561754726186,
+    "hash": "b59aa1d867449d49c5f3d18186e69aa9c4eecbbd11d2448145dbe462f120793b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/components-2026-01-29T09-04-03-767Z.json": {
+    "size": 98131,
+    "mtime_ns": 1769677561757756394,
+    "hash": "7aa1ba4c0a8cc8a75da33f3faba61dfff819fb0be6148585cbee1762136b750f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/performance-2026-01-29T09-04-03-868Z.json": {
+    "size": 31715,
+    "mtime_ns": 1769677561760811518,
+    "hash": "f540097805a7860c4096f0d89e3fd28fa6163a451b53e33b3dad0a7e95d4880a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/styling-2026-01-29T09-04-03-809Z.json": {
+    "size": 82435,
+    "mtime_ns": 1769677561767306850,
+    "hash": "1e5be4ca6ffd58e3de55641c7829ca5ed1552f3bc117580083f65917b57c486f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/errors-2026-01-29T09-04-03-770Z.json": {
+    "size": 83812,
+    "mtime_ns": 1769677561758258894,
+    "hash": "a1a127839119211917a47e8e128f8f1e41a576553cd34e2cbb6891ac275e3f9f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/config-2026-01-29T09-04-03-834Z.json": {
+    "size": 22663,
+    "mtime_ns": 1769677561747739313,
+    "hash": "6f6566654f5d6a58a5457847ec8fd4c1cdd1f28ec240f1a8769cb5162583dcdb"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/types-2026-01-29T09-04-03-867Z.json": {
+    "size": 123334,
+    "mtime_ns": 1769677561776825182,
+    "hash": "db4c4f695b8826a7517ab6884d154041ef4dd7788ed8aaf39fdb141bfcc0de79"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-04-03-790Z.json": {
+    "size": 85524,
+    "mtime_ns": 1769677561757198477,
+    "hash": "50d327e46fe637b3b9632c47c1a424fddba209fc6d15f90688bcf8d914d681b2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/logging-2026-01-29T09-04-03-791Z.json": {
+    "size": 37221,
+    "mtime_ns": 1769677561766527559,
+    "hash": "52512b6c174191ed96e79807bd4a890ca2087432d54c2e6e1d4272463b0d87dd"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/auth-2026-01-29T09-04-03-830Z.json": {
+    "size": 29536,
+    "mtime_ns": 1769677561747744604,
+    "hash": "46e4cca8c24adb05fc49ebb23fd3c40cc3840541e09af61ef55411b6a506fd7a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-04-03-795Z.json": {
+    "size": 23929,
+    "mtime_ns": 1769677561743983105,
+    "hash": "70cb5951e5d994fb60e8caf8fea1b35a080c923f6d85d8aa1acb6cfa693851ce"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/structural-2026-01-29T09-04-03-827Z.json": {
+    "size": 98811,
+    "mtime_ns": 1769677561767613600,
+    "hash": "817847d30fda93466733aa2df0479048bef92c00e6b443500e39276fca208b05"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/logging-2026-01-29T09-04-03-833Z.json": {
+    "size": 37221,
+    "mtime_ns": 1769677561759034477,
+    "hash": "b7cfc2a2ccdbab3e321a97b185b46d6eb0c5e58711c6b9c5d535305f1bdd6024"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/testing-2026-01-29T09-04-03-771Z.json": {
+    "size": 43011,
+    "mtime_ns": 1769677561768673267,
+    "hash": "37f93a7c3e3a8a3d3bc311f9859a12f21224af61d7d07ff4186258fc230bf3f1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-04-03-832Z.json": {
+    "size": 85524,
+    "mtime_ns": 1769677561754099603,
+    "hash": "d48ee864232116d44cfdf4f012a05ff35b0b00bdd85388efe65fa71ce7cf02d2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/errors-2026-01-29T09-04-03-810Z.json": {
+    "size": 83812,
+    "mtime_ns": 1769677561757335269,
+    "hash": "58807dd34514fbda8b21e0570edb6311260e7e74c3e850243ab3b9663c6636b9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-04-03-869Z.json": {
+    "size": 23962,
+    "mtime_ns": 1769677561755878478,
+    "hash": "f924d6fa9b591e0d47d2804445474c46ed0f7e4d9559e8f554e6a14ed6a7c1af"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/auth-2026-01-29T09-04-03-789Z.json": {
+    "size": 29536,
+    "mtime_ns": 1769677561747929146,
+    "hash": "a49bd10d2ebd26d6052955620047b9628f1bccb5251352074d6170e864c86800"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/testing-2026-01-29T09-04-03-865Z.json": {
+    "size": 43011,
+    "mtime_ns": 1769677561770756850,
+    "hash": "61c726f07d9bd6f311d2b51c87f8301ea52f505502230732f84617b46fa25977"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/types-2026-01-29T09-04-03-835Z.json": {
+    "size": 123334,
+    "mtime_ns": 1769677561776429849,
+    "hash": "fa805cf28bd2542c4edefa236eb17e66a2778ceef2c0d6522e9cd835b2e7a52b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/config-2026-01-29T09-04-03-866Z.json": {
+    "size": 22663,
+    "mtime_ns": 1769677561748530437,
+    "hash": "b821d73264004156b08fd741297449d88afb0329788575186367da582607400c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/api-2026-01-29T09-04-02-005Z.json": {
+    "size": 5553,
+    "mtime_ns": 1769677561742539355,
+    "hash": "1ce2ede920458bdbadb94149a356eeb30f56256b6031a83e307ce915d49d2b1a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/auth-2026-01-29T09-04-03-769Z.json": {
+    "size": 29536,
+    "mtime_ns": 1769677561744777397,
+    "hash": "9c23e08d582eb367be2d3bca54362b4832c7f5d9a55f8fc6420ff223123e7dc7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/security-2026-01-29T09-04-03-773Z.json": {
+    "size": 17659,
+    "mtime_ns": 1769677561766764851,
+    "hash": "2cb1bfd346a7765fdddf8cd59bd03c664834d658f8c12ad9feff6d8a4cb7255f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-04-03-775Z.json": {
+    "size": 25029,
+    "mtime_ns": 1769677561741495231,
+    "hash": "d5b5859a2071b0228f6d22e490a2dbc89012ed7ab0b48df0ec1f6948dc88aba1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/structural-2026-01-29T09-04-03-807Z.json": {
+    "size": 98811,
+    "mtime_ns": 1769677561768077392,
+    "hash": "be4fb3080566d019a524976a82eec6e5b1b8b1d2d8424492c7c3c72017fd3675"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/performance-2026-01-29T09-04-03-774Z.json": {
+    "size": 31715,
+    "mtime_ns": 1769677561760468352,
+    "hash": "d4175a8952aee73a4a265b528ee35eb20dbbda30a2e7fa37b34d2e76dba9b975"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/auth-2026-01-29T09-04-03-859Z.json": {
+    "size": 29536,
+    "mtime_ns": 1769677561745747313,
+    "hash": "d5679ea3cddd2c90ac4fec6005e980296700055807466c6ac05e601f94301f43"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/testing-2026-01-29T09-04-03-791Z.json": {
+    "size": 43011,
+    "mtime_ns": 1769677561771151433,
+    "hash": "6c25384e21f8e2d7b71cb5dbef673fba576632f42692e5db8e4e17e13b79949e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/security-2026-01-29T09-04-03-792Z.json": {
+    "size": 17659,
+    "mtime_ns": 1769677561780849264,
+    "hash": "3972fb6197d8501aab19dd93ca51f264837fb10ff8c3b4d4b9b2bd81a59e0b75"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/api-2026-01-29T09-04-02-020Z.json": {
+    "size": 5553,
+    "mtime_ns": 1769677561742688730,
+    "hash": "67b5d1d2d242bacff3cb38147f6b6407725cef86218c075c498f4e4d6069e87a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/performance-2026-01-29T09-04-03-795Z.json": {
+    "size": 31715,
+    "mtime_ns": 1769677561760167768,
+    "hash": "5d4911a4c680e1bfec46f2c5a994f902c2d67b2dcf164f0180090a1aa1aafe8f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-04-03-836Z.json": {
+    "size": 26318,
+    "mtime_ns": 1769677561751675395,
+    "hash": "42a100763bcea320ce268875c2b1ddccce05e0e3791d41351284e3b41cde8973"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/api-2026-01-29T09-04-01-989Z.json": {
+    "size": 5553,
+    "mtime_ns": 1769677561742672189,
+    "hash": "f8c32eaf72a124737f7dcc414ba32f2251c03831dafc1de5630c2657b65c9c55"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/config-2026-01-29T09-04-03-773Z.json": {
+    "size": 22663,
+    "mtime_ns": 1769677561746861479,
+    "hash": "e2cf0ff769a90ab3f3df8691349b06f1ccfe8f15a4e97ae1caafae52213a33a3"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/styling-2026-01-29T09-04-03-768Z.json": {
+    "size": 82435,
+    "mtime_ns": 1769677561766643517,
+    "hash": "d8251c48945c2617841963cc0436d77aed30b3695c23e79965e766bc5b8bfa05"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/logging-2026-01-29T09-04-03-812Z.json": {
+    "size": 37221,
+    "mtime_ns": 1769677561758924727,
+    "hash": "70d31d408c196c97940e7db6b800eb49c035b16858b789416c9f51326d1b8ed0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/config-2026-01-29T09-04-03-793Z.json": {
+    "size": 22663,
+    "mtime_ns": 1769677561748171271,
+    "hash": "e305510210521d925f0dcc6df4813cc26ce4345e60071cf1d77242c4f1da4494"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-04-03-816Z.json": {
+    "size": 26318,
+    "mtime_ns": 1769677561755557894,
+    "hash": "f54d94262455a0a69a9cfc9f14f88fa7e4e1c41e84a60948bac5cf2ccfb2139b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/styling-2026-01-29T09-04-03-788Z.json": {
+    "size": 82435,
+    "mtime_ns": 1769677561766648976,
+    "hash": "139e833055ed513fe5e13fa64e4526514a77d7d5b60d5d34af7b54ad252ee3de"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/security-2026-01-29T09-04-03-866Z.json": {
+    "size": 17659,
+    "mtime_ns": 1769677561763450726,
+    "hash": "309e0710246214b3a48c86ed29ad0683f16a3e738e7dfe4d929c9904748d57d9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/errors-2026-01-29T09-04-03-831Z.json": {
+    "size": 83812,
+    "mtime_ns": 1769677561764231059,
+    "hash": "9df4db0ce0f6c1ea5e908734449f535abcef6a7d0244e201891e0c19163da44d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-04-03-811Z.json": {
+    "size": 85524,
+    "mtime_ns": 1769677561754002603,
+    "hash": "50c920a8280c60d59fd4fcb8a68489a13ab698290ffa675336581c2d8865290a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/discovered/.backups/types-2026-01-29T09-04-03-814Z.json": {
+    "size": 123334,
+    "mtime_ns": 1769677561785643597,
+    "hash": "048e85eef8e96c3ae58d391bc63c52b87df6ecfb04f726038e90ae03d8ac74bf"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/views/security-summary.json": {
+    "size": 269,
+    "mtime_ns": 1769677561777027890,
+    "hash": "14259e2b8822bdf512a03ef728626769d396f5718d8b4214904ada153d0755cc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/views/pattern-index.json": {
+    "size": 117934,
+    "mtime_ns": 1769677561802279802,
+    "hash": "d120595027bcf9846fac03edf48a041fb458ea3bd025e8b5f9f064643ff322df"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/views/status.json": {
+    "size": 1303,
+    "mtime_ns": 1769677561779459015,
+    "hash": "5f064fa2ea68912b0ee1cc12ae4dcdf31ff5ebf40685085e7d092176bc67b96b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/indexes/by-file.json": {
+    "size": 59931,
+    "mtime_ns": 1769677561713254820,
+    "hash": "6961c6e9b685a516e652e3ca584d6efa93a30db387fdc76b084752d44d6ff579"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/indexes/by-category.json": {
+    "size": 9193,
+    "mtime_ns": 1769677561711422195,
+    "hash": "57e94b9a5043a04d1c5415c7e64dfd304fc6a5667ef6b96fdd7fa0be15b5efaa"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.tamagui/tamagui.config.json": {
+    "size": 4262612,
+    "mtime_ns": 1778053475849127202,
+    "hash": "a7153963b5dafe6f178e0ad4e7f2fa804638ef740488c6cd47eda45b8a479eca"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/build.gradle": {
+    "size": 556,
+    "mtime_ns": 1778052666294516253,
+    "hash": "39331977ac19fd664e43fe365366f19ae3912e44df6feb1ed741ff3d5b9a9da2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/settings.gradle": {
+    "size": 1509,
+    "mtime_ns": 1778052666291203988,
+    "hash": "16e789df41d7cb2516d41b48d2c96cfc6b2b61a40ff62a7bbb8b416ae907c9bd"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/build.gradle": {
+    "size": 8445,
+    "mtime_ns": 1779846551641060413,
+    "hash": "7e6420358d79a1b5327326a67a5c505b2f7f452d336b24900640d1efa7abe298"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/tools/debug/arm64-v8a/compile_commands.json": {
+    "size": 321646,
+    "mtime_ns": 1778052696082577473,
+    "hash": "f51af61da9dbf65ecc940365e8e968d41f3627e86b688b7c303c06422de68bd0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/compile_commands.json": {
+    "size": 321646,
+    "mtime_ns": 1778052725755379176,
+    "hash": "cc526906b66bc562bf9ceb58499205ef094596bbdd89ba120638c97d0f99c1e2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build_mini.json": {
+    "size": 9550,
+    "mtime_ns": 1778052725783262061,
+    "hash": "5580401659eee019749ce5091af13664bd7d3a9863f113a2415a8517950b591a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json": {
+    "size": 1341,
+    "mtime_ns": 1778052719014000000,
+    "hash": "c4f009c7a55792119504764dd190cfc7d6e198466477b5cd0bb74c427707e4e1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/android_gradle_build.json": {
+    "size": 10118,
+    "mtime_ns": 1778052725775502232,
+    "hash": "e00e759688fe488ba92c5a7335cf53df1075e6573e4a060b102ed01382b637b5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/src/foo.cpp": {
+    "size": 29,
+    "mtime_ns": 1778052725447039722,
+    "hash": "74d1b9ab7b5255eba4e405f20cbdfeb9b0bbff1ddd12faba921fbb563f9a22d7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/src/main.cpp": {
+    "size": 43,
+    "mtime_ns": 1778052725447219473,
+    "hash": "4cc1ed7ad1282d2edeff188dec39c52dc818df317561be946e7bc31b567f9c87"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CompilerIdC/CMakeCCompilerId.c": {
+    "size": 24853,
+    "mtime_ns": 1778052695566979805,
+    "hash": "fcf0bf75dced5c4bb573e5991a93b2b9ad4ddb0723084f66ccc432305272c7b4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CompilerIdCXX/CMakeCXXCompilerId.cpp": {
+    "size": 24597,
+    "mtime_ns": 1778052695670510432,
+    "hash": "40f94be447334c3c1a245fe3134d648f2a4145f93e3a0fbfdff24d1cc05266a4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_RNDateTimePickerCGen-Debug-29a3adbd3e48f338946c.json": {
+    "size": 9757,
+    "mtime_ns": 1778052696090500053,
+    "hash": "0aeba5688d36ed8f0b28a60b12f60cebc7a9ae5cbaa60807d493fa7d9cf33076"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-.-Debug-f5ebdc15457944623624.json": {
+    "size": 154,
+    "mtime_ns": 1778052696094177613,
+    "hash": "7e65f7e63c4079412fe50343d01aa6f0ace063bcd95842464556cab112e618fa"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-rnworklets_autolinked_build-Debug-329035ff29f5d4b38790.json": {
+    "size": 465,
+    "mtime_ns": 1778052696096346248,
+    "hash": "8f1980f4a35e57da63d987c7909fa282063484a8e7ed1a3395d6ddeec7e3efc1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-RNDateTimePickerCGen_autolinked_build-Debug-78c06753c885b963566a.json": {
+    "size": 492,
+    "mtime_ns": 1778052696094967200,
+    "hash": "016204ba2c0501c2a275dbce1c1fed87cc39843336dfa5a37eabb646ceaffa64"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-RNCWebViewSpec_autolinked_build-Debug-eb00cfed09756f2d28e4.json": {
+    "size": 463,
+    "mtime_ns": 1778052696096185873,
+    "hash": "0d06632eb5e40989e59511bccaad01ce7e89e36f064131716c89ed77ca380ad6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-RNBackgroundDownloaderSpec_autolinked_build-Debug-38640eba1271c839b7cd.json": {
+    "size": 509,
+    "mtime_ns": 1778052696094473323,
+    "hash": "1d94bca79727e37b94bcbc1dce6088e7bb34e3015d60911deba0d49790d6aa1d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cmakeFiles-v1-175d9643a854c0ad90b0.json": {
+    "size": 12872,
+    "mtime_ns": 1778052725761306830,
+    "hash": "03c0391ab963bdcfca066f5630a514b7410792f918743981cf75ccf87f135ea1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/index-2026-05-06T07-32-05-0768.json": {
+    "size": 1626,
+    "mtime_ns": 1778052725768439531,
+    "hash": "0f42c51e2be1fd422be0b07043d049c68405d33875104b2baa350f8c8b622886"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-rnreanimated_autolinked_build-Debug-755b4a662029edd9bb50.json": {
+    "size": 469,
+    "mtime_ns": 1778052696095639828,
+    "hash": "684439d006e28c6f74144913e09fb89557ff7fcddd7ad08c4b6422ba8706ee65"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json": {
+    "size": 473,
+    "mtime_ns": 1778052696095447077,
+    "hash": "4e39fc0fa88baca70850c15a8cb0defa6f1eb12152cf058e3e59183afcb137df"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_rnworklets-Debug-bc1a988c45ed08166214.json": {
+    "size": 9230,
+    "mtime_ns": 1778052696093368484,
+    "hash": "fe2a5f45b48ad5c23c600079a754bd3f38a25fc9e2f77ea84194b0d6646cc5d0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-rnasyncstorage_autolinked_build-Debug-b471d0a3847dfe8c5b67.json": {
+    "size": 489,
+    "mtime_ns": 1778052696094744532,
+    "hash": "224790a7f9c90a2be4e6ab3475180d06774e75d90a03e4e15e73c7e889bde487"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json": {
+    "size": 457,
+    "mtime_ns": 1778052696095831037,
+    "hash": "5d1d08348b3e84d22e2830c178e4a045bda8f565dc44c1ce35e3319d6bb6cc4d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_rnscreens-Debug-6dee8760d6d79749989f.json": {
+    "size": 15363,
+    "mtime_ns": 1778052696092993274,
+    "hash": "44938e7547aca51f8d5d80380fac89309f31126e6285b80fc97b423792bef5ca"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_reactnativekeyboardcontroller-Debug-8f70c5535b00811956b5.json": {
+    "size": 14040,
+    "mtime_ns": 1778052696091135098,
+    "hash": "20780b736c5e161954eb01d5ad5cfe22d956cecbd1380ef09977fa421a813a46"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-rnscreens_autolinked_build-Debug-d73f8e88eda86804c69c.json": {
+    "size": 435,
+    "mtime_ns": 1778052696096008205,
+    "hash": "fad63c9d43abef3cd92c76a6ecdbc4cf3eaf1746bead663c2eb6d1654ac98281"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_rngesturehandler_codegen-Debug-b1789782602e7a31027d.json": {
+    "size": 9783,
+    "mtime_ns": 1778052696092058394,
+    "hash": "60d6cfd4160e8c2e84cbef57c59db98efc6bbd3009146213ddb14101882aff61"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-rngesturehandler_codegen_autolinked_build-Debug-64ae23b63723e122efcc.json": {
+    "size": 486,
+    "mtime_ns": 1778052696095178368,
+    "hash": "9e8622a06136395e1212963219886b9605bd528a7807cc95beb88694d5b73186"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_safeareacontext-Debug-a9d83b5eab01d8269a78.json": {
+    "size": 11839,
+    "mtime_ns": 1778052696093918987,
+    "hash": "e6f50c595ab600fc013387e579aadcb02a8ac184af1670aa5db61a8c8532a4ee"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-appmodules-Debug-8bd21d1ba63e00542b81.json": {
+    "size": 38146,
+    "mtime_ns": 1778052696089037088,
+    "hash": "ba2cd96cb58bc2b5ac916f30e2c38db71305738b51db5c7ee98f98e6d309b113"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_rnreanimated-Debug-242c76f8390e7d5d5ca6.json": {
+    "size": 9320,
+    "mtime_ns": 1778052696092477105,
+    "hash": "e0dc1b387a51491de5f2836c8fd36335f71d78acda9df227fcf7e98b1449efee"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json": {
+    "size": 29688,
+    "mtime_ns": 1778052725760792827,
+    "hash": "abe3b543be831d17cccbcb66744fe9dfc5a5ccd6118c186a47fe139884a32851"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_rnasyncstorage-Debug-6f248f1af6d36feae252.json": {
+    "size": 9586,
+    "mtime_ns": 1778052696091571725,
+    "hash": "57092ee5aa2e3cad7790512cbe2f11058c621ca4da070642c169b30b003ac8d3"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_RNBackgroundDownloaderSpec-Debug-cb634e9168ad13450fb4.json": {
+    "size": 10082,
+    "mtime_ns": 1778052696089565507,
+    "hash": "30e1b47d04dd28c72495c6b709ac6c24165c9496c0416aa3c8586c6283df37ed"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/codemodel-v2-a454e1a1f79d0dacffc2.json": {
+    "size": 10657,
+    "mtime_ns": 1778052696096570249,
+    "hash": "9a74fcae7d183a2fae2468e4256eb31f49ce0ab2138a865b7c3775541c77cdb5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_RNCWebViewSpec-Debug-9fd27b416c9d5ff2ca0b.json": {
+    "size": 9300,
+    "mtime_ns": 1778052696090037093,
+    "hash": "84390b88cad8a6f91c06056a69bc4d64e6a19efba9a6c1a4ca9058717164fa37"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt": {
+    "size": 2204,
+    "mtime_ns": 1778052665797901636,
+    "hash": "72f234cca0f28be4f6a815fd5e6ef28b48f7381ca9fd2df0735b920a45a2dfcc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt": {
+    "size": 2148,
+    "mtime_ns": 1778052666279024012,
+    "hash": "33c9c388b04bbe5b677f9ca69a2306a662052b638aa84bed8f486492213af0ed"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json": {
+    "size": 129,
+    "mtime_ns": 1774185179638926927,
+    "hash": "10aa86fa67ee0b46d5523167d5c2114f5fd691ce8b5e917d0c06b94879cb1b70"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/build.gradle": {
+    "size": 196,
+    "mtime_ns": 1774185179637352926,
+    "hash": "c8350e63c5c6d152742ef8f18677b2076296a288cb4ce0ffb340d26131bfab2e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt": {
+    "size": 2739,
+    "mtime_ns": 1774185179638588260,
+    "hash": "8bafba5f3a183afe350503850399150909675dedfcb13920254cfcd2d8a76de1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/vercel.json": {
+    "size": 162,
+    "mtime_ns": 1768109655977041759,
+    "hash": "92204845e499c2ef230fe051d6eec7eb298ff2e8b420c211ef0e65e20d813068"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/package.json": {
+    "size": 1697,
+    "mtime_ns": 1774459254132409100,
+    "hash": "a4699f9a5b18421f46e7b594c8254523300d72e1a84dcd27f7b5c16a45718fc1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/components.json": {
+    "size": 430,
+    "mtime_ns": 1768109655967070291,
+    "hash": "a9842fb446fd6a3a562567cda417ec2beb87ad2616cd25f6fe997fe72fde4623"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/tsconfig.json": {
+    "size": 651,
+    "mtime_ns": 1768394699770239423,
+    "hash": "55127feee7b0f6ce14e6ddf7425465bf29ccdd66b4191a72854ecfc35199da9d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/railway.json": {
+    "size": 533,
+    "mtime_ns": 1773377363581828201,
+    "hash": "60e47fe482c2ad54b20fd7739ca46b567560217b56001c3cc12856023d26c55c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/config.json": {
+    "size": 1076,
+    "mtime_ns": 1769677561777435765,
+    "hash": "ef2754339e2616271233dca53482b0cb6e46c83b05c0bb1409bd56c1fc4994ba"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/telemetry-queue.json": {
+    "size": 67,
+    "mtime_ns": 1769677561724924234,
+    "hash": "ffa2d309809f7909e64f802ece2b463d015add79e0420051d0f07974a373470f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json": {
+    "size": 2296,
+    "mtime_ns": 1769677561778663140,
+    "hash": "66b80c0f5ace8664a2dfa344652fef04338dc5535be49c286f81035271dd10c7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/logging.json": {
+    "size": 41204,
+    "mtime_ns": 1769677561818375590,
+    "hash": "73eb183686b4522c727ee87142fe42d9b9733c7e272caed763b01d8481984da7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/testing.json": {
+    "size": 22745,
+    "mtime_ns": 1769677561820245965,
+    "hash": "343f7e76ef600794606cd49f5fefb10277e0a51be5dc321c20e1d32081458fdc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/api.json": {
+    "size": 4704,
+    "mtime_ns": 1769677561813298591,
+    "hash": "8dd1daa291fdba6cec146d41603ba5e40a969ddf065dcd0f57bdd56cc793b162"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json": {
+    "size": 66036,
+    "mtime_ns": 1769677561822637215,
+    "hash": "4dd82aecbc67a3c0485e777b19d8c78ae732e941512f1eccecbc86bca90370c7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/styling.json": {
+    "size": 124781,
+    "mtime_ns": 1769677561829083171,
+    "hash": "55072d5fe4db8266bc24f0223372a30a6f2d311da3e431cf76f47630e87e8f3e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/errors.json": {
+    "size": 51302,
+    "mtime_ns": 1769677561818026632,
+    "hash": "b64ec1935ae80f14a052b472af543d6ad305ff226f1276f43bef7670b91ed2f2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/types.json": {
+    "size": 175257,
+    "mtime_ns": 1769677561829843671,
+    "hash": "601c86095a5ca7f94e544b21e26a7e85fa457f277a200ce858bf10efb712a776"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/config.json": {
+    "size": 41046,
+    "mtime_ns": 1769677561816887591,
+    "hash": "30033afd28bbc80c4d3ef24032120a4088db66d1481d050669abb780f04a9c7a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/security.json": {
+    "size": 42382,
+    "mtime_ns": 1769677561824697422,
+    "hash": "e4ef63ffbcf5d2b46c1b4544766e1d00de438a6a8e6583974d8e258917a0a291"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/performance.json": {
+    "size": 13604,
+    "mtime_ns": 1769677561816783299,
+    "hash": "0b015aa1296cd17f78d9f2293d59057e6fc1935e93cadb9540fa96b79e6bfa20"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/components.json": {
+    "size": 165851,
+    "mtime_ns": 1769677561833354837,
+    "hash": "6c736a102c7fd79eb668f77a6fe6dfd0264f34e16c2f310c4f506fc55cf9d3f3"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/auth.json": {
+    "size": 27591,
+    "mtime_ns": 1769677561829415922,
+    "hash": "5e85e5d75b110c7a261e4566cd193eafe00acc2c30f3ef87543e28cda4537d93"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/data-access.json": {
+    "size": 83136,
+    "mtime_ns": 1769677561830889380,
+    "hash": "daea0f5013f68a4959f59bed01424d677674c294cc01f25181d6107474879fc5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/accessibility.json": {
+    "size": 73415,
+    "mtime_ns": 1769677561817107466,
+    "hash": "92b0f2cf3ea1e29c49a06d507cdc75f844c81297790caf9046ee349a2e187235"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/documentation.json": {
+    "size": 12691,
+    "mtime_ns": 1769677561815263008,
+    "hash": "0f496fea7de0525391fd09e5a6d1dfa542660ccddec02e9b36ef8ec8e6281821"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/errors-2026-01-29T09-05-09-595Z.json": {
+    "size": 51302,
+    "mtime_ns": 1769677561797510053,
+    "hash": "279e64523dfb799f1e0a19f25b6a79de916cb90f575e8723dfd6d0776cc5ce50"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/security-2026-01-29T09-05-09-646Z.json": {
+    "size": 42382,
+    "mtime_ns": 1769677561804270176,
+    "hash": "8672e8dced54064033bde53d63c1ba1b159e837434d5d8d53575a59ed0f865d9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/config-2026-01-29T09-05-09-599Z.json": {
+    "size": 41046,
+    "mtime_ns": 1769677561792244846,
+    "hash": "9ab4c19e4a60ac2ea4a62f9dbd7bc8c33ee40a3fd2bd02d0baac9e34bc3d454f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/components-2026-01-29T09-05-09-566Z.json": {
+    "size": 165851,
+    "mtime_ns": 1769677561796073345,
+    "hash": "7a096f819d7f2f2079c2515f9431f67edebedd0baabb66d3cf3baf51ced1018f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/api-2026-01-29T09-05-09-618Z.json": {
+    "size": 4704,
+    "mtime_ns": 1769677561782322806,
+    "hash": "58a7ac5970315fccb3d4d73152ad1aed4cda0860d1b76be3492b52a1405951eb"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/config-2026-01-29T09-05-09-622Z.json": {
+    "size": 41046,
+    "mtime_ns": 1769677561789784304,
+    "hash": "a63c94f21a66aa35b3c91f86b6999e88fe4f64de71dbdd86c896252c43579498"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/styling-2026-01-29T09-05-09-665Z.json": {
+    "size": 124781,
+    "mtime_ns": 1769677561817866549,
+    "hash": "999bc24aad0395cda99f54623464625f3cfbfe31ed7b0cf16670c2799669a311"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/styling-2026-01-29T09-05-09-641Z.json": {
+    "size": 124781,
+    "mtime_ns": 1769677561813550300,
+    "hash": "7d8c77f7c4b435d32aa56d64a7b3adf51278dccfbd834b979ecea46d8d807b43"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-05-09-625Z.json": {
+    "size": 73415,
+    "mtime_ns": 1769677561784678180,
+    "hash": "32f8e181a6568661bb120c24efd67c3fe370fd904863530bb0ae996658e7e2ea"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/structural-2026-01-29T09-05-09-639Z.json": {
+    "size": 66036,
+    "mtime_ns": 1769677561810471800,
+    "hash": "d8f234d25efaf891482dc2dd814543daff2d96e2e8c13f5fea5872db7ecafbf7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/config-2026-01-29T09-05-09-647Z.json": {
+    "size": 41046,
+    "mtime_ns": 1769677561791816429,
+    "hash": "f05db5f5642492e83341256abe611cf37a7217e65d6623bf3e5e6ee310e1329a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/auth-2026-01-29T09-05-09-667Z.json": {
+    "size": 27591,
+    "mtime_ns": 1769677561786968347,
+    "hash": "212abc364163e76760b506b77911d19d1ed619e9166a68f28bc98000ff565cdf"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/security-2026-01-29T09-05-09-598Z.json": {
+    "size": 42382,
+    "mtime_ns": 1769677561803623551,
+    "hash": "dd2b327dcf323fcfdbddd10e77a33ae550fcbe129ce7b3c29d36b8a66fbdac98"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/security-2026-01-29T09-05-09-621Z.json": {
+    "size": 42382,
+    "mtime_ns": 1769677561804095468,
+    "hash": "db2413634238318b24411bdc8582ce0590b627b4bd42ca69d65d3fc46d1ae6dc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/auth-2026-01-29T09-05-09-643Z.json": {
+    "size": 27591,
+    "mtime_ns": 1769677561785243764,
+    "hash": "8eecf86c262bc5674b5a358258b56305da0094c615a06bd5a8fc554b9099eff1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-05-09-601Z.json": {
+    "size": 73415,
+    "mtime_ns": 1769677561784231139,
+    "hash": "057de1edf2e79bf5c91af2a6272f584096ac64bba779d678829e97699a34c199"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/types-2026-01-29T09-05-09-648Z.json": {
+    "size": 175257,
+    "mtime_ns": 1769677561822535631,
+    "hash": "9a32e2dcaa0ff84c40b4fe4c72717114f72b4cbf5a30da3c8ad519061ac56eec"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/api-2026-01-29T09-05-09-567Z.json": {
+    "size": 4704,
+    "mtime_ns": 1769677561781157639,
+    "hash": "4c71732550ee52e0970327d887ec6001610b094925fed837dd6727118afa7b9a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/api-2026-01-29T09-05-09-666Z.json": {
+    "size": 4704,
+    "mtime_ns": 1769677561782571681,
+    "hash": "51e92b8c644b15f26a3c5a8ed22b3de71ba7ea3352d3fcf1ad058c9926f2c4ca"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/components-2026-01-29T09-05-09-663Z.json": {
+    "size": 165851,
+    "mtime_ns": 1769677561807885884,
+    "hash": "7d893a6ec0a11bee74e015159d76aaea4f4089b98133aeb51e8658849f748177"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/api-2026-01-29T09-05-09-642Z.json": {
+    "size": 4704,
+    "mtime_ns": 1769677561782327639,
+    "hash": "bd5e7fded6a027e8498383590ae0668db0d750309948702ec47b19c993e33729"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/components-2026-01-29T09-05-09-640Z.json": {
+    "size": 165851,
+    "mtime_ns": 1769677561800201011,
+    "hash": "a0ac4f7ddfb9485837f5edfb79e3c63f1b9ba5b1ac3e0a77f46dae13fede9d0b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/testing-2026-01-29T09-05-09-620Z.json": {
+    "size": 22745,
+    "mtime_ns": 1769677561810320009,
+    "hash": "a01c6f9f91d11acda52a5faef7b92dc8bddbcb853c8362516479e3421e7b83d4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/auth-2026-01-29T09-05-09-618Z.json": {
+    "size": 27591,
+    "mtime_ns": 1769677561785219889,
+    "hash": "e97f4e939deb797a030c004511518d4788fbe2917e7f12ed8a296ec4dfe40688"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/errors-2026-01-29T09-05-09-569Z.json": {
+    "size": 51302,
+    "mtime_ns": 1769677561797448761,
+    "hash": "6d575d88e6ce02dc14e089e20fc747859fc9da37e85b1051fcffa475dbcf427d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/errors-2026-01-29T09-05-09-668Z.json": {
+    "size": 51302,
+    "mtime_ns": 1769677561800098886,
+    "hash": "73b84d58a97ac9f1eec039c196efeef947a2dcb5edf2242471b03548cf75efb5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/types-2026-01-29T09-05-09-672Z.json": {
+    "size": 175257,
+    "mtime_ns": 1769677561822666631,
+    "hash": "a6d90f775dfddb955b870039c0820ecb75a2306e0d21c4efd9ba971af36ea3b4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/styling-2026-01-29T09-05-09-567Z.json": {
+    "size": 124781,
+    "mtime_ns": 1769677561812627133,
+    "hash": "a73ca4205910a73b5fb146343033855fbb3eec70b0d684ad067a8558c9139d65"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/structural-2026-01-29T09-05-09-662Z.json": {
+    "size": 66036,
+    "mtime_ns": 1769677561808106717,
+    "hash": "a3809a244ca07df49c13f07fdb08e9a6a4cbecea5d11119886e34c1b4c8fa009"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/data-access-2026-01-29T09-05-09-596Z.json": {
+    "size": 83136,
+    "mtime_ns": 1769677561795589012,
+    "hash": "20740463ad0e0aca51013212557f9c3d03ab5fd9c98eca9d34b38a2c695a0f1f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/performance-2026-01-29T09-05-09-625Z.json": {
+    "size": 13604,
+    "mtime_ns": 1769677561799756052,
+    "hash": "324cfa8dbe5a178bb6bfc5b77be54c59f2fbddac9d27c7c2a6f8ffce76f217f9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/documentation-2026-01-29T09-05-09-650Z.json": {
+    "size": 9515,
+    "mtime_ns": 1769677561793528804,
+    "hash": "83de0b9f98e0debf15c04e2aff868c674efbd0b87cd1b1fb1def1b8da91a2c01"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/logging-2026-01-29T09-05-09-571Z.json": {
+    "size": 41204,
+    "mtime_ns": 1769677561799728552,
+    "hash": "236321d6a39b8429c409de021f58e059e85196ee7752a1dc00f8069f4e301697"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/logging-2026-01-29T09-05-09-670Z.json": {
+    "size": 41204,
+    "mtime_ns": 1769677561800780761,
+    "hash": "df37f22a50475a75b0cb141f3f1cbf5724dad9516c6326232e5e9e1978823ed0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/structural-2026-01-29T09-05-09-565Z.json": {
+    "size": 66036,
+    "mtime_ns": 1769677561806116718,
+    "hash": "a7f4d03b2461460a9bc16479d582018ac2f05a7cdf018e3cda35ea673c03e99e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/testing-2026-01-29T09-05-09-645Z.json": {
+    "size": 22745,
+    "mtime_ns": 1769677561810442467,
+    "hash": "c524a5be95ff8bfbbf6dc55615bf84e5a171afe5a32d381542a757a929f9426e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/data-access-2026-01-29T09-05-09-569Z.json": {
+    "size": 83136,
+    "mtime_ns": 1769677561793875304,
+    "hash": "55c24b41772ce553e8f31b534a49b7b79f8fbcd93d1d08e5460384210d852e97"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/data-access-2026-01-29T09-05-09-668Z.json": {
+    "size": 83136,
+    "mtime_ns": 1769677561796766928,
+    "hash": "2b6adda050b0edcf90c9a6aec1b66088a6492d5e75ad71cd2195fa801b0d16ef"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/performance-2026-01-29T09-05-09-601Z.json": {
+    "size": 13604,
+    "mtime_ns": 1769677561801397177,
+    "hash": "e5ffb2244ba7088435d1923f47f7b2ec4d23df8a9601016938f5312dd4fff9f6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/documentation-2026-01-29T09-05-09-674Z.json": {
+    "size": 11366,
+    "mtime_ns": 1769677561809300592,
+    "hash": "c2fc8838c679d24ff28254aafd5bc70f45ed92964fc8ce49f8153baa9cd03c4d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/types-2026-01-29T09-05-09-575Z.json": {
+    "size": 175257,
+    "mtime_ns": 1769677561824880047,
+    "hash": "4ecfd497f7087a68dd06eccfb31b58fed7b441f49e0779996fe3e71366b5cb3d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/types-2026-01-29T09-05-09-600Z.json": {
+    "size": 175257,
+    "mtime_ns": 1769677561829237547,
+    "hash": "80ed22032e4e6a8de0ae316d49e4a62342a12f8202853f5231b606418198bb0c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-05-09-649Z.json": {
+    "size": 73415,
+    "mtime_ns": 1769677561785015847,
+    "hash": "4dbf1aa19affd9d9f483403a641e75b507cdb2375d5cf070b3274b209fac5bb8"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/security-2026-01-29T09-05-09-670Z.json": {
+    "size": 42382,
+    "mtime_ns": 1769677561804665010,
+    "hash": "768110ff126c11ccf1d26b135fe8f40c134f3ca24527b7ca0550e9b36cb500a9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/security-2026-01-29T09-05-09-573Z.json": {
+    "size": 42382,
+    "mtime_ns": 1769677561803376718,
+    "hash": "c446bd757b8ff9394accf1f14acf5bc798c5ddd7b1f2fff802c51b99260ac2c4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/config-2026-01-29T09-05-09-574Z.json": {
+    "size": 41046,
+    "mtime_ns": 1769677561789193513,
+    "hash": "49b4be4f69bd5ee6096333f4d5e7b14a04850aedc0e50b930b289404dcefaea5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/documentation-2026-01-29T09-05-09-626Z.json": {
+    "size": 4533,
+    "mtime_ns": 1769677561792965137,
+    "hash": "0328cd48491ca4448d50f748c495e2cc10898eb8adc86240bc8c3a389fce06d0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/components-2026-01-29T09-05-09-616Z.json": {
+    "size": 165851,
+    "mtime_ns": 1769677561815187216,
+    "hash": "97a84400b275645575ed720567a8a3320bdfc191bcbe8eb707b417d0d9a19f1e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/performance-2026-01-29T09-05-09-576Z.json": {
+    "size": 13604,
+    "mtime_ns": 1769677561801407635,
+    "hash": "3022ade2cceb9800836254f74a58ae74fb4437c667441f85de6f1bf9329a29bc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-05-09-577Z.json": {
+    "size": 72316,
+    "mtime_ns": 1769677561788956179,
+    "hash": "a155942fc5973032ecb22af646b794a35f8dfeff525aee6765e0031bdbb2a1b2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/components-2026-01-29T09-05-09-592Z.json": {
+    "size": 165851,
+    "mtime_ns": 1769677561796633053,
+    "hash": "db13ac4715276344e922ae218638aa7bd3260482bb9977273df4efd492c90c5e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/performance-2026-01-29T09-05-09-673Z.json": {
+    "size": 13604,
+    "mtime_ns": 1769677561801354260,
+    "hash": "16281650ba7fae994d5b87d0b700b45b17fd1b3adb89ca17eff5bf7ac05d9032"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/config-2026-01-29T09-05-09-671Z.json": {
+    "size": 41046,
+    "mtime_ns": 1769677561791992679,
+    "hash": "028eff1d1265531fff94c30ed43e8a7a98c5819f65eb58d1946daa57491eae84"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/testing-2026-01-29T09-05-09-597Z.json": {
+    "size": 22745,
+    "mtime_ns": 1769677561812164050,
+    "hash": "3179c785f70562eeae8e882d3697b622336fd49a9845b3d64e518add58624866"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/testing-2026-01-29T09-05-09-669Z.json": {
+    "size": 22745,
+    "mtime_ns": 1769677561810417758,
+    "hash": "2d65e0b7127b94ee706f66774cd7b2a26cbec4bfeea8a221ad9f856808c270f3"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/data-access-2026-01-29T09-05-09-644Z.json": {
+    "size": 83136,
+    "mtime_ns": 1769677561796151220,
+    "hash": "9db080556f1b64666d7ded57348aa16154f5c2fb8482a149987227bdc4f4ef20"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/logging-2026-01-29T09-05-09-645Z.json": {
+    "size": 41204,
+    "mtime_ns": 1769677561800646385,
+    "hash": "d15b89da870794b75338883187496f6b6741ea2352e1ae775198f546534a2dd9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/errors-2026-01-29T09-05-09-619Z.json": {
+    "size": 51302,
+    "mtime_ns": 1769677561798148761,
+    "hash": "fa58fa6b39d6e1b8dec6993a0191ee011772d90469b60d378f8b72a23c1858a5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/auth-2026-01-29T09-05-09-568Z.json": {
+    "size": 27591,
+    "mtime_ns": 1769677561786399888,
+    "hash": "8f8ac4e232444267956ff47a185da55ee3b199206ab670eace284acc88ff3918"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/auth-2026-01-29T09-05-09-595Z.json": {
+    "size": 27591,
+    "mtime_ns": 1769677561787776638,
+    "hash": "19013994e8445f5a0aa59363aaa6a8e4d6146ae3ab2ab6adec0d2ffc3dcc016e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/styling-2026-01-29T09-05-09-617Z.json": {
+    "size": 124781,
+    "mtime_ns": 1769677561813308925,
+    "hash": "f6cda91bd4ad3a963ad2e9dd5fcb7b08a6347e52ad78ba15bc46693e56a84137"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/styling-2026-01-29T09-05-09-593Z.json": {
+    "size": 124781,
+    "mtime_ns": 1769677561813092966,
+    "hash": "b744c7289d2070cf21a6e5f7f1c5496340815187ec1aa7fbb08b98c9b30ef804"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/api-2026-01-29T09-05-09-594Z.json": {
+    "size": 4704,
+    "mtime_ns": 1769677561782331764,
+    "hash": "fa1bca48f8be099a3843cf214dbe93543dc8aeed93bdf4e1fda03232658cbccf"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/performance-2026-01-29T09-05-09-649Z.json": {
+    "size": 13604,
+    "mtime_ns": 1769677561801159260,
+    "hash": "b140f05bfcf2557309c25124e2bb62b9c7fc085479f135fd203f18b4652d5c10"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/data-access-2026-01-29T09-05-09-620Z.json": {
+    "size": 83136,
+    "mtime_ns": 1769677561795831803,
+    "hash": "9b7b9556658404e0282b77aae01de4f8036e01421fb57cc97ba0c88077b21916"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/logging-2026-01-29T09-05-09-621Z.json": {
+    "size": 41204,
+    "mtime_ns": 1769677561815174758,
+    "hash": "205cfd0ddef0e446a434a3435c2dc9dfab8fb4823dca5957452a8e3621f56fb0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/logging-2026-01-29T09-05-09-598Z.json": {
+    "size": 41204,
+    "mtime_ns": 1769677561805631760,
+    "hash": "b0b74008102f940568aa565714fdcf00d4517fc82440fc485cadc0f5aeae3ff1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/structural-2026-01-29T09-05-09-591Z.json": {
+    "size": 66036,
+    "mtime_ns": 1769677561807169676,
+    "hash": "1121cddf31cf8a495d353e2440bfc4c32976f48acf5615279936b15654ed339f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/testing-2026-01-29T09-05-09-570Z.json": {
+    "size": 22745,
+    "mtime_ns": 1769677561808387592,
+    "hash": "d5187a37f4d5486d7d19b4ae9f34119ae9db5e8c3958edfbc2afffb6883a503d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/structural-2026-01-29T09-05-09-615Z.json": {
+    "size": 66036,
+    "mtime_ns": 1769677561806955176,
+    "hash": "b38c3ccb7dd21d409e4be77611d71388c7f5daaaed4ebdd56d368b50552badc9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/errors-2026-01-29T09-05-09-643Z.json": {
+    "size": 51302,
+    "mtime_ns": 1769677561799822344,
+    "hash": "70738d7dbcddbb3f83e39c1f80dbbbebb9a738b8f227a97edde9d7eab8b1256f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/accessibility-2026-01-29T09-05-09-673Z.json": {
+    "size": 73415,
+    "mtime_ns": 1769677561785268764,
+    "hash": "7c79aed4ab0215dcfbf20305d75dc76267712c7450e5bab2e1bda9738d6b09bd"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/.backups/types-2026-01-29T09-05-09-623Z.json": {
+    "size": 175257,
+    "mtime_ns": 1769677561826662505,
+    "hash": "43dd89b8a20d3d25aace476a51e5c58936b8befae5fe774970bb38b6a64a0e11"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/logging.json": {
+    "size": 46292,
+    "mtime_ns": 1769677561761705852,
+    "hash": "bbecd37cadb68a46b0b5a64edd7e6009737d7af595e1921884f59279c0ad3c30"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/testing.json": {
+    "size": 42664,
+    "mtime_ns": 1769677561736225065,
+    "hash": "f2e7520c0c7dbb975222cee4f8104b709b719203eff1f26c3034fe1f3a73c18d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/structural.json": {
+    "size": 118456,
+    "mtime_ns": 1769677561749352646,
+    "hash": "2f9ba263dbb090b14950624369dc3359c39bd3422f3d646684b05a1ef0716aa2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/styling.json": {
+    "size": 59653,
+    "mtime_ns": 1769677561740759647,
+    "hash": "78d72f9b7078183761653388a0b92d849086b73cb52c897083ba19d01889f563"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/errors.json": {
+    "size": 85226,
+    "mtime_ns": 1769677561769994225,
+    "hash": "4dcc19ac98fc0563aae56768c7c1a885290227cb40d0b55271b7742f02ae3dab"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/types.json": {
+    "size": 110298,
+    "mtime_ns": 1769677561732475607,
+    "hash": "0166a52240c26afea0352978eae39216455e37c8bb3e8c2345c59b1d99a7518e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/config.json": {
+    "size": 36610,
+    "mtime_ns": 1769677561788386471,
+    "hash": "ae81bece5e466deac2aeaa2514fce25130ca2b874fe271e80800bdcdc7ce5651"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/security.json": {
+    "size": 36213,
+    "mtime_ns": 1769677561752765812,
+    "hash": "c692e3639b3c7f11da168d632a608a4874384d77e8758eacb4212bd324a04d53"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/performance.json": {
+    "size": 68938,
+    "mtime_ns": 1769677561757904061,
+    "hash": "23815999b457dbb29bba504d3d4745aa645f2f74fbfe419c28d78357a328782b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/components.json": {
+    "size": 225327,
+    "mtime_ns": 1769677561815974924,
+    "hash": "26b7f9ef9d7cde02bddb3ba6434a2ad31d596b2367094af864a9c489d6d19f66"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/auth.json": {
+    "size": 61588,
+    "mtime_ns": 1769677561829943088,
+    "hash": "665e0eb6dc771c573db32bbc0059e988700de121b36d150cf7ed166be941653b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json": {
+    "size": 176207,
+    "mtime_ns": 1769677561784470555,
+    "hash": "ce9a1808633166b612df9673ac4debdad3a1c42a4a520223107901d910cfb54f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/accessibility.json": {
+    "size": 48093,
+    "mtime_ns": 1769677561846710293,
+    "hash": "f2ba22db8556835adac1168b52bd89db120950f0b1446548cd12ec29a65984c0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/documentation.json": {
+    "size": 26658,
+    "mtime_ns": 1769677561772569183,
+    "hash": "d2390d3e08ebe18789324b2a26abc50d52d5305d1456e1ff103874ba8ecb2fb7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/security-2026-01-29T09-05-09-587Z.json": {
+    "size": 36213,
+    "mtime_ns": 1769677561853993917,
+    "hash": "1b55cee01b93885053ca70fcd9d2ae1f1041d04ab46b6b5819630116c1b365eb"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/types-2026-01-29T09-05-09-636Z.json": {
+    "size": 110298,
+    "mtime_ns": 1769677561865524873,
+    "hash": "75157c034ff6ffb1af1b3b4487bd9b4e623c3b843cf36daf270d31141a5dddee"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-05-09-638Z.json": {
+    "size": 48093,
+    "mtime_ns": 1769677561826264464,
+    "hash": "a6b5b55385b96940ceef2b3a2b48788dea1eaf302bb85a645377dff724b9842a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/api-2026-01-29T09-05-06-715Z.json": {
+    "size": 4554,
+    "mtime_ns": 1769677561825704172,
+    "hash": "a20ee9cd6223540a4440d8a9a70a2171578dfd7ab0766acb6aeb42a0165abb69"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/components-2026-01-29T09-05-09-580Z.json": {
+    "size": 225327,
+    "mtime_ns": 1769677561850960042,
+    "hash": "6752f0e4c9949d4f3e5964bd67548548ea24a439c6ef97078d752837272a5320"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/components-2026-01-29T09-05-09-604Z.json": {
+    "size": 225327,
+    "mtime_ns": 1769677561843867544,
+    "hash": "94a64a76df596b507a513fef00be9715a2a54ccabe264751b1942e87625dd574"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/structural-2026-01-29T09-05-09-579Z.json": {
+    "size": 118456,
+    "mtime_ns": 1769677561861723665,
+    "hash": "f7731a391da7dfb57ab68386036cb968a1fa71b592cbd6a770688acb1dcb3e04"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/testing-2026-01-29T09-05-09-558Z.json": {
+    "size": 42664,
+    "mtime_ns": 1769677561863937165,
+    "hash": "9a010432baf82f3cdfebc82ab69bd9212e41e1b73420308dd04b916119f0ad07"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-05-09-590Z.json": {
+    "size": 38994,
+    "mtime_ns": 1769677561837476461,
+    "hash": "51d8a3ee7eff7c7c4bfe05acea4706986eb15e52b675a62bcd5808ab7dd0bff4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/performance-2026-01-29T09-05-09-661Z.json": {
+    "size": 68938,
+    "mtime_ns": 1769677561855582999,
+    "hash": "bc110962baf4222763ba5b4372d3108afbdb25a0a16ac016ab2b3d830188e9de"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-05-09-614Z.json": {
+    "size": 34666,
+    "mtime_ns": 1769677561848298293,
+    "hash": "424ce4b7d4440af16c4297dedc80c2fd93e127d89a0ef73f566f7ed6dd96daaa"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-05-09-608Z.json": {
+    "size": 176207,
+    "mtime_ns": 1769677561847113418,
+    "hash": "177d7d6545fd4678748436c27b9beeb3951999cfb47a4ddf45927419ccf51912"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/testing-2026-01-29T09-05-09-585Z.json": {
+    "size": 42664,
+    "mtime_ns": 1769677561863802623,
+    "hash": "f7bae0c5be5a6460e0ebf0ba89c74a3a1ac4cb176f2e42b9355cd1e921518db9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/logging-2026-01-29T09-05-09-609Z.json": {
+    "size": 46292,
+    "mtime_ns": 1769677561850271459,
+    "hash": "ca0a86b25157650eaa559933aa8fc20c59346771bfe1880a3bd7c9ba427bcf83"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/auth-2026-01-29T09-05-09-606Z.json": {
+    "size": 61588,
+    "mtime_ns": 1769677561830745588,
+    "hash": "9d393838394ea9e2809687f4515d5bc0a5e235317f808bf2e355661effa9120a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/auth-2026-01-29T09-05-09-582Z.json": {
+    "size": 61588,
+    "mtime_ns": 1769677561830357713,
+    "hash": "50065e63676e927972c504699eb9a0b320a69b0ce5f4dbbcbb289f61397a969b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/logging-2026-01-29T09-05-09-634Z.json": {
+    "size": 46292,
+    "mtime_ns": 1769677561853466500,
+    "hash": "e6f85693572514a86659f8f73007748a29f4ab1fb28fc77f6e9bcdbc8e10f306"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-05-09-557Z.json": {
+    "size": 176207,
+    "mtime_ns": 1769677561850254167,
+    "hash": "d209282e2f01cfeca4ad17b3eb12b23e82fd27ef6fa805862847e6c71e4c2fa5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-05-09-656Z.json": {
+    "size": 176207,
+    "mtime_ns": 1769677561845781001,
+    "hash": "2bab8ea4275fc201bcda498fc19081f926d007d4b0cbaed95f9f9ab8715778a3"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/errors-2026-01-29T09-05-09-631Z.json": {
+    "size": 85226,
+    "mtime_ns": 1769677561850668084,
+    "hash": "7f3efe10940258f58da0c5ee7e012893a7af12488e7b304219c8f48b78125f81"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/config-2026-01-29T09-05-09-560Z.json": {
+    "size": 36610,
+    "mtime_ns": 1769677561833324546,
+    "hash": "458cb5c1a994b1c1312203cd0105577702c24436138ca8013cf613a552347b2e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/performance-2026-01-29T09-05-09-562Z.json": {
+    "size": 68938,
+    "mtime_ns": 1769677561853108542,
+    "hash": "ac855dcdb7aa0de51c62de198b4c2d685d9d48e01e8a0dbe53215e19167e37cc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-05-09-563Z.json": {
+    "size": 49142,
+    "mtime_ns": 1769677561822350631,
+    "hash": "41f687b00c5ee03ff237c60646652c6ec2e6e062504efea383ebe253d2f3b79c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/styling-2026-01-29T09-05-09-581Z.json": {
+    "size": 59653,
+    "mtime_ns": 1769677561859044874,
+    "hash": "567c17a94edc2d9f63db2ad122801ec1d46cac6e3f69d0760e44689933f46c16"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/types-2026-01-29T09-05-09-611Z.json": {
+    "size": 110298,
+    "mtime_ns": 1769677561867793956,
+    "hash": "a6c1c32402cf3e94d9e04828f1e04fa9d59c58419ae5c91df276c8014a9bff80"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/errors-2026-01-29T09-05-09-556Z.json": {
+    "size": 85226,
+    "mtime_ns": 1769677561846322751,
+    "hash": "1b764a062fb6c3ea629a1cdb8558b104279da45b8a66d96b682cd0871ff0fba6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/styling-2026-01-29T09-05-09-605Z.json": {
+    "size": 59653,
+    "mtime_ns": 1769677561865914914,
+    "hash": "ef97204909477fcef0520132e569d8383a9f16bc4fb600709f0c58b71d9d6330"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-05-09-632Z.json": {
+    "size": 176207,
+    "mtime_ns": 1769677561845771918,
+    "hash": "60b3ae8d262e0828571010e9129f5091d7d96d39f81c4dc039d0e97b7a37ddb7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/errors-2026-01-29T09-05-09-655Z.json": {
+    "size": 85226,
+    "mtime_ns": 1769677561851105917,
+    "hash": "e28c5ac6ef66717c105df96cc71b85bdbb5e21237538b488de5db1e12220cff6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/structural-2026-01-29T09-05-09-603Z.json": {
+    "size": 118456,
+    "mtime_ns": 1769677561866692039,
+    "hash": "7dc78e285b883833446aa291f6f942f1b12886fb6b1bc0b4f8d8165c7a9a5a1c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/config-2026-01-29T09-05-09-659Z.json": {
+    "size": 36610,
+    "mtime_ns": 1769677561834247796,
+    "hash": "c607c1253962f7c58a99ac102b1208f89d97a8db3034a410ae7355d622530115"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/api-2026-01-29T09-05-06-734Z.json": {
+    "size": 2967,
+    "mtime_ns": 1769677561825862797,
+    "hash": "47bf0647e345b53d4df55bd1f5d87d07225a6f383edb72cb8168cefd87135e9a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/config-2026-01-29T09-05-09-587Z.json": {
+    "size": 36610,
+    "mtime_ns": 1769677561833637587,
+    "hash": "8b7394f1a319317eb9dcf358916eff30cec0a9ac0395010b5cbd5135ae68f7cd"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-05-09-661Z.json": {
+    "size": 48093,
+    "mtime_ns": 1769677561833136754,
+    "hash": "272f839fdecc17266f1407e5bc0835b32d7857d025deaaba9fa22ed9767bb0ce"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/security-2026-01-29T09-05-09-559Z.json": {
+    "size": 36213,
+    "mtime_ns": 1769677561853981250,
+    "hash": "2a523e65f2e5d8ddd62ff384ebeb085de39a18240fab3327624b3fa6ee6c6ec3"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/security-2026-01-29T09-05-09-658Z.json": {
+    "size": 36213,
+    "mtime_ns": 1769677561855128125,
+    "hash": "a55d046f37f34d133b9e57909c09d044135b10a56d9fe6c3e5c0a30eecb85c12"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/types-2026-01-29T09-05-09-588Z.json": {
+    "size": 110298,
+    "mtime_ns": 1769677561867841997,
+    "hash": "e7ad866da2d40a0e4e796b342478c40968a80d98f17c70d7421a6b1d94f2046f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/components-2026-01-29T09-05-09-629Z.json": {
+    "size": 225327,
+    "mtime_ns": 1769677561846689876,
+    "hash": "0c1018d52b7f729f245b3d5b5dfe60b447f380d93d8471fd563d2b3425500614"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/performance-2026-01-29T09-05-09-589Z.json": {
+    "size": 68938,
+    "mtime_ns": 1769677561857444749,
+    "hash": "96268216ec3ad1433c7c67d44b01a9c79505fa2106abd75c5723c6fcfac4181b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/logging-2026-01-29T09-05-09-658Z.json": {
+    "size": 46292,
+    "mtime_ns": 1769677561854589291,
+    "hash": "843b3d7d6e22a34e913296b9fe13c9e4a5a95206f05e42d43bea2de26ad76541"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/security-2026-01-29T09-05-09-635Z.json": {
+    "size": 36213,
+    "mtime_ns": 1769677561857071874,
+    "hash": "607cdda73a4715aeca9c98ff633e698084007a836ac2542a834163624ef0b3a3"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/styling-2026-01-29T09-05-09-630Z.json": {
+    "size": 59653,
+    "mtime_ns": 1769677561859819915,
+    "hash": "138759df42e4d6d4fc809d8cea1ef2d13b9128fc3c9c33327134ce601623d035"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/api-2026-01-29T09-05-06-662Z.json": {
+    "size": 4554,
+    "mtime_ns": 1769677561825984464,
+    "hash": "e276bce0248e8c97affb94e4c50547d3bc7d2e63320c33b43b8b9f1bb1b733e7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/styling-2026-01-29T09-05-09-653Z.json": {
+    "size": 59653,
+    "mtime_ns": 1769677561859862499,
+    "hash": "b8d11d39fedc5abb0234d02d2f21007cfed51735f9b3074ebad875ad3e0dee09"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/testing-2026-01-29T09-05-09-633Z.json": {
+    "size": 42664,
+    "mtime_ns": 1769677561863105498,
+    "hash": "f2a62c4f1b8d08463762ee7dfca7c21f3f95f8364853e3c13f3cd186b6cf3030"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/logging-2026-01-29T09-05-09-586Z.json": {
+    "size": 46292,
+    "mtime_ns": 1769677561852635500,
+    "hash": "0555be699b0d206512db77b8c94246813311c7d991f3161a018e04b482ffc4a1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/structural-2026-01-29T09-05-09-552Z.json": {
+    "size": 118456,
+    "mtime_ns": 1769677561863987373,
+    "hash": "811bd9987fb103e407dde912bb8c0cfce160f488a85c86e672805038eb7655b3"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-05-09-564Z.json": {
+    "size": 38994,
+    "mtime_ns": 1769677561837433086,
+    "hash": "48039f9f8ee670ca1da607b159c8aef60eedcdb080334c4bcb57b5b2219789bc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/config-2026-01-29T09-05-09-636Z.json": {
+    "size": 36610,
+    "mtime_ns": 1769677561834102129,
+    "hash": "1e41eab8bc0e43cef413cd9a5528dabf60ac9789f70a4a4b830fe012fdd574c6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/api-2026-01-29T09-05-06-699Z.json": {
+    "size": 4554,
+    "mtime_ns": 1769677561825297256,
+    "hash": "1f9bbaf9efe8f80f157439a8addc4a43727a1d771fc9015523fd032243f34187"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/structural-2026-01-29T09-05-09-651Z.json": {
+    "size": 118456,
+    "mtime_ns": 1769677561862452498,
+    "hash": "40d27437b12847a6f03da4aeff89b7e3fa12b2292cc62c57ff7edfafadd04188"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/styling-2026-01-29T09-05-09-554Z.json": {
+    "size": 59653,
+    "mtime_ns": 1769677561864426623,
+    "hash": "28aab36aa9e9f1da8f4a1af17e50ad7448c5e4a3d227475b91a396e6450152d0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/errors-2026-01-29T09-05-09-607Z.json": {
+    "size": 85226,
+    "mtime_ns": 1769677561848651418,
+    "hash": "55e2f504e2efe241d74f4936b602fe4004849eb9293444a8b3b777582f66fc9a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-05-09-639Z.json": {
+    "size": 29734,
+    "mtime_ns": 1769677561840056753,
+    "hash": "13a7923de4489ed2ca7f96978ae7df4e30af03319ecf3005ca3a0ef35f545e59"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/errors-2026-01-29T09-05-09-583Z.json": {
+    "size": 85226,
+    "mtime_ns": 1769677561848537626,
+    "hash": "5cf057fc8bcb04c6ee0ccbef9f3124f5b53128ca9bc35b803462c08235322a1d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/auth-2026-01-29T09-05-09-654Z.json": {
+    "size": 61588,
+    "mtime_ns": 1769677561831072338,
+    "hash": "b24d86991f2f9987375a99cdaaf5e9c8deeb60d2ec969d3850c2d7fb9fb0bfa1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/documentation-2026-01-29T09-05-09-662Z.json": {
+    "size": 27933,
+    "mtime_ns": 1769677561842403335,
+    "hash": "bd1e47a32d50cdee7c397aa8a8604e8eb51cd9abe964bd8bbc326993fccaad97"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/auth-2026-01-29T09-05-09-555Z.json": {
+    "size": 61588,
+    "mtime_ns": 1769677561846165168,
+    "hash": "530893daf05a4b9bfcc7d18242fc8d2fb4c1c40df4b195ed7c448df5a6e160b2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/components-2026-01-29T09-05-09-652Z.json": {
+    "size": 225327,
+    "mtime_ns": 1769677561854786125,
+    "hash": "fc862d8f8c4b8d58919c9b7fc3e0cddd24cd51e8f78d7956517cf1c5cb08271e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/components-2026-01-29T09-05-09-553Z.json": {
+    "size": 225327,
+    "mtime_ns": 1769677561849817376,
+    "hash": "6602fdf729b0e2c10b425647c4e1de7a5410eb1cd7417092eeb2e71651c202b8"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/security-2026-01-29T09-05-09-610Z.json": {
+    "size": 36213,
+    "mtime_ns": 1769677561854397958,
+    "hash": "e83eaa7f40b72754d03a94be5de0eb36b17ee46b987919dc57dc6a781f09c002"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-05-09-614Z.json": {
+    "size": 48093,
+    "mtime_ns": 1769677561827242797,
+    "hash": "c2613425c1daec39a6eb90720f2b97fe168b4139605a6e0056bba22dfd273844"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/accessibility-2026-01-29T09-05-09-590Z.json": {
+    "size": 48093,
+    "mtime_ns": 1769677561824213672,
+    "hash": "9c4c39f6b7c72f5c26e584c647a56f0b9b420940868bdbfbbba7c279ce2c76fc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/types-2026-01-29T09-05-09-660Z.json": {
+    "size": 110298,
+    "mtime_ns": 1769677561857316291,
+    "hash": "9e708eed11942c74e4c44b3bf5a53d1a845a44a78cc655a2d6aa64cf2f4840ee"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/types-2026-01-29T09-05-09-561Z.json": {
+    "size": 110298,
+    "mtime_ns": 1769677561866991997,
+    "hash": "c20397d41c79e1df22d867fb43de18c93c3a391e4e4905dcb1aab121a4367c4d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/logging-2026-01-29T09-05-09-558Z.json": {
+    "size": 46292,
+    "mtime_ns": 1769677561850268417,
+    "hash": "adeee4425eea57c06af7d73d25845057a8d98c701faba68362e0daf5c709954b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/data-access-2026-01-29T09-05-09-584Z.json": {
+    "size": 176207,
+    "mtime_ns": 1769677561843587877,
+    "hash": "69a5ed806ac7bcd015cacb532e0ac53dc1fecd7048ce6be65960b04bd1a03384"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/testing-2026-01-29T09-05-09-609Z.json": {
+    "size": 42664,
+    "mtime_ns": 1769677561865652206,
+    "hash": "54dbddecc683d5f7db0a59569f3438fa1ca99eba6b3e65f4ca5b8364ef94ffcb"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/structural-2026-01-29T09-05-09-628Z.json": {
+    "size": 118456,
+    "mtime_ns": 1769677561864578456,
+    "hash": "54ee414a5c110f06ddbcee50b1e163697c48114628961b83ae1b729de9056cb0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/api-2026-01-29T09-05-06-681Z.json": {
+    "size": 4554,
+    "mtime_ns": 1769677561825108547,
+    "hash": "ab17099d46ccca687b6de4914ae94bb7ce7d69785245291fb016a834b2e73c5b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/config-2026-01-29T09-05-09-611Z.json": {
+    "size": 36610,
+    "mtime_ns": 1769677561833664379,
+    "hash": "2583407a05f466be2ca9872072a1e20332e4b8fc66550c4422518e194e3f86b6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/auth-2026-01-29T09-05-09-631Z.json": {
+    "size": 61588,
+    "mtime_ns": 1769677561831344588,
+    "hash": "708ec67b392be129a007bd37605bdad01a9a1507664a9271891d0c211e0ba4f6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/performance-2026-01-29T09-05-09-637Z.json": {
+    "size": 68938,
+    "mtime_ns": 1769677561854856666,
+    "hash": "72c4c7609a1d2da77ba3c9ab2e63d49e82b24a282845873b8e74fab2f1ebdef0"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/performance-2026-01-29T09-05-09-613Z.json": {
+    "size": 68938,
+    "mtime_ns": 1769677561854075333,
+    "hash": "bfb80eb6bff0e3d72054121e39c0b79fabe104830498230eada8d00606c9f44a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/.backups/testing-2026-01-29T09-05-09-657Z.json": {
+    "size": 42664,
+    "mtime_ns": 1769677561861081290,
+    "hash": "d80a2e34b71f9c4774ec27f02245723969f36cd812408f00c5fb761abc9cb886"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/views/security-summary.json": {
+    "size": 269,
+    "mtime_ns": 1769677561711933195,
+    "hash": "58aabbb9f87b2ba283b6877387142f0a1b751ca5e8d9976c9efaa9ba8c876014"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/views/pattern-index.json": {
+    "size": 138426,
+    "mtime_ns": 1769677561723553484,
+    "hash": "8efd6132261a16744605026fe3805ecfdd444c9df6deb23c4b5c5b178e7c9523"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/views/status.json": {
+    "size": 1304,
+    "mtime_ns": 1769677561711029778,
+    "hash": "6ec22b70ff434d7a3ca5cd0aa9260ad0a6b06ad3ad0bce40debc9f1029d5a2f1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/indexes/by-file.json": {
+    "size": 75707,
+    "mtime_ns": 1769677561780423139,
+    "hash": "b6c9e7005f82e7629ce16afac4561d08bdec5cd67b11dbdfdb11689e9e701db2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/indexes/by-category.json": {
+    "size": 10707,
+    "mtime_ns": 1769677561778340890,
+    "hash": "e0779e3cf9366580a762b58622c2217ddbe9c7da4abe9e4a2bec61e96ab3cab8"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/PLAN-bluetooth-printer.md": {
+    "size": 23139,
+    "mtime_ns": 1769682084438876871,
+    "hash": "8aa981adec627084a5567c6b466e211ae7a89b78ca694a74ca353f1ab2c51741"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2026-01-31-app-versioning-updater.md": {
+    "size": 14734,
+    "mtime_ns": 1773377363586312415,
+    "hash": "7fa53ee54e2edf130f01e393ef8894a484cb52b5d8dc7f0acc866027bbfd08c5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2026-03-02-modifier-category-inheritance.md": {
+    "size": 25825,
+    "mtime_ns": 1773377363587606875,
+    "hash": "6e4a7ad62c1f87ae9382aa20302b6263d15825eb8319827faca581b7caa410dc"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md": {
+    "size": 3954,
+    "mtime_ns": 1768111029939873419,
+    "hash": "fab1594b7ef0452856a08cf8c8ebd75d25ef1e5db0ae1755843071db6e4a431c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2026-03-02-eod-closing-batch-reprint.md": {
+    "size": 6057,
+    "mtime_ns": 1773377363586931583,
+    "hash": "c4e95fa99f84069ea7c80b3e49426fad1394af4da90add8b2ad79310410bceb4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/PLAN-product-modifiers.md": {
+    "size": 14194,
+    "mtime_ns": 1769703666074595586,
+    "hash": "66775fa516d829000ea25c7ea567c14c341eff960c5cd8194d75e5da7944bf9d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2026-01-13-pnpm-biome-migration-design.md": {
+    "size": 6282,
+    "mtime_ns": 1768394699770399050,
+    "hash": "57c461a1af162087149ea779175eb59948d626824372dbeaf75591db1b97f9d2"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2025-01-09-pos-implementation-plan.md": {
+    "size": 44277,
+    "mtime_ns": 1768109655977223675,
+    "hash": "62186c5f0d3703de70939bda6eca259fd1e710cef25a1d0fe75a20b1c20a47bb"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/PLAN.md": {
+    "size": 21223,
+    "mtime_ns": 1769698957485565902,
+    "hash": "5136d28ccfaa65eb810d31aaec514bef59a1bb9fe24335b3afa7bfda129ee65a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2026-02-03-bulk-sc-pwd-discount.md": {
+    "size": 20101,
+    "mtime_ns": 1773377363586565082,
+    "hash": "01504465ec1a2d2381f6a1b5401b5e6773714abe7be24bf7268aade39c62da00"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2026-03-02-eod-closing-implementation.md": {
+    "size": 51447,
+    "mtime_ns": 1773377363587229917,
+    "hash": "690230fc0c992abf399fb9b40cd06bb6a320635fd3b63b66c598f9133078e258"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2025-01-09-pos-system-design.md": {
+    "size": 19145,
+    "mtime_ns": 1768109655977339759,
+    "hash": "82edb981f2c46136dab99aaa32f7a5bb690968f92a7b67f7026e0e9a5eaf85b5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2026-01-29-pin-management-implementation.md": {
+    "size": 10324,
+    "mtime_ns": 1769699316436034901,
+    "hash": "4ef85a30fbceb4e414df9cb551ceddceb7ed7096fe07df00657a1f1214d242fa"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2026-01-29-pin-management-ui-design.md": {
+    "size": 1574,
+    "mtime_ns": 1769699217355080988,
+    "hash": "c43fa2260e9a45ab0dfc7af90de13c5460ac08d3bcd2f88e831fc1fdea0158e6"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/plans/2026-01-29-takeout-feature.md": {
+    "size": 39759,
+    "mtime_ns": 1769700803388664329,
+    "hash": "d095b0c986fd85532768a315e66e824b4ec72a3fb696c77fb72ebe71c8a5e148"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md": {
+    "size": 20547,
+    "mtime_ns": 1774185179657926487,
+    "hash": "2e4751b9a97df34e2250657db553ffad018c1a480be4c9e88e3fa7bed19f379e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-28-void-paid-orders.md": {
+    "size": 50533,
+    "mtime_ns": 1777517809241129673,
+    "hash": "8244e925693a32e3f6127f46073903ed89bfe03a8f170b849ccabb6ffaff9178"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md": {
+    "size": 47546,
+    "mtime_ns": 1777517809240341733,
+    "hash": "9ad47beae9c1f5a4ddbfe643b1c7c1d0bbe729705d5bf025e65f28c3ad5017c7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md": {
+    "size": 56052,
+    "mtime_ns": 1777517815422052310,
+    "hash": "2c8b2186cd09e4233671c8a428a0b8b1d484acf0947ffac3a820a0b8e4b6683b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-25-dashboard-real-trends.md": {
+    "size": 5357,
+    "mtime_ns": 1774459254135308470,
+    "hash": "ad13ff413aeb1c2b08159c12f493afe669d3c6bbaa012831f0a894ca3537020f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-13-cashier-lock-screen.md": {
+    "size": 60817,
+    "mtime_ns": 1774185179659042529,
+    "hash": "934bf9664ed966ea814b9fffa8dfaffef46e17a0075bbeda771b2bd66768f49f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-13-takeout-void-order.md": {
+    "size": 8689,
+    "mtime_ns": 1774459254134697013,
+    "hash": "907e6dda9eeb28ae70676a826c079769aacc26cc5c48875813517d7adcfefcda"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md": {
+    "size": 34594,
+    "mtime_ns": 1774459254135187845,
+    "hash": "572676209febeb6a8cda3babe24803cb154cb23bd1b980f87fb1e6e0e7142c0d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-04-16-store-schedule-cutoff.md": {
+    "size": 50790,
+    "mtime_ns": 1777517809242076076,
+    "hash": "0e571c96b6809e37665c0f55a46bfc73d3dc8d2ce6f0a7370278654d64594131"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md": {
+    "size": 77505,
+    "mtime_ns": 1777517815421669344,
+    "hash": "542ea8e0a8ec0a312c3a1f5609986bd7eee0bfcd6b41e78ca2702ab178887d40"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-23-draft-takeout-orders.md": {
+    "size": 43617,
+    "mtime_ns": 1774459254135051595,
+    "hash": "0f22d693a0150162ed08ee5a18cc01ead64922c18300eb89ab4d8de9d7c4736c"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-13-bulk-void-orders.md": {
+    "size": 21740,
+    "mtime_ns": 1774185179658365404,
+    "hash": "61bf435111c814fa3dd31b52a13527d3b6ed43c03ade69085e1fa72d4d6951b9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-28-item-level-service-type.md": {
+    "size": 36962,
+    "mtime_ns": 1777517809240593074,
+    "hash": "88fa1a8ba2fa200584f7962dd7bca7e86f0e9df512963cf4b028ea962e33cbd7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md": {
+    "size": 41855,
+    "mtime_ns": 1777517809240872749,
+    "hash": "410309295babc486e570d2539894385e8a5e01b1be778d66ab57de46b311086e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-13-printer-connection-polling.md": {
+    "size": 24729,
+    "mtime_ns": 1773381525709051425,
+    "hash": "d2479f4cfe6d5cc8f709229e281b7766017fd49c14c82fcf46e695369d0d3f63"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-29-printable-product-catalog.md": {
+    "size": 19542,
+    "mtime_ns": 1777517809241530351,
+    "hash": "377c29dc77a0f391ebb8501cfced919bc614a6756c3801df72ecfdb85b1dc5d9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-25-products-category-filter.md": {
+    "size": 7349,
+    "mtime_ns": 1774459254135648261,
+    "hash": "eecabebe04222ec7aa562368c1a1beab3bf9cbbf87dbf1e049f45142f07e4fb5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md": {
+    "size": 31119,
+    "mtime_ns": 1777517809242294832,
+    "hash": "080fbda090e427845819bee007387e2bfd6170f126f4035c8ed77f83e084622e"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-22-open-price-products.md": {
+    "size": 36589,
+    "mtime_ns": 1774459254134864804,
+    "hash": "4260f0c757d960fb35980a967b0901c0c46e3b04b15394d6a4814b7a98a0f6e4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md": {
+    "size": 49223,
+    "mtime_ns": 1774459254135514053,
+    "hash": "908875fa26c1c4309bcc9b9f63a0688bc39812bbb03d2d447f44d5c5a7c8f2d4"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-04-16-native-performance-fixes.md": {
+    "size": 52050,
+    "mtime_ns": 1777517809241799068,
+    "hash": "6ce7c5e814ddd8fc3459b7595eabd6ba75f73d6da8df1c0b3c3fbac708bdfed8"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-26-admin-forms-tanstack-migration.md": {
+    "size": 50212,
+    "mtime_ns": 1777517809240180895,
+    "hash": "5d3587ce045b4805c63edc8c6eb4a42524e88b392c93c0d73ff76f32dd4a1b29"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-03-29-advance-takeout-order.md": {
+    "size": 16588,
+    "mtime_ns": 1777517809241340887,
+    "hash": "f77442df3dd7c8f6ff91a5a37626f67434e2df21d54068e6350de14752708128"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/plans/2026-04-29-phase4-local-first-writes.md": {
+    "size": 69865,
+    "mtime_ns": 1777517815422537486,
+    "hash": "7af0b8180ff12cb4933da3b625dd22efb9f0fe60678c28376bb59f9e53b43bee"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-30-takeout-running-bill-design.md": {
+    "size": 2392,
+    "mtime_ns": 1777517809243482742,
+    "hash": "c071e9cae9de702da7b03624644029c87d341e0b925d106adb5334eec1c25443"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-29-advance-takeout-order-design.md": {
+    "size": 3335,
+    "mtime_ns": 1777517809243188817,
+    "hash": "cdb5df9423a0f3cb12f44b004bef5515f3d558996e69536eb0eefca5e6fcc8d7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-28-void-paid-orders-design.md": {
+    "size": 4163,
+    "mtime_ns": 1777517809243068813,
+    "hash": "71c0ef15e7dddad155f3c2cf8843ace016ca16956a596993995b22baf111c929"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md": {
+    "size": 13031,
+    "mtime_ns": 1777517809243824544,
+    "hash": "03da272d65d7617b553aa9f051f576c3b352538fbf5456814671c9684acada94"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md": {
+    "size": 7698,
+    "mtime_ns": 1774185179660359239,
+    "hash": "2b685bd468a965d7bdad08a9fa7630bd8ef61bc403b0d4ad5cec0a914106a47b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-13-receipt-preview-modal-fixes-design.md": {
+    "size": 3173,
+    "mtime_ns": 1774185179661046573,
+    "hash": "4bed1dfa8a996eb266eb3294817b986f647dc368767b078a7ec82b7bb3df5db1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-13-printer-connection-polling-design.md": {
+    "size": 3746,
+    "mtime_ns": 1773381525709264676,
+    "hash": "ec3107abe77109721d6b1a1ffdc1959a3d14356cd2a33810016e716b6bfe9e8b"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-26-eod-category-grouping-payment-breakdown-design.md": {
+    "size": 5447,
+    "mtime_ns": 1777517809242549881,
+    "hash": "f18e7670c6cee16f112364cfedb0ad592520930a84b59c5eb2f7caf8f772ae8a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-13-kitchen-printer-status-and-shared-toggle-design.md": {
+    "size": 2218,
+    "mtime_ns": 1774185179660712572,
+    "hash": "e827048135d4b0d3ac62044810b15a7dd7b9ba3f4fb606e3995d88a678a224b8"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md": {
+    "size": 10047,
+    "mtime_ns": 1777517809242919851,
+    "hash": "a380dffc4d9fd5188771907b6d7f3fa9f22b93cbe7c7885e56e31d0617f21b78"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-24-duplicate-takeout-transaction-fix-design.md": {
+    "size": 11756,
+    "mtime_ns": 1774459254136041552,
+    "hash": "9f00fbac2c7454a3faaef6008b226c4ed21218e17c269e1cfaccba5051a32351"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md": {
+    "size": 9856,
+    "mtime_ns": 1777517809243662289,
+    "hash": "8fb1a40ac5df0027788acc27937dd8332a0842f4d8c3b6c12a408dd25c9558a1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-25-products-category-filter-design.md": {
+    "size": 3898,
+    "mtime_ns": 1774459254136375343,
+    "hash": "817c21e8d453a347844e9ef22ae6ddc56c3f9910de7f2968818d69e1914eba78"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-22-open-price-products-design.md": {
+    "size": 2720,
+    "mtime_ns": 1774459254135780761,
+    "hash": "db4dcbcc244d216b8458d89f525f7fab9d128a847e7b2c0375dae9bff096f902"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md": {
+    "size": 6913,
+    "mtime_ns": 1774459254136284927,
+    "hash": "a62da28862bde5898c98b59ae8efea04bc6a9aaec3a83b61a91275edf26a9fbd"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-26-admin-forms-tanstack-migration-design.md": {
+    "size": 4226,
+    "mtime_ns": 1777517809242440461,
+    "hash": "e0d97bf4ca2d1052804a760a58f7cfd29876eeef46c5af55b67801c74e3f39ac"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md": {
+    "size": 7810,
+    "mtime_ns": 1774185179659542363,
+    "hash": "e2d01602dfd3ca45e6eb30d52e1ede33cae39fa51e4cd9ce2daf453efc5c786d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-25-dashboard-real-trends-design.md": {
+    "size": 3002,
+    "mtime_ns": 1774459254136125052,
+    "hash": "dd3b9d769f47d59e665540b11f19b78c3fac1969f270bc464126b9e100aff0f7"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md": {
+    "size": 32903,
+    "mtime_ns": 1777517815422914285,
+    "hash": "8fd095006e95ac6a628d708f28dc91354759f7c3c1e206acf680da6f7a32b4f1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md": {
+    "size": 20437,
+    "mtime_ns": 1777517815423269542,
+    "hash": "86b5c02d43099a15fac5c3abed336fb3ea4e97158c9056b248e878bae7b21d20"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md": {
+    "size": 4864,
+    "mtime_ns": 1777517815423588257,
+    "hash": "858e56bd8b4d9265edd1d5b5ae61c1bcaeafc244b4dc3c07da1df0cbda7c3553"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-13-bulk-void-stale-orders-design.md": {
+    "size": 4660,
+    "mtime_ns": 1774185179659979572,
+    "hash": "aa18180caf6e15f0b1dd036bda83e685633eafbfbef875f8c241aaced23d44b5"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-28-item-level-service-type-design.md": {
+    "size": 6867,
+    "mtime_ns": 1777517809242722970,
+    "hash": "3dc7b64173b5679fbd2d3edb123ce8b289bdd73886c3ab4df3f540c2c181794f"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-29-printable-product-catalog-design.md": {
+    "size": 2445,
+    "mtime_ns": 1777517809243329446,
+    "hash": "fb8d5ea6bc8e73119b63f67a28cc03e1e73f255ad5f0b2dc67909a4afe0cbb03"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md": {
+    "size": 5715,
+    "mtime_ns": 1774459254135916219,
+    "hash": "fa2c18366b2ebe51aa3eaf4f5aa20a24ce45d609361547caf8256e2e5c662080"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/convex/README.md": {
+    "size": 2523,
+    "mtime_ns": 1768109655978739552,
+    "hash": "71ade222c9365a78c2309dedc12fedc78e2ec194ad028416ed56da9d26b8dc94"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/release_notes.txt": {
+    "size": 793,
+    "mtime_ns": 1779846551642637623,
+    "hash": "3a6101040daa872732ca7b0636e4a7640b2d75291710faf0773d83be2017d6e9"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/hash_key.txt": {
+    "size": 1712,
+    "mtime_ns": 1778052696127377690,
+    "hash": "40f19b6fcad4d7830c35392f538f7ec588318b663c44f9df33b352f7dc7d35d8"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/metadata_generation_command.txt": {
+    "size": 2047,
+    "mtime_ns": 1778052696123019044,
+    "hash": "14d28c871ccdeb742cbe479548421dbdbda455027bfed7897dee94d991cd3e8d"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/build_file_index.txt": {
+    "size": 3279,
+    "mtime_ns": 1778052696123336046,
+    "hash": "ff342fafd596ed4f658242fbb69f8df9d99fdbb5f0ece3db5f3d3ded9859cfa1"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/additional_project_files.txt": {
+    "size": 13041,
+    "mtime_ns": 1778052725774911854,
+    "hash": "b62cce0cb9415208f85c578cefaeb653a8a44f32394cb19886f72cf2ab232317"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeCache.txt": {
+    "size": 18826,
+    "mtime_ns": 1778052725725883200,
+    "hash": "d40cbf4302305f8f502eead73c2e5158b74f73d576535455a1d882b3e17726a3"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/symbol_folder_index.txt": {
+    "size": 145,
+    "mtime_ns": 1778052696123235671,
+    "hash": "1c2baf710cb54bf1decceb83389e115514538b3e7cfb8400a953ee6877ad7520"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/TargetDirectories.txt": {
+    "size": 6222,
+    "mtime_ns": 1778052725754882007,
+    "hash": "9c28707bbb92ce526054258e770fa906814941e8b2fd13ead78a3ac21486a4b8"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeCache.txt": {
+    "size": 11869,
+    "mtime_ns": 1778052725455417096,
+    "hash": "40dc361ab4402fcbd6650c69fc68f5b4301c74ddc65cbc626d146b8768f1808a"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/TargetDirectories.txt": {
+    "size": 717,
+    "mtime_ns": 1778052725458579111,
+    "hash": "4250ecd6a395ce46578ecd9334859a259b3689eaf3de1ac4679858d62913dddd"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/src/CMakeLists.txt": {
+    "size": 208,
+    "mtime_ns": 1778052725446691803,
+    "hash": "d69fc6ab3ef20b65cd5ae7964b8ddcd5a1100b22fc367bbbe5a47a4ebfe4c775"
+  },
+  "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/README.md": {
+    "size": 1383,
+    "mtime_ns": 1768109655967012791,
+    "hash": "cd64899a054bb500200cbec4465b75868334bfbc81f24e83cf33c53ddf44030f"
+  }
+}

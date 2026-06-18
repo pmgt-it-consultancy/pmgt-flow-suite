@@ -1,0 +1,329 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2025_01_09_pos_system_design_pos_system_design",
+      "label": "POS System Design",
+      "file_type": "document",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_custom_auth_system",
+      "label": "Custom Auth System (replacing Clerk)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_rbac_scoped_roles",
+      "label": "RBAC Scoped Roles",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_permission_system",
+      "label": "Permission System",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_multi_store_hierarchy",
+      "label": "Multi-Store Hierarchy (Parent/Branch)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_bir_compliance",
+      "label": "BIR Compliance (VAT, SC/PWD)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_sc_pwd_discount_computation",
+      "label": "SC/PWD Discount Computation (VAT-exempt)",
+      "file_type": "rationale",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_prices_in_cents",
+      "label": "Prices in Cents (integer storage)",
+      "file_type": "rationale",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_audit_logging",
+      "label": "Audit Logging",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_order_management",
+      "label": "Order Management",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_voids_with_approval",
+      "label": "Voids with Manager Approval",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_daily_reports",
+      "label": "Daily Reports (EOD)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_product_catalog",
+      "label": "Product Catalog (Two-Level Categories)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_table_management",
+      "label": "Table Management",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_bluetooth_receipt_printing",
+      "label": "Bluetooth Thermal Receipt/Kitchen Printing",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_convex_realtime_backend",
+      "label": "Convex Real-Time Backend",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_09_pos_system_design_online_only_architecture",
+      "label": "Online-Only Architecture",
+      "file_type": "rationale",
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2025_01_09_pos_system_design_custom_auth_system",
+      "target": "plans_2025_01_09_pos_system_design_rbac_scoped_roles",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_rbac_scoped_roles",
+      "target": "plans_2025_01_09_pos_system_design_permission_system",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_rbac_scoped_roles",
+      "target": "plans_2025_01_09_pos_system_design_multi_store_hierarchy",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": "lines 42-51",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_bir_compliance",
+      "target": "plans_2025_01_09_pos_system_design_sc_pwd_discount_computation",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": "lines 267-276",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_order_management",
+      "target": "plans_2025_01_09_pos_system_design_bir_compliance",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": "lines 184-220",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_voids_with_approval",
+      "target": "plans_2025_01_09_pos_system_design_audit_logging",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": "lines 286-328",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_daily_reports",
+      "target": "plans_2025_01_09_pos_system_design_bir_compliance",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": "lines 331-392",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_product_catalog",
+      "target": "plans_2025_01_09_pos_system_design_order_management",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": "lines 222-237",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_table_management",
+      "target": "plans_2025_01_09_pos_system_design_order_management",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": "lines 166-180",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_voids_with_approval",
+      "target": "plans_2026_01_29_pin_management_manager_pin",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_pos_system_design",
+      "target": "plans_2025_01_09_pos_system_design_convex_realtime_backend",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": "lines 15-21",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_system_design_prices_in_cents",
+      "target": "plans_2025_01_09_pos_system_design_bir_compliance",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md",
+      "source_location": "line 27",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "bir_compliant_order_flow",
+      "label": "BIR-Compliant Order & Tax Flow",
+      "nodes": [
+        "plans_2025_01_09_pos_system_design_order_management",
+        "plans_2025_01_09_pos_system_design_bir_compliance",
+        "plans_2025_01_09_pos_system_design_sc_pwd_discount_computation",
+        "plans_2025_01_09_pos_system_design_daily_reports"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/plans/2025-01-09-pos-system-design.md"
+    }
+  ]
+}

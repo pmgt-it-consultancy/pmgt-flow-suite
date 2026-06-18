@@ -1,0 +1,148 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_04_16_store_schedule_cutoff_design_doc",
+      "label": "Store Schedule & Business-Day Cutoff Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_16_store_schedule_cutoff_design_store_schedule",
+      "label": "stores.schedule Field",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": "lines 56-79",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_16_store_schedule_cutoff_design_business_day_boundaries",
+      "label": "getBusinessDayBoundaries Helper",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": "lines 106-122",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_16_store_schedule_cutoff_design_cutoff_algorithm",
+      "label": "Closing-Time Business-Day Cutoff",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": "lines 13-16",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_16_store_schedule_cutoff_design_get_pht_day_boundaries",
+      "label": "getPHTDayBoundaries (dateUtils)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": "lines 8-9",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_16_store_schedule_cutoff_design_operating_hours_ui",
+      "label": "Operating Hours Admin UI",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": "lines 124-141",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_04_16_store_schedule_cutoff_design_doc",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_store_schedule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_16_store_schedule_cutoff_design_doc",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_business_day_boundaries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_16_store_schedule_cutoff_design_business_day_boundaries",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_store_schedule",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_16_store_schedule_cutoff_design_cutoff_algorithm",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_business_day_boundaries",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_16_store_schedule_cutoff_design_business_day_boundaries",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_get_pht_day_boundaries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_16_store_schedule_cutoff_design_operating_hours_ui",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_store_schedule",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "business_day_cutoff_chain",
+      "label": "Business-Day Cutoff Across Numbering and Reporting",
+      "nodes": [
+        "specs_2026_04_16_store_schedule_cutoff_design_store_schedule",
+        "specs_2026_04_16_store_schedule_cutoff_design_business_day_boundaries",
+        "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_get_report_boundaries",
+        "specs_2026_03_28_split_payment_counter_ordering_design_daily_order_reset"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/superpowers/specs/2026-04-16-store-schedule-cutoff-design.md"
+    }
+  ]
+}

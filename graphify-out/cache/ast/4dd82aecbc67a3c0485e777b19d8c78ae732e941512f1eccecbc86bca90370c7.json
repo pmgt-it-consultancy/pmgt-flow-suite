@@ -1,0 +1,93 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_approved_structural_json",
+      "label": "structural.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "approved_structural_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "approved_structural_category",
+      "label": "category",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "approved_structural_patterns",
+      "label": "patterns",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "approved_structural_lastupdated",
+      "label": "lastUpdated",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L2472"
+    },
+    {
+      "id": "approved_structural_checksum",
+      "label": "checksum",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L2473"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_approved_structural_json",
+      "target": "approved_structural_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_approved_structural_json",
+      "target": "approved_structural_category",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_approved_structural_json",
+      "target": "approved_structural_patterns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_approved_structural_json",
+      "target": "approved_structural_lastupdated",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L2472",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_approved_structural_json",
+      "target": "approved_structural_checksum",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/approved/structural.json",
+      "source_location": "L2473",
+      "weight": 1.0
+    }
+  ]
+}

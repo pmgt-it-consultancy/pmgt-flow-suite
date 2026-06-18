@@ -1,0 +1,1359 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_manifest_json",
+      "label": "manifest.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "drift_manifest_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "drift_manifest_generatedat",
+      "label": "generatedAt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "drift_manifest_projectroot",
+      "label": "projectRoot",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "drift_manifest_stats",
+      "label": "stats",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "drift_manifest_stats_patterns",
+      "label": "patterns",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "drift_manifest_patterns_total",
+      "label": "total",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "drift_manifest_patterns_bycategory",
+      "label": "byCategory",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "drift_manifest_bycategory_auth",
+      "label": "auth",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "drift_manifest_bycategory_security",
+      "label": "security",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "drift_manifest_bycategory_structural",
+      "label": "structural",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "drift_manifest_bycategory_components",
+      "label": "components",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "drift_manifest_bycategory_data_access",
+      "label": "data-access",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "drift_manifest_bycategory_config",
+      "label": "config",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "drift_manifest_bycategory_types",
+      "label": "types",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L15"
+    },
+    {
+      "id": "drift_manifest_bycategory_styling",
+      "label": "styling",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "drift_manifest_bycategory_errors",
+      "label": "errors",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "drift_manifest_bycategory_logging",
+      "label": "logging",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L18"
+    },
+    {
+      "id": "drift_manifest_bycategory_testing",
+      "label": "testing",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "drift_manifest_bycategory_accessibility",
+      "label": "accessibility",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "drift_manifest_bycategory_documentation",
+      "label": "documentation",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "drift_manifest_bycategory_performance",
+      "label": "performance",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "drift_manifest_bycategory_api",
+      "label": "api",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "drift_manifest_patterns_bystatus",
+      "label": "byStatus",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "drift_manifest_bystatus_discovered",
+      "label": "discovered",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "drift_manifest_bystatus_approved",
+      "label": "approved",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L27"
+    },
+    {
+      "id": "drift_manifest_bystatus_ignored",
+      "label": "ignored",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L28"
+    },
+    {
+      "id": "drift_manifest_patterns_byconfidence",
+      "label": "byConfidence",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L30"
+    },
+    {
+      "id": "drift_manifest_byconfidence_high",
+      "label": "high",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L31"
+    },
+    {
+      "id": "drift_manifest_byconfidence_medium",
+      "label": "medium",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L32"
+    },
+    {
+      "id": "drift_manifest_byconfidence_low",
+      "label": "low",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L33"
+    },
+    {
+      "id": "drift_manifest_byconfidence_uncertain",
+      "label": "uncertain",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "drift_manifest_patterns_totallocations",
+      "label": "totalLocations",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L36"
+    },
+    {
+      "id": "drift_manifest_patterns_totaloutliers",
+      "label": "totalOutliers",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L37"
+    },
+    {
+      "id": "drift_manifest_stats_security",
+      "label": "security",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L39"
+    },
+    {
+      "id": "drift_manifest_security_totaltables",
+      "label": "totalTables",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L40"
+    },
+    {
+      "id": "drift_manifest_security_totalaccesspoints",
+      "label": "totalAccessPoints",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L41"
+    },
+    {
+      "id": "drift_manifest_security_sensitivefields",
+      "label": "sensitiveFields",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L42"
+    },
+    {
+      "id": "drift_manifest_security_violations",
+      "label": "violations",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L43"
+    },
+    {
+      "id": "drift_manifest_security_risklevel",
+      "label": "riskLevel",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "drift_manifest_stats_callgraph",
+      "label": "callGraph",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L46"
+    },
+    {
+      "id": "drift_manifest_callgraph_totalfunctions",
+      "label": "totalFunctions",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L47"
+    },
+    {
+      "id": "drift_manifest_callgraph_totalcalls",
+      "label": "totalCalls",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L48"
+    },
+    {
+      "id": "drift_manifest_callgraph_entrypoints",
+      "label": "entryPoints",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L49"
+    },
+    {
+      "id": "drift_manifest_callgraph_dataaccessors",
+      "label": "dataAccessors",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L50"
+    },
+    {
+      "id": "drift_manifest_callgraph_avgdepth",
+      "label": "avgDepth",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L51"
+    },
+    {
+      "id": "drift_manifest_stats_contracts",
+      "label": "contracts",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L53"
+    },
+    {
+      "id": "drift_manifest_contracts_verified",
+      "label": "verified",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L54"
+    },
+    {
+      "id": "drift_manifest_contracts_mismatch",
+      "label": "mismatch",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L55"
+    },
+    {
+      "id": "drift_manifest_contracts_discovered",
+      "label": "discovered",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L56"
+    },
+    {
+      "id": "drift_manifest_contracts_ignored",
+      "label": "ignored",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L57"
+    },
+    {
+      "id": "drift_manifest_stats_dna",
+      "label": "dna",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L59"
+    },
+    {
+      "id": "drift_manifest_dna_healthscore",
+      "label": "healthScore",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L60"
+    },
+    {
+      "id": "drift_manifest_dna_geneticdiversity",
+      "label": "geneticDiversity",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L61"
+    },
+    {
+      "id": "drift_manifest_dna_mutations",
+      "label": "mutations",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L62"
+    },
+    {
+      "id": "drift_manifest_dna_dominantgenes",
+      "label": "dominantGenes",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L63"
+    },
+    {
+      "id": "drift_manifest_filehashes",
+      "label": "fileHashes",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L66"
+    },
+    {
+      "id": "drift_manifest_lastscan",
+      "label": "lastScan",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L67"
+    },
+    {
+      "id": "drift_manifest_lastscan_timestamp",
+      "label": "timestamp",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L68"
+    },
+    {
+      "id": "drift_manifest_lastscan_duration",
+      "label": "duration",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L69"
+    },
+    {
+      "id": "drift_manifest_lastscan_filesscanned",
+      "label": "filesScanned",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L70"
+    },
+    {
+      "id": "drift_manifest_lastscan_patternsfound",
+      "label": "patternsFound",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L71"
+    },
+    {
+      "id": "drift_manifest_lastscan_errors",
+      "label": "errors",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L72"
+    },
+    {
+      "id": "drift_manifest_views",
+      "label": "views",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L74"
+    },
+    {
+      "id": "drift_manifest_views_status",
+      "label": "status",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L75"
+    },
+    {
+      "id": "drift_manifest_status_generatedat",
+      "label": "generatedAt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L76"
+    },
+    {
+      "id": "drift_manifest_status_stale",
+      "label": "stale",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L77"
+    },
+    {
+      "id": "drift_manifest_status_invalidatedby",
+      "label": "invalidatedBy",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L78"
+    },
+    {
+      "id": "drift_manifest_views_patternindex",
+      "label": "patternIndex",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L80"
+    },
+    {
+      "id": "drift_manifest_patternindex_generatedat",
+      "label": "generatedAt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L81"
+    },
+    {
+      "id": "drift_manifest_patternindex_stale",
+      "label": "stale",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L82"
+    },
+    {
+      "id": "drift_manifest_patternindex_invalidatedby",
+      "label": "invalidatedBy",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L83"
+    },
+    {
+      "id": "drift_manifest_views_securitysummary",
+      "label": "securitySummary",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L85"
+    },
+    {
+      "id": "drift_manifest_securitysummary_generatedat",
+      "label": "generatedAt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L86"
+    },
+    {
+      "id": "drift_manifest_securitysummary_stale",
+      "label": "stale",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L87"
+    },
+    {
+      "id": "drift_manifest_securitysummary_invalidatedby",
+      "label": "invalidatedBy",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L88"
+    },
+    {
+      "id": "drift_manifest_views_trends",
+      "label": "trends",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L90"
+    },
+    {
+      "id": "drift_manifest_trends_generatedat",
+      "label": "generatedAt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L91"
+    },
+    {
+      "id": "drift_manifest_trends_stale",
+      "label": "stale",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L92"
+    },
+    {
+      "id": "drift_manifest_views_examples",
+      "label": "examples",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L94"
+    },
+    {
+      "id": "drift_manifest_examples_generatedat",
+      "label": "generatedAt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L95"
+    },
+    {
+      "id": "drift_manifest_examples_stale",
+      "label": "stale",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L96"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_manifest_json",
+      "target": "drift_manifest_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_manifest_json",
+      "target": "drift_manifest_generatedat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_manifest_json",
+      "target": "drift_manifest_projectroot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_manifest_json",
+      "target": "drift_manifest_stats",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats",
+      "target": "drift_manifest_stats_patterns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_patterns",
+      "target": "drift_manifest_patterns_total",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_patterns",
+      "target": "drift_manifest_patterns_bycategory",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_auth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_security",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_structural",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_data_access",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_styling",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_errors",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_logging",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_testing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_accessibility",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_documentation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_performance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bycategory",
+      "target": "drift_manifest_bycategory_api",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_patterns",
+      "target": "drift_manifest_patterns_bystatus",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bystatus",
+      "target": "drift_manifest_bystatus_discovered",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bystatus",
+      "target": "drift_manifest_bystatus_approved",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_bystatus",
+      "target": "drift_manifest_bystatus_ignored",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_patterns",
+      "target": "drift_manifest_patterns_byconfidence",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_byconfidence",
+      "target": "drift_manifest_byconfidence_high",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_byconfidence",
+      "target": "drift_manifest_byconfidence_medium",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_byconfidence",
+      "target": "drift_manifest_byconfidence_low",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patterns_byconfidence",
+      "target": "drift_manifest_byconfidence_uncertain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_patterns",
+      "target": "drift_manifest_patterns_totallocations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_patterns",
+      "target": "drift_manifest_patterns_totaloutliers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats",
+      "target": "drift_manifest_stats_security",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_security",
+      "target": "drift_manifest_security_totaltables",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_security",
+      "target": "drift_manifest_security_totalaccesspoints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_security",
+      "target": "drift_manifest_security_sensitivefields",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_security",
+      "target": "drift_manifest_security_violations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_security",
+      "target": "drift_manifest_security_risklevel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats",
+      "target": "drift_manifest_stats_callgraph",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_callgraph",
+      "target": "drift_manifest_callgraph_totalfunctions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_callgraph",
+      "target": "drift_manifest_callgraph_totalcalls",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_callgraph",
+      "target": "drift_manifest_callgraph_entrypoints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_callgraph",
+      "target": "drift_manifest_callgraph_dataaccessors",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_callgraph",
+      "target": "drift_manifest_callgraph_avgdepth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats",
+      "target": "drift_manifest_stats_contracts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_contracts",
+      "target": "drift_manifest_contracts_verified",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_contracts",
+      "target": "drift_manifest_contracts_mismatch",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_contracts",
+      "target": "drift_manifest_contracts_discovered",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_contracts",
+      "target": "drift_manifest_contracts_ignored",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats",
+      "target": "drift_manifest_stats_dna",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_dna",
+      "target": "drift_manifest_dna_healthscore",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_dna",
+      "target": "drift_manifest_dna_geneticdiversity",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_dna",
+      "target": "drift_manifest_dna_mutations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_stats_dna",
+      "target": "drift_manifest_dna_dominantgenes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_manifest_json",
+      "target": "drift_manifest_filehashes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_manifest_json",
+      "target": "drift_manifest_lastscan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_lastscan",
+      "target": "drift_manifest_lastscan_timestamp",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_lastscan",
+      "target": "drift_manifest_lastscan_duration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_lastscan",
+      "target": "drift_manifest_lastscan_filesscanned",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_lastscan",
+      "target": "drift_manifest_lastscan_patternsfound",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_lastscan",
+      "target": "drift_manifest_lastscan_errors",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_manifest_json",
+      "target": "drift_manifest_views",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views",
+      "target": "drift_manifest_views_status",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_status",
+      "target": "drift_manifest_status_generatedat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_status",
+      "target": "drift_manifest_status_stale",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_status",
+      "target": "drift_manifest_status_invalidatedby",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_status_invalidatedby",
+      "target": "ref_pattern_stats_updated",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L78",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_manifest_status_invalidatedby",
+      "target": "ref_security_stats_updated",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L78",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_manifest_status_invalidatedby",
+      "target": "ref_contract_stats_updated",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L78",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_manifest_views",
+      "target": "drift_manifest_views_patternindex",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_patternindex",
+      "target": "drift_manifest_patternindex_generatedat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_patternindex",
+      "target": "drift_manifest_patternindex_stale",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_patternindex",
+      "target": "drift_manifest_patternindex_invalidatedby",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_patternindex_invalidatedby",
+      "target": "ref_pattern_stats_updated",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L83",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_manifest_views",
+      "target": "drift_manifest_views_securitysummary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_securitysummary",
+      "target": "drift_manifest_securitysummary_generatedat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_securitysummary",
+      "target": "drift_manifest_securitysummary_stale",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_securitysummary",
+      "target": "drift_manifest_securitysummary_invalidatedby",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_securitysummary_invalidatedby",
+      "target": "ref_security_stats_updated",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L88",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_manifest_views",
+      "target": "drift_manifest_views_trends",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_trends",
+      "target": "drift_manifest_trends_generatedat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_trends",
+      "target": "drift_manifest_trends_stale",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views",
+      "target": "drift_manifest_views_examples",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_examples",
+      "target": "drift_manifest_examples_generatedat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_manifest_views_examples",
+      "target": "drift_manifest_examples_stale",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/manifest.json",
+      "source_location": "L96",
+      "weight": 1.0
+    }
+  ]
+}

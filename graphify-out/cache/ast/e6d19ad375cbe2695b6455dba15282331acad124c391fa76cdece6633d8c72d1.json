@@ -1,0 +1,639 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "label": "config.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "drift_config_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "drift_config_project",
+      "label": "project",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "drift_config_project_id",
+      "label": "id",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "drift_config_project_name",
+      "label": "name",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "drift_config_project_initializedat",
+      "label": "initializedAt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "drift_config_severity",
+      "label": "severity",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "drift_config_ignore",
+      "label": "ignore",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "drift_config_ci",
+      "label": "ci",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "drift_config_ci_failon",
+      "label": "failOn",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "drift_config_ci_reportformat",
+      "label": "reportFormat",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "drift_config_learning",
+      "label": "learning",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L28"
+    },
+    {
+      "id": "drift_config_learning_autoapprovethreshold",
+      "label": "autoApproveThreshold",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "drift_config_learning_minoccurrences",
+      "label": "minOccurrences",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L30"
+    },
+    {
+      "id": "drift_config_learning_semanticlearning",
+      "label": "semanticLearning",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L31"
+    },
+    {
+      "id": "drift_config_performance",
+      "label": "performance",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L33"
+    },
+    {
+      "id": "drift_config_performance_maxworkers",
+      "label": "maxWorkers",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "drift_config_performance_cacheenabled",
+      "label": "cacheEnabled",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L35"
+    },
+    {
+      "id": "drift_config_performance_incrementalanalysis",
+      "label": "incrementalAnalysis",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L36"
+    },
+    {
+      "id": "drift_config_performance_cachettl",
+      "label": "cacheTTL",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L37"
+    },
+    {
+      "id": "drift_config_features",
+      "label": "features",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L39"
+    },
+    {
+      "id": "drift_config_features_callgraph",
+      "label": "callGraph",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L40"
+    },
+    {
+      "id": "drift_config_features_boundaries",
+      "label": "boundaries",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L41"
+    },
+    {
+      "id": "drift_config_features_dna",
+      "label": "dna",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L42"
+    },
+    {
+      "id": "drift_config_features_contracts",
+      "label": "contracts",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L43"
+    },
+    {
+      "id": "drift_config_telemetry",
+      "label": "telemetry",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "drift_config_telemetry_enabled",
+      "label": "enabled",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L46"
+    },
+    {
+      "id": "drift_config_telemetry_sharepatternsignatures",
+      "label": "sharePatternSignatures",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L47"
+    },
+    {
+      "id": "drift_config_telemetry_shareaggregatestats",
+      "label": "shareAggregateStats",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L48"
+    },
+    {
+      "id": "drift_config_telemetry_shareuseractions",
+      "label": "shareUserActions",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L49"
+    },
+    {
+      "id": "drift_config_telemetry_installationid",
+      "label": "installationId",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L50"
+    },
+    {
+      "id": "drift_config_telemetry_enabledat",
+      "label": "enabledAt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L51"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "target": "drift_config_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "target": "drift_config_project",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_project",
+      "target": "drift_config_project_id",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_project",
+      "target": "drift_config_project_name",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_project",
+      "target": "drift_config_project_initializedat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "target": "drift_config_severity",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "target": "drift_config_ignore",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_node_modules",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_dist",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_build",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_git",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_coverage",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_min_js",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_bundle_js",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_vendor",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_pycache",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_venv",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_target",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_bin",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "drift_config_ignore",
+      "target": "ref_obj",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "target": "drift_config_ci",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_ci",
+      "target": "drift_config_ci_failon",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_ci",
+      "target": "drift_config_ci_reportformat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "target": "drift_config_learning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_learning",
+      "target": "drift_config_learning_autoapprovethreshold",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_learning",
+      "target": "drift_config_learning_minoccurrences",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_learning",
+      "target": "drift_config_learning_semanticlearning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "target": "drift_config_performance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_performance",
+      "target": "drift_config_performance_maxworkers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_performance",
+      "target": "drift_config_performance_cacheenabled",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_performance",
+      "target": "drift_config_performance_incrementalanalysis",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_performance",
+      "target": "drift_config_performance_cachettl",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "target": "drift_config_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_features",
+      "target": "drift_config_features_callgraph",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_features",
+      "target": "drift_config_features_boundaries",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_features",
+      "target": "drift_config_features_dna",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_features",
+      "target": "drift_config_features_contracts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_config_json",
+      "target": "drift_config_telemetry",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_telemetry",
+      "target": "drift_config_telemetry_enabled",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_telemetry",
+      "target": "drift_config_telemetry_sharepatternsignatures",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_telemetry",
+      "target": "drift_config_telemetry_shareaggregatestats",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_telemetry",
+      "target": "drift_config_telemetry_shareuseractions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_telemetry",
+      "target": "drift_config_telemetry_installationid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "drift_config_telemetry",
+      "target": "drift_config_telemetry_enabledat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/config.json",
+      "source_location": "L51",
+      "weight": 1.0
+    }
+  ]
+}

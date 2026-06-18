@@ -1,0 +1,206 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_03_28_split_payment_counter_ordering_design_doc",
+      "label": "Split Payment & Counter Ordering Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_split_payment_counter_ordering_design_order_payments",
+      "label": "orderPayments Table",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": "lines 24-45",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_split_payment_counter_ordering_design_process_payment",
+      "label": "processPayment Mutation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": "lines 47-70",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_split_payment_counter_ordering_design_get_receipt",
+      "label": "getReceipt Query (payments array)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": "lines 71-86",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_split_payment_counter_ordering_design_order_category",
+      "label": "orderCategory Field (counter ordering)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": "lines 119-156",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_split_payment_counter_ordering_design_table_marker",
+      "label": "tableMarker Field",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": "lines 158-207",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_split_payment_counter_ordering_design_daily_order_reset",
+      "label": "Daily Order Number Reset",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": "lines 209-228",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_split_payment_counter_ordering_design_kitchen_ticket_data",
+      "label": "KitchenTicketData (tableName removed)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": "lines 230-260",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_split_payment_counter_ordering_design_legacy_fallback",
+      "label": "Legacy Single-Payment Backward Compatibility",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": "lines 262-267",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_doc",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_order_payments",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_doc",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_order_category",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_doc",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_table_marker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_doc",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_daily_order_reset",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_process_payment",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_order_payments",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_get_receipt",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_order_payments",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_legacy_fallback",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_get_receipt",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_kitchen_ticket_data",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_order_category",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_kitchen_ticket_data",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_table_marker",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_split_payment_counter_ordering_design_daily_order_reset",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_cutoff_algorithm",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/specs/2026-03-28-split-payment-counter-ordering-design.md",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": []
+}

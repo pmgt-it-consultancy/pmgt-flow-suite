@@ -1,0 +1,93 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_discovered_data_access_json",
+      "label": "data-access.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "discovered_data_access_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "discovered_data_access_category",
+      "label": "category",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "discovered_data_access_patterns",
+      "label": "patterns",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "discovered_data_access_lastupdated",
+      "label": "lastUpdated",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L6423"
+    },
+    {
+      "id": "discovered_data_access_checksum",
+      "label": "checksum",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L6424"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_discovered_data_access_json",
+      "target": "discovered_data_access_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_discovered_data_access_json",
+      "target": "discovered_data_access_category",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_discovered_data_access_json",
+      "target": "discovered_data_access_patterns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_discovered_data_access_json",
+      "target": "discovered_data_access_lastupdated",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L6423",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_patterns_discovered_data_access_json",
+      "target": "discovered_data_access_checksum",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/patterns/discovered/data-access.json",
+      "source_location": "L6424",
+      "weight": 1.0
+    }
+  ]
+}

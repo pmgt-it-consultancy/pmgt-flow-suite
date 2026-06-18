@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_telemetry_queue_json",
+      "label": "telemetry-queue.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/telemetry-queue.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "drift_telemetry_queue_events",
+      "label": "events",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/telemetry-queue.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "drift_telemetry_queue_lastsubmission",
+      "label": "lastSubmission",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/telemetry-queue.json",
+      "source_location": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_telemetry_queue_json",
+      "target": "drift_telemetry_queue_events",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/telemetry-queue.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_web_drift_telemetry_queue_json",
+      "target": "drift_telemetry_queue_lastsubmission",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/web/.drift/telemetry-queue.json",
+      "source_location": "L3",
+      "weight": 1.0
+    }
+  ]
+}

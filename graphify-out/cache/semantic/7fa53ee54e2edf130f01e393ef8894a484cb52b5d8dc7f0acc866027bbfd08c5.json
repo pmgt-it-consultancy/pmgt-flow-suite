@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_01_31_app_versioning_updater_app_versioning_updater",
+      "label": "App Versioning & In-App Updater Plan",
+      "file_type": "document",
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_01_31_app_versioning_updater_version_bump_script",
+      "label": "Version Bump Script (semver sync)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_01_31_app_versioning_updater_github_releases_update_check",
+      "label": "GitHub Releases Update Check (Convex-proxied)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_01_31_app_versioning_updater_in_app_apk_updater",
+      "label": "In-App APK Updater (Android sideload)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_01_31_app_versioning_updater_forced_update_min_version",
+      "label": "Forced Update via minRequiredVersion",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_01_31_app_versioning_updater_app_versioning_updater",
+      "target": "plans_2026_01_31_app_versioning_updater_version_bump_script",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": "Task 2",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_01_31_app_versioning_updater_app_versioning_updater",
+      "target": "plans_2026_01_31_app_versioning_updater_github_releases_update_check",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": "Task 4",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_01_31_app_versioning_updater_app_versioning_updater",
+      "target": "plans_2026_01_31_app_versioning_updater_in_app_apk_updater",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": "Task 6",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_01_31_app_versioning_updater_github_releases_update_check",
+      "target": "plans_2026_01_31_app_versioning_updater_forced_update_min_version",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": "Task 4",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_01_31_app_versioning_updater_github_releases_update_check",
+      "target": "plans_2025_01_09_pos_system_design_convex_realtime_backend",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md",
+      "source_location": "Task 4",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "in_app_update_pipeline",
+      "label": "In-App Update Pipeline",
+      "nodes": [
+        "plans_2026_01_31_app_versioning_updater_version_bump_script",
+        "plans_2026_01_31_app_versioning_updater_github_releases_update_check",
+        "plans_2026_01_31_app_versioning_updater_in_app_apk_updater",
+        "plans_2026_01_31_app_versioning_updater_forced_update_min_version"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.85,
+      "source_file": "docs/plans/2026-01-31-app-versioning-updater.md"
+    }
+  ]
+}

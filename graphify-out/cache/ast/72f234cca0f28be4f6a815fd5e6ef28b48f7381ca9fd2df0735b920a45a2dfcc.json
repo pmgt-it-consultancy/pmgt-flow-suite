@@ -1,0 +1,109 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_src_main_java_com_pmgtitconsultancy_pmgtflow_stg_mainactivity_kt",
+      "label": "MainActivity.kt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L1"
+    },
+    {
+      "id": "stg_mainactivity_mainactivity",
+      "label": "MainActivity",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L13"
+    },
+    {
+      "id": "stg_mainactivity_mainactivity_oncreate",
+      "label": ".onCreate()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L14"
+    },
+    {
+      "id": "stg_mainactivity_mainactivity_getmaincomponentname",
+      "label": ".getMainComponentName()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L26"
+    },
+    {
+      "id": "stg_mainactivity_mainactivity_createreactactivitydelegate",
+      "label": ".createReactActivityDelegate()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L32"
+    },
+    {
+      "id": "stg_mainactivity_mainactivity_invokedefaultonbackpressed",
+      "label": ".invokeDefaultOnBackPressed()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L48"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_src_main_java_com_pmgtitconsultancy_pmgtflow_stg_mainactivity_kt",
+      "target": "stg_mainactivity_mainactivity",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "stg_mainactivity_mainactivity",
+      "target": "stg_mainactivity_mainactivity_oncreate",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "stg_mainactivity_mainactivity",
+      "target": "stg_mainactivity_mainactivity_getmaincomponentname",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "stg_mainactivity_mainactivity",
+      "target": "stg_mainactivity_mainactivity_createreactactivitydelegate",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "stg_mainactivity_mainactivity",
+      "target": "stg_mainactivity_mainactivity_invokedefaultonbackpressed",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L48",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "stg_mainactivity_mainactivity_oncreate",
+      "callee": "setTheme",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L18"
+    },
+    {
+      "caller_nid": "stg_mainactivity_mainactivity_createreactactivitydelegate",
+      "callee": "ReactActivityDelegateWrapper",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainActivity.kt",
+      "source_location": "L33"
+    }
+  ]
+}

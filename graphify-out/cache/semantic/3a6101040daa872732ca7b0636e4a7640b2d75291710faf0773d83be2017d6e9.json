@@ -1,0 +1,101 @@
+{
+  "nodes": [
+    {
+      "id": "native_release_notes_offline_first_sync",
+      "label": "Offline-First Sync (WatermelonDB)",
+      "file_type": "rationale",
+      "source_file": "apps/native/release_notes.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "native_release_notes_debounced_quantity_buttons",
+      "label": "Debounced Quantity Buttons",
+      "file_type": "rationale",
+      "source_file": "apps/native/release_notes.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "native_release_notes_batch_sync_performance",
+      "label": "Batch Sync Performance (single SQL query)",
+      "file_type": "rationale",
+      "source_file": "apps/native/release_notes.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "native_release_notes_sync_pull_push_endpoints",
+      "label": "Sync Pull/Push Endpoints",
+      "file_type": "concept",
+      "source_file": "apps/native/release_notes.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "native_release_notes_offline_first_sync",
+      "target": "plans_2025_01_09_pos_system_design_online_only_architecture",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/native/release_notes.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "native_release_notes_offline_first_sync",
+      "target": "native_release_notes_sync_pull_push_endpoints",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/native/release_notes.txt",
+      "source_location": "lines 3, 11",
+      "weight": 1.0
+    },
+    {
+      "source": "native_release_notes_batch_sync_performance",
+      "target": "native_release_notes_sync_pull_push_endpoints",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/native/release_notes.txt",
+      "source_location": "lines 6-7",
+      "weight": 1.0
+    },
+    {
+      "source": "native_release_notes_debounced_quantity_buttons",
+      "target": "plans_2025_01_09_pos_system_design_order_management",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "apps/native/release_notes.txt",
+      "source_location": "line 4",
+      "weight": 1.0
+    },
+    {
+      "source": "native_release_notes_offline_first_sync",
+      "target": "plans_2025_01_09_pos_system_design_convex_realtime_backend",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/native/release_notes.txt",
+      "source_location": "line 3",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

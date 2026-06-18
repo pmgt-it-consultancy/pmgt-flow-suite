@@ -1,0 +1,80 @@
+{
+  "nodes": [
+    {
+      "id": "specs_bulk_void_stale_orders_design_doc",
+      "label": "Bulk Void Stale Orders Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-13-bulk-void-stale-orders-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_bulk_void_stale_orders_design_bulk_void_action",
+      "label": "bulkVoidOrders Action",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-bulk-void-stale-orders-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_bulk_void_stale_orders_design_skip_and_continue",
+      "label": "Skip-and-Continue Batch Voiding",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-bulk-void-stale-orders-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_bulk_void_stale_orders_design_doc",
+      "target": "specs_bulk_void_stale_orders_design_bulk_void_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-bulk-void-stale-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_bulk_void_stale_orders_design_doc",
+      "target": "specs_bulk_void_stale_orders_design_skip_and_continue",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-bulk-void-stale-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_bulk_void_stale_orders_design_bulk_void_action",
+      "target": "specs_bulk_void_stale_orders_design_skip_and_continue",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-bulk-void-stale-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_bulk_void_stale_orders_design_bulk_void_action",
+      "target": "plans_void_paid_orders_void_paid_order_action",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/superpowers/specs/2026-03-13-bulk-void-stale-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

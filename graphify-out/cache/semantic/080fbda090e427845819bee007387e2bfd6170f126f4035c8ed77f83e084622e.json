@@ -1,0 +1,136 @@
+{
+  "nodes": [
+    {
+      "id": "plans_day_closing_cross_midnight_cutoff_doc",
+      "label": "Day Closing Cross-Midnight Cutoff Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_day_closing_cross_midnight_cutoff_report_boundaries",
+      "label": "getReportBoundariesForDate Helper",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_day_closing_cross_midnight_cutoff_z_report",
+      "label": "Z-Report Day Closing",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_day_closing_cross_midnight_cutoff_time_range_selector",
+      "label": "Cross-Midnight TimeRangeSelector",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_day_closing_cross_midnight_cutoff_doc",
+      "target": "plans_day_closing_cross_midnight_cutoff_report_boundaries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_day_closing_cross_midnight_cutoff_doc",
+      "target": "plans_day_closing_cross_midnight_cutoff_z_report",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_day_closing_cross_midnight_cutoff_doc",
+      "target": "plans_day_closing_cross_midnight_cutoff_time_range_selector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_day_closing_cross_midnight_cutoff_report_boundaries",
+      "target": "plans_store_schedule_cutoff_business_day_boundaries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_day_closing_cross_midnight_cutoff_report_boundaries",
+      "target": "plans_store_schedule_cutoff_store_schedule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_day_closing_cross_midnight_cutoff_z_report",
+      "target": "plans_day_closing_cross_midnight_cutoff_report_boundaries",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_day_closing_cross_midnight_cutoff_time_range_selector",
+      "target": "plans_store_schedule_cutoff_cross_midnight",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "schedule_aware_business_day",
+      "label": "Schedule-Aware Business Day Cutoff",
+      "nodes": [
+        "plans_store_schedule_cutoff_store_schedule",
+        "plans_store_schedule_cutoff_business_day_boundaries",
+        "plans_day_closing_cross_midnight_cutoff_report_boundaries",
+        "plans_split_payment_counter_ordering_daily_reset"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-04-17-day-closing-cross-midnight-cutoff.md"
+    }
+  ]
+}

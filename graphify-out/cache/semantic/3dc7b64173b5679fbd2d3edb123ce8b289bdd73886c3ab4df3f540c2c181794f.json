@@ -1,0 +1,133 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_03_28_item_level_service_type_design_doc",
+      "label": "Item-Level Service Type Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_item_level_service_type_design_service_type_field",
+      "label": "orderItems.serviceType Field",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": "lines 24-32",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_item_level_service_type_design_update_item_service_type",
+      "label": "updateItemServiceType Mutation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": "lines 50-61",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_item_level_service_type_design_kitchen_ticket",
+      "label": "Kitchen Ticket (service-type grouped)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": "lines 92-128",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_item_level_service_type_design_lock_rule",
+      "label": "Service Type Lock After Sent to Kitchen",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": "lines 67-71",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_item_level_service_type_design_reject_packing_table",
+      "label": "Rejected Separate Packing List Table",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": "lines 165-168",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_03_28_item_level_service_type_design_doc",
+      "target": "specs_2026_03_28_item_level_service_type_design_service_type_field",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_item_level_service_type_design_update_item_service_type",
+      "target": "specs_2026_03_28_item_level_service_type_design_service_type_field",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_item_level_service_type_design_kitchen_ticket",
+      "target": "specs_2026_03_28_item_level_service_type_design_service_type_field",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_item_level_service_type_design_lock_rule",
+      "target": "specs_2026_03_28_item_level_service_type_design_update_item_service_type",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_item_level_service_type_design_reject_packing_table",
+      "target": "specs_2026_03_28_item_level_service_type_design_service_type_field",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_item_level_service_type_design_service_type_field",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_order_category",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/superpowers/specs/2026-03-28-item-level-service-type-design.md",
+      "source_location": null,
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": []
+}

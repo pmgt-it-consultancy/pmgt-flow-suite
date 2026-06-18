@@ -1,0 +1,93 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_cache_v2_55cc7364b289f268bbdf_json",
+      "label": "cache-v2-55cc7364b289f268bbdf.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "reply_cache_v2_55cc7364b289f268bbdf_entries",
+      "label": "entries",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "reply_cache_v2_55cc7364b289f268bbdf_kind",
+      "label": "kind",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L1413"
+    },
+    {
+      "id": "reply_cache_v2_55cc7364b289f268bbdf_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L1414"
+    },
+    {
+      "id": "reply_cache_v2_55cc7364b289f268bbdf_version_major",
+      "label": "major",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L1416"
+    },
+    {
+      "id": "reply_cache_v2_55cc7364b289f268bbdf_version_minor",
+      "label": "minor",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L1417"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_cache_v2_55cc7364b289f268bbdf_json",
+      "target": "reply_cache_v2_55cc7364b289f268bbdf_entries",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_cache_v2_55cc7364b289f268bbdf_json",
+      "target": "reply_cache_v2_55cc7364b289f268bbdf_kind",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L1413",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_cache_v2_55cc7364b289f268bbdf_json",
+      "target": "reply_cache_v2_55cc7364b289f268bbdf_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L1414",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_cache_v2_55cc7364b289f268bbdf_version",
+      "target": "reply_cache_v2_55cc7364b289f268bbdf_version_major",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L1416",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_cache_v2_55cc7364b289f268bbdf_version",
+      "target": "reply_cache_v2_55cc7364b289f268bbdf_version_minor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/cache-v2-55cc7364b289f268bbdf.json",
+      "source_location": "L1417",
+      "weight": 1.0
+    }
+  ]
+}

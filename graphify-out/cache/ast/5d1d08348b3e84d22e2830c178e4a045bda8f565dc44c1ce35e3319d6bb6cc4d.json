@@ -1,0 +1,141 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_json",
+      "label": "directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph",
+      "label": "backtraceGraph",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph_commands",
+      "label": "commands",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph_files",
+      "label": "files",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph_nodes",
+      "label": "nodes",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_installers",
+      "label": "installers",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_paths",
+      "label": "paths",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_paths_build",
+      "label": "build",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_paths_source",
+      "label": "source",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L12"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_json",
+      "target": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph",
+      "target": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph_commands",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph",
+      "target": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph",
+      "target": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_backtracegraph_nodes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_json",
+      "target": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_installers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_json",
+      "target": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_paths",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_paths",
+      "target": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_paths_build",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_paths",
+      "target": "reply_directory_safeareacontext_autolinked_build_debug_6e909e73d10948c1bd3a_paths_source",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-safeareacontext_autolinked_build-Debug-6e909e73d10948c1bd3a.json",
+      "source_location": "L12",
+      "weight": 1.0
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "nodes": [
+    {
+      "id": "plans_plan_bluetooth_printer_doc",
+      "label": "Bluetooth Printer Support Plan",
+      "file_type": "document",
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_bluetooth_printer_escpos",
+      "label": "ESC/POS Receipt Formatter",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_bluetooth_printer_printer_store",
+      "label": "Zustand Printer Store",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_bluetooth_printer_printer_config",
+      "label": "PrinterConfig (role/paperWidth)",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_bluetooth_printer_receipt_preview",
+      "label": "ReceiptPreviewModal",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_bluetooth_printer_ios_fallback",
+      "label": "iOS AirPrint Fallback",
+      "file_type": "rationale",
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_bluetooth_printer_kitchen_ticket",
+      "label": "Kitchen Ticket Format",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_plan_bluetooth_printer_doc",
+      "target": "plans_plan_bluetooth_printer_escpos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_bluetooth_printer_doc",
+      "target": "plans_plan_bluetooth_printer_printer_store",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_bluetooth_printer_doc",
+      "target": "plans_plan_bluetooth_printer_printer_config",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_bluetooth_printer_doc",
+      "target": "plans_plan_bluetooth_printer_receipt_preview",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_bluetooth_printer_doc",
+      "target": "plans_plan_bluetooth_printer_kitchen_ticket",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_bluetooth_printer_printer_store",
+      "target": "plans_plan_bluetooth_printer_printer_config",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_bluetooth_printer_printer_store",
+      "target": "plans_plan_bluetooth_printer_escpos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_bluetooth_printer_receipt_preview",
+      "target": "plans_plan_bluetooth_printer_escpos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_bluetooth_printer_ios_fallback",
+      "target": "plans_plan_bluetooth_printer_escpos",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN-bluetooth-printer.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

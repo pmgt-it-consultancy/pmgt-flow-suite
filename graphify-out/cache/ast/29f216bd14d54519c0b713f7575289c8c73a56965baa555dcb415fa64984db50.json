@@ -1,0 +1,2365 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_package_json",
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "native_package_name",
+      "label": "name",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "native_package_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "native_package_main",
+      "label": "main",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "native_package_scripts",
+      "label": "scripts",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "native_package_scripts_dev",
+      "label": "dev",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "native_package_scripts_android",
+      "label": "android",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "native_package_scripts_android_production",
+      "label": "android:production",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "native_package_scripts_android_staging",
+      "label": "android:staging",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "native_package_scripts_android_clean",
+      "label": "android:clean",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "native_package_scripts_prebuild",
+      "label": "prebuild",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "native_package_scripts_prebuild_clean",
+      "label": "prebuild:clean",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "native_package_scripts_prebuild_staging",
+      "label": "prebuild:staging",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "native_package_scripts_prebuild_production",
+      "label": "prebuild:production",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "native_package_scripts_prebuild_staging_clean",
+      "label": "prebuild:staging:clean",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L15"
+    },
+    {
+      "id": "native_package_scripts_prebuild_production_clean",
+      "label": "prebuild:production:clean",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "native_package_scripts_build_dev",
+      "label": "build:dev",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "native_package_scripts_build_staging",
+      "label": "build:staging",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L18"
+    },
+    {
+      "id": "native_package_scripts_build_production",
+      "label": "build:production",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "native_package_scripts_clean",
+      "label": "clean",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "native_package_scripts_typecheck",
+      "label": "typecheck",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "native_package_scripts_ios",
+      "label": "ios",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "native_package_scripts_version_patch",
+      "label": "version:patch",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "native_package_scripts_version_minor",
+      "label": "version:minor",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "native_package_scripts_version_major",
+      "label": "version:major",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "native_package_scripts_version_set",
+      "label": "version:set",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "native_package_dependencies",
+      "label": "dependencies",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L28"
+    },
+    {
+      "id": "native_package_dependencies_convex_dev_auth",
+      "label": "@convex-dev/auth",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "native_package_dependencies_convex_dev_react_query",
+      "label": "@convex-dev/react-query",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L30"
+    },
+    {
+      "id": "native_package_dependencies_expo_vector_icons",
+      "label": "@expo/vector-icons",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L31"
+    },
+    {
+      "id": "native_package_dependencies_kesha_antonov_react_native_background_downloader",
+      "label": "@kesha-antonov/react-native-background-downloader",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L32"
+    },
+    {
+      "id": "native_package_dependencies_nozbe_watermelondb",
+      "label": "@nozbe/watermelondb",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L33"
+    },
+    {
+      "id": "native_package_dependencies_nozbe_with_observables",
+      "label": "@nozbe/with-observables",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "native_package_dependencies_packages_backend",
+      "label": "@packages/backend",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L35"
+    },
+    {
+      "id": "native_package_dependencies_packages_shared",
+      "label": "@packages/shared",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L36"
+    },
+    {
+      "id": "native_package_dependencies_react_native_async_storage_async_storage",
+      "label": "@react-native-async-storage/async-storage",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L37"
+    },
+    {
+      "id": "native_package_dependencies_react_native_community_datetimepicker",
+      "label": "@react-native-community/datetimepicker",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L38"
+    },
+    {
+      "id": "native_package_dependencies_react_native_community_netinfo",
+      "label": "@react-native-community/netinfo",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L39"
+    },
+    {
+      "id": "native_package_dependencies_react_native_virtualized_lists",
+      "label": "@react-native/virtualized-lists",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L40"
+    },
+    {
+      "id": "native_package_dependencies_react_navigation_bottom_tabs",
+      "label": "@react-navigation/bottom-tabs",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L41"
+    },
+    {
+      "id": "native_package_dependencies_react_navigation_native",
+      "label": "@react-navigation/native",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L42"
+    },
+    {
+      "id": "native_package_dependencies_react_navigation_native_stack",
+      "label": "@react-navigation/native-stack",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L43"
+    },
+    {
+      "id": "native_package_dependencies_tamagui_animations_react_native",
+      "label": "@tamagui/animations-react-native",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "native_package_dependencies_tamagui_babel_plugin",
+      "label": "@tamagui/babel-plugin",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "native_package_dependencies_tamagui_config",
+      "label": "@tamagui/config",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L46"
+    },
+    {
+      "id": "native_package_dependencies_tamagui_core",
+      "label": "@tamagui/core",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L47"
+    },
+    {
+      "id": "native_package_dependencies_tamagui_font_inter",
+      "label": "@tamagui/font-inter",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L48"
+    },
+    {
+      "id": "native_package_dependencies_tamagui_react_native_media_driver",
+      "label": "@tamagui/react-native-media-driver",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L49"
+    },
+    {
+      "id": "native_package_dependencies_tamagui_shorthands",
+      "label": "@tamagui/shorthands",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L50"
+    },
+    {
+      "id": "native_package_dependencies_tamagui_themes",
+      "label": "@tamagui/themes",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L51"
+    },
+    {
+      "id": "native_package_dependencies_tanstack_react_form",
+      "label": "@tanstack/react-form",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L52"
+    },
+    {
+      "id": "native_package_dependencies_tanstack_react_query",
+      "label": "@tanstack/react-query",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L53"
+    },
+    {
+      "id": "native_package_dependencies_vardrz_react_native_bluetooth_escpos_printer",
+      "label": "@vardrz/react-native-bluetooth-escpos-printer",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L54"
+    },
+    {
+      "id": "native_package_dependencies_convex",
+      "label": "convex",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L55"
+    },
+    {
+      "id": "native_package_dependencies_expo",
+      "label": "expo",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L56"
+    },
+    {
+      "id": "native_package_dependencies_expo_application",
+      "label": "expo-application",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L57"
+    },
+    {
+      "id": "native_package_dependencies_expo_asset",
+      "label": "expo-asset",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L58"
+    },
+    {
+      "id": "native_package_dependencies_expo_auth_session",
+      "label": "expo-auth-session",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L59"
+    },
+    {
+      "id": "native_package_dependencies_expo_crypto",
+      "label": "expo-crypto",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L60"
+    },
+    {
+      "id": "native_package_dependencies_expo_file_system",
+      "label": "expo-file-system",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L61"
+    },
+    {
+      "id": "native_package_dependencies_expo_font",
+      "label": "expo-font",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L62"
+    },
+    {
+      "id": "native_package_dependencies_expo_haptics",
+      "label": "expo-haptics",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L63"
+    },
+    {
+      "id": "native_package_dependencies_expo_intent_launcher",
+      "label": "expo-intent-launcher",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L64"
+    },
+    {
+      "id": "native_package_dependencies_expo_linking",
+      "label": "expo-linking",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L65"
+    },
+    {
+      "id": "native_package_dependencies_expo_navigation_bar",
+      "label": "expo-navigation-bar",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L66"
+    },
+    {
+      "id": "native_package_dependencies_expo_notifications",
+      "label": "expo-notifications",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L67"
+    },
+    {
+      "id": "native_package_dependencies_expo_print",
+      "label": "expo-print",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L68"
+    },
+    {
+      "id": "native_package_dependencies_expo_secure_store",
+      "label": "expo-secure-store",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L69"
+    },
+    {
+      "id": "native_package_dependencies_expo_sharing",
+      "label": "expo-sharing",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L70"
+    },
+    {
+      "id": "native_package_dependencies_expo_system_ui",
+      "label": "expo-system-ui",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L71"
+    },
+    {
+      "id": "native_package_dependencies_expo_web_browser",
+      "label": "expo-web-browser",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L72"
+    },
+    {
+      "id": "native_package_dependencies_react",
+      "label": "react",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L73"
+    },
+    {
+      "id": "native_package_dependencies_react_dom",
+      "label": "react-dom",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L74"
+    },
+    {
+      "id": "native_package_dependencies_react_native",
+      "label": "react-native",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L75"
+    },
+    {
+      "id": "native_package_dependencies_react_native_gesture_handler",
+      "label": "react-native-gesture-handler",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L76"
+    },
+    {
+      "id": "native_package_dependencies_react_native_keyboard_aware_scroll_view",
+      "label": "react-native-keyboard-aware-scroll-view",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L77"
+    },
+    {
+      "id": "native_package_dependencies_react_native_keyboard_controller",
+      "label": "react-native-keyboard-controller",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L78"
+    },
+    {
+      "id": "native_package_dependencies_react_native_reanimated",
+      "label": "react-native-reanimated",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L79"
+    },
+    {
+      "id": "native_package_dependencies_react_native_responsive_fontsize",
+      "label": "react-native-responsive-fontsize",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L80"
+    },
+    {
+      "id": "native_package_dependencies_react_native_safe_area_context",
+      "label": "react-native-safe-area-context",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L81"
+    },
+    {
+      "id": "native_package_dependencies_react_native_screens",
+      "label": "react-native-screens",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L82"
+    },
+    {
+      "id": "native_package_dependencies_react_native_web",
+      "label": "react-native-web",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L83"
+    },
+    {
+      "id": "native_package_dependencies_react_native_webview",
+      "label": "react-native-webview",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L84"
+    },
+    {
+      "id": "native_package_dependencies_react_native_worklets",
+      "label": "react-native-worklets",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L85"
+    },
+    {
+      "id": "native_package_dependencies_tamagui",
+      "label": "tamagui",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L86"
+    },
+    {
+      "id": "native_package_dependencies_use_sync_external_store",
+      "label": "use-sync-external-store",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L87"
+    },
+    {
+      "id": "native_package_dependencies_zod",
+      "label": "zod",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L88"
+    },
+    {
+      "id": "native_package_dependencies_zustand",
+      "label": "zustand",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L89"
+    },
+    {
+      "id": "native_package_devdependencies",
+      "label": "devDependencies",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L91"
+    },
+    {
+      "id": "native_package_devdependencies_babel_core",
+      "label": "@babel/core",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L92"
+    },
+    {
+      "id": "native_package_devdependencies_babel_plugin_proposal_decorators",
+      "label": "@babel/plugin-proposal-decorators",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L93"
+    },
+    {
+      "id": "native_package_devdependencies_types_jest",
+      "label": "@types/jest",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L94"
+    },
+    {
+      "id": "native_package_devdependencies_types_react",
+      "label": "@types/react",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L95"
+    },
+    {
+      "id": "native_package_devdependencies_types_react_test_renderer",
+      "label": "@types/react-test-renderer",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L96"
+    },
+    {
+      "id": "native_package_devdependencies_babel_preset_expo",
+      "label": "babel-preset-expo",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L97"
+    },
+    {
+      "id": "native_package_devdependencies_jest",
+      "label": "jest",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L98"
+    },
+    {
+      "id": "native_package_devdependencies_jest_expo",
+      "label": "jest-expo",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L99"
+    },
+    {
+      "id": "native_package_devdependencies_react_test_renderer",
+      "label": "react-test-renderer",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L100"
+    },
+    {
+      "id": "native_package_devdependencies_typescript",
+      "label": "typescript",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L101"
+    },
+    {
+      "id": "native_package_expo",
+      "label": "expo",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L103"
+    },
+    {
+      "id": "native_package_expo_install",
+      "label": "install",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L104"
+    },
+    {
+      "id": "native_package_install_exclude",
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L105"
+    },
+    {
+      "id": "native_package_private",
+      "label": "private",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L110"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_package_json",
+      "target": "native_package_name",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_package_json",
+      "target": "native_package_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_package_json",
+      "target": "native_package_main",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_package_json",
+      "target": "native_package_scripts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_dev",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_android",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_android_production",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_android_staging",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_android_clean",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_prebuild",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_prebuild_clean",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_prebuild_staging",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_prebuild_production",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_prebuild_staging_clean",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_prebuild_production_clean",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_build_dev",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_build_staging",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_build_production",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_clean",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_typecheck",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_ios",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_version_patch",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_version_minor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_version_major",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_scripts",
+      "target": "native_package_scripts_version_set",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_package_json",
+      "target": "native_package_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_convex_dev_auth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_convex_dev_auth",
+      "target": "convex_dev_auth",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L29",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_convex_dev_react_query",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_convex_dev_react_query",
+      "target": "convex_dev_react_query",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L30",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_vector_icons",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_vector_icons",
+      "target": "expo_vector_icons",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L31",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_kesha_antonov_react_native_background_downloader",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_kesha_antonov_react_native_background_downloader",
+      "target": "kesha_antonov_react_native_background_downloader",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L32",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_nozbe_watermelondb",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_nozbe_watermelondb",
+      "target": "nozbe_watermelondb",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L33",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_nozbe_with_observables",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_nozbe_with_observables",
+      "target": "nozbe_with_observables",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_packages_backend",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_packages_backend",
+      "target": "packages_backend",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L35",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_packages_shared",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_packages_shared",
+      "target": "packages_shared",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L36",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_async_storage_async_storage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_async_storage_async_storage",
+      "target": "react_native_async_storage_async_storage",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L37",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_community_datetimepicker",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_community_datetimepicker",
+      "target": "react_native_community_datetimepicker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L38",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_community_netinfo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_community_netinfo",
+      "target": "react_native_community_netinfo",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L39",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_virtualized_lists",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_virtualized_lists",
+      "target": "react_native_virtualized_lists",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L40",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_navigation_bottom_tabs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_navigation_bottom_tabs",
+      "target": "react_navigation_bottom_tabs",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L41",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_navigation_native",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_navigation_native",
+      "target": "react_navigation_native",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L42",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_navigation_native_stack",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_navigation_native_stack",
+      "target": "react_navigation_native_stack",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L43",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tamagui_animations_react_native",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tamagui_animations_react_native",
+      "target": "tamagui_animations_react_native",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tamagui_babel_plugin",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tamagui_babel_plugin",
+      "target": "tamagui_babel_plugin",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tamagui_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tamagui_config",
+      "target": "tamagui_config",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L46",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tamagui_core",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tamagui_core",
+      "target": "tamagui_core",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L47",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tamagui_font_inter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tamagui_font_inter",
+      "target": "tamagui_font_inter",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L48",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tamagui_react_native_media_driver",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tamagui_react_native_media_driver",
+      "target": "tamagui_react_native_media_driver",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L49",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tamagui_shorthands",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tamagui_shorthands",
+      "target": "tamagui_shorthands",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L50",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tamagui_themes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tamagui_themes",
+      "target": "tamagui_themes",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L51",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tanstack_react_form",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tanstack_react_form",
+      "target": "tanstack_react_form",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L52",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tanstack_react_query",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tanstack_react_query",
+      "target": "tanstack_react_query",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L53",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_vardrz_react_native_bluetooth_escpos_printer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_vardrz_react_native_bluetooth_escpos_printer",
+      "target": "vardrz_react_native_bluetooth_escpos_printer",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L54",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_convex",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_convex",
+      "target": "convex",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L55",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo",
+      "target": "expo",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L56",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_application",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_application",
+      "target": "expo_application",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L57",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_asset",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_asset",
+      "target": "expo_asset",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L58",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_auth_session",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_auth_session",
+      "target": "expo_auth_session",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L59",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_crypto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_crypto",
+      "target": "expo_crypto",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L60",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_file_system",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_file_system",
+      "target": "expo_file_system",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L61",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_font",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_font",
+      "target": "expo_font",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L62",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_haptics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_haptics",
+      "target": "expo_haptics",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L63",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_intent_launcher",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_intent_launcher",
+      "target": "expo_intent_launcher",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L64",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_linking",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_linking",
+      "target": "expo_linking",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L65",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_navigation_bar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_navigation_bar",
+      "target": "expo_navigation_bar",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L66",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_notifications",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_notifications",
+      "target": "expo_notifications",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L67",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_print",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_print",
+      "target": "expo_print",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L68",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_secure_store",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_secure_store",
+      "target": "expo_secure_store",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L69",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_sharing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_sharing",
+      "target": "expo_sharing",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L70",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_system_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_system_ui",
+      "target": "expo_system_ui",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L71",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_expo_web_browser",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_expo_web_browser",
+      "target": "expo_web_browser",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L72",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react",
+      "target": "react",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L73",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_dom",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_dom",
+      "target": "react_dom",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L74",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native",
+      "target": "react_native",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L75",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_gesture_handler",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_gesture_handler",
+      "target": "react_native_gesture_handler",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L76",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_keyboard_aware_scroll_view",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_keyboard_aware_scroll_view",
+      "target": "react_native_keyboard_aware_scroll_view",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L77",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_keyboard_controller",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_keyboard_controller",
+      "target": "react_native_keyboard_controller",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L78",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_reanimated",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_reanimated",
+      "target": "react_native_reanimated",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L79",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_responsive_fontsize",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_responsive_fontsize",
+      "target": "react_native_responsive_fontsize",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L80",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_safe_area_context",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_safe_area_context",
+      "target": "react_native_safe_area_context",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L81",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_screens",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_screens",
+      "target": "react_native_screens",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L82",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_web",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_web",
+      "target": "react_native_web",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L83",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_webview",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_webview",
+      "target": "react_native_webview",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L84",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_react_native_worklets",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_react_native_worklets",
+      "target": "react_native_worklets",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L85",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_tamagui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_tamagui",
+      "target": "tamagui",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L86",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_use_sync_external_store",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_use_sync_external_store",
+      "target": "use_sync_external_store",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L87",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_zod",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_zod",
+      "target": "zod",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L88",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_dependencies",
+      "target": "native_package_dependencies_zustand",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_dependencies_zustand",
+      "target": "zustand",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L89",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_package_json",
+      "target": "native_package_devdependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_babel_core",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_babel_core",
+      "target": "babel_core",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L92",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_babel_plugin_proposal_decorators",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_babel_plugin_proposal_decorators",
+      "target": "babel_plugin_proposal_decorators",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L93",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_types_jest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_types_jest",
+      "target": "types_jest",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L94",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_types_react",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_types_react",
+      "target": "types_react",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L95",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_types_react_test_renderer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_types_react_test_renderer",
+      "target": "types_react_test_renderer",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L96",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_babel_preset_expo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_babel_preset_expo",
+      "target": "babel_preset_expo",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L97",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_jest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_jest",
+      "target": "jest",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L98",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_jest_expo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_jest_expo",
+      "target": "jest_expo",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L99",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_react_test_renderer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_react_test_renderer",
+      "target": "react_test_renderer",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L100",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_package_devdependencies",
+      "target": "native_package_devdependencies_typescript",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_devdependencies_typescript",
+      "target": "typescript",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L101",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_package_json",
+      "target": "native_package_expo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_expo",
+      "target": "native_package_expo_install",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_expo_install",
+      "target": "native_package_install_exclude",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "native_package_install_exclude",
+      "target": "ref_react_native_worklets",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L105",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_package_json",
+      "target": "native_package_private",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/package.json",
+      "source_location": "L110",
+      "weight": 1.0
+    }
+  ]
+}

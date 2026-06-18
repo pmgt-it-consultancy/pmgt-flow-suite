@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "specs_bluetooth_connection_events_design_doc",
+      "label": "Event-Driven Bluetooth Connection Detection Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-13",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_bluetooth_connection_events_design_acl_events",
+      "label": "Android ACL Connection Events",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-13",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_bluetooth_connection_events_design_auto_reconnect",
+      "label": "Shared Auto-Reconnect Backoff",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-13",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_bluetooth_connection_events_design_safety_net_poll",
+      "label": "60s Safety-Net Poll",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-13",
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_bluetooth_connection_events_design_doc",
+      "target": "specs_bluetooth_connection_events_design_acl_events",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_bluetooth_connection_events_design_doc",
+      "target": "specs_bluetooth_connection_events_design_auto_reconnect",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_bluetooth_connection_events_design_doc",
+      "target": "specs_bluetooth_connection_events_design_safety_net_poll",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_bluetooth_connection_events_design_acl_events",
+      "target": "specs_bluetooth_connection_events_design_auto_reconnect",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_bluetooth_connection_events_design_safety_net_poll",
+      "target": "specs_printer_connection_polling_design_polling_hook",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_bluetooth_connection_events_design_doc",
+      "target": "specs_printer_connection_polling_design_doc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-bluetooth-connection-events-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,273 @@
+{
+  "nodes": [
+    {
+      "id": "plans_offline_first_pos_foundation_doc",
+      "label": "Offline-First POS Foundation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_pos_foundation_watermelondb",
+      "label": "WatermelonDB Local Cache",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_pos_foundation_sync_endpoints",
+      "label": "Sync HTTP Endpoints",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_pos_foundation_client_id",
+      "label": "Per-Row clientId UUID",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_pos_foundation_synced_mutations",
+      "label": "syncedMutations Idempotency Cache",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_pos_foundation_sync_devices",
+      "label": "syncDevices Registration",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_pos_foundation_updated_at_cursor",
+      "label": "updatedAt Pull Cursor",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_pos_foundation_fk_translation",
+      "label": "FK clientId Translation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_pos_foundation_sync_manager",
+      "label": "Native SyncManager",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_pos_foundation_refresh_token_ttl",
+      "label": "60-Day Refresh Token TTL",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_offline_first_pos_foundation_doc",
+      "target": "plans_offline_first_pos_foundation_watermelondb",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_doc",
+      "target": "plans_offline_first_pos_foundation_sync_endpoints",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_doc",
+      "target": "plans_offline_first_pos_foundation_client_id",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_doc",
+      "target": "plans_offline_first_pos_foundation_synced_mutations",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_doc",
+      "target": "plans_offline_first_pos_foundation_sync_devices",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_doc",
+      "target": "plans_offline_first_pos_foundation_sync_manager",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_sync_endpoints",
+      "target": "plans_offline_first_pos_foundation_updated_at_cursor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_sync_endpoints",
+      "target": "plans_offline_first_pos_foundation_fk_translation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_sync_endpoints",
+      "target": "plans_offline_first_pos_foundation_synced_mutations",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_fk_translation",
+      "target": "plans_offline_first_pos_foundation_client_id",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_sync_manager",
+      "target": "plans_offline_first_pos_foundation_sync_endpoints",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_sync_manager",
+      "target": "plans_offline_first_pos_foundation_watermelondb",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_refresh_token_ttl",
+      "target": "plans_offline_first_pos_foundation_doc",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_pos_foundation_client_id",
+      "target": "specs_duplicate_takeout_transaction_fix_design_request_id",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "offline_first_sync_loop",
+      "label": "Offline-First Sync Loop",
+      "nodes": [
+        "plans_offline_first_pos_foundation_watermelondb",
+        "plans_offline_first_pos_foundation_sync_manager",
+        "plans_offline_first_pos_foundation_sync_endpoints",
+        "plans_offline_first_pos_foundation_client_id",
+        "plans_offline_first_pos_foundation_synced_mutations"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-04-27-offline-first-pos-foundation.md"
+    }
+  ]
+}

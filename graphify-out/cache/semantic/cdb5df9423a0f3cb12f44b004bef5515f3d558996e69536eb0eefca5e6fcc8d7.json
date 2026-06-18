@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_03_29_advance_takeout_order_design_doc",
+      "label": "Advance Takeout Order Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-29-advance-takeout-order-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_29_advance_takeout_order_design_send_to_kitchen_without_payment",
+      "label": "sendToKitchenWithoutPayment Mutation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-29-advance-takeout-order-design.md",
+      "source_location": "lines 30-44",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_29_advance_takeout_order_design_unpaid_badge",
+      "label": "Unpaid Badge (takeout queue)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-29-advance-takeout-order-design.md",
+      "source_location": "lines 57-62",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_03_29_advance_takeout_order_design_doc",
+      "target": "specs_2026_03_29_advance_takeout_order_design_send_to_kitchen_without_payment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-29-advance-takeout-order-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_29_advance_takeout_order_design_doc",
+      "target": "specs_2026_03_29_advance_takeout_order_design_unpaid_badge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-29-advance-takeout-order-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_29_advance_takeout_order_design_unpaid_badge",
+      "target": "specs_2026_03_29_advance_takeout_order_design_send_to_kitchen_without_payment",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-29-advance-takeout-order-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}
