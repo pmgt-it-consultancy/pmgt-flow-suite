@@ -383,6 +383,51 @@ describe("checkout — processPayment (split payments)", () => {
       }),
     ).rejects.toThrow();
   });
+
+  it("should reject a card amount that exceeds netSales (over-tender)", async () => {
+    // Card has no change mechanism, so a recorded card amount above the bill
+    // would inflate the Z-report payment breakdown past net sales.
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupAuthenticatedUser(t);
+    const orderId = await createOpenOrder(t, storeId, userId, 10000);
+
+    const asUser = t.withIdentity({ subject: userId });
+    await expect(
+      asUser.mutation(api.checkout.processPayment, {
+        orderId,
+        payments: [
+          {
+            paymentMethod: "card_ewallet",
+            amount: 11000,
+            cardPaymentType: "GCash",
+            cardReferenceNumber: "REF1",
+          },
+        ],
+      }),
+    ).rejects.toThrow();
+  });
+
+  it("records cash amount as the bill portion, not the tendered cash", async () => {
+    // Over-tender becomes change, never inflates the recorded amount.
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupAuthenticatedUser(t);
+    const orderId = await createOpenOrder(t, storeId, userId, 10000);
+
+    const asUser = t.withIdentity({ subject: userId });
+    await asUser.mutation(api.checkout.processPayment, {
+      orderId,
+      payments: [{ paymentMethod: "cash", amount: 10000, cashReceived: 12000 }],
+    });
+
+    const payments = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("orderPayments")
+        .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
+        .collect(),
+    );
+    expect(payments[0].amount).toBe(10000);
+    expect(payments[0].changeGiven).toBe(2000);
+  });
 });
 
 describe("checkout — payment idempotency", () => {

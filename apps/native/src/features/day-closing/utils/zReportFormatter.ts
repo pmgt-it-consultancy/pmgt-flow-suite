@@ -120,14 +120,14 @@ export async function printZReportToThermal(
   await p.printerAlign(ALIGN.LEFT);
   await p.printText(`${line("=", w)}\n`, normal());
 
-  // Sales summary
+  // Sales summary.
+  // NET SALES = Gross - Discounts. Voids are NOT subtracted here: voided orders
+  // and voided items are already excluded from grossSales/netSales, so they are
+  // reported separately (in the VOIDS section below) for audit only. Subtracting
+  // them here would double-count and the column would not foot.
   await p.printText(`${formatRow("Gross Sales", formatCurrency(data.grossSales), w)}\n`, bold());
   await p.printText(
     `${formatRow("Less Discounts", `-${formatCurrency(data.totalDiscounts)}`, w)}\n`,
-    normal(),
-  );
-  await p.printText(
-    `${formatRow("Less Voids", `-${formatCurrency(data.voidAmount)}`, w)}\n`,
     normal(),
   );
   await p.printText(`${line("-", w)}\n`, normal());
@@ -153,6 +153,14 @@ export async function printZReportToThermal(
   await p.printText(
     `${formatRow("Card/E-Wallet", formatCurrency(data.cardEwalletTotal), w)}\n`,
     normal(),
+  );
+  await p.printText(`${line("-", w)}\n`, normal());
+  // Total Collected = Cash + Card/E-Wallet, which equals NET SALES. Showing it
+  // makes the breakdown self-summing so staff don't have to add the lines or
+  // tally individual transactions to confirm the day balances.
+  await p.printText(
+    `${formatRow("TOTAL COLLECTED", formatCurrency(data.cashTotal + data.cardEwalletTotal), w)}\n`,
+    bold(),
   );
 
   await p.printText("\n", normal());
