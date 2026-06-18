@@ -1,0 +1,101 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_01_29_takeout_feature_takeout_feature",
+      "label": "Takeout Feature Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/plans/2026-01-29-takeout-feature.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_01_29_takeout_feature_takeout_status_workflow",
+      "label": "Takeout Status Workflow (tap-to-advance)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-01-29-takeout-feature.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_01_29_takeout_feature_order_channel_field",
+      "label": "orderChannel Field (delivery platform integration)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-01-29-takeout-feature.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_01_29_takeout_feature_pos_home_dashboard",
+      "label": "POS Home Dashboard",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-01-29-takeout-feature.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_01_29_takeout_feature_takeout_feature",
+      "target": "plans_2026_01_29_takeout_feature_takeout_status_workflow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-29-takeout-feature.md",
+      "source_location": "Task 3",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_01_29_takeout_feature_takeout_feature",
+      "target": "plans_2026_01_29_takeout_feature_order_channel_field",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-29-takeout-feature.md",
+      "source_location": "Task 1",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_01_29_takeout_feature_takeout_feature",
+      "target": "plans_2026_01_29_takeout_feature_pos_home_dashboard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-29-takeout-feature.md",
+      "source_location": "Task 6",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_01_29_takeout_feature_takeout_feature",
+      "target": "plans_2025_01_09_pos_system_design_order_management",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-29-takeout-feature.md",
+      "source_location": "Task 1-2",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_01_29_takeout_feature_pos_home_dashboard",
+      "target": "plans_2025_01_11_admin_store_selector_and_missing_pages_global_store_selector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-29-takeout-feature.md",
+      "source_location": "Task 6",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

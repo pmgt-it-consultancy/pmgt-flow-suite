@@ -52,6 +52,73 @@ interface PaymentLine {
 const PAYMENT_TYPES = ["Credit/Debit Card", "GCash", "Maya", "Bank Transfer", "Other"] as const;
 const QUICK_AMOUNTS = [50, 100, 200, 500, 1000, 2000];
 
+interface BuiltPayment {
+  paymentMethod: "cash" | "card_ewallet";
+  amount: number;
+  cashReceived: number | undefined;
+  changeGiven: number | undefined;
+  cardPaymentType: string | undefined;
+  cardReferenceNumber: string | undefined;
+}
+
+/**
+ * Convert the cashier's payment lines into the canonical payment records.
+ *
+ * Each record's `amount` is the portion of the bill that method settles — cash
+ * over-tender is captured separately in cashReceived/changeGiven, never in
+ * `amount`. The recorded amounts therefore always sum to at most netSales, so
+ * the Z-report payment breakdown reconciles with net sales. (Sync push writes
+ * these rows directly, bypassing backend validation, so this is the
+ * authoritative place to keep them balanced.)
+ *
+ * Card amounts are capped cumulatively so a mistyped card amount can never
+ * exceed the bill; cash lines then split whatever portion of the bill remains,
+ * with a running remainder so multiple cash lines don't each claim the full
+ * cash portion.
+ */
+function buildPaymentsFromLines(lines: PaymentLine[], netSales: number): BuiltPayment[] {
+  // Pass 1: cap card amounts so their total never exceeds the bill.
+  let cardRemaining = netSales;
+  const cardApplied = new Map<string, number>();
+  for (const line of lines) {
+    if (line.paymentMethod === "card_ewallet") {
+      const typed = parseFloat(line.amount) || 0;
+      const applied = Math.min(typed, Math.max(0, cardRemaining));
+      cardApplied.set(line.id, applied);
+      cardRemaining -= applied;
+    }
+  }
+  const totalCard = netSales - cardRemaining;
+
+  // Pass 2: cash lines split the remaining (cash) portion of the bill.
+  let cashPortionRemaining = Math.max(0, netSales - totalCard);
+  return lines.map((line) => {
+    if (line.paymentMethod === "cash") {
+      const received = parseFloat(line.cashReceived) || 0;
+      const amount = Math.min(received, cashPortionRemaining);
+      cashPortionRemaining -= amount;
+      return {
+        paymentMethod: "cash" as const,
+        amount,
+        cashReceived: received,
+        changeGiven: received > amount ? received - amount : undefined,
+        cardPaymentType: undefined,
+        cardReferenceNumber: undefined,
+      };
+    }
+    return {
+      paymentMethod: "card_ewallet" as const,
+      amount: cardApplied.get(line.id) ?? 0,
+      cashReceived: undefined,
+      changeGiven: undefined,
+      cardPaymentType:
+        (line.cardPaymentType === "Other" ? line.customPaymentType : line.cardPaymentType) ||
+        undefined,
+      cardReferenceNumber: line.cardReferenceNumber || undefined,
+    };
+  });
+}
+
 export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
   const { orderId, tableName, orderType } = route.params;
   const isTakeout = orderType === "takeout";
@@ -409,29 +476,7 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
         primaryLine?.paymentMethod === "card_ewallet"
           ? primaryLine.cardReferenceNumber || undefined
           : undefined,
-      payments: paymentLines.map((line) => {
-        if (line.paymentMethod === "cash") {
-          const received = parseFloat(line.cashReceived) || 0;
-          return {
-            paymentMethod: "cash" as const,
-            amount: Math.min(received, cashPortion),
-            cashReceived: received,
-            changeGiven: received > cashPortion ? received - cashPortion : undefined,
-            cardPaymentType: undefined,
-            cardReferenceNumber: undefined,
-          };
-        }
-        return {
-          paymentMethod: "card_ewallet" as const,
-          amount: parseFloat(line.amount) || 0,
-          cashReceived: undefined,
-          changeGiven: undefined,
-          cardPaymentType:
-            (line.cardPaymentType === "Other" ? line.customPaymentType : line.cardPaymentType) ||
-            undefined,
-          cardReferenceNumber: line.cardReferenceNumber || undefined,
-        };
-      }),
+      payments: buildPaymentsFromLines(paymentLines, netSales),
       transactionDate: new Date(),
       receiptNumber: order?.orderNumber,
     };
@@ -492,36 +537,9 @@ export const CheckoutScreen = ({ navigation, route }: CheckoutScreenProps) => {
     try {
       await recalculateOrderTotals(orderId as string);
 
-      // Build payments: for cash lines, amount = cashReceived (capped at cash portion of bill)
-      const totalCardAmount = paymentLines
-        .filter((l) => l.paymentMethod === "card_ewallet")
-        .reduce((sum, l) => sum + (parseFloat(l.amount) || 0), 0);
-      const cashPortionOfBill = netSales - totalCardAmount;
-
-      const payments = paymentLines.map((line) => {
-        if (line.paymentMethod === "cash") {
-          const received = parseFloat(line.cashReceived) || 0;
-          // For single cash line: amount = min(cashReceived, cashPortion)
-          // cashReceived can exceed amount (generates change)
-          const amount = Math.min(received, cashPortionOfBill);
-          return {
-            paymentMethod: line.paymentMethod,
-            amount,
-            cashReceived: received,
-            cardPaymentType: undefined,
-            cardReferenceNumber: undefined,
-          };
-        }
-        return {
-          paymentMethod: line.paymentMethod,
-          amount: parseFloat(line.amount) || 0,
-          cashReceived: undefined,
-          cardPaymentType:
-            (line.cardPaymentType === "Other" ? line.customPaymentType : line.cardPaymentType) ||
-            undefined,
-          cardReferenceNumber: line.cardReferenceNumber || undefined,
-        };
-      });
+      // Build canonical payment records (amounts capped to the bill; cash change
+      // tracked separately) so the recorded amounts reconcile with net sales.
+      const payments = buildPaymentsFromLines(paymentLines, netSales);
 
       await processPayment({ orderId: orderId as string, payments });
 

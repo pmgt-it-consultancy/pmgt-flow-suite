@@ -1,0 +1,153 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_03_25_eod_reporting_improvements_doc",
+      "label": "EOD Reporting Improvements Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_25_eod_reporting_improvements_item_breakdown",
+      "label": "ItemBreakdownCard",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_25_eod_reporting_improvements_date_nav",
+      "label": "DateNavigationBar",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_25_eod_reporting_improvements_pdf_export",
+      "label": "PDF Report Export (react-pdf)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_25_eod_reporting_improvements_product_sales",
+      "label": "getDailyProductSales Query",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_25_eod_reporting_improvements_remove_batch",
+      "label": "Remove Batch Reprint Feature",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_03_25_eod_reporting_improvements_doc",
+      "target": "plans_2026_03_25_eod_reporting_improvements_item_breakdown",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_25_eod_reporting_improvements_doc",
+      "target": "plans_2026_03_25_eod_reporting_improvements_date_nav",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_25_eod_reporting_improvements_doc",
+      "target": "plans_2026_03_25_eod_reporting_improvements_pdf_export",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_25_eod_reporting_improvements_doc",
+      "target": "plans_2026_03_25_eod_reporting_improvements_product_sales",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_25_eod_reporting_improvements_item_breakdown",
+      "target": "plans_2026_03_25_eod_reporting_improvements_product_sales",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_25_eod_reporting_improvements_remove_batch",
+      "target": "plans_2026_03_02_eod_closing_implementation_use_batch_print",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_25_eod_reporting_improvements_doc",
+      "target": "plans_2026_03_02_eod_closing_implementation_doc",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_25_eod_reporting_improvements_pdf_export",
+      "target": "plans_2026_03_02_eod_closing_implementation_zreport_formatter",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/superpowers/plans/2026-03-25-eod-reporting-improvements.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

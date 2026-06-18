@@ -1,0 +1,142 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_03_26_eod_category_grouping_payment_breakdown_doc",
+      "label": "EOD Category Grouping & Payment Breakdown Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_26_eod_category_grouping_payment_breakdown_payment_txns_table",
+      "label": "dailyPaymentTransactions Table",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_26_eod_category_grouping_payment_breakdown_payment_txns_query",
+      "label": "getDailyPaymentTransactions Query",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_26_eod_category_grouping_payment_breakdown_category_grouping",
+      "label": "Category-Grouped Product Sales",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_26_eod_category_grouping_payment_breakdown_denormalize",
+      "label": "Denormalize at Report-Generation Time",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_03_26_eod_category_grouping_payment_breakdown_doc",
+      "target": "plans_2026_03_26_eod_category_grouping_payment_breakdown_payment_txns_table",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_eod_category_grouping_payment_breakdown_doc",
+      "target": "plans_2026_03_26_eod_category_grouping_payment_breakdown_payment_txns_query",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_eod_category_grouping_payment_breakdown_doc",
+      "target": "plans_2026_03_26_eod_category_grouping_payment_breakdown_category_grouping",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_eod_category_grouping_payment_breakdown_payment_txns_query",
+      "target": "plans_2026_03_26_eod_category_grouping_payment_breakdown_payment_txns_table",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_eod_category_grouping_payment_breakdown_denormalize",
+      "target": "plans_2026_03_26_eod_category_grouping_payment_breakdown_payment_txns_table",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_eod_category_grouping_payment_breakdown_category_grouping",
+      "target": "plans_2026_03_25_eod_reporting_improvements_item_breakdown",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_eod_category_grouping_payment_breakdown_category_grouping",
+      "target": "plans_2026_03_25_eod_reporting_improvements_product_sales",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_26_eod_category_grouping_payment_breakdown_doc",
+      "target": "plans_2026_03_25_eod_reporting_improvements_doc",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/superpowers/plans/2026-03-26-eod-category-grouping-payment-breakdown.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

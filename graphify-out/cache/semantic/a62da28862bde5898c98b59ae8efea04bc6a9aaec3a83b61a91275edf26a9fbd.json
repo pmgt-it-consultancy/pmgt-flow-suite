@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_03_25_eod_reporting_improvements_design_doc",
+      "label": "End-of-Day Reporting Improvements Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_eod_reporting_improvements_design_day_closing_screen",
+      "label": "Day Closing Screen",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": "lines 13-58",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_eod_reporting_improvements_design_z_report",
+      "label": "Z-Report Summary",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": "lines 24-26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_eod_reporting_improvements_design_z_report_formatter",
+      "label": "zReportFormatter Thermal Print",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": "lines 59-87",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_eod_reporting_improvements_design_get_daily_product_sales",
+      "label": "getDailyProductSales Query",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": "lines 44-48",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_eod_reporting_improvements_design_pdf_report",
+      "label": "Web Admin PDF Report Generation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": "lines 89-138",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_eod_reporting_improvements_design_react_pdf",
+      "label": "@react-pdf/renderer",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": "lines 116-130",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_25_eod_reporting_improvements_design_batch_reprint_removal",
+      "label": "Batch Receipt Reprint Removal",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": "lines 37-41",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_03_25_eod_reporting_improvements_design_doc",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_day_closing_screen",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_eod_reporting_improvements_design_doc",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_pdf_report",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_eod_reporting_improvements_design_day_closing_screen",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_z_report",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_eod_reporting_improvements_design_day_closing_screen",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_get_daily_product_sales",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_eod_reporting_improvements_design_day_closing_screen",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_z_report_formatter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_eod_reporting_improvements_design_pdf_report",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_react_pdf",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_eod_reporting_improvements_design_pdf_report",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_get_daily_product_sales",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_25_eod_reporting_improvements_design_batch_reprint_removal",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_day_closing_screen",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-25-eod-reporting-improvements-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

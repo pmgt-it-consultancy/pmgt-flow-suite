@@ -1,0 +1,121 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_prefab_config_json",
+      "label": "prefab_config.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "arm64_v8a_prefab_config_enabled",
+      "label": "enabled",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "arm64_v8a_prefab_config_prefabpath",
+      "label": "prefabPath",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "arm64_v8a_prefab_config_packages",
+      "label": "packages",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_prefab_config_json",
+      "target": "arm64_v8a_prefab_config_enabled",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_prefab_config_json",
+      "target": "arm64_v8a_prefab_config_prefabpath",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_prefab_config_json",
+      "target": "arm64_v8a_prefab_config_packages",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "arm64_v8a_prefab_config_packages",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_b2680b08f1e2cb52f3dff51eef1dacfb_transformed_react_android_0_81_5_debug_prefab",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_prefab_config_packages",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_reanimated_4_1_6_babel_core_7_28_5_react_native_worklets_0_7_1_babel_cor_a51e1a02219c2078c15305e88020a39d_node_modules_react_native_reanimated_android_build_intermediates_prefab_package_debug_prefab",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_prefab_config_packages",
+      "target": "ref_users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_node_modules_pnpm_react_native_worklets_0_7_1_babel_core_7_28_5_react_native_0_81_5_babel_core_7_28_5_ef7bff3349d4a2a6c958408676ea3891_node_modules_react_native_worklets_android_build_intermediates_prefab_package_debug_prefab",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_prefab_config_packages",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_624859ca777893b52a6938426f8962d7_transformed_mmkv_shared_2_2_4_prefab",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_prefab_config_packages",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_9f8bf174426a62033c5396f3e1842ab7_transformed_hermes_android_0_81_5_debug_prefab",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "arm64_v8a_prefab_config_packages",
+      "target": "ref_users_solstellar_gradle_caches_8_14_3_transforms_c4ed38aee617328a15ca67287b31027e_transformed_fbjni_0_7_0_prefab",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/prefab_config.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "context": "import"
+    }
+  ]
+}

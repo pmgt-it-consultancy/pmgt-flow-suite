@@ -1,0 +1,142 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_04_29_phase5_order_numbering_device_codes_design_doc",
+      "label": "Phase 5 Order Numbering & Device Codes Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_29_phase5_order_numbering_device_codes_design_get_next_order_number",
+      "label": "getNextOrderNumber (device-prefixed, local counter)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": "lines 40-61",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_29_phase5_order_numbering_device_codes_design_register_device",
+      "label": "callRegisterDevice on Sign-in",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": "lines 30-39",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_29_phase5_order_numbering_device_codes_design_device_info",
+      "label": "Device Info Settings Section",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": "lines 63-91",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_29_phase5_order_numbering_device_codes_design_legacy_format_compat",
+      "label": "Legacy Order Format Compatibility (T-042 vs T-A042)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": "lines 105-111",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_04_29_phase5_order_numbering_device_codes_design_doc",
+      "target": "specs_2026_04_29_phase5_order_numbering_device_codes_design_get_next_order_number",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase5_order_numbering_device_codes_design_doc",
+      "target": "specs_2026_04_29_phase5_order_numbering_device_codes_design_register_device",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase5_order_numbering_device_codes_design_doc",
+      "target": "specs_2026_04_29_phase5_order_numbering_device_codes_design_device_info",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase5_order_numbering_device_codes_design_get_next_order_number",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_device_order_numbers",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase5_order_numbering_device_codes_design_register_device",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_devices",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase5_order_numbering_device_codes_design_get_next_order_number",
+      "target": "specs_2026_04_29_phase4_local_first_writes_design_order_mutations_service",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase5_order_numbering_device_codes_design_legacy_format_compat",
+      "target": "specs_2026_04_29_phase5_order_numbering_device_codes_design_get_next_order_number",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase5_order_numbering_device_codes_design_device_info",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_status_pill",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase5-order-numbering-device-codes-design.md",
+      "source_location": null,
+      "weight": 0.95
+    }
+  ],
+  "hyperedges": []
+}

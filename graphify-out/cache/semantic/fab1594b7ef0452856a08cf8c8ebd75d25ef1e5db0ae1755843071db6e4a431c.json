@@ -1,0 +1,105 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2025_01_11_admin_store_selector_and_missing_pages_admin_store_selector_design",
+      "label": "Admin Store Selector & Missing Pages Design",
+      "file_type": "document",
+      "source_file": "docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_11_admin_store_selector_and_missing_pages_global_store_selector",
+      "label": "Global Store Selector (Zustand)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2025_01_11_admin_store_selector_and_missing_pages_role_based_store_access",
+      "label": "Role-Based Store Access Hook",
+      "file_type": "concept",
+      "source_file": "docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2025_01_11_admin_store_selector_and_missing_pages_admin_store_selector_design",
+      "target": "plans_2025_01_11_admin_store_selector_and_missing_pages_global_store_selector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_11_admin_store_selector_and_missing_pages_role_based_store_access",
+      "target": "plans_2025_01_09_pos_system_design_multi_store_hierarchy",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md",
+      "source_location": "lines 52-58",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_11_admin_store_selector_and_missing_pages_role_based_store_access",
+      "target": "plans_2025_01_09_pos_system_design_rbac_scoped_roles",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md",
+      "source_location": "lines 52-58",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_11_admin_store_selector_and_missing_pages_admin_store_selector_design",
+      "target": "plans_2025_01_09_pos_system_design_table_management",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md",
+      "source_location": "lines 71-77",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_11_admin_store_selector_and_missing_pages_admin_store_selector_design",
+      "target": "plans_2025_01_09_pos_system_design_audit_logging",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md",
+      "source_location": "lines 87-94",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "rbac_store_scoping",
+      "label": "RBAC Store Scoping",
+      "nodes": [
+        "plans_2025_01_09_pos_system_design_custom_auth_system",
+        "plans_2025_01_09_pos_system_design_rbac_scoped_roles",
+        "plans_2025_01_09_pos_system_design_multi_store_hierarchy",
+        "plans_2025_01_11_admin_store_selector_and_missing_pages_role_based_store_access"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/plans/2025-01-11-admin-store-selector-and-missing-pages.md"
+    }
+  ]
+}

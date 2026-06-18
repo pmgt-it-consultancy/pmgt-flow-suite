@@ -42,11 +42,16 @@ async function calculatePaymentTotals(
         }
       }
     } else {
-      // Legacy single-payment: use order.paymentMethod
-      if (order.paymentMethod === "cash") {
-        cashTotal += order.netSales;
-      } else if (order.paymentMethod === "card_ewallet") {
+      // Legacy single-payment: use order.paymentMethod.
+      // A paid order has always collected money equal to its netSales, so its
+      // value MUST land in one of the buckets — otherwise (cashTotal +
+      // cardEwalletTotal) would not reconcile with netSales. Default an
+      // unset/unrecognized method to cash (the default tender) so the payment
+      // breakdown always balances against net sales.
+      if (order.paymentMethod === "card_ewallet") {
         cardEwalletTotal += order.netSales;
+      } else {
+        cashTotal += order.netSales;
       }
     }
   }

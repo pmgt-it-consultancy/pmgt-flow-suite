@@ -1,0 +1,80 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_03_29_printable_product_catalog_design_doc",
+      "label": "Printable Product Catalog PDF Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-29-printable-product-catalog-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_29_printable_product_catalog_design_catalog_pdf_document",
+      "label": "ProductCatalogPdfDocument Component",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-29-printable-product-catalog-design.md",
+      "source_location": "lines 41-54",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_29_printable_product_catalog_design_download_pdf_button",
+      "label": "DownloadPdfButton Pattern",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-29-printable-product-catalog-design.md",
+      "source_location": "lines 10-14",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_03_29_printable_product_catalog_design_doc",
+      "target": "specs_2026_03_29_printable_product_catalog_design_catalog_pdf_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-29-printable-product-catalog-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_29_printable_product_catalog_design_catalog_pdf_document",
+      "target": "specs_2026_03_29_printable_product_catalog_design_download_pdf_button",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-29-printable-product-catalog-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_29_printable_product_catalog_design_catalog_pdf_document",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_react_pdf",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-29-printable-product-catalog-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_29_printable_product_catalog_design_download_pdf_button",
+      "target": "specs_2026_03_25_eod_reporting_improvements_design_pdf_report",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/specs/2026-03-29-printable-product-catalog-design.md",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": []
+}

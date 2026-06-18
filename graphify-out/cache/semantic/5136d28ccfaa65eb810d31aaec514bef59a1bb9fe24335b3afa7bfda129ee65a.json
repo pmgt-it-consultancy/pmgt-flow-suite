@@ -1,0 +1,189 @@
+{
+  "nodes": [
+    {
+      "id": "plans_plan_doc",
+      "label": "Running Bill Feature Plan",
+      "file_type": "document",
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_running_bill",
+      "label": "Running Bill Model",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_send_to_kitchen",
+      "label": "sendToKitchen Mutation",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_is_sent_to_kitchen",
+      "label": "isSentToKitchen Item Flag",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_order_numbering",
+      "label": "Prefixed Order Numbering (D-/T-)",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_transfer_table",
+      "label": "transferTable Mutation",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_plan_draft_mode",
+      "label": "OrderScreen Draft Mode",
+      "file_type": "concept",
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_plan_doc",
+      "target": "plans_plan_running_bill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_doc",
+      "target": "plans_plan_send_to_kitchen",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_doc",
+      "target": "plans_plan_is_sent_to_kitchen",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_doc",
+      "target": "plans_plan_order_numbering",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_doc",
+      "target": "plans_plan_transfer_table",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_doc",
+      "target": "plans_plan_draft_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_send_to_kitchen",
+      "target": "plans_plan_is_sent_to_kitchen",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_running_bill",
+      "target": "plans_plan_send_to_kitchen",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_plan_send_to_kitchen",
+      "target": "plans_plan_bluetooth_printer_kitchen_ticket",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/PLAN.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "running_bill_kitchen_flow",
+      "label": "Running Bill + Kitchen Ticket Flow",
+      "nodes": [
+        "plans_plan_send_to_kitchen",
+        "plans_plan_is_sent_to_kitchen",
+        "plans_plan_bluetooth_printer_kitchen_ticket",
+        "plans_plan_order_numbering"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/plans/PLAN.md"
+    }
+  ]
+}

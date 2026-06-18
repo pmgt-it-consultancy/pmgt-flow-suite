@@ -1,0 +1,185 @@
+{
+  "nodes": [
+    {
+      "id": "plans_split_payment_counter_ordering_doc",
+      "label": "Split Payment & Counter Ordering Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_split_payment_counter_ordering_order_payments_table",
+      "label": "orderPayments Table",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_split_payment_counter_ordering_process_payment",
+      "label": "processPayment Mutation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_split_payment_counter_ordering_order_category",
+      "label": "orderCategory Field",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_split_payment_counter_ordering_table_marker",
+      "label": "tableMarker Field",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_split_payment_counter_ordering_daily_reset",
+      "label": "Daily Order Number Reset",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_split_payment_counter_ordering_kitchen_type_bug",
+      "label": "Kitchen Ticket Order-Type Bug Fix",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_split_payment_counter_ordering_legacy_fallback",
+      "label": "getReceipt Legacy Payment Fallback",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_split_payment_counter_ordering_doc",
+      "target": "plans_split_payment_counter_ordering_order_payments_table",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_split_payment_counter_ordering_doc",
+      "target": "plans_split_payment_counter_ordering_process_payment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_split_payment_counter_ordering_doc",
+      "target": "plans_split_payment_counter_ordering_order_category",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_split_payment_counter_ordering_doc",
+      "target": "plans_split_payment_counter_ordering_table_marker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_split_payment_counter_ordering_doc",
+      "target": "plans_split_payment_counter_ordering_daily_reset",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_split_payment_counter_ordering_doc",
+      "target": "plans_split_payment_counter_ordering_kitchen_type_bug",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_split_payment_counter_ordering_process_payment",
+      "target": "plans_split_payment_counter_ordering_order_payments_table",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_split_payment_counter_ordering_legacy_fallback",
+      "target": "plans_split_payment_counter_ordering_order_payments_table",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_split_payment_counter_ordering_kitchen_type_bug",
+      "target": "specs_receipt_preview_modal_fixes_design_kitchen_ticket_data",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/superpowers/plans/2026-03-28-split-payment-counter-ordering.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

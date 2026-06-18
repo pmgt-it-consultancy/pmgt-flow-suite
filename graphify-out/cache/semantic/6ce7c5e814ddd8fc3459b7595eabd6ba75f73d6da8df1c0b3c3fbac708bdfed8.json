@@ -1,0 +1,215 @@
+{
+  "nodes": [
+    {
+      "id": "plans_native_performance_fixes_doc",
+      "label": "Native POS Performance Fixes Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_native_performance_fixes_optimistic_updates",
+      "label": "Optimistic Cart Mutations",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_native_performance_fixes_use_cart_mutations",
+      "label": "useCartMutations Hook",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_native_performance_fixes_listactive_denorm",
+      "label": "listActive N+1 Denormalization",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_native_performance_fixes_item_count_table_name",
+      "label": "Denormalized itemCount & tableName",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_native_performance_fixes_printer_store_selectors",
+      "label": "Printer Store Selector Subscriptions",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_native_performance_fixes_per_product_modifier_fetch",
+      "label": "Per-Product Modifier Fetch",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_native_performance_fixes_quantity_debounce",
+      "label": "Coalesced Quantity Presses",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_native_performance_fixes_doc",
+      "target": "plans_native_performance_fixes_optimistic_updates",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_doc",
+      "target": "plans_native_performance_fixes_use_cart_mutations",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_doc",
+      "target": "plans_native_performance_fixes_listactive_denorm",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_doc",
+      "target": "plans_native_performance_fixes_printer_store_selectors",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_doc",
+      "target": "plans_native_performance_fixes_per_product_modifier_fetch",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_doc",
+      "target": "plans_native_performance_fixes_quantity_debounce",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_use_cart_mutations",
+      "target": "plans_native_performance_fixes_optimistic_updates",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_listactive_denorm",
+      "target": "plans_native_performance_fixes_item_count_table_name",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_quantity_debounce",
+      "target": "plans_native_performance_fixes_use_cart_mutations",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_per_product_modifier_fetch",
+      "target": "plans_offline_first_phase3_read_paths_data_sources",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_optimistic_updates",
+      "target": "plans_phase4_local_first_writes_service_functions",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_native_performance_fixes_item_count_table_name",
+      "target": "plans_advance_takeout_order_takeout_status",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.55,
+      "source_file": "docs/superpowers/plans/2026-04-16-native-performance-fixes.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

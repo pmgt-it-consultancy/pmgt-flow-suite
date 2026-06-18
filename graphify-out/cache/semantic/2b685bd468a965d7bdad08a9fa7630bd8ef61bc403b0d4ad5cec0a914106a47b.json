@@ -1,0 +1,122 @@
+{
+  "nodes": [
+    {
+      "id": "specs_cashier_lock_screen_design_doc",
+      "label": "Cashier Lock Screen Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_cashier_lock_screen_design_lock_store",
+      "label": "useLockStore Persisted State",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_cashier_lock_screen_design_idle_timer",
+      "label": "useIdleTimer Auto-Lock",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_cashier_lock_screen_design_pin_unlock",
+      "label": "PIN Unlock & Manager Override",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_cashier_lock_screen_design_auto_lock_timeout",
+      "label": "autoLockTimeout Store Setting",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_cashier_lock_screen_design_doc",
+      "target": "specs_cashier_lock_screen_design_lock_store",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_cashier_lock_screen_design_doc",
+      "target": "specs_cashier_lock_screen_design_idle_timer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_cashier_lock_screen_design_doc",
+      "target": "specs_cashier_lock_screen_design_pin_unlock",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_cashier_lock_screen_design_doc",
+      "target": "specs_cashier_lock_screen_design_auto_lock_timeout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_cashier_lock_screen_design_idle_timer",
+      "target": "specs_cashier_lock_screen_design_auto_lock_timeout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_cashier_lock_screen_design_idle_timer",
+      "target": "specs_cashier_lock_screen_design_lock_store",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-cashier-lock-screen-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

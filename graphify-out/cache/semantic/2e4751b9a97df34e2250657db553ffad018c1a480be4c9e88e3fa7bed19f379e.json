@@ -1,0 +1,177 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_03_13_bluetooth_connection_events_doc",
+      "label": "Event-Driven Bluetooth Connection Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_13_bluetooth_connection_events_acl_module",
+      "label": "Bluetooth ACL BroadcastReceiver Module",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_13_bluetooth_connection_events_use_events_hook",
+      "label": "useBluetoothConnectionEvents Hook",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_13_bluetooth_connection_events_auto_reconnect",
+      "label": "autoReconnect Exponential Backoff",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_13_bluetooth_connection_events_event_over_polling",
+      "label": "Event Detection vs Polling",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_doc",
+      "target": "plans_2026_03_13_bluetooth_connection_events_acl_module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_doc",
+      "target": "plans_2026_03_13_bluetooth_connection_events_use_events_hook",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_doc",
+      "target": "plans_2026_03_13_bluetooth_connection_events_auto_reconnect",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_use_events_hook",
+      "target": "plans_2026_03_13_bluetooth_connection_events_acl_module",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_use_events_hook",
+      "target": "plans_2026_03_13_bluetooth_connection_events_auto_reconnect",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_event_over_polling",
+      "target": "plans_2026_03_13_bluetooth_connection_events_acl_module",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_doc",
+      "target": "plans_2026_03_13_printer_connection_polling_doc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_auto_reconnect",
+      "target": "plans_2026_03_13_printer_connection_polling_polling_hook",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_auto_reconnect",
+      "target": "plans_2026_03_13_printer_connection_polling_connection_status",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_bluetooth_connection_events_acl_module",
+      "target": "plans_plan_bluetooth_printer_printer_store",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "bluetooth_printer_connection_lifecycle",
+      "label": "Bluetooth Printer Connection Lifecycle",
+      "nodes": [
+        "plans_plan_bluetooth_printer_printer_store",
+        "plans_2026_03_13_printer_connection_polling_polling_hook",
+        "plans_2026_03_13_bluetooth_connection_events_acl_module",
+        "plans_2026_03_13_bluetooth_connection_events_auto_reconnect"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-03-13-bluetooth-connection-events.md"
+    }
+  ]
+}

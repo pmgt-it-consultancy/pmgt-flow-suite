@@ -1,0 +1,132 @@
+{
+  "nodes": [
+    {
+      "id": "specs_draft_takeout_orders_design_doc",
+      "label": "Draft Takeout Orders Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_draft_takeout_orders_design_draft_status",
+      "label": "Draft Order Status",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_draft_takeout_orders_design_create_draft_order",
+      "label": "createDraftOrder Mutation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_draft_takeout_orders_design_submit_draft",
+      "label": "submitDraft Mutation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_draft_takeout_orders_design_eod_cleanup",
+      "label": "End-of-Day Draft Cleanup",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_draft_takeout_orders_design_doc",
+      "target": "specs_draft_takeout_orders_design_draft_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_draft_takeout_orders_design_doc",
+      "target": "specs_draft_takeout_orders_design_create_draft_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_draft_takeout_orders_design_doc",
+      "target": "specs_draft_takeout_orders_design_submit_draft",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_draft_takeout_orders_design_doc",
+      "target": "specs_draft_takeout_orders_design_eod_cleanup",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_draft_takeout_orders_design_create_draft_order",
+      "target": "specs_draft_takeout_orders_design_draft_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_draft_takeout_orders_design_submit_draft",
+      "target": "specs_draft_takeout_orders_design_draft_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_draft_takeout_orders_design_submit_draft",
+      "target": "plans_split_payment_counter_ordering_daily_reset",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/superpowers/specs/2026-03-23-draft-takeout-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

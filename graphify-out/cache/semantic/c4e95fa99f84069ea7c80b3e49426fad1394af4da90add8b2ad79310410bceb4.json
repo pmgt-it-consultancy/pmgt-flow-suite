@@ -1,0 +1,102 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_03_02_eod_closing_batch_reprint_doc",
+      "label": "EOD Closing & Batch Reprint Design",
+      "file_type": "document",
+      "source_file": "docs/plans/2026-03-02-eod-closing-batch-reprint.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_02_eod_closing_batch_reprint_day_closing",
+      "label": "Day Closing Screen",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-03-02-eod-closing-batch-reprint.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_02_eod_closing_batch_reprint_zreport",
+      "label": "Z-Report",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-03-02-eod-closing-batch-reprint.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_02_eod_closing_batch_reprint_batch_reprint",
+      "label": "Batch Receipt Reprint",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-03-02-eod-closing-batch-reprint.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_02_eod_closing_batch_reprint_no_locking",
+      "label": "No Locking on Day Close",
+      "file_type": "rationale",
+      "source_file": "docs/plans/2026-03-02-eod-closing-batch-reprint.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_03_02_eod_closing_batch_reprint_doc",
+      "target": "plans_2026_03_02_eod_closing_batch_reprint_day_closing",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-03-02-eod-closing-batch-reprint.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_02_eod_closing_batch_reprint_day_closing",
+      "target": "plans_2026_03_02_eod_closing_batch_reprint_zreport",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-03-02-eod-closing-batch-reprint.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_02_eod_closing_batch_reprint_day_closing",
+      "target": "plans_2026_03_02_eod_closing_batch_reprint_batch_reprint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-03-02-eod-closing-batch-reprint.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_02_eod_closing_batch_reprint_no_locking",
+      "target": "plans_2026_03_02_eod_closing_batch_reprint_day_closing",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-03-02-eod-closing-batch-reprint.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

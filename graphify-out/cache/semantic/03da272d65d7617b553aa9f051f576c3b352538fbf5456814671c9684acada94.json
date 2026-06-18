@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_doc",
+      "label": "Day Closing Cross-Midnight Cutoff Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_cross_midnight_bug",
+      "label": "getPHTTimeBoundariesForDate Cross-Midnight Bug",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": "lines 11-15",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_get_report_boundaries",
+      "label": "getReportBoundariesForDate Helper",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": "lines 82-110",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_time_range_selector",
+      "label": "TimeRangeSelector (next day hint)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": "lines 114-122",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_doc",
+      "target": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_cross_midnight_bug",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_doc",
+      "target": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_get_report_boundaries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_get_report_boundaries",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_business_day_boundaries",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_doc",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_doc",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_time_range_selector",
+      "target": "specs_2026_04_16_store_schedule_cutoff_design_store_schedule",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_17_day_closing_cross_midnight_cutoff_design_get_report_boundaries",
+      "target": "specs_2026_03_26_eod_category_grouping_payment_breakdown_design_generate_daily_report",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/specs/2026-04-17-day-closing-cross-midnight-cutoff-design.md",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": []
+}

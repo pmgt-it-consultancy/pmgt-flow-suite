@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "specs_open_price_products_design_doc",
+      "label": "Open Price Products Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-22-open-price-products-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-22",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_open_price_products_design_open_price_flag",
+      "label": "isOpenPrice Product Flag",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-22-open-price-products-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-22",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_open_price_products_design_custom_price",
+      "label": "customPrice addItem Arg",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-22-open-price-products-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-22",
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_open_price_products_design_doc",
+      "target": "specs_open_price_products_design_open_price_flag",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-22-open-price-products-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_open_price_products_design_doc",
+      "target": "specs_open_price_products_design_custom_price",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-22-open-price-products-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_open_price_products_design_custom_price",
+      "target": "specs_open_price_products_design_open_price_flag",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-22-open-price-products-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

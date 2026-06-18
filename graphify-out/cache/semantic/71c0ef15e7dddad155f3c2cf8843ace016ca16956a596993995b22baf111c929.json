@@ -1,0 +1,112 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_03_28_void_paid_orders_design_doc",
+      "label": "Void Paid Orders (Refund & Re-ring) Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_void_paid_orders_design_void_and_rering",
+      "label": "Void and Re-ring Approach",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": "lines 6-26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_void_paid_orders_design_void_paid_order_mutation",
+      "label": "voidPaidOrder Mutation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": "lines 48-76",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_void_paid_orders_design_order_voids_refund",
+      "label": "orderVoids Refund Type",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": "lines 29-44",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_03_28_void_paid_orders_design_refunded_from_order_id",
+      "label": "orders.refundedFromOrderId Link",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": "lines 38-44",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_03_28_void_paid_orders_design_doc",
+      "target": "specs_2026_03_28_void_paid_orders_design_void_paid_order_mutation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_void_paid_orders_design_void_and_rering",
+      "target": "specs_2026_03_28_void_paid_orders_design_void_paid_order_mutation",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_void_paid_orders_design_void_paid_order_mutation",
+      "target": "specs_2026_03_28_void_paid_orders_design_order_voids_refund",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_void_paid_orders_design_void_paid_order_mutation",
+      "target": "specs_2026_03_28_void_paid_orders_design_refunded_from_order_id",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_03_28_void_paid_orders_design_void_paid_order_mutation",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_order_payments",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-28-void-paid-orders-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

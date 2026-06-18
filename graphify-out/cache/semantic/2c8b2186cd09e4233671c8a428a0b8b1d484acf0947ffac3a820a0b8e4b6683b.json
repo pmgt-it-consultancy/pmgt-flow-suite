@@ -1,0 +1,121 @@
+{
+  "nodes": [
+    {
+      "id": "plans_offline_first_phase3_read_paths_doc",
+      "label": "Phase 3 Migrate Read Paths Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_phase3_read_paths_data_sources",
+      "label": "WatermelonDB Data Source Hooks",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_phase3_read_paths_feature_flags",
+      "label": "Per-Table Feature Flags",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_offline_first_phase3_read_paths_use_observable",
+      "label": "useObservable Hook",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_offline_first_phase3_read_paths_doc",
+      "target": "plans_offline_first_phase3_read_paths_data_sources",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_phase3_read_paths_doc",
+      "target": "plans_offline_first_phase3_read_paths_feature_flags",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_phase3_read_paths_doc",
+      "target": "plans_offline_first_phase3_read_paths_use_observable",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_phase3_read_paths_data_sources",
+      "target": "plans_offline_first_phase3_read_paths_use_observable",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_phase3_read_paths_data_sources",
+      "target": "plans_offline_first_phase3_read_paths_feature_flags",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_phase3_read_paths_data_sources",
+      "target": "plans_offline_first_pos_foundation_watermelondb",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_offline_first_phase3_read_paths_doc",
+      "target": "plans_offline_first_pos_foundation_doc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-04-29-offline-first-phase3-read-paths.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

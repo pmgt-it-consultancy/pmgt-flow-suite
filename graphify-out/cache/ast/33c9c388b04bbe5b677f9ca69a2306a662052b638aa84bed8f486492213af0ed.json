@@ -1,0 +1,167 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_src_main_java_com_pmgtitconsultancy_pmgtflow_stg_mainapplication_kt",
+      "label": "MainApplication.kt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L1"
+    },
+    {
+      "id": "stg_mainapplication_mainapplication",
+      "label": "MainApplication",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L20"
+    },
+    {
+      "id": "stg_mainapplication_getpackages",
+      "label": "getPackages()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L25"
+    },
+    {
+      "id": "stg_mainapplication_getjsmainmodulename",
+      "label": "getJSMainModuleName()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L32"
+    },
+    {
+      "id": "stg_mainapplication_getusedevelopersupport",
+      "label": "getUseDeveloperSupport()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L34"
+    },
+    {
+      "id": "stg_mainapplication_mainapplication_oncreate",
+      "label": ".onCreate()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L43"
+    },
+    {
+      "id": "stg_mainapplication_mainapplication_onconfigurationchanged",
+      "label": ".onConfigurationChanged()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L54"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_src_main_java_com_pmgtitconsultancy_pmgtflow_stg_mainapplication_kt",
+      "target": "stg_mainapplication_mainapplication",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_src_main_java_com_pmgtitconsultancy_pmgtflow_stg_mainapplication_kt",
+      "target": "stg_mainapplication_getpackages",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_src_main_java_com_pmgtitconsultancy_pmgtflow_stg_mainapplication_kt",
+      "target": "stg_mainapplication_getjsmainmodulename",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_src_main_java_com_pmgtitconsultancy_pmgtflow_stg_mainapplication_kt",
+      "target": "stg_mainapplication_getusedevelopersupport",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "stg_mainapplication_mainapplication",
+      "target": "stg_mainapplication_mainapplication_oncreate",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "stg_mainapplication_mainapplication",
+      "target": "stg_mainapplication_mainapplication_onconfigurationchanged",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L54",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "stg_mainapplication_getpackages",
+      "callee": "apply",
+      "is_member_call": true,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L26"
+    },
+    {
+      "caller_nid": "stg_mainapplication_getpackages",
+      "callee": "PackageList",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L26"
+    },
+    {
+      "caller_nid": "stg_mainapplication_getpackages",
+      "callee": "add",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L27"
+    },
+    {
+      "caller_nid": "stg_mainapplication_getpackages",
+      "callee": "WatermelonDBJSIPackage",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L27"
+    },
+    {
+      "caller_nid": "stg_mainapplication_mainapplication_oncreate",
+      "callee": "valueOf",
+      "is_member_call": true,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L46"
+    },
+    {
+      "caller_nid": "stg_mainapplication_mainapplication_oncreate",
+      "callee": "uppercase",
+      "is_member_call": true,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L46"
+    },
+    {
+      "caller_nid": "stg_mainapplication_mainapplication_oncreate",
+      "callee": "loadReactNative",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L50"
+    },
+    {
+      "caller_nid": "stg_mainapplication_mainapplication_oncreate",
+      "callee": "onApplicationCreate",
+      "is_member_call": true,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/src/main/java/com/pmgtitconsultancy/pmgtflow/stg/MainApplication.kt",
+      "source_location": "L51"
+    }
+  ]
+}

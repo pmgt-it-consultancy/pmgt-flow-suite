@@ -53,6 +53,14 @@ async function processPaymentCore(
 
   const totalPayments = payments.reduce((sum, p) => sum + p.amount, 0);
   if (totalPayments < order.netSales) throw new Error("Total payments insufficient");
+  // Recorded payment amounts are the portions applied to the bill — cash
+  // over-tender is captured separately via cashReceived/changeGiven, not in
+  // `amount`. So the sum must equal the amount due; anything above it (e.g. a
+  // card amount typed higher than the bill) would push the Z-report payment
+  // breakdown above net sales and break reconciliation.
+  if (totalPayments > order.netSales + 0.01) {
+    throw new Error("Total payments exceed amount due");
+  }
 
   for (const payment of payments) {
     if (payment.amount <= 0) throw new Error("Payment amount must be positive");

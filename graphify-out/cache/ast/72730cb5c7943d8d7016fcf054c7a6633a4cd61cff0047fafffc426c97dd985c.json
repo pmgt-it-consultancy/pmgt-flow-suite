@@ -1,0 +1,601 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_packages_backend_package_json",
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_package_name",
+      "label": "name",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "backend_package_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "backend_package_description",
+      "label": "description",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "backend_package_scripts",
+      "label": "scripts",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "backend_package_scripts_dev",
+      "label": "dev",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "backend_package_scripts_setup",
+      "label": "setup",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "backend_package_scripts_deploy",
+      "label": "deploy",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "backend_package_scripts_typecheck",
+      "label": "typecheck",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "backend_package_scripts_test",
+      "label": "test",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "backend_package_scripts_test_run",
+      "label": "test:run",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "backend_package_author",
+      "label": "author",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "backend_package_license",
+      "label": "license",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "backend_package_dependencies",
+      "label": "dependencies",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L15"
+    },
+    {
+      "id": "backend_package_dependencies_auth_core",
+      "label": "@auth/core",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "backend_package_dependencies_convex_dev_auth",
+      "label": "@convex-dev/auth",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "backend_package_dependencies_packages_shared",
+      "label": "@packages/shared",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L18"
+    },
+    {
+      "id": "backend_package_dependencies_types_node",
+      "label": "@types/node",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "backend_package_dependencies_bcryptjs",
+      "label": "bcryptjs",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "backend_package_dependencies_convex",
+      "label": "convex",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "backend_package_dependencies_convex_helpers",
+      "label": "convex-helpers",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "backend_package_dependencies_openai",
+      "label": "openai",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "backend_package_dependencies_scrypt_kdf",
+      "label": "scrypt-kdf",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "backend_package_devdependencies",
+      "label": "devDependencies",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "backend_package_devdependencies_edge_runtime_vm",
+      "label": "@edge-runtime/vm",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L27"
+    },
+    {
+      "id": "backend_package_devdependencies_types_bcryptjs",
+      "label": "@types/bcryptjs",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L28"
+    },
+    {
+      "id": "backend_package_devdependencies_convex_test",
+      "label": "convex-test",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "backend_package_devdependencies_typescript",
+      "label": "typescript",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L30"
+    },
+    {
+      "id": "backend_package_devdependencies_vitest",
+      "label": "vitest",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L31"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_packages_backend_package_json",
+      "target": "backend_package_name",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_packages_backend_package_json",
+      "target": "backend_package_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_packages_backend_package_json",
+      "target": "backend_package_description",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_packages_backend_package_json",
+      "target": "backend_package_scripts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_scripts",
+      "target": "backend_package_scripts_dev",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_scripts",
+      "target": "backend_package_scripts_setup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_scripts",
+      "target": "backend_package_scripts_deploy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_scripts",
+      "target": "backend_package_scripts_typecheck",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_scripts",
+      "target": "backend_package_scripts_test",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_scripts",
+      "target": "backend_package_scripts_test_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_packages_backend_package_json",
+      "target": "backend_package_author",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_packages_backend_package_json",
+      "target": "backend_package_license",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_packages_backend_package_json",
+      "target": "backend_package_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_auth_core",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies_auth_core",
+      "target": "auth_core",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_convex_dev_auth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies_convex_dev_auth",
+      "target": "convex_dev_auth",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_packages_shared",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies_packages_shared",
+      "target": "packages_shared",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_types_node",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies_types_node",
+      "target": "types_node",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_bcryptjs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies_bcryptjs",
+      "target": "bcryptjs",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_convex",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies_convex",
+      "target": "convex",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_convex_helpers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies_convex_helpers",
+      "target": "convex_helpers",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_openai",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies_openai",
+      "target": "openai",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_scrypt_kdf",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_dependencies_scrypt_kdf",
+      "target": "scrypt_kdf",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_packages_backend_package_json",
+      "target": "backend_package_devdependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_devdependencies",
+      "target": "backend_package_devdependencies_edge_runtime_vm",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_devdependencies_edge_runtime_vm",
+      "target": "edge_runtime_vm",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L27",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_devdependencies",
+      "target": "backend_package_devdependencies_types_bcryptjs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_devdependencies_types_bcryptjs",
+      "target": "types_bcryptjs",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L28",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_devdependencies",
+      "target": "backend_package_devdependencies_convex_test",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_devdependencies_convex_test",
+      "target": "convex_test",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L29",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_devdependencies",
+      "target": "backend_package_devdependencies_typescript",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_devdependencies_typescript",
+      "target": "typescript",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L30",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "backend_package_devdependencies",
+      "target": "backend_package_devdependencies_vitest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "backend_package_devdependencies_vitest",
+      "target": "vitest",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/packages/backend/package.json",
+      "source_location": "L31",
+      "weight": 1.0,
+      "context": "import"
+    }
+  ]
+}

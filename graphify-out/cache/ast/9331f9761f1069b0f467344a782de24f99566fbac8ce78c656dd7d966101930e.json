@@ -1,0 +1,93 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_approved_backups_security_2026_01_29t09_04_03_876z_json",
+      "label": "security-2026-01-29T09-04-03-876Z.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "backups_security_2026_01_29t09_04_03_876z_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "backups_security_2026_01_29t09_04_03_876z_category",
+      "label": "category",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "backups_security_2026_01_29t09_04_03_876z_patterns",
+      "label": "patterns",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "backups_security_2026_01_29t09_04_03_876z_lastupdated",
+      "label": "lastUpdated",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L597"
+    },
+    {
+      "id": "backups_security_2026_01_29t09_04_03_876z_checksum",
+      "label": "checksum",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L598"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_approved_backups_security_2026_01_29t09_04_03_876z_json",
+      "target": "backups_security_2026_01_29t09_04_03_876z_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_approved_backups_security_2026_01_29t09_04_03_876z_json",
+      "target": "backups_security_2026_01_29t09_04_03_876z_category",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_approved_backups_security_2026_01_29t09_04_03_876z_json",
+      "target": "backups_security_2026_01_29t09_04_03_876z_patterns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_approved_backups_security_2026_01_29t09_04_03_876z_json",
+      "target": "backups_security_2026_01_29t09_04_03_876z_lastupdated",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L597",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_drift_patterns_approved_backups_security_2026_01_29t09_04_03_876z_json",
+      "target": "backups_security_2026_01_29t09_04_03_876z_checksum",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/.drift/patterns/approved/.backups/security-2026-01-29T09-04-03-876Z.json",
+      "source_location": "L598",
+      "weight": 1.0
+    }
+  ]
+}

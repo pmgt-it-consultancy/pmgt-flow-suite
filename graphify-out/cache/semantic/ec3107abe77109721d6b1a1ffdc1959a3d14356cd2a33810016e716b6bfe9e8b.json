@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "specs_printer_connection_polling_design_doc",
+      "label": "Printer Connection Polling & Error Notifications Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-13-printer-connection-polling-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_printer_connection_polling_design_polling_hook",
+      "label": "usePrinterConnectionPolling Hook",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-printer-connection-polling-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_printer_connection_polling_design_connection_status",
+      "label": "Printer Connection Status State Machine",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-printer-connection-polling-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_printer_connection_polling_design_doc",
+      "target": "specs_printer_connection_polling_design_polling_hook",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-printer-connection-polling-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_printer_connection_polling_design_doc",
+      "target": "specs_printer_connection_polling_design_connection_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-printer-connection-polling-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_printer_connection_polling_design_polling_hook",
+      "target": "specs_printer_connection_polling_design_connection_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-printer-connection-polling-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

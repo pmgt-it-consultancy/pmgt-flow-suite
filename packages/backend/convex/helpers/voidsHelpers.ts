@@ -545,14 +545,24 @@ export const voidPaidOrderInternal = internalMutation({
       // Update denormalized item count on replacement order
       await recomputeOrderItemCount(ctx, replacementOrderId);
 
-      // Create payment record for the new order
+      // Create payment record for the new order. The kept items were paid for
+      // through the ORIGINAL order's tender, so the replacement payment must
+      // mirror the original payment method (not a hardcoded "cash") — otherwise
+      // the Z-report's cash-vs-card breakdown is skewed on every refund. Carry
+      // the card metadata so the payment-transactions breakdown stays accurate,
+      // and stamp updatedAt so the row syncs to offline devices.
+      const replacementMethod = order.paymentMethod === "card_ewallet" ? "card_ewallet" : "cash";
       await ctx.db.insert("orderPayments", {
         orderId: replacementOrderId,
         storeId: order.storeId,
-        paymentMethod: "cash",
+        paymentMethod: replacementMethod,
         amount: netSales,
+        cardPaymentType: replacementMethod === "card_ewallet" ? order.cardPaymentType : undefined,
+        cardReferenceNumber:
+          replacementMethod === "card_ewallet" ? order.cardReferenceNumber : undefined,
         createdAt: now,
         createdBy: args.approvedBy,
+        updatedAt: now,
       });
 
       // Refund amount = original netSales - new netSales

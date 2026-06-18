@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_03_13_printer_connection_polling_doc",
+      "label": "Printer Connection Polling Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_13_printer_connection_polling_polling_hook",
+      "label": "usePrinterConnectionPolling Hook",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_13_printer_connection_polling_connection_status",
+      "label": "PrinterConnectionStatus String States",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_13_printer_connection_polling_system_status",
+      "label": "useSystemStatus Derivation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_03_13_printer_connection_polling_doc",
+      "target": "plans_2026_03_13_printer_connection_polling_polling_hook",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_printer_connection_polling_doc",
+      "target": "plans_2026_03_13_printer_connection_polling_connection_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_printer_connection_polling_doc",
+      "target": "plans_2026_03_13_printer_connection_polling_system_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_printer_connection_polling_polling_hook",
+      "target": "plans_2026_03_13_printer_connection_polling_connection_status",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_printer_connection_polling_system_status",
+      "target": "plans_2026_03_13_printer_connection_polling_connection_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_13_printer_connection_polling_connection_status",
+      "target": "plans_plan_bluetooth_printer_printer_store",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-13-printer-connection-polling.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

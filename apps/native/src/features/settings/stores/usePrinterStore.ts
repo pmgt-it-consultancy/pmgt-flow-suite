@@ -38,6 +38,7 @@ interface PrinterStore {
   kitchenPrintingEnabled: boolean;
   cashDrawerEnabled: boolean;
   useReceiptPrinterForKitchen: boolean;
+  minimalReceiptEnabled: boolean;
   isInitialized: boolean;
 
   initialize: () => Promise<{ failedPrinters: string[] }>;
@@ -59,6 +60,7 @@ interface PrinterStore {
   setKitchenPrintingEnabled: (enabled: boolean) => Promise<void>;
   setCashDrawerEnabled: (enabled: boolean) => Promise<void>;
   setUseReceiptPrinterForKitchen: (enabled: boolean) => Promise<void>;
+  setMinimalReceiptEnabled: (enabled: boolean) => Promise<void>;
 
   printReceipt: (data: ReceiptData) => Promise<void>;
   printKitchenTicket: (data: KitchenTicketData) => Promise<void>;
@@ -74,6 +76,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   kitchenPrintingEnabled: false,
   cashDrawerEnabled: false,
   useReceiptPrinterForKitchen: false,
+  minimalReceiptEnabled: false,
   isInitialized: false,
 
   initialize: async () => {
@@ -83,6 +86,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
       kitchenPrintingEnabled: settings.kitchenPrintingEnabled,
       cashDrawerEnabled: settings.cashDrawerEnabled,
       useReceiptPrinterForKitchen: settings.useReceiptPrinterForKitchen ?? false,
+      minimalReceiptEnabled: settings.minimalReceiptEnabled,
     });
 
     await enableBluetooth();
@@ -243,43 +247,62 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
   },
 
   setKitchenPrintingEnabled: async (enabled: boolean) => {
-    const { printers, cashDrawerEnabled, useReceiptPrinterForKitchen } = get();
+    const { printers, cashDrawerEnabled, useReceiptPrinterForKitchen, minimalReceiptEnabled } =
+      get();
     const settings: PrinterSettings = {
       printers,
       kitchenPrintingEnabled: enabled,
       cashDrawerEnabled,
       useReceiptPrinterForKitchen,
+      minimalReceiptEnabled,
     };
     await savePrinterSettings(settings);
     set({ kitchenPrintingEnabled: enabled });
   },
 
   setCashDrawerEnabled: async (enabled: boolean) => {
-    const { printers, kitchenPrintingEnabled, useReceiptPrinterForKitchen } = get();
+    const { printers, kitchenPrintingEnabled, useReceiptPrinterForKitchen, minimalReceiptEnabled } =
+      get();
     const settings: PrinterSettings = {
       printers,
       kitchenPrintingEnabled,
       cashDrawerEnabled: enabled,
       useReceiptPrinterForKitchen,
+      minimalReceiptEnabled,
     };
     await savePrinterSettings(settings);
     set({ cashDrawerEnabled: enabled });
   },
 
   setUseReceiptPrinterForKitchen: async (enabled: boolean) => {
-    const { printers, kitchenPrintingEnabled, cashDrawerEnabled } = get();
+    const { printers, kitchenPrintingEnabled, cashDrawerEnabled, minimalReceiptEnabled } = get();
     const settings: PrinterSettings = {
       printers,
       kitchenPrintingEnabled,
       cashDrawerEnabled,
       useReceiptPrinterForKitchen: enabled,
+      minimalReceiptEnabled,
     };
     await savePrinterSettings(settings);
     set({ useReceiptPrinterForKitchen: enabled });
   },
 
+  setMinimalReceiptEnabled: async (enabled: boolean) => {
+    const { printers, kitchenPrintingEnabled, cashDrawerEnabled, useReceiptPrinterForKitchen } =
+      get();
+    const settings: PrinterSettings = {
+      printers,
+      kitchenPrintingEnabled,
+      cashDrawerEnabled,
+      useReceiptPrinterForKitchen,
+      minimalReceiptEnabled: enabled,
+    };
+    await savePrinterSettings(settings);
+    set({ minimalReceiptEnabled: enabled });
+  },
+
   printReceipt: async (data: ReceiptData) => {
-    const { printers, connectPrinter } = get();
+    const { printers, connectPrinter, minimalReceiptEnabled } = get();
     const printer = printers.find((p) => p.role === "receipt" && p.isDefault);
     if (!printer) throw new Error("No receipt printer configured");
 
@@ -288,7 +311,7 @@ export const usePrinterStore = create<PrinterStore>((set, get) => ({
     if (!connected) throw new Error("Failed to connect to receipt printer");
 
     const charsPerLine = printer.paperWidth === 58 ? 32 : 48;
-    await printReceiptToThermal(data, charsPerLine);
+    await printReceiptToThermal(data, charsPerLine, minimalReceiptEnabled);
   },
 
   printKitchenTicket: async (data: KitchenTicketData) => {

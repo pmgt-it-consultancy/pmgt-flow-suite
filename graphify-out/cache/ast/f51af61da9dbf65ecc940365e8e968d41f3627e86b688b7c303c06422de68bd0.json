@@ -1,0 +1,12 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_tools_debug_arm64_v8a_compile_commands_json",
+      "label": "compile_commands.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/tools/debug/arm64-v8a/compile_commands.json",
+      "source_location": "L1"
+    }
+  ],
+  "edges": []
+}

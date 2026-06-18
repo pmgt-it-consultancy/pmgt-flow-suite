@@ -1,0 +1,132 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_03_24_duplicate_transaction_prevention_doc",
+      "label": "Duplicate Transaction Prevention Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_24_duplicate_transaction_prevention_request_id",
+      "label": "requestId Idempotency Field",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_24_duplicate_transaction_prevention_idempotent_payments",
+      "label": "Idempotent Payment Mutations",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_24_duplicate_transaction_prevention_loading_guards",
+      "label": "Frontend Loading-State Guards",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_03_24_duplicate_transaction_prevention_three_layer",
+      "label": "Three-Layer Defense",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_03_24_duplicate_transaction_prevention_doc",
+      "target": "plans_2026_03_24_duplicate_transaction_prevention_request_id",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_24_duplicate_transaction_prevention_doc",
+      "target": "plans_2026_03_24_duplicate_transaction_prevention_idempotent_payments",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_24_duplicate_transaction_prevention_doc",
+      "target": "plans_2026_03_24_duplicate_transaction_prevention_loading_guards",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_24_duplicate_transaction_prevention_three_layer",
+      "target": "plans_2026_03_24_duplicate_transaction_prevention_request_id",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_24_duplicate_transaction_prevention_request_id",
+      "target": "plans_2026_03_23_draft_takeout_orders_create_draft",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_24_duplicate_transaction_prevention_idempotent_payments",
+      "target": "plans_2026_03_23_draft_takeout_orders_submit_draft",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_03_24_duplicate_transaction_prevention_doc",
+      "target": "plans_2026_03_23_draft_takeout_orders_doc",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/superpowers/plans/2026-03-24-duplicate-transaction-prevention.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,10 +1,11 @@
 ## What's New
 
-- Faster order recalculation — order totals now query only the current order's local items, modifiers, and products.
-- Modifier-inclusive totals — order, VAT, and SC/PWD discount calculations now include modifier price adjustments consistently.
-- More accurate reports — SC/PWD discount rows are recalculated for synced native orders and cleared when discounted items are voided.
-- Faster reports — admin report screens avoid unnecessary live subscriptions and date-range reports use bounded indexed queries.
+- Balanced Z-report — the payment breakdown now reconciles with net sales, with a "Total Collected" line so you can confirm the day balances without tallying every transaction.
+- Customer receipt setting — option for a minimal customer receipt layout.
+- Category sales in reports — product sales are now broken down by category.
+- Admin improvements — better filtering and ordering on admin list screens.
 
 ## Notes
 
-- This update corrects accounting for orders with modifiers and SC/PWD discounts.
+- Z-report voids are now shown for audit only and are no longer subtracted from net sales again (they were already excluded), so the Sales Summary adds up correctly.
+- Refunds record the replacement payment under the original method (cash vs card), keeping the cash/card breakdown accurate.

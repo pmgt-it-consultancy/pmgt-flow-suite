@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2025_01_09_pos_implementation_plan_pos_implementation_plan",
+      "label": "POS System Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/plans/2025-01-09-pos-implementation-plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2025_01_09_pos_implementation_plan_pos_implementation_plan",
+      "target": "plans_2025_01_09_pos_system_design_pos_system_design",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-implementation-plan.md",
+      "source_location": "line 15",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_implementation_plan_pos_implementation_plan",
+      "target": "plans_2025_01_09_pos_system_design_custom_auth_system",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-implementation-plan.md",
+      "source_location": "Phase 2",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2025_01_09_pos_implementation_plan_pos_implementation_plan",
+      "target": "plans_2025_01_09_pos_system_design_bluetooth_receipt_printing",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2025-01-09-pos-implementation-plan.md",
+      "source_location": "Phase 10",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

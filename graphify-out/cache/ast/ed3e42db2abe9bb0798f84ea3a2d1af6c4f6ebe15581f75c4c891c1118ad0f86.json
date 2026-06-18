@@ -1,0 +1,577 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_eas_json",
+      "label": "eas.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "native_eas_cli",
+      "label": "cli",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "native_eas_cli_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "native_eas_cli_appversionsource",
+      "label": "appVersionSource",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "native_eas_build",
+      "label": "build",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "native_eas_build_base",
+      "label": "base",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "native_eas_base_android",
+      "label": "android",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "native_eas_android_image",
+      "label": "image",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "native_eas_android_gradlecommand",
+      "label": "gradleCommand",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "native_eas_android_applicationarchivepath",
+      "label": "applicationArchivePath",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "native_eas_build_development",
+      "label": "development",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "native_eas_development_extends",
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L15"
+    },
+    {
+      "id": "native_eas_development_developmentclient",
+      "label": "developmentClient",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "native_eas_development_distribution",
+      "label": "distribution",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "native_eas_development_env",
+      "label": "env",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L18"
+    },
+    {
+      "id": "native_eas_env_app_variant",
+      "label": "APP_VARIANT",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "native_eas_env_expo_public_convex_url",
+      "label": "EXPO_PUBLIC_CONVEX_URL",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "native_eas_development_android",
+      "label": "android",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "native_eas_android_buildtype",
+      "label": "buildType",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "native_eas_android_withoutcredentials",
+      "label": "withoutCredentials",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "native_eas_build_staging",
+      "label": "staging",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L27"
+    },
+    {
+      "id": "native_eas_staging_extends",
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L28"
+    },
+    {
+      "id": "native_eas_staging_credentialssource",
+      "label": "credentialsSource",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "native_eas_staging_distribution",
+      "label": "distribution",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L30"
+    },
+    {
+      "id": "native_eas_staging_env",
+      "label": "env",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L31"
+    },
+    {
+      "id": "native_eas_staging_android",
+      "label": "android",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L35"
+    },
+    {
+      "id": "native_eas_build_production",
+      "label": "production",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L39"
+    },
+    {
+      "id": "native_eas_production_extends",
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L40"
+    },
+    {
+      "id": "native_eas_production_credentialssource",
+      "label": "credentialsSource",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L41"
+    },
+    {
+      "id": "native_eas_production_env",
+      "label": "env",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L42"
+    },
+    {
+      "id": "native_eas_production_android",
+      "label": "android",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L46"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_eas_json",
+      "target": "native_eas_cli",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_cli",
+      "target": "native_eas_cli_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_cli",
+      "target": "native_eas_cli_appversionsource",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_eas_json",
+      "target": "native_eas_build",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build",
+      "target": "native_eas_build_base",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_base",
+      "target": "native_eas_base_android",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_base_android",
+      "target": "native_eas_android_image",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_base_android",
+      "target": "native_eas_android_gradlecommand",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_base_android",
+      "target": "native_eas_android_applicationarchivepath",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build",
+      "target": "native_eas_build_development",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_development",
+      "target": "native_eas_development_extends",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_eas_json",
+      "target": "ref_base",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_eas_build_development",
+      "target": "native_eas_development_developmentclient",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_development",
+      "target": "native_eas_development_distribution",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_development",
+      "target": "native_eas_development_env",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_development_env",
+      "target": "native_eas_env_app_variant",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_development_env",
+      "target": "native_eas_env_expo_public_convex_url",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_development",
+      "target": "native_eas_development_android",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_development_android",
+      "target": "native_eas_android_buildtype",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_development_android",
+      "target": "native_eas_android_withoutcredentials",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build",
+      "target": "native_eas_build_staging",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_staging",
+      "target": "native_eas_staging_extends",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_eas_json",
+      "target": "ref_base",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L28",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_eas_build_staging",
+      "target": "native_eas_staging_credentialssource",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_staging",
+      "target": "native_eas_staging_distribution",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_staging",
+      "target": "native_eas_staging_env",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_staging_env",
+      "target": "native_eas_env_app_variant",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_staging_env",
+      "target": "native_eas_env_expo_public_convex_url",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_staging",
+      "target": "native_eas_staging_android",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_staging_android",
+      "target": "native_eas_android_buildtype",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build",
+      "target": "native_eas_build_production",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_production",
+      "target": "native_eas_production_extends",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_eas_json",
+      "target": "ref_base",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L40",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "native_eas_build_production",
+      "target": "native_eas_production_credentialssource",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_production",
+      "target": "native_eas_production_env",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_production_env",
+      "target": "native_eas_env_app_variant",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_production_env",
+      "target": "native_eas_env_expo_public_convex_url",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_build_production",
+      "target": "native_eas_production_android",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "native_eas_production_android",
+      "target": "native_eas_android_buildtype",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/eas.json",
+      "source_location": "L47",
+      "weight": 1.0
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_json",
+      "label": "directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph",
+      "label": "backtraceGraph",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph_commands",
+      "label": "commands",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph_files",
+      "label": "files",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph_nodes",
+      "label": "nodes",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_installers",
+      "label": "installers",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_paths",
+      "label": "paths",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_paths_build",
+      "label": "build",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_paths_source",
+      "label": "source",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L12"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_json",
+      "target": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph",
+      "target": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph_commands",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph",
+      "target": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph",
+      "target": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_backtracegraph_nodes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_json",
+      "target": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_installers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_android_app_cxx_debug_5t441f4f_arm64_v8a_cmake_api_v1_reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_json",
+      "target": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_paths",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_paths",
+      "target": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_paths_build",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_paths",
+      "target": "reply_directory_reactnativekeyboardcontroller_autolinked_build_debug_0d7bb6e72565d3ef0b11_paths_source",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/android/app/.cxx/Debug/5t441f4f/arm64-v8a/.cmake/api/v1/reply/directory-reactnativekeyboardcontroller_autolinked_build-Debug-0d7bb6e72565d3ef0b11.json",
+      "source_location": "L12",
+      "weight": 1.0
+    }
+  ]
+}

@@ -509,7 +509,11 @@ export default function ReportsPage() {
                       value={formatCurrency(dailyReport.cardEwalletTotal)}
                     />
                     <div className="border-t pt-3">
-                      <DetailRow label="Total" value={formatCurrency(dailyReport.netSales)} bold />
+                      <DetailRow
+                        label="Total Collected"
+                        value={formatCurrency(dailyReport.cashTotal + dailyReport.cardEwalletTotal)}
+                        bold
+                      />
                     </div>
                     {paymentTransactions && paymentTransactions.length > 0 && (
                       <div className="border-t pt-3 space-y-4">

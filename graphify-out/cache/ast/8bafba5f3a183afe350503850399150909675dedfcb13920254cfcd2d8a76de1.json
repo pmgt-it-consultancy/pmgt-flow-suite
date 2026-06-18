@@ -1,0 +1,169 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_modules_bluetooth_connection_android_src_main_java_expo_modules_bluetoothconnection_bluetoothconnectionmodule_kt",
+      "label": "BluetoothConnectionModule.kt",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L1"
+    },
+    {
+      "id": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule",
+      "label": "BluetoothConnectionModule",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L13"
+    },
+    {
+      "id": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_definition",
+      "label": ".definition()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L16"
+    },
+    {
+      "id": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_registerreceiver",
+      "label": ".registerReceiver()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L30"
+    },
+    {
+      "id": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_unregisterreceiver",
+      "label": ".unregisterReceiver()",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L72"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_modules_bluetooth_connection_android_src_main_java_expo_modules_bluetoothconnection_bluetoothconnectionmodule_kt",
+      "target": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule",
+      "target": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_definition",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule",
+      "target": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_registerreceiver",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule",
+      "target": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_unregisterreceiver",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_definition",
+      "target": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_registerreceiver",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_definition",
+      "target": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_unregisterreceiver",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L26",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_definition",
+      "callee": "ModuleDefinition",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L16"
+    },
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_definition",
+      "callee": "Name",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_definition",
+      "callee": "Events",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L19"
+    },
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_definition",
+      "callee": "OnStartObserving",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L21"
+    },
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_definition",
+      "callee": "OnStopObserving",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L25"
+    },
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_registerreceiver",
+      "callee": "apply",
+      "is_member_call": true,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L60"
+    },
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_registerreceiver",
+      "callee": "IntentFilter",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L60"
+    },
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_registerreceiver",
+      "callee": "addAction",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L61"
+    },
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_registerreceiver",
+      "callee": "addAction",
+      "is_member_call": false,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L62"
+    },
+    {
+      "caller_nid": "bluetoothconnection_bluetoothconnectionmodule_bluetoothconnectionmodule_unregisterreceiver",
+      "callee": "let",
+      "is_member_call": true,
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/android/src/main/java/expo/modules/bluetoothconnection/BluetoothConnectionModule.kt",
+      "source_location": "L74"
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_04_29_phase4_local_first_writes_design_doc",
+      "label": "Phase 4 Local-First Write Paths Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_29_phase4_local_first_writes_design_order_mutations_service",
+      "label": "orderMutations Service Functions",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": "lines 210-334",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_29_phase4_local_first_writes_design_recalculate_order",
+      "label": "recalculateOrderTotals",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": "lines 149-205",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_29_phase4_local_first_writes_design_shared_tax_calc",
+      "label": "Shared taxCalculations (packages/shared)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": "lines 91-147",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_29_phase4_local_first_writes_design_no_dual_path_rationale",
+      "label": "No Dual-Path / No Feature Flags",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": "lines 50-55",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_29_phase4_local_first_writes_design_trigger_push",
+      "label": "SyncManager.triggerPush",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": "lines 472-487",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_04_29_phase4_local_first_writes_design_doc",
+      "target": "specs_2026_04_29_phase4_local_first_writes_design_order_mutations_service",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase4_local_first_writes_design_doc",
+      "target": "specs_2026_04_29_phase4_local_first_writes_design_recalculate_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase4_local_first_writes_design_doc",
+      "target": "specs_2026_04_29_phase4_local_first_writes_design_shared_tax_calc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase4_local_first_writes_design_order_mutations_service",
+      "target": "specs_2026_04_29_phase4_local_first_writes_design_recalculate_order",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase4_local_first_writes_design_recalculate_order",
+      "target": "specs_2026_04_29_phase4_local_first_writes_design_shared_tax_calc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase4_local_first_writes_design_order_mutations_service",
+      "target": "specs_2026_04_29_phase4_local_first_writes_design_trigger_push",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase4_local_first_writes_design_trigger_push",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_manager",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase4_local_first_writes_design_no_dual_path_rationale",
+      "target": "specs_2026_04_29_phase4_local_first_writes_design_order_mutations_service",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_29_phase4_local_first_writes_design_doc",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_doc",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-29-phase4-local-first-writes-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

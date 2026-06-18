@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "specs_kitchen_printer_status_and_shared_toggle_design_doc",
+      "label": "Kitchen Printer Status & Shared Toggle Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-03-13-kitchen-printer-status-and-shared-toggle-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-13",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_kitchen_printer_status_and_shared_toggle_design_shared_printer_toggle",
+      "label": "useReceiptPrinterForKitchen Toggle",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-kitchen-printer-status-and-shared-toggle-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-13",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_kitchen_printer_status_and_shared_toggle_design_not_configured_status",
+      "label": "not_configured Connection Status",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-03-13-kitchen-printer-status-and-shared-toggle-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-03-13",
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_kitchen_printer_status_and_shared_toggle_design_doc",
+      "target": "specs_kitchen_printer_status_and_shared_toggle_design_shared_printer_toggle",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-kitchen-printer-status-and-shared-toggle-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_kitchen_printer_status_and_shared_toggle_design_doc",
+      "target": "specs_kitchen_printer_status_and_shared_toggle_design_not_configured_status",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-kitchen-printer-status-and-shared-toggle-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_kitchen_printer_status_and_shared_toggle_design_not_configured_status",
+      "target": "specs_printer_connection_polling_design_connection_status",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-03-13-kitchen-printer-status-and-shared-toggle-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

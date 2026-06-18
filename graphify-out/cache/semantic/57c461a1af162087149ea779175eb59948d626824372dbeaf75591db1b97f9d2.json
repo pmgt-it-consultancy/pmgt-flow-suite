@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "plans_2026_01_13_pnpm_biome_migration_design_pnpm_biome_migration",
+      "label": "pnpm + Biome Migration Design",
+      "file_type": "document",
+      "source_file": "docs/plans/2026-01-13-pnpm-biome-migration-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_01_13_pnpm_biome_migration_design_pnpm_catalog_protocol",
+      "label": "pnpm Catalog Protocol",
+      "file_type": "rationale",
+      "source_file": "docs/plans/2026-01-13-pnpm-biome-migration-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "plans_2026_01_13_pnpm_biome_migration_design_biome_replacing_eslint_prettier",
+      "label": "Biome (replacing ESLint/Prettier)",
+      "file_type": "concept",
+      "source_file": "docs/plans/2026-01-13-pnpm-biome-migration-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "plans_2026_01_13_pnpm_biome_migration_design_pnpm_biome_migration",
+      "target": "plans_2026_01_13_pnpm_biome_migration_design_pnpm_catalog_protocol",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-13-pnpm-biome-migration-design.md",
+      "source_location": "lines 126-136",
+      "weight": 1.0
+    },
+    {
+      "source": "plans_2026_01_13_pnpm_biome_migration_design_pnpm_biome_migration",
+      "target": "plans_2026_01_13_pnpm_biome_migration_design_biome_replacing_eslint_prettier",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/plans/2026-01-13-pnpm-biome-migration-design.md",
+      "source_location": "lines 252-260",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

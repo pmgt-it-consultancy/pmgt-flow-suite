@@ -91,6 +91,19 @@ export const ZReportSummary = ({ report, isLoading }: ZReportSummaryProps) => {
             {formatCurrency(report.cardEwalletTotal)}
           </Text>
         </XStack>
+        <XStack
+          justifyContent="space-between"
+          borderTopWidth={1}
+          borderColor="$gray200"
+          paddingTop={8}
+        >
+          <Text size="sm" style={{ fontWeight: "700" }}>
+            Total Collected
+          </Text>
+          <Text size="sm" style={{ fontWeight: "700" }}>
+            {formatCurrency(report.cashTotal + report.cardEwalletTotal)}
+          </Text>
+        </XStack>
         <XStack justifyContent="space-between">
           <Text variant="muted" size="sm">
             Discounts

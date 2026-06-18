@@ -1,0 +1,81 @@
+{
+  "nodes": [
+    {
+      "id": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_modules_bluetooth_connection_expo_module_config_json",
+      "label": "expo-module.config.json",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "bluetooth_connection_expo_module_config_platforms",
+      "label": "platforms",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "bluetooth_connection_expo_module_config_android",
+      "label": "android",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "bluetooth_connection_expo_module_config_android_modules",
+      "label": "modules",
+      "file_type": "code",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json",
+      "source_location": "L4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_modules_bluetooth_connection_expo_module_config_json",
+      "target": "bluetooth_connection_expo_module_config_platforms",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "bluetooth_connection_expo_module_config_platforms",
+      "target": "ref_android",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_solstellar_documents_work_pmgt_it_consultancy_pmgt_flow_suite_apps_native_modules_bluetooth_connection_expo_module_config_json",
+      "target": "bluetooth_connection_expo_module_config_android",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "bluetooth_connection_expo_module_config_android",
+      "target": "bluetooth_connection_expo_module_config_android_modules",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "bluetooth_connection_expo_module_config_android_modules",
+      "target": "ref_expo_modules_bluetoothconnection_bluetoothconnectionmodule",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/solstellar/Documents/work/pmgt-it-consultancy/pmgt-flow-suite/apps/native/modules/bluetooth-connection/expo-module.config.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "context": "import"
+    }
+  ]
+}

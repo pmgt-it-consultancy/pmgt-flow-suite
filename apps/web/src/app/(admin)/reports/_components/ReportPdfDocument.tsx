@@ -320,6 +320,12 @@ export const ReportPdfDocument = ({
           <Text style={s.sectionTitle}>Payment Methods</Text>
           <DetailRow label="Cash" value={fmt(report.cashTotal)} />
           <DetailRow label="Card/E-Wallet" value={fmt(report.cardEwalletTotal)} />
+          <View style={s.divider} />
+          <DetailRow
+            label="Total Collected"
+            value={fmt(report.cashTotal + report.cardEwalletTotal)}
+            bold
+          />
         </View>
 
         {/* Payment Transaction Details */}

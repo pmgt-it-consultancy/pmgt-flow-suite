@@ -1,0 +1,358 @@
+{
+  "nodes": [
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_doc",
+      "label": "Offline-First POS Tablet Design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_watermelondb",
+      "label": "WatermelonDB Sync Engine",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 29-43",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_engine_choice_rationale",
+      "label": "WatermelonDB Engine Choice",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 29-43",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_sync_manager",
+      "label": "SyncManager",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 60-63",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+      "label": "Sync HTTP Endpoints (pull/push/registerDevice)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 174-256",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_http_transport_rationale",
+      "label": "HTTP Transport over WebSocket",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 82-83",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_client_id",
+      "label": "clientId / Local-First UUIDs",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 84-86",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_updated_at_cursor",
+      "label": "updatedAt Pull Cursor",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 83-84",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_synced_mutations",
+      "label": "syncedMutations Idempotency Table",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 139-145",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_sync_devices",
+      "label": "syncDevices Table & deviceCode",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 128-153",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_conflict_resolution",
+      "label": "Server-Authoritative LWW Conflict Resolution",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 258-268",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_origin_tablet_wins",
+      "label": "Origin Tablet Wins Rule",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 262-264",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_device_order_numbers",
+      "label": "Device-Prefixed Order Numbers (T-A042)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 270-289",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_refresh_token_rotation",
+      "label": "60-Day Refresh Token Rotation",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 304-332",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_cached_session",
+      "label": "SecureStore Cached Session",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 334-354",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_2026_04_27_offline_first_pos_tablet_design_sync_status_pill",
+      "label": "SyncStatusPill Indicator",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": "lines 388-401",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_doc",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_watermelondb",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_doc",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_manager",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_doc",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_engine_choice_rationale",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_watermelondb",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_sync_manager",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_http_transport_rationale",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_client_id",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_updated_at_cursor",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_synced_mutations",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_devices",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_conflict_resolution",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_origin_tablet_wins",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_conflict_resolution",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_device_order_numbers",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_devices",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_cached_session",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_refresh_token_rotation",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_sync_status_pill",
+      "target": "specs_2026_04_27_offline_first_pos_tablet_design_sync_manager",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_2026_04_27_offline_first_pos_tablet_design_device_order_numbers",
+      "target": "specs_2026_03_28_split_payment_counter_ordering_design_daily_order_reset",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md",
+      "source_location": null,
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "offline_first_sync_pipeline",
+      "label": "Offline-First Sync Pipeline (WatermelonDB to Convex)",
+      "nodes": [
+        "specs_2026_04_27_offline_first_pos_tablet_design_watermelondb",
+        "specs_2026_04_27_offline_first_pos_tablet_design_sync_manager",
+        "specs_2026_04_27_offline_first_pos_tablet_design_sync_endpoints",
+        "specs_2026_04_29_phase4_local_first_writes_design_order_mutations_service"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/specs/2026-04-27-offline-first-pos-tablet-design.md"
+    }
+  ]
+}

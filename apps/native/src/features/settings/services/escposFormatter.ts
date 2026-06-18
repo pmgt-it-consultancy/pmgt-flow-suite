@@ -24,7 +24,7 @@ const line = (char: string, width: number): string => char.repeat(width);
 
 const formatRow = (left: string, right: string, width: number): string => {
   const gap = width - left.length - right.length;
-  if (gap < 1) return left.slice(0, width - right.length - 1) + " " + right;
+  if (gap < 1) return `${left.slice(0, width - right.length - 1)} ${right}`;
   return left + " ".repeat(gap) + right;
 };
 
@@ -58,9 +58,21 @@ const large = () => ({ encoding: "UTF-8", widthtimes: 1, heigthtimes: 1, fonttyp
 export async function printReceiptToThermal(
   data: ReceiptData,
   charsPerLine: number,
+  minimalReceipt = false,
 ): Promise<void> {
   const w = charsPerLine;
   const p = BluetoothEscposPrinter;
+
+  if (minimalReceipt) {
+    await p.printerAlign(ALIGN.LEFT);
+    await p.printText("Product Name Quantity Price\n", normal());
+    for (const item of data.items) {
+      await p.printText(`${item.name} ${item.quantity} ${formatCurrency(item.total)}\n`, normal());
+    }
+    const feed = charsPerLine >= 48 ? "\n\n\n\n\n\n" : "\n\n\n";
+    await p.printText(feed, { ...normal(), cut: true });
+    return;
+  }
 
   // Header
   await p.printerAlign(ALIGN.CENTER);

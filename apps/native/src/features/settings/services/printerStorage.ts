@@ -16,6 +16,7 @@ export interface PrinterSettings {
   kitchenPrintingEnabled: boolean;
   cashDrawerEnabled: boolean;
   useReceiptPrinterForKitchen: boolean;
+  minimalReceiptEnabled: boolean;
 }
 
 const DEFAULT_SETTINGS: PrinterSettings = {
@@ -23,12 +24,18 @@ const DEFAULT_SETTINGS: PrinterSettings = {
   kitchenPrintingEnabled: false,
   cashDrawerEnabled: false,
   useReceiptPrinterForKitchen: false,
+  minimalReceiptEnabled: false,
 };
 
 export async function getPrinterSettings(): Promise<PrinterSettings> {
   const raw = await SecureStore.getItemAsync(STORAGE_KEY);
   if (!raw) return { ...DEFAULT_SETTINGS, printers: [] };
-  return JSON.parse(raw) as PrinterSettings;
+  const parsed = JSON.parse(raw) as Partial<PrinterSettings>;
+  return {
+    ...DEFAULT_SETTINGS,
+    ...parsed,
+    printers: parsed.printers ?? [],
+  };
 }
 
 export async function savePrinterSettings(settings: PrinterSettings): Promise<void> {
