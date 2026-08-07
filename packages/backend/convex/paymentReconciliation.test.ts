@@ -124,8 +124,14 @@ async function seedPayment(
 
 async function generate(t: any, storeId: any, userId: any) {
   const asUser = t.withIdentity({ subject: userId });
-  await asUser.mutation(api.reports.generateDailyReport, { storeId, reportDate: REPORT_DATE });
-  return asUser.query(api.reports.getDailyReport, { storeId, reportDate: REPORT_DATE });
+  await asUser.mutation(api.reports.generateDailyReport, {
+    storeId,
+    reportDate: REPORT_DATE,
+  });
+  return asUser.query(api.reports.getDailyReport, {
+    storeId,
+    reportDate: REPORT_DATE,
+  });
 }
 
 describe("Z-report payment reconciliation — Cash + Card === Net Sales", () => {
@@ -133,7 +139,13 @@ describe("Z-report payment reconciliation — Cash + Card === Net Sales", () => 
     const t = convexTest(schema, modules);
     const { storeId, userId } = await setup(t);
     const orderId = await seedPaidOrder(t, { storeId, userId, netSales: 500 });
-    await seedPayment(t, { orderId, storeId, userId, paymentMethod: "cash", amount: 500 });
+    await seedPayment(t, {
+      orderId,
+      storeId,
+      userId,
+      paymentMethod: "cash",
+      amount: 500,
+    });
 
     const report = await generate(t, storeId, userId);
 
@@ -146,8 +158,20 @@ describe("Z-report payment reconciliation — Cash + Card === Net Sales", () => 
     const t = convexTest(schema, modules);
     const { storeId, userId } = await setup(t);
     const orderId = await seedPaidOrder(t, { storeId, userId, netSales: 500 });
-    await seedPayment(t, { orderId, storeId, userId, paymentMethod: "cash", amount: 300 });
-    await seedPayment(t, { orderId, storeId, userId, paymentMethod: "card_ewallet", amount: 200 });
+    await seedPayment(t, {
+      orderId,
+      storeId,
+      userId,
+      paymentMethod: "cash",
+      amount: 300,
+    });
+    await seedPayment(t, {
+      orderId,
+      storeId,
+      userId,
+      paymentMethod: "card_ewallet",
+      amount: 200,
+    });
 
     const report = await generate(t, storeId, userId);
 
@@ -159,13 +183,73 @@ describe("Z-report payment reconciliation — Cash + Card === Net Sales", () => 
   it("legacy card order (no orderPayments rows): attributed to card, balances to net", async () => {
     const t = convexTest(schema, modules);
     const { storeId, userId } = await setup(t);
-    await seedPaidOrder(t, { storeId, userId, netSales: 450, paymentMethod: "card_ewallet" });
+    await seedPaidOrder(t, {
+      storeId,
+      userId,
+      netSales: 450,
+      paymentMethod: "card_ewallet",
+    });
 
     const report = await generate(t, storeId, userId);
 
     expect(report?.cardEwalletTotal).toBe(450);
     expect(report?.cashTotal).toBe(0);
     expect((report?.cashTotal ?? 0) + (report?.cardEwalletTotal ?? 0)).toBe(report?.netSales);
+  });
+
+  it("rejects a duplicate offline payment push for an already-settled order", async () => {
+    // The online processPayment mutation no-ops when order.status is already
+    // "paid" (checkout.ts processPaymentCore), so a retried/double-tapped
+    // checkout is safe there. The offline sync push path for orderPayments
+    // (sync.ts applyPushedRow) writes rows directly and only dedupes by
+    // clientId, with no equivalent check — so a double-tap on the tablet that
+    // creates a second local payment record (fresh clientId, same order) gets
+    // pushed and accepted as a second, independent payment, inflating the
+    // Z-report's Cash/Card breakdown above net sales.
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setup(t);
+    const orderId = await seedPaidOrder(t, { storeId, userId, netSales: 500 });
+
+    const pushPayment = (clientId: string) =>
+      t.mutation(internal.sync.syncPushCore, {
+        storeId,
+        userId,
+        deviceId: "tablet-a",
+        payload: {
+          lastPulledAt: 0,
+          clientMutationId: `push-${clientId}`,
+          changes: {
+            orderPayments: {
+              created: [
+                {
+                  id: clientId,
+                  orderId,
+                  paymentMethod: "cash",
+                  amount: 500,
+                  createdAt: CREATED_AT,
+                },
+              ],
+            },
+          },
+        },
+      });
+
+    await pushPayment("payment-attempt-1");
+    const retryResponse = await pushPayment("payment-attempt-2");
+
+    expect(retryResponse).toEqual({
+      rejected: [
+        {
+          table: "orderPayments",
+          clientId: "payment-attempt-2",
+          reason: expect.any(String),
+        },
+      ],
+    });
+
+    const report = await generate(t, storeId, userId);
+    expect((report?.cashTotal ?? 0) + (report?.cardEwalletTotal ?? 0)).toBe(report?.netSales);
+    expect(report?.cashTotal).toBe(500);
   });
 
   it("paid order with no payment rows AND no paymentMethod still balances (defaults to cash)", async () => {
@@ -186,7 +270,13 @@ describe("Z-report payment reconciliation — Cash + Card === Net Sales", () => 
     const { storeId, userId } = await setup(t);
 
     const o1 = await seedPaidOrder(t, { storeId, userId, netSales: 500 });
-    await seedPayment(t, { orderId: o1, storeId, userId, paymentMethod: "cash", amount: 500 });
+    await seedPayment(t, {
+      orderId: o1,
+      storeId,
+      userId,
+      paymentMethod: "cash",
+      amount: 500,
+    });
 
     const o2 = await seedPaidOrder(t, { storeId, userId, netSales: 250 });
     await seedPayment(t, {
@@ -198,7 +288,12 @@ describe("Z-report payment reconciliation — Cash + Card === Net Sales", () => 
     });
 
     // Legacy + unattributed orders too.
-    await seedPaidOrder(t, { storeId, userId, netSales: 100, paymentMethod: "card_ewallet" });
+    await seedPaidOrder(t, {
+      storeId,
+      userId,
+      netSales: 100,
+      paymentMethod: "card_ewallet",
+    });
     await seedPaidOrder(t, { storeId, userId, netSales: 80 });
 
     const report = await generate(t, storeId, userId);
