@@ -16,7 +16,11 @@ import { cleanupExpiredDraftOrders } from "./orders";
 // Queries orderPayments table first; falls back to legacy order.paymentMethod
 async function calculatePaymentTotals(
   ctx: { db: any },
-  paidOrders: Array<{ _id: Id<"orders">; netSales: number; paymentMethod?: string }>,
+  paidOrders: Array<{
+    _id: Id<"orders">;
+    netSales: number;
+    paymentMethod?: string;
+  }>,
 ): Promise<{ cashTotal: number; cardEwalletTotal: number }> {
   let cashTotal = 0;
   let cardEwalletTotal = 0;
@@ -182,7 +186,7 @@ export const generateDailyReport = mutation({
 });
 
 // Helper: Aggregate daily data from orders
-async function aggregateDailyData(
+export async function aggregateDailyData(
   ctx: { db: any },
   storeId: Id<"stores">,
   reportDate: string,
@@ -500,7 +504,7 @@ async function generateProductSalesBreakdown(
 }
 
 // Helper: Generate payment transactions breakdown for non-cash orders
-async function generatePaymentTransactionsBreakdown(
+export async function generatePaymentTransactionsBreakdown(
   ctx: { db: any },
   storeId: Id<"stores">,
   reportDate: string,
@@ -1326,7 +1330,12 @@ export const getTopSellingProductsLive = query({
 
     const productMap = new Map<
       string,
-      { productId: Id<"products">; productName: string; quantitySold: number; grossAmount: number }
+      {
+        productId: Id<"products">;
+        productName: string;
+        quantitySold: number;
+        grossAmount: number;
+      }
     >();
 
     for (const order of paidOrders) {

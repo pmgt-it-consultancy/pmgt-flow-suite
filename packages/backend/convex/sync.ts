@@ -56,7 +56,10 @@ export const registerDeviceCore = internalMutation({
     const nextIndex = store.deviceCodeCounter ?? 0;
     const deviceCode = deviceCodeFromIndex(nextIndex);
 
-    await ctx.db.patch(args.storeId, { deviceCodeCounter: nextIndex + 1, updatedAt: Date.now() });
+    await ctx.db.patch(args.storeId, {
+      deviceCodeCounter: nextIndex + 1,
+      updatedAt: Date.now(),
+    });
     await ctx.db.insert("syncDevices", {
       deviceId: args.deviceId,
       storeId: args.storeId,
@@ -72,7 +75,10 @@ export const registerDevice = httpAction(async (ctx, request) => {
   const userId = await getAuthUserId(ctx);
   if (!userId) return unauthorized();
 
-  const body = (await request.json()) as { deviceId?: unknown; storeId?: unknown };
+  const body = (await request.json()) as {
+    deviceId?: unknown;
+    storeId?: unknown;
+  };
   if (typeof body.deviceId !== "string" || typeof body.storeId !== "string") {
     return badRequest("deviceId and storeId must be strings");
   }
@@ -102,7 +108,11 @@ type WatermelonRow = {
   [k: string]: unknown;
 };
 
-type ChangeBucket = { created: WatermelonRow[]; updated: WatermelonRow[]; deleted: string[] };
+type ChangeBucket = {
+  created: WatermelonRow[];
+  updated: WatermelonRow[];
+  deleted: string[];
+};
 
 type TableCursor = {
   cursor: string | null; // paginated query continuation
@@ -117,7 +127,11 @@ type PullPagePayload = {
   timestamp: number;
 };
 
-const emptyBucket = (): ChangeBucket => ({ created: [], updated: [], deleted: [] });
+const emptyBucket = (): ChangeBucket => ({
+  created: [],
+  updated: [],
+  deleted: [],
+});
 const emptyCursor = (): TableCursor => ({ cursor: null, isDone: false });
 
 // Paginated table fetch: numItems per page, capped per HTTP request by the
@@ -149,7 +163,10 @@ const STORE_SCOPED_TABLES: ReadonlyArray<{
   },
   { table: "orderItems", fkFields: ["orderId", "productId", "voidedBy"] },
   { table: "orderItemModifiers", fkFields: ["orderItemId"] },
-  { table: "orderDiscounts", fkFields: ["orderId", "orderItemId", "approvedBy"] },
+  {
+    table: "orderDiscounts",
+    fkFields: ["orderId", "orderItemId", "approvedBy"],
+  },
   {
     table: "orderVoids",
     fkFields: ["orderId", "orderItemId", "approvedBy", "requestedBy", "replacementOrderId"],
@@ -405,7 +422,9 @@ export const syncPull = httpAction(async (ctx, request) => {
   const userId = await getAuthUserId(ctx);
   if (!userId) return unauthorized();
 
-  const user = (await ctx.runQuery(internal.sync.getUserStoreScopeInternal, { userId })) as {
+  const user = (await ctx.runQuery(internal.sync.getUserStoreScopeInternal, {
+    userId,
+  })) as {
     storeId: Id<"stores">;
   } | null;
   if (!user?.storeId) return forbidden("User has no store");
@@ -1015,11 +1034,29 @@ async function applyPushedRow({
         | Id<"orders">
         | undefined;
       if (!orderId) throw new Error("Missing orderId FK");
+      const amount = row.amount as number;
+      // This path bypasses processPaymentCore's "totalPayments > netSales" guard
+      // (checkout.ts), since offline devices write these rows directly. A
+      // double-tapped checkout — or any retry that mints a fresh local
+      // clientId — would otherwise push a second, independent payment row for
+      // the same order, since dedup above is by clientId, not by order. Re-derive
+      // the same guard here against what's already recorded for the order so a
+      // duplicate push is rejected instead of inflating the Z-report breakdown
+      // past net sales.
+      const order = await ctx.db.get(orderId);
+      const existingPayments = await ctx.db
+        .query("orderPayments")
+        .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
+        .collect();
+      const alreadyRecorded = existingPayments.reduce((sum: number, p: any) => sum + p.amount, 0);
+      if (order && alreadyRecorded + amount > order.netSales + 0.01) {
+        throw new Error("Rejected payment push: exceeds amount due for order");
+      }
       await ctx.db.insert("orderPayments", {
         orderId,
         storeId,
         paymentMethod: row.paymentMethod as Doc<"orderPayments">["paymentMethod"],
-        amount: row.amount as number,
+        amount,
         cashReceived: row.cashReceived as number | undefined,
         changeGiven: row.changeGiven as number | undefined,
         cardPaymentType: row.cardPaymentType as string | undefined,
@@ -1083,7 +1120,9 @@ export const syncPush = httpAction(async (ctx, request) => {
   const userId = await getAuthUserId(ctx);
   if (!userId) return unauthorized();
 
-  const user = (await ctx.runQuery(internal.sync.getUserStoreScopeInternal, { userId })) as {
+  const user = (await ctx.runQuery(internal.sync.getUserStoreScopeInternal, {
+    userId,
+  })) as {
     storeId: Id<"stores">;
   } | null;
   if (!user?.storeId) return forbidden("User has no store");

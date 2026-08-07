@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { internalAction, internalMutation, internalQuery } from "./_generated/server";
+import { aggregateDailyData, generatePaymentTransactionsBreakdown } from "./reports";
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -206,7 +207,10 @@ export const backfillAllStoreIds = internalAction({
     // orderItems first so orderItemModifiers can resolve storeId via the
     // now-backfilled item without chaining to the order.
     const sequence = [
-      { key: "orderItems" as const, fn: internal.syncMaintenance.backfillOrderItemStoreId },
+      {
+        key: "orderItems" as const,
+        fn: internal.syncMaintenance.backfillOrderItemStoreId,
+      },
       {
         key: "orderItemModifiers" as const,
         fn: internal.syncMaintenance.backfillOrderItemModifierStoreId,
@@ -215,7 +219,10 @@ export const backfillAllStoreIds = internalAction({
         key: "orderDiscounts" as const,
         fn: internal.syncMaintenance.backfillOrderDiscountStoreId,
       },
-      { key: "orderVoids" as const, fn: internal.syncMaintenance.backfillOrderVoidStoreId },
+      {
+        key: "orderVoids" as const,
+        fn: internal.syncMaintenance.backfillOrderVoidStoreId,
+      },
     ];
 
     const totals = {
@@ -262,7 +269,10 @@ export const countLegacyOrphans = internalQuery({
   args: {},
   returns: v.object({
     orderItems: v.object({ total: v.number(), samples: v.array(v.any()) }),
-    orderItemModifiers: v.object({ total: v.number(), samples: v.array(v.any()) }),
+    orderItemModifiers: v.object({
+      total: v.number(),
+      samples: v.array(v.any()),
+    }),
     orderDiscounts: v.object({ total: v.number(), samples: v.array(v.any()) }),
     orderVoids: v.object({ total: v.number(), samples: v.array(v.any()) }),
   }),
@@ -291,7 +301,10 @@ export const countLegacyOrphans = internalQuery({
     const sample = (rows: any[]) => rows.slice(0, LEGACY_SAMPLE_SIZE);
     return {
       orderItems: { total: items.length, samples: sample(items) },
-      orderItemModifiers: { total: modifiers.length, samples: sample(modifiers) },
+      orderItemModifiers: {
+        total: modifiers.length,
+        samples: sample(modifiers),
+      },
       orderDiscounts: { total: discounts.length, samples: sample(discounts) },
       orderVoids: { total: voids.length, samples: sample(voids) },
     };
@@ -449,14 +462,26 @@ const MAX_CLEANUP_PAGES = 1000;
 export const cleanupOrphanedLegacyRows = internalAction({
   args: { pageSize: v.optional(v.number()) },
   returns: v.object({
-    orderItems: v.object({ deleted: v.number(), scanned: v.number(), retained: v.number() }),
+    orderItems: v.object({
+      deleted: v.number(),
+      scanned: v.number(),
+      retained: v.number(),
+    }),
     orderItemModifiers: v.object({
       deleted: v.number(),
       scanned: v.number(),
       retained: v.number(),
     }),
-    orderDiscounts: v.object({ deleted: v.number(), scanned: v.number(), retained: v.number() }),
-    orderVoids: v.object({ deleted: v.number(), scanned: v.number(), retained: v.number() }),
+    orderDiscounts: v.object({
+      deleted: v.number(),
+      scanned: v.number(),
+      retained: v.number(),
+    }),
+    orderVoids: v.object({
+      deleted: v.number(),
+      scanned: v.number(),
+      retained: v.number(),
+    }),
   }),
   handler: async (ctx, args) => {
     const sequence = [
@@ -464,12 +489,18 @@ export const cleanupOrphanedLegacyRows = internalAction({
         key: "orderItemModifiers" as const,
         fn: internal.syncMaintenance.cleanupOrphanedOrderItemModifiers,
       },
-      { key: "orderItems" as const, fn: internal.syncMaintenance.cleanupOrphanedOrderItems },
+      {
+        key: "orderItems" as const,
+        fn: internal.syncMaintenance.cleanupOrphanedOrderItems,
+      },
       {
         key: "orderDiscounts" as const,
         fn: internal.syncMaintenance.cleanupOrphanedOrderDiscounts,
       },
-      { key: "orderVoids" as const, fn: internal.syncMaintenance.cleanupOrphanedOrderVoids },
+      {
+        key: "orderVoids" as const,
+        fn: internal.syncMaintenance.cleanupOrphanedOrderVoids,
+      },
     ];
 
     const totals = {
@@ -493,5 +524,107 @@ export const cleanupOrphanedLegacyRows = internalAction({
     }
 
     return totals;
+  },
+});
+
+// ---------------------------------------------------------------------------
+// One-shot: fix the 2026-08-06 Myka's Grill duplicate cash payment
+// ---------------------------------------------------------------------------
+//
+// A double-tapped checkout on order T-F6112 (offline sync push had no guard
+// against a second, independent orderPayments row for the same order —
+// fixed in sync.ts's applyPushedRow) recorded two cash payments of 2182 each
+// for a 2182 bill, inflating that day's Cash total by 2182 and breaking the
+// printed Z-report's Cash + Card === Net Sales invariant.
+//
+// This deletes the specific duplicate row (identity-checked against order,
+// amount, and method before deleting) and regenerates the stored report for
+// that date using the exact same aggregation logic generateDailyReport uses.
+//
+// Run via: `npx convex run --prod syncMaintenance:fixAug6DuplicatePayment`
+// Safe to re-run: if the row is already gone, it throws instead of touching
+// anything else.
+
+const AUG6_DUPLICATE_PAYMENT_ID = "nh7dqm419r49r86ra513cy4cas8bygms" as Id<"orderPayments">;
+const AUG6_AFFECTED_ORDER_ID = "m9740j5xq7y4dw8khjrn97rgpn8bye3m" as Id<"orders">;
+const AUG6_STORE_ID = "mn7dkgmcp1j1zncwxh0db9gg1s80fpme" as Id<"stores">;
+const AUG6_REPORT_DATE = "2026-08-06";
+const AUG6_START_TIME = "06:00";
+const AUG6_END_TIME = "15:45";
+const AUG6_EXPECTED_AMOUNT = 2182;
+
+export const fixAug6DuplicatePayment = internalMutation({
+  args: {},
+  returns: v.object({
+    deletedPaymentId: v.id("orderPayments"),
+    before: v.object({ cashTotal: v.number(), cardEwalletTotal: v.number() }),
+    after: v.object({ cashTotal: v.number(), cardEwalletTotal: v.number() }),
+  }),
+  handler: async (ctx) => {
+    const payment = await ctx.db.get(AUG6_DUPLICATE_PAYMENT_ID);
+    if (!payment) {
+      throw new Error("Duplicate payment row not found — already deleted?");
+    }
+    if (
+      payment.orderId !== AUG6_AFFECTED_ORDER_ID ||
+      payment.amount !== AUG6_EXPECTED_AMOUNT ||
+      payment.paymentMethod !== "cash"
+    ) {
+      throw new Error(
+        "Safety check failed: row does not match the expected duplicate (order T-F6112, PHP 2182 cash)",
+      );
+    }
+
+    const existingReport = await ctx.db
+      .query("dailyReports")
+      .withIndex("by_store_date", (q) =>
+        q.eq("storeId", AUG6_STORE_ID).eq("reportDate", AUG6_REPORT_DATE),
+      )
+      .first();
+    const before = existingReport
+      ? {
+          cashTotal: existingReport.cashTotal,
+          cardEwalletTotal: existingReport.cardEwalletTotal,
+        }
+      : { cashTotal: 0, cardEwalletTotal: 0 };
+
+    await ctx.db.delete(AUG6_DUPLICATE_PAYMENT_ID);
+
+    const store = await ctx.db.get(AUG6_STORE_ID);
+    const reportData = await aggregateDailyData(
+      ctx,
+      AUG6_STORE_ID,
+      AUG6_REPORT_DATE,
+      store?.schedule,
+      AUG6_START_TIME,
+      AUG6_END_TIME,
+    );
+
+    if (existingReport) {
+      await ctx.db.patch(existingReport._id, {
+        ...reportData,
+        startTime: AUG6_START_TIME,
+        endTime: AUG6_END_TIME,
+        generatedAt: Date.now(),
+      });
+    }
+
+    await generatePaymentTransactionsBreakdown(
+      ctx,
+      AUG6_STORE_ID,
+      AUG6_REPORT_DATE,
+      store?.schedule,
+      AUG6_START_TIME,
+      AUG6_END_TIME,
+    );
+
+    return {
+      deletedPaymentId: AUG6_DUPLICATE_PAYMENT_ID,
+      before,
+      after: {
+        cashTotal: reportData.cashTotal,
+        cardEwalletTotal: reportData.cardEwalletTotal,
+      },
+    };
   },
 });
