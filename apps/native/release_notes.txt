@@ -1,11 +1,7 @@
 ## What's New
 
-- Balanced Z-report — the payment breakdown now reconciles with net sales, with a "Total Collected" line so you can confirm the day balances without tallying every transaction.
-- Customer receipt setting — option for a minimal customer receipt layout.
-- Category sales in reports — product sales are now broken down by category.
-- Admin improvements — better filtering and ordering on admin list screens.
+- Fixed a rare Z-report imbalance where a double-tapped checkout could record a payment twice for the same order, pushing the Cash/Card total above Net Sales. Duplicate payment attempts are now rejected during sync.
 
 ## Notes
 
-- Z-report voids are now shown for audit only and are no longer subtracted from net sales again (they were already excluded), so the Sales Summary adds up correctly.
-- Refunds record the replacement payment under the original method (cash vs card), keeping the cash/card breakdown accurate.
+- This closes a gap in offline sync: the checkout screen already prevented double payments when online, but the offline sync path didn't have the same protection until now.
