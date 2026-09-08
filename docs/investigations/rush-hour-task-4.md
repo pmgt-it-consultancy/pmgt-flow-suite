@@ -20,3 +20,9 @@ Approved seam: exported `useModifiersForProduct`, rendered with actual React/tes
 ## Limits
 
 This is a materialization/subscription correctness proxy, not a SQL execution-cost or tablet latency measurement. The deterministic database boundary drives catalog notifications and does not validate Watermelon SQLite notification internals. Existing observed-column lists cover membership/display edits. Actual VistaTab/Hermes acceptance remains required under parent #3. No index migration or worker is justified by this synthetic fixture alone. Full native suite is coordinated once by the parent agent.
+
+## Modal integration follow-up
+
+Review found the modal initialized defaults only when opened/product changed, whereas scoped queries deliver groups asynchronously. Rendered regression reproduced a required default remaining unselected (Add disabled) after groups arrived. The modal now resets session fields on open/product change and initializes each new group once as its choices arrive. Catalog refreshes retain cashier selections, deselected optional defaults and notes. Direct imports keep the real Text/currency helper in rendered tests without unrelated barrel initialization.
+
+The delayed-groups test went red then green. Three rendered modal tests cover required/optional defaults, no-default required validation, preservation across empty/loading refreshes and delayed defaults after product switching. Only native/vendor UI boundaries are mocked. Focused modal suite passes. Follow-up native typecheck initially encountered another task's in-progress `CartItem.test.tsx` prop mismatch (`quantityEdits`); parent coordinates final verification. No device/build claim.

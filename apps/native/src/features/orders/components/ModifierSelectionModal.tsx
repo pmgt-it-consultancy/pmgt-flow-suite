@@ -5,8 +5,8 @@ import { Modal as RNModal, ScrollView, StyleSheet, TextInput, View } from "react
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { XStack, YStack } from "tamagui";
-import { Text } from "../../shared/components/ui";
-import { useFormatCurrency } from "../../shared/hooks";
+import { Text } from "../../shared/components/ui/Text";
+import { useFormatCurrency } from "../../shared/hooks/useFormatCurrency";
 
 interface ModifierGroup {
   groupId: Id<"modifierGroups">;
@@ -88,18 +88,28 @@ export const ModifierSelectionModal = ({
       customPrice <= openMaxPrice);
 
   useEffect(() => {
-    if (!visible || !product) return;
-    const defaults: Record<string, Set<string>> = {};
-    for (const group of modifierGroups) {
-      const defaultOptions = group.options.filter((o) => o.isDefault);
-      defaults[group.groupId] =
-        defaultOptions.length > 0 ? new Set(defaultOptions.map((o) => o.optionId)) : new Set();
-    }
-    setSelections(defaults);
+    if (!visible || !product?.id) return;
+    setSelections({});
     setQuantity(1);
     setNotes("");
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- modifierGroups is derived per-product; resetting only when the user opens a different product is intentional.
   }, [product?.id, visible]);
+
+  useEffect(() => {
+    if (!visible || !product?.id) return;
+    // Groups can arrive after opening. Initialize each group once per modal
+    // session, including optional groups; subsequent emissions retain edits.
+    setSelections((previous) => {
+      const missing = modifierGroups.filter((group) => !(group.groupId in previous));
+      if (!missing.length) return previous;
+      const next = { ...previous };
+      for (const group of missing) {
+        next[group.groupId] = new Set(
+          group.options.filter((option) => option.isDefault).map((option) => option.optionId),
+        );
+      }
+      return next;
+    });
+  }, [modifierGroups, product?.id, visible]);
 
   const handleSelectOption = useCallback((group: ModifierGroup, optionId: string) => {
     setSelections((prev) => {
