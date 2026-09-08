@@ -1,4 +1,4 @@
-import { Q } from "@nozbe/watermelondb";
+import { type Model, Q } from "@nozbe/watermelondb";
 import {
   getDatabase,
   type Order,
@@ -42,7 +42,7 @@ export async function createOrder(params: {
   let orderId = "";
 
   await db.write(async () => {
-    const order = await db.get<Order>("orders").create((o) => {
+    await db.get<Order>("orders").create((o) => {
       o._raw.id = uid();
       orderId = o._raw.id;
       o.storeId = params.storeId;
@@ -95,10 +95,11 @@ export async function addItemToOrder(params: {
 
   await db.write(async () => {
     const product = await db.get<Product>("products").find(params.productId);
+    const order = await db.get<Order>("orders").find(params.orderId);
 
     const basePrice = params.customPrice ?? product.price;
 
-    const orderItem = await db.get<OrderItem>("order_items").create((oi) => {
+    const orderItem = db.get<OrderItem>("order_items").prepareCreate((oi) => {
       oi._raw.id = uid();
       oi.orderId = params.orderId;
       oi.productId = params.productId;
@@ -111,22 +112,22 @@ export async function addItemToOrder(params: {
       oi.isSentToKitchen = false;
     });
 
-    if (params.modifiers) {
-      for (const mod of params.modifiers) {
-        await db.get<OrderItemModifier>("order_item_modifiers").create((oim) => {
-          oim._raw.id = uid();
-          oim.orderItemId = orderItem.id;
-          oim.modifierGroupName = mod.modifierGroupName;
-          oim.modifierOptionName = mod.modifierOptionName;
-          oim.priceAdjustment = mod.priceAdjustment;
-        });
-      }
-    }
-
-    const order = await db.get<Order>("orders").find(params.orderId);
-    await order.update((o) => {
-      o.itemCount = (o.itemCount ?? 0) + params.quantity;
-    });
+    const modifiers = (params.modifiers ?? []).map((mod) =>
+      db.get<OrderItemModifier>("order_item_modifiers").prepareCreate((oim) => {
+        oim._raw.id = uid();
+        oim.orderItemId = orderItem.id;
+        oim.modifierGroupName = mod.modifierGroupName;
+        oim.modifierOptionName = mod.modifierOptionName;
+        oim.priceAdjustment = mod.priceAdjustment;
+      }),
+    );
+    await db.batch(
+      orderItem,
+      ...modifiers,
+      order.prepareUpdate((o) => {
+        o.itemCount = (o.itemCount ?? 0) + params.quantity;
+      }),
+    );
   });
 
   await recalculateOrderTotals(params.orderId);
@@ -146,17 +147,18 @@ export async function removeItemFromOrder(params: {
     const item = await db.get<OrderItem>("order_items").find(params.orderItemId);
 
     orderId = item.orderId;
-
-    await item.update((oi) => {
-      oi.isVoided = true;
-      oi.voidReason = params.voidReason || undefined;
-      oi.voidedAt = Date.now();
-    });
-
     const order = await db.get<Order>("orders").find(orderId);
-    await order.update((o) => {
-      o.itemCount = Math.max(0, (o.itemCount ?? 0) - item.quantity);
-    });
+
+    await db.batch(
+      item.prepareUpdate((oi) => {
+        oi.isVoided = true;
+        oi.voidReason = params.voidReason || undefined;
+        oi.voidedAt = Date.now();
+      }),
+      order.prepareUpdate((o) => {
+        o.itemCount = Math.max(0, (o.itemCount ?? 0) - item.quantity);
+      }),
+    );
   });
 
   await recalculateOrderTotals(orderId);
@@ -177,15 +179,16 @@ export async function updateItemQuantity(params: {
 
     const oldQty = item.quantity;
     orderId = item.orderId;
-
-    await item.update((oi) => {
-      oi.quantity = params.quantity;
-    });
-
     const order = await db.get<Order>("orders").find(orderId);
-    await order.update((o) => {
-      o.itemCount = (o.itemCount ?? 0) - oldQty + params.quantity;
-    });
+
+    await db.batch(
+      item.prepareUpdate((oi) => {
+        oi.quantity = params.quantity;
+      }),
+      order.prepareUpdate((o) => {
+        o.itemCount = (o.itemCount ?? 0) - oldQty + params.quantity;
+      }),
+    );
   });
 
   await recalculateOrderTotals(orderId);
@@ -382,75 +385,86 @@ export async function createAndSendToKitchen(params: {
   const sentItemIds: string[] = [];
 
   await db.write(async () => {
-    await db.get<Order>("orders").create((o) => {
-      o._raw.id = orderId;
-      o.storeId = params.storeId;
-      o.orderNumber = orderNumber;
-      o.orderType = "dine_in";
-      o.tableId = params.tableId;
-      o.pax = params.pax;
-      o.tabNumber = params.tabNumber;
-      o.tabName = params.tabName;
-      o.status = "open";
-      o.createdBy = "";
-      o.createdAt = Date.now();
-      o.grossSales = 0;
-      o.vatableSales = 0;
-      o.vatAmount = 0;
-      o.vatExemptSales = 0;
-      o.nonVatSales = 0;
-      o.discountAmount = 0;
-      o.netSales = 0;
-      o.itemCount = 0;
-    });
+    const table = await db.get<TableModel>("tables").find(params.tableId);
+    const products = await db
+      .get<Product>("products")
+      .query(Q.where("id", Q.oneOf([...new Set(params.items.map((item) => item.productId))])))
+      .fetch();
+    const productById = new Map(products.map((product) => [product.id, product]));
+    for (const item of params.items) {
+      if (!productById.has(item.productId))
+        throw new Error("A product in this order is no longer available");
+    }
+    const operations: Model[] = [];
+    operations.push(
+      db.get<Order>("orders").prepareCreate((o) => {
+        o._raw.id = orderId;
+        o.storeId = params.storeId;
+        o.orderNumber = orderNumber;
+        o.orderType = "dine_in";
+        o.tableId = params.tableId;
+        o.pax = params.pax;
+        o.tabNumber = params.tabNumber;
+        o.tabName = params.tabName;
+        o.status = "open";
+        o.createdBy = "";
+        o.createdAt = Date.now();
+        o.grossSales = 0;
+        o.vatableSales = 0;
+        o.vatAmount = 0;
+        o.vatExemptSales = 0;
+        o.nonVatSales = 0;
+        o.discountAmount = 0;
+        o.netSales = 0;
+        o.itemCount = params.items.reduce((sum, item) => sum + item.quantity, 0);
+      }),
+    );
 
     for (const d of params.items) {
-      const product = await db.get<Product>("products").find(d.productId);
+      const product = productById.get(d.productId)!;
 
       const basePrice = d.customPrice ?? product.price;
       const oiId = uid();
       sentItemIds.push(oiId);
 
-      await db.get<OrderItem>("order_items").create((oi) => {
-        oi._raw.id = oiId;
-        oi.orderId = orderId;
-        oi.productId = d.productId;
-        oi.productName = product.name;
-        oi.productPrice = basePrice;
-        oi.quantity = d.quantity;
-        oi.notes = d.notes || undefined;
-        oi.isVoided = false;
-        oi.isSentToKitchen = true;
-      });
+      operations.push(
+        db.get<OrderItem>("order_items").prepareCreate((oi) => {
+          oi._raw.id = oiId;
+          oi.orderId = orderId;
+          oi.productId = d.productId;
+          oi.productName = product.name;
+          oi.productPrice = basePrice;
+          oi.quantity = d.quantity;
+          oi.notes = d.notes || undefined;
+          oi.isVoided = false;
+          oi.isSentToKitchen = true;
+        }),
+      );
 
       if (d.modifiers) {
         for (const mod of d.modifiers) {
-          await db.get<OrderItemModifier>("order_item_modifiers").create((oim) => {
-            oim._raw.id = uid();
-            oim.orderItemId = oiId;
-            oim.modifierGroupName = mod.modifierGroupName;
-            oim.modifierOptionName = mod.modifierOptionName;
-            oim.priceAdjustment = mod.priceAdjustment;
-          });
+          operations.push(
+            db.get<OrderItemModifier>("order_item_modifiers").prepareCreate((oim) => {
+              oim._raw.id = uid();
+              oim.orderItemId = oiId;
+              oim.modifierGroupName = mod.modifierGroupName;
+              oim.modifierOptionName = mod.modifierOptionName;
+              oim.priceAdjustment = mod.priceAdjustment;
+            }),
+          );
         }
       }
     }
 
-    const table = await db.get<TableModel>("tables").find(params.tableId);
-    await table.update((t) => {
-      t.status = "occupied";
-    });
+    operations.push(
+      table.prepareUpdate((t) => {
+        t.status = "occupied";
+      }),
+    );
+    await db.batch(operations);
   });
 
   await recalculateOrderTotals(orderId);
-
-  await db.write(async () => {
-    const order = await db.get<Order>("orders").find(orderId);
-    const totalQty = params.items.reduce((s, d) => s + d.quantity, 0);
-    await order.update((o) => {
-      o.itemCount = totalQty;
-    });
-  });
 
   syncManager.triggerPush();
 
