@@ -645,7 +645,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         tableId,
         tableName: currentTableName,
       });
-    } catch (error) {
+    } catch {
       Alert.alert("Quantity not saved", "Please try checkout again to save your changes.");
       closeTableLockRef.current = false;
       setIsClosingTable(false);
