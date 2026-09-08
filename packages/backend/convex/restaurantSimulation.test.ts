@@ -84,6 +84,13 @@ it("creates an additive restaurant catalog once and makes its modifier options s
   });
   expect(page.bucket.created).toHaveLength(80);
   expect(page.bucket.created.every((row: { isAvailable: boolean }) => row.isAvailable)).toBe(true);
+  expect(
+    await t.query(internal.restaurantSimulation.countPage, {
+      storeId,
+      table: "products",
+      cursor: null,
+    }),
+  ).toMatchObject({ count: 500, isDone: true });
 });
 
 it("seeds complete historical orders once, with literal modifier-inclusive totals and bounded ranges", async () => {

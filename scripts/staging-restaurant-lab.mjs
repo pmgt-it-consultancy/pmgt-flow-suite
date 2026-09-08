@@ -100,25 +100,33 @@ if (mode === "seed") {
   }
   console.log("Traffic finished; no background job remains.");
 } else if (mode === "status") {
-  for (const table of [
-    "categories",
-    "products",
-    "modifierGroups",
-    "modifierOptions",
-    "tables",
-    "orders",
-    "orderItems",
-    "orderItemModifiers",
-    "orderPayments",
-  ]) {
-    const rows = await convex(["data", table, "--limit", "100000", "--format", "json"]);
-    const matched = rows.filter(
-      (row) => row.storeId === storeId && row.clientId?.startsWith(`sim-restaurant-v1:${storeId}:`),
-    );
-    console.log(
-      `${table}: ${matched.length} SIM records${rows.length === 100000 ? " (scan limit reached; count may be incomplete)" : ""}`,
-    );
-  }
+  await Promise.all(
+    [
+      "categories",
+      "products",
+      "modifierGroups",
+      "modifierOptions",
+      "modifierGroupAssignments",
+      "tables",
+      "orders",
+      "orderItems",
+      "orderItemModifiers",
+      "orderPayments",
+    ].map(async (table) => {
+      let cursor = null;
+      let count = 0;
+      for (let pageNumber = 0; pageNumber < 1000; pageNumber++) {
+        const page = await run("restaurantSimulation:countPage", { storeId, table, cursor });
+        count += page.count;
+        if (page.isDone) {
+          console.log(`${table}: ${count} SIM records`);
+          return;
+        }
+        cursor = page.cursor;
+      }
+      throw new Error(`Verification page limit reached for ${table}; count incomplete`);
+    }),
+  );
 } else {
   console.log(
     "Usage: node scripts/staging-restaurant-lab.mjs seed|status|traffic [count] [intervalMs] [runId]",

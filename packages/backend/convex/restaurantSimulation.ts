@@ -1,12 +1,49 @@
 import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
-import { internalMutation } from "./_generated/server";
+import { internalMutation, internalQuery } from "./_generated/server";
 import { requireStagingLab } from "./lib/stagingLab";
 import { aggregateOrderTotals, calculateItemTotals } from "./lib/taxCalculations";
 
 const key = (storeId: Id<"stores">, kind: string, index: number) =>
   `sim-restaurant-v1:${storeId}:${kind}:${index}`;
 const label = (index: number) => String(index + 1).padStart(3, "0");
+
+export const countPage = internalQuery({
+  args: {
+    storeId: v.id("stores"),
+    table: v.union(
+      v.literal("categories"),
+      v.literal("products"),
+      v.literal("modifierGroups"),
+      v.literal("modifierOptions"),
+      v.literal("modifierGroupAssignments"),
+      v.literal("tables"),
+      v.literal("orders"),
+      v.literal("orderItems"),
+      v.literal("orderItemModifiers"),
+      v.literal("orderPayments"),
+    ),
+    cursor: v.union(v.string(), v.null()),
+  },
+  returns: v.object({
+    count: v.number(),
+    isDone: v.boolean(),
+    cursor: v.union(v.string(), v.null()),
+  }),
+  handler: async (ctx, { storeId, table, cursor }) => {
+    requireStagingLab();
+    const prefix = `sim-restaurant-v1:${storeId}:`;
+    const page = await ctx.db
+      .query(table)
+      .withIndex("by_clientId", (q) => q.gte("clientId", prefix).lt("clientId", `${prefix}\uffff`))
+      .paginate({ cursor, numItems: 1000 });
+    return {
+      count: page.page.length,
+      isDone: page.isDone,
+      cursor: page.isDone ? null : page.continueCursor,
+    };
+  },
+});
 
 export const seedCatalog = internalMutation({
   args: { storeId: v.id("stores") },
