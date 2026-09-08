@@ -1,4 +1,7 @@
 ## What's New
 
-- Reduced unnecessary order-data loading on tables, order history, and checkout screens as sales history grows.
-- Improved takeout date filtering so older orders and their items are not loaded for the selected period.
+- Reduced unnecessary data loading across tables, takeout, order history, checkout, and refunds as sales history grows.
+- Improved modifier loading for dine-in and takeout, and reduced updates on unchanged cart rows and hidden screens.
+- Quantity edits now finish saving before checkout or kitchen send, with retry support when saving fails.
+- Reduced database work when adding, updating, and sending orders while preserving totals and discounts.
+- Fixed queued sync delivery and interrupted downloads, including large order backlogs.
