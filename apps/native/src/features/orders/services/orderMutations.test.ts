@@ -1,5 +1,12 @@
 import type { Database } from "@nozbe/watermelondb";
-import type { Order, OrderItem, Product, Store, TableModel } from "../../../db/models";
+import type {
+  Order,
+  OrderDiscount,
+  OrderItem,
+  Product,
+  Store,
+  TableModel,
+} from "../../../db/models";
 import { createTestDatabase } from "../../../db/testing/createTestDatabase";
 import {
   addItemToOrder,
@@ -77,6 +84,47 @@ it("rejects a missing product without creating a partial line", async () => {
   ).rejects.toThrow();
   expect(await mockDatabase.get("order_items").query().fetchCount()).toBe(0);
   expect((await mockDatabase.get<Order>("orders").find("o")).itemCount).toBe(0);
+});
+it.each([
+  "senior_citizen",
+  "pwd",
+])("preserves VAT and %s discounts through quantity changes and voids", async (discountType) => {
+  const product = await mockDatabase.get<Product>("products").find("p");
+  await mockDatabase.write(() =>
+    product.update((p) => {
+      p.price = 100;
+      p.isVatable = true;
+    }),
+  );
+  await addItemToOrder({
+    orderId: "o",
+    productId: "p",
+    quantity: 2,
+    modifiers: [{ modifierGroupName: "Extra", modifierOptionName: "Milk", priceAdjustment: 12 }],
+  });
+  const [item] = await mockDatabase.get<OrderItem>("order_items").query().fetch();
+  const discount = await mockDatabase.write(() =>
+    mockDatabase.get<OrderDiscount>("order_discounts").create((d) => {
+      d.orderId = "o";
+      d.orderItemId = item.id;
+      d.discountType = discountType;
+      d.quantityApplied = 1;
+    }),
+  );
+  await updateItemQuantity({ orderItemId: item.id, quantity: 3 });
+  const order = await mockDatabase.get<Order>("orders").find("o");
+  // Two regular VAT-inclusive units (112 each) plus one exempt discounted unit (80).
+  expect(order.netSales).toBe(304);
+  expect(order.vatAmount).toBe(24);
+  expect(order.discountAmount).toBe(20);
+  expect(order.itemCount).toBe(3);
+  expect(discount.discountAmount).toBe(20);
+  await removeItemFromOrder({ orderItemId: item.id });
+  expect(order.netSales).toBe(0);
+  expect(order.vatAmount).toBe(0);
+  expect(order.discountAmount).toBe(0);
+  expect(order.itemCount).toBe(0);
+  expect(discount.discountAmount).toBe(0);
 });
 it("does not leave a partial kitchen order when a draft contains a missing product", async () => {
   await expect(
