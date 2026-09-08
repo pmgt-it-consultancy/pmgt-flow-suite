@@ -24,6 +24,7 @@ import {
   ViewBillModal,
   VoidItemModal,
 } from "../components";
+import { useCartQuantityEdits, usePreventCartEditLoss } from "../hooks/useCartQuantityEdits";
 import {
   addItemToOrder,
   createAndSendToKitchen,
@@ -92,6 +93,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
   // Draft mode state
   const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
+  const quantityEdits = useCartQuantityEdits();
+  usePreventCartEditLoss(quantityEdits, navigation);
 
   // Shared UI state
   const [isAddingItem, setIsAddingItem] = useState(false);
@@ -178,6 +181,8 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     }
     return order?.items.filter((i) => !i.isVoided) ?? [];
   }, [isDraftMode, draftItems, order]);
+  const activeItemsRef = useRef(activeItems);
+  activeItemsRef.current = activeItems;
 
   const cartTotal = useMemo(
     () => activeItems.reduce((sum, item) => sum + item.lineTotal, 0),
@@ -333,6 +338,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     async (itemId: Id<"orderItems">, currentQty: number) => {
       if (isDraftMode) {
         if (currentQty <= 1) {
+          quantityEdits.discard(itemId);
           setDraftItems((prev) =>
             prev.filter((d) => (d.localId as unknown as Id<"orderItems">) !== itemId),
           );
@@ -356,7 +362,9 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             style: "destructive",
             onPress: async () => {
               try {
+                await quantityEdits.flush();
                 await removeItemFromOrder({ orderItemId: itemId as string });
+                quantityEdits.discard(itemId);
               } catch (error) {
                 console.error("Remove item error:", error);
                 Alert.alert("Error", "Failed to remove item");
@@ -374,17 +382,14 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [isDraftMode, updateItemQuantity, removeItemFromOrder],
+    [isDraftMode, updateItemQuantity, removeItemFromOrder, quantityEdits],
   );
 
-  const handleVoidItem = useCallback(
-    (itemId: Id<"orderItems">) => {
-      const item = activeItems.find((i) => i._id === itemId);
-      if (!item) return;
-      setVoidingItem({ id: itemId, name: item.productName, quantity: item.quantity });
-    },
-    [activeItems],
-  );
+  const handleVoidItem = useCallback((itemId: Id<"orderItems">) => {
+    const item = activeItemsRef.current.find((i) => i._id === itemId);
+    if (!item) return;
+    setVoidingItem({ id: itemId, name: item.productName, quantity: item.quantity });
+  }, []);
 
   const handleConfirmVoid = useCallback(
     async (reason: string) => {
@@ -420,6 +425,11 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       setIsSending(true);
       let shouldReleaseLock = true;
       try {
+        const savedQuantities = await quantityEdits.flush();
+        const latestDraftItems = draftItems.map((item) => ({
+          ...item,
+          quantity: savedQuantities.get(item.localId) ?? item.quantity,
+        }));
         let orderNumber: string;
         let sentItemNames: { name: string; quantity: number; notes?: string }[];
 
@@ -459,7 +469,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
               storeId: storeId as string,
               tableId: tableId as string,
               pax: paxValue,
-              items: draftItems.map((d) => ({
+              items: latestDraftItems.map((d) => ({
                 productId: d.productId as string,
                 quantity: d.quantity,
                 notes: d.notes,
@@ -479,7 +489,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
 
           setCurrentOrderId(result.orderId as Id<"orders">);
           orderNumber = result.orderNumber;
-          sentItemNames = draftItems.map((d) => ({
+          sentItemNames = latestDraftItems.map((d) => ({
             name: d.productName,
             quantity: d.quantity,
             notes: d.notes,
@@ -511,7 +521,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
           orderNumber = order.orderNumber;
           sentItemNames = unsentItems.map((i) => ({
             name: i.productName,
-            quantity: i.quantity,
+            quantity: savedQuantities.get(i._id) ?? i.quantity,
             notes: i.notes,
             serviceType: i.serviceType ?? ("dine_in" as const),
             modifiers: i.modifiers?.map((m) => ({
@@ -559,6 +569,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
       currentTableName,
       printKitchenTicket,
       navigation,
+      quantityEdits,
     ],
   );
 
@@ -622,17 +633,24 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
     setShowPaxModal(true);
   }, [order?.pax]);
 
-  const handleCloseTable = useCallback(() => {
+  const handleCloseTable = useCallback(async () => {
     if (!currentOrderId || activeItems.length === 0 || closeTableLockRef.current) return;
 
     closeTableLockRef.current = true;
     setIsClosingTable(true);
-    navigation.navigate("CheckoutScreen", {
-      orderId: currentOrderId,
-      tableId,
-      tableName: currentTableName,
-    });
-  }, [currentOrderId, activeItems.length, navigation, tableId, currentTableName]);
+    try {
+      await quantityEdits.flush();
+      navigation.navigate("CheckoutScreen", {
+        orderId: currentOrderId,
+        tableId,
+        tableName: currentTableName,
+      });
+    } catch (error) {
+      Alert.alert("Quantity not saved", "Please try checkout again to save your changes.");
+      closeTableLockRef.current = false;
+      setIsClosingTable(false);
+    }
+  }, [currentOrderId, activeItems.length, navigation, tableId, currentTableName, quantityEdits]);
 
   const handleCancelOrder = useCallback(() => {
     if (cancelOrderLockRef.current) return;
@@ -647,7 +665,10 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         {
           text: "Yes, Discard",
           style: "destructive",
-          onPress: () => navigation.goBack(),
+          onPress: () => {
+            quantityEdits.discard();
+            navigation.goBack();
+          },
         },
       ]);
       return;
@@ -668,6 +689,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
             setIsCancellingOrder(true);
             try {
               await cancelOrder({ orderId: currentOrderId! as string });
+              quantityEdits.discard();
               navigation.goBack();
             } catch (error: any) {
               Alert.alert("Error", error.message || "Failed to cancel order");
@@ -678,7 +700,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         },
       ],
     );
-  }, [isDraftMode, draftItems.length, currentOrderId, navigation]);
+  }, [isDraftMode, draftItems.length, currentOrderId, navigation, quantityEdits]);
 
   const handleTransferred = useCallback((_newTableId: Id<"tables">, newTableName: string) => {
     setCurrentTableName(newTableName);
@@ -738,12 +760,7 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         );
         return;
       }
-      try {
-        await updateItemQuantity({ orderItemId: itemId as string, quantity: targetQty });
-      } catch (error) {
-        if (__DEV__) console.error("Update quantity error:", error);
-        Alert.alert("Error", "Failed to update quantity");
-      }
+      await updateItemQuantity({ orderItemId: itemId as string, quantity: targetQty });
     },
     [isDraftMode, updateItemQuantity],
   );
@@ -765,10 +782,21 @@ export const OrderScreen = ({ navigation, route }: OrderScreenProps) => {
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
         onSetQuantity={handleSetQuantity}
+        quantityEdits={quantityEdits}
+        disabled={isClosingTable || isSending}
         onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
       />
     ),
-    [handleServiceTypeChange, handleIncrement, handleDecrement, handleSetQuantity, handleVoidItem],
+    [
+      handleServiceTypeChange,
+      handleIncrement,
+      handleDecrement,
+      handleSetQuantity,
+      handleVoidItem,
+      quantityEdits,
+      isClosingTable,
+      isSending,
+    ],
   );
 
   if (isLoading || !isAuthenticated) {

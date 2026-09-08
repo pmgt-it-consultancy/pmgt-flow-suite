@@ -6,6 +6,7 @@ import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { Text } from "../../shared/components/ui";
 import { useFormatCurrency } from "../../shared/hooks";
+import { CartQuantityEdits } from "../hooks/useCartQuantityEdits";
 
 interface CartItemModifier {
   groupName: string;
@@ -25,6 +26,8 @@ interface CartItemProps {
   onIncrement: (id: Id<"orderItems">, currentQty: number) => void;
   onDecrement: (id: Id<"orderItems">, currentQty: number) => void;
   onSetQuantity?: (id: Id<"orderItems">, targetQty: number) => void | Promise<void>;
+  quantityEdits?: CartQuantityEdits;
+  disabled?: boolean;
   onVoidItem?: (id: Id<"orderItems">) => void;
   serviceType?: "dine_in" | "takeout";
   orderDefaultServiceType?: "dine_in" | "takeout";
@@ -47,6 +50,8 @@ export const CartItem = memo(
     onIncrement,
     onDecrement,
     onSetQuantity,
+    quantityEdits,
+    disabled,
     onVoidItem,
     serviceType,
     orderDefaultServiceType,
@@ -66,73 +71,50 @@ export const CartItem = memo(
       }
     };
 
-    const DEBOUNCE_MS = 300;
-
-    const [displayQty, setDisplayQty] = useState(quantity);
-    const pendingQtyRef = useRef<number | null>(null);
-    const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [localEdits] = useState(() => new CartQuantityEdits());
+    const edits = quantityEdits ?? localEdits;
+    const [displayQty, setDisplayQty] = useState(() => edits.pendingQuantity(id) ?? quantity);
+    const displayQtyRef = useRef(displayQty);
+    const callbacks = useRef({ onSetQuantity, onIncrement, onDecrement, quantity });
+    callbacks.current = { onSetQuantity, onIncrement, onDecrement, quantity };
 
     // Keep displayQty synced with upstream quantity unless the user has a pending change.
     useEffect(() => {
-      if (pendingQtyRef.current === null) {
-        setDisplayQty(quantity);
-      }
-    }, [quantity]);
+      const next = edits.pendingQuantity(id) ?? quantity;
+      displayQtyRef.current = next;
+      setDisplayQty(next);
+      edits.acknowledge(id);
+    }, [quantity, id, edits]);
 
-    const flushNow = (target: number) => {
-      if (flushTimerRef.current) {
-        clearTimeout(flushTimerRef.current);
-        flushTimerRef.current = null;
-      }
-      pendingQtyRef.current = null;
-      if (target < 1) {
-        // Route through the existing remove/confirm path.
-        onDecrement(id, 1);
-      } else if (onSetQuantity) {
-        onSetQuantity(id, target);
-      } else {
-        // Fallback if parent hasn't wired onSetQuantity yet — use the old increment path.
-        const diff = target - quantity;
-        if (diff > 0) onIncrement(id, quantity);
-        else if (diff < 0) onDecrement(id, quantity);
-      }
+    const saveQuantity = async (target: number) => {
+      const latest = callbacks.current;
+      if (latest.onSetQuantity) await latest.onSetQuantity(id, target);
+      else if (target > latest.quantity) await latest.onIncrement(id, latest.quantity);
+      else if (target < latest.quantity) await latest.onDecrement(id, latest.quantity);
     };
+    useEffect(() => {
+      // Recycled rows may mount with a new callback while their edit still belongs to the screen.
+      edits.updateSaver(id, saveQuantity);
+    });
 
     const scheduleFlush = (nextQty: number) => {
-      setDisplayQty(nextQty);
-      pendingQtyRef.current = nextQty;
-      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-
+      if (disabled) return;
       if (nextQty < 1) {
-        // Remove confirmation must fire immediately — don't debounce.
-        flushNow(nextQty);
+        // Keep one visible while the existing removal confirmation is open.
+        onDecrement(id, 1);
         return;
       }
-
-      flushTimerRef.current = setTimeout(() => {
-        const pending = pendingQtyRef.current;
-        if (pending !== null && pending !== quantity && pending >= 1) {
-          flushNow(pending);
-        } else {
-          pendingQtyRef.current = null;
-          flushTimerRef.current = null;
-        }
-      }, DEBOUNCE_MS);
+      displayQtyRef.current = nextQty;
+      setDisplayQty(nextQty);
+      edits.enqueue(id, nextQty, saveQuantity);
     };
 
-    // Flush on unmount so we don't lose a pending edit.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
       return () => {
-        if (flushTimerRef.current) {
-          clearTimeout(flushTimerRef.current);
-          const pending = pendingQtyRef.current;
-          if (pending !== null && pending !== quantity && pending >= 1 && onSetQuantity) {
-            onSetQuantity(id, pending);
-          }
-        }
+        // Shared edits outlive virtualized rows; their owner flushes on screen exit.
+        if (!quantityEdits) void localEdits.flush().catch(() => {});
       };
-    }, []); // unmount-only
+    }, [quantityEdits, localEdits]);
 
     return (
       <YStack
@@ -277,7 +259,8 @@ export const CartItem = memo(
               <XStack alignItems="center" gap={8}>
                 <Pressable
                   android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-                  onPress={() => scheduleFlush(displayQty - 1)}
+                  disabled={disabled}
+                  onPress={() => scheduleFlush(displayQtyRef.current - 1)}
                   style={({ pressed }) => [
                     {
                       width: 44,
@@ -308,7 +291,8 @@ export const CartItem = memo(
 
                 <Pressable
                   android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: false }}
-                  onPress={() => scheduleFlush(displayQty + 1)}
+                  disabled={disabled}
+                  onPress={() => scheduleFlush(displayQtyRef.current + 1)}
                   style={({ pressed }) => [
                     {
                       width: 44,
@@ -400,6 +384,28 @@ export const CartItem = memo(
           )}
         </XStack>
       </YStack>
+    );
+  },
+  (previous, next) => {
+    // Callback identity is significant: equal-looking rows must not retain stale handlers.
+    const keys = new Set([...Object.keys(previous), ...Object.keys(next)]);
+    for (const key of keys) {
+      if (
+        key !== "modifiers" &&
+        previous[key as keyof CartItemProps] !== next[key as keyof CartItemProps]
+      )
+        return false;
+    }
+    const before = previous.modifiers ?? [];
+    const after = next.modifiers ?? [];
+    return (
+      before.length === after.length &&
+      before.every(
+        (modifier, index) =>
+          modifier.groupName === after[index].groupName &&
+          modifier.optionName === after[index].optionName &&
+          modifier.priceAdjustment === after[index].priceAdjustment,
+      )
     );
   },
 );

@@ -17,6 +17,10 @@ import {
   VoidItemModal,
 } from "../../orders/components";
 import {
+  useCartQuantityEdits,
+  usePreventCartEditLoss,
+} from "../../orders/hooks/useCartQuantityEdits";
+import {
   addItemToOrder,
   removeItemFromOrder,
   sendToKitchen,
@@ -54,6 +58,8 @@ interface SelectedProduct {
 export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProps) => {
   const { storeId, orderId } = route.params;
   const { isLoading, isAuthenticated } = useAuth();
+  const quantityEdits = useCartQuantityEdits();
+  usePreventCartEditLoss(quantityEdits, navigation);
 
   // Customer name local state (synced to backend on blur)
   const [customerName, setCustomerName] = useState("");
@@ -165,6 +171,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const activeItems = useMemo(() => {
     return order?.items.filter((i) => !i.isVoided) ?? [];
   }, [order]);
+  const activeItemsRef = useRef(activeItems);
+  activeItemsRef.current = activeItems;
 
   const cartTotal = useMemo(
     () => activeItems.reduce((sum, item) => sum + item.lineTotal, 0),
@@ -214,6 +222,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
               } else {
                 await cancelOrder({ orderId: orderId as string });
               }
+              quantityEdits.discard();
               navigation.goBack();
             } catch (error: any) {
               Alert.alert(
@@ -229,7 +238,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         },
       ],
     );
-  }, [navigation, order?.status, orderId]);
+  }, [navigation, order?.status, orderId, quantityEdits]);
 
   const handleAddProduct = useCallback((product: SelectedProduct) => {
     setSelectedProduct(product);
@@ -316,7 +325,9 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             style: "destructive",
             onPress: async () => {
               try {
+                await quantityEdits.flush();
                 await removeItemFromOrder({ orderItemId: itemId as string });
+                quantityEdits.discard(itemId);
               } catch (error) {
                 console.error("Remove item error:", error);
                 Alert.alert("Error", "Failed to remove item");
@@ -334,29 +345,21 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [updateItemQuantity, removeItemFromOrder],
+    [updateItemQuantity, removeItemFromOrder, quantityEdits],
   );
 
   const handleSetQuantity = useCallback(
     async (itemId: Id<"orderItems">, targetQty: number) => {
-      try {
-        await updateItemQuantity({ orderItemId: itemId as string, quantity: targetQty });
-      } catch (error) {
-        if (__DEV__) console.error("Update quantity error:", error);
-        Alert.alert("Error", "Failed to update quantity");
-      }
+      await updateItemQuantity({ orderItemId: itemId as string, quantity: targetQty });
     },
     [updateItemQuantity],
   );
 
-  const handleVoidItem = useCallback(
-    (itemId: Id<"orderItems">) => {
-      const item = activeItems.find((i) => i._id === itemId);
-      if (!item) return;
-      setVoidingItem({ id: itemId, name: item.productName, quantity: item.quantity });
-    },
-    [activeItems],
-  );
+  const handleVoidItem = useCallback((itemId: Id<"orderItems">) => {
+    const item = activeItemsRef.current.find((i) => i._id === itemId);
+    if (!item) return;
+    setVoidingItem({ id: itemId, name: item.productName, quantity: item.quantity });
+  }, []);
 
   const handleConfirmVoid = useCallback(
     async (reason: string) => {
@@ -384,6 +387,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     setIsSending(true);
     let shouldReleaseLock = true;
     try {
+      await quantityEdits.flush();
       if (order?.status === "draft") {
         await submitDraft({ orderId: orderId as string });
       }
@@ -404,7 +408,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         setIsSending(false);
       }
     }
-  }, [order, orderId, navigation]);
+  }, [order, orderId, navigation, quantityEdits, orderCategory, tableMarker]);
 
   // Send new items to kitchen (first-time or running bill)
   const handleSendToKitchen = useCallback(async () => {
@@ -412,6 +416,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
     setIsSending(true);
     try {
+      const savedQuantities = await quantityEdits.flush();
       // Submit draft first if needed
       if (order.status === "draft") {
         await submitDraft({ orderId: orderId as string });
@@ -433,7 +438,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
           orderDefaultServiceType: "takeout",
           items: unsentItems.map((i) => ({
             name: i.productName,
-            quantity: i.quantity,
+            quantity: savedQuantities.get(i._id) ?? i.quantity,
             notes: i.notes,
             serviceType: i.serviceType ?? "takeout",
             modifiers: i.modifiers?.map((m) => ({
@@ -467,7 +472,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     } finally {
       setIsSending(false);
     }
-  }, [order, orderId, hasUnsentItems, isSending, activeItems, navigation]);
+  }, [order, orderId, hasUnsentItems, isSending, activeItems, navigation, quantityEdits]);
 
   // Reprint full kitchen receipt (all items)
   const handleReprintKitchenReceipt = useCallback(async () => {
@@ -795,6 +800,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
                 onSetQuantity={handleSetQuantity}
+                quantityEdits={quantityEdits}
+                disabled={isSending}
                 onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
               />
             )}
