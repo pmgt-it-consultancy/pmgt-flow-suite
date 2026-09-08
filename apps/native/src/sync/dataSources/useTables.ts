@@ -76,9 +76,21 @@ export function useTablesListWithOrders(
     TABLE_ORDER_COLUMNS,
   );
 
+  const orderIds = useMemo(
+    () => (watermelonOrders ?? []).map((order) => order.id),
+    [watermelonOrders],
+  );
+
   const watermelonOrderItems = useObservable<OrderItem>(
-    () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [],
+    () =>
+      getDatabase()
+        .collections.get<OrderItem>("order_items")
+        .query(
+          orderIds.length > 0
+            ? Q.where("order_id", Q.oneOf(orderIds))
+            : Q.where("order_id", "__none__"),
+        ),
+    [orderIds.join(",")],
     TABLE_ITEM_COUNT_COLUMNS,
   );
 

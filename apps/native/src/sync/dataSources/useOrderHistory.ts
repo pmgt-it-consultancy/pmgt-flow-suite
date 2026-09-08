@@ -123,10 +123,12 @@ export function useTakeoutOrders(
                 Q.where("store_id", storeId),
                 Q.where("order_type", "takeout"),
                 Q.where("status", Q.oneOf(["open", "paid", "draft"])),
+                ...(startDate !== undefined ? [Q.where("created_at", Q.gte(startDate))] : []),
+                ...(endDate !== undefined ? [Q.where("created_at", Q.lte(endDate))] : []),
               ]
             : [Q.where("store_id", "__none__")]),
         ),
-    [storeId],
+    [storeId, startDate, endDate],
     ORDER_SUMMARY_COLUMNS,
   );
 
@@ -185,15 +187,7 @@ export function useTakeoutOrders(
       modifiersByItemId,
     });
 
-    let filtered = watermelonOrders;
-    if (startDate !== undefined) {
-      filtered = filtered.filter((o) => o.createdAt >= startDate);
-    }
-    if (endDate !== undefined) {
-      filtered = filtered.filter((o) => o.createdAt <= endDate);
-    }
-
-    return filtered
+    return watermelonOrders
       .slice()
       .sort((a, b) => b.createdAt - a.createdAt)
       .map((o) => ({
@@ -211,12 +205,5 @@ export function useTakeoutOrders(
         createdAt: o.createdAt,
         refundedFromOrderId: undefined,
       }));
-  }, [
-    storeId,
-    watermelonOrders,
-    watermelonOrderItems,
-    watermelonOrderItemModifiers,
-    startDate,
-    endDate,
-  ]);
+  }, [storeId, watermelonOrders, watermelonOrderItems, watermelonOrderItemModifiers]);
 }

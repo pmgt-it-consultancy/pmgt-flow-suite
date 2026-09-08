@@ -527,9 +527,16 @@ export function useOrderHistoryQuery(params: {
     ORDER_HISTORY_COLUMNS,
   );
 
+  const orderIds = useMemo(() => (orders ?? []).map((order) => order.id), [orders]);
+
   const orderItems = useObservable<OrderItem>(
-    () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [],
+    () =>
+      getDatabase()
+        .collections.get<OrderItem>("order_items")
+        .query(
+          orderIds.length > 0 ? Q.where("order_id", Q.oneOf(orderIds)) : Q.where("order_id", NEVER),
+        ),
+    [orderIds.join(",")],
     ORDER_ITEM_COUNT_COLUMNS,
   );
 
@@ -603,8 +610,11 @@ export function useOrderDiscountsQuery(
   );
 
   const items = useObservable<OrderItem>(
-    () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [],
+    () =>
+      getDatabase()
+        .collections.get<OrderItem>("order_items")
+        .query(Q.where("order_id", orderId ? String(orderId) : NEVER)),
+    [orderId],
     ["product_name"],
   );
 
