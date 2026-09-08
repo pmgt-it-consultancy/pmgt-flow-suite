@@ -3,6 +3,7 @@ import { Q } from "@nozbe/watermelondb";
 import { synchronize } from "@nozbe/watermelondb/sync";
 import { getOrCreateDeviceId } from "../auth/deviceId";
 import { getDatabase } from "../db";
+import { SyncPhase, syncDiagnostics } from "./diagnostics";
 import { generateUUID } from "./idBridge";
 import { subscribeToNetworkChanges } from "./networkStatus";
 import { callPull, callPush, callRegisterDevice } from "./syncEndpoints";
@@ -64,7 +65,11 @@ class SyncManagerImpl {
   private listeners = new Set<Listener>();
   private periodicTimer: ReturnType<typeof setInterval> | null = null;
   private retryTimer: ReturnType<typeof setTimeout> | null = null;
-  private inFlight = false;
+  private inFlight: Promise<void> | null = null;
+  private inFlightGeneration = 0;
+  private pending = false;
+  private online = true;
+  private generation = 0;
   private retryAttempt = 0;
   private deviceId = "";
   private deviceCode = "";
@@ -75,7 +80,11 @@ class SyncManagerImpl {
   async start(storeId: string): Promise<void> {
     if (this.started) return;
     this.started = true;
-    this.deviceId = await getOrCreateDeviceId();
+    const generation = ++this.generation;
+    this.online = true;
+    const deviceId = await getOrCreateDeviceId();
+    if (!this.started || generation !== this.generation) return;
+    this.deviceId = deviceId;
 
     // One-time cursor reset for upgrades from schema v1. v1 silently
     // sanitized rows pulled with camelCase keys to defaults, so catalog
@@ -85,32 +94,45 @@ class SyncManagerImpl {
       setLocal: (k: string, v: string) => Promise<void>;
     };
     const resetFlag = await adapter.getLocal("__sync_cursor_reset_v2");
+    if (!this.started || generation !== this.generation) return;
     if (!resetFlag) {
       await adapter.setLocal("__watermelon_last_pulled_at", "0");
+      if (!this.started || generation !== this.generation) return;
       await adapter.setLocal("__sync_cursor_reset_v2", "1");
     }
+    if (!this.started || generation !== this.generation) return;
 
     try {
       const result = await callRegisterDevice(this.deviceId, storeId);
+      if (!this.started || generation !== this.generation) return;
       this.deviceCode = result.deviceCode;
     } catch (err) {
       console.warn("[SyncManager] device registration failed:", err);
     }
+    if (!this.started || generation !== this.generation) return;
 
     this.unsubNet = subscribeToNetworkChanges((online) => {
+      if (!this.started || generation !== this.generation) return;
+      this.online = online;
       if (online) {
-        this.setState({ status: "idle" });
-        void this.syncOnce();
+        this.setState({ status: this.inFlight ? "syncing" : "idle" });
+        void this.requestSync();
       } else {
         this.setState({ status: "offline" });
       }
     });
 
-    this.periodicTimer = setInterval(() => void this.syncOnce(), PULL_PERIOD_MS);
-    void this.syncOnce();
+    this.periodicTimer = setInterval(() => void this.requestSync(), PULL_PERIOD_MS);
+    void this.requestSync();
   }
 
   stop(): void {
+    this.generation++;
+    this.pending = false;
+    if (this.pushDebounce) {
+      clearTimeout(this.pushDebounce);
+      this.pushDebounce = null;
+    }
     if (this.periodicTimer) {
       clearInterval(this.periodicTimer);
       this.periodicTimer = null;
@@ -124,6 +146,7 @@ class SyncManagerImpl {
       this.unsubNet = null;
     }
     this.started = false;
+    this.retryAttempt = 0;
   }
 
   subscribe(listener: Listener): () => void {
@@ -148,12 +171,19 @@ class SyncManagerImpl {
    * rapid-fire cart edits don't hammer the Convex backend.
    */
   triggerPush(): void {
+    if (!this.started) return;
+    // Remember the write immediately, even if the current run finishes
+    // before the debounce fires.
+    this.pending = true;
     if (this.pushDebounce) clearTimeout(this.pushDebounce);
-    this.pushDebounce = setTimeout(() => void this.syncOnce(), 500);
+    this.pushDebounce = setTimeout(() => {
+      this.pushDebounce = null;
+      void this.requestSync();
+    }, 500);
   }
 
   async syncNow(): Promise<void> {
-    return this.syncOnce();
+    return this.requestSync();
   }
 
   /**
@@ -168,7 +198,47 @@ class SyncManagerImpl {
       setLocal: (k: string, v: string) => Promise<void>;
     };
     await adapter.setLocal("__watermelon_last_pulled_at", "0");
-    return this.syncOnce();
+    return this.requestSync();
+  }
+
+  private requestSync(): Promise<void> {
+    if (!this.started) return Promise.resolve();
+    this.pending = true;
+    const generation = this.generation;
+    if (this.inFlight) {
+      if (this.inFlightGeneration === generation) return this.inFlight;
+      return this.inFlight.then(() => {
+        if (this.started && generation === this.generation) return this.inFlight;
+      });
+    }
+    if (!this.online || this.retryTimer) return Promise.resolve();
+    this.inFlightGeneration = generation;
+    // Install the promise before notifying state listeners; a listener can
+    // itself request sync synchronously.
+    this.inFlight = Promise.resolve()
+      .then(() => this.drain(generation))
+      .finally(() => {
+        this.inFlight = null;
+        // Also catch requests queued between drain's final condition and
+        // this promise settling, including requests from a new session.
+        if (this.started && this.online && !this.retryTimer && this.pending) {
+          return this.requestSync();
+        }
+      });
+    return this.inFlight;
+  }
+
+  private async drain(generation: number): Promise<void> {
+    while (this.started && this.online && generation === this.generation && this.pending) {
+      this.pending = false;
+      if (this.pushDebounce) {
+        clearTimeout(this.pushDebounce);
+        this.pushDebounce = null;
+      }
+      const succeeded = await this.syncOnce(generation);
+      if (!succeeded) break; // Failure is retried by the backoff timer.
+      if (this.pending) await yieldToEventLoop();
+    }
   }
 
   /**
@@ -185,9 +255,12 @@ class SyncManagerImpl {
    * Progress is stamped on `state.progress` at every meaningful boundary:
    * before each pull, after each apply, and during the push step.
    */
-  private async syncOnce(): Promise<void> {
-    if (this.inFlight) return;
-    this.inFlight = true;
+  private async syncOnce(generation: number): Promise<boolean> {
+    const requireActive = () => {
+      if (!this.started || generation !== this.generation || !this.online) {
+        throw new Error("Sync session paused");
+      }
+    };
     this.setState({
       status: "syncing",
       progress: {
@@ -204,123 +277,167 @@ class SyncManagerImpl {
     const tablesApplied: Record<string, number> = {};
     let cursors: CursorMap | undefined;
     let serverNow: number | undefined;
-    let pushDone = false;
-    // Capture the original `lastPulledAt` once. WatermelonDB advances its
-    // own lastPulledAt after every synchronize() apply (to the timestamp we
-    // returned, i.e. `serverNow`), so on iter 2+ the parameter passed to
-    // pullChanges is `serverNow`, not the original since. Convex
-    // pagination cursors are only valid against the index range they were
-    // generated for — we MUST keep `since` constant across the loop.
+    // Capture the original `lastPulledAt` once: Convex pagination cursors
+    // require a constant index range. Keep the durable watermark at that
+    // point until the last page so an interruption can safely replay pages.
     let initialSince: number | null = null;
     let initialSinceCaptured = false;
 
     try {
       while (true) {
+        requireActive();
         let pageComplete = false;
         let thisPageRows = 0;
         let thisPageTopTable: string | null = null;
+        const finishPage = syncDiagnostics.begin(SyncPhase.SynchronizeTotal, pageIndex);
+        let finishApply: ((rows?: number, succeeded?: boolean) => void) | undefined;
 
-        await synchronize({
-          database: getDatabase(),
-          pullChanges: async ({ lastPulledAt }) => {
-            if (!initialSinceCaptured) {
-              initialSince = lastPulledAt ?? null;
-              initialSinceCaptured = true;
-            }
-            // Always send the captured initialSince to the server — never
-            // the per-iter `lastPulledAt`, which advances after each apply
-            // and would invalidate our pagination cursors.
-            const page = await callPull(initialSince, cursors, serverNow);
-            if (serverNow === undefined) serverNow = page.timestamp;
-            cursors = page.cursors;
-            pageComplete = page.complete;
-
-            const counts = countRows(page.changes as Record<string, ChangeBucket>);
-            thisPageRows = counts.total;
-            // Pick the table with the most rows in this page as
-            // `currentTable` — the user-visible signal of what's being
-            // applied right now. Tables map from camelCase (server) to
-            // snake_case (WM) so the UI label matches the local schema.
-            let topRows = 0;
-            for (const [table, n] of Object.entries(counts.perTable)) {
-              const snake = camelCollectionToSnake(table);
-              tablesApplied[snake] = (tablesApplied[snake] ?? 0) + n;
-              if (n > topRows) {
-                topRows = n;
-                thisPageTopTable = snake;
+        try {
+          await synchronize({
+            database: getDatabase(),
+            pullChanges: async ({ lastPulledAt }) => {
+              requireActive();
+              if (!initialSinceCaptured) {
+                // 1 is our incomplete-first-pull marker, never a real POS
+                // server timestamp. Replay with null so legacy rows without
+                // updatedAt remain included by the backend's first-pull path.
+                initialSince = lastPulledAt === 1 ? null : (lastPulledAt ?? null);
+                initialSinceCaptured = true;
               }
-            }
+              // Always send the captured initialSince to the server — never
+              // the per-iter `lastPulledAt`, which advances after each apply
+              // and would invalidate our pagination cursors.
+              const finishPull = syncDiagnostics.begin(SyncPhase.PullNetwork, pageIndex);
+              const page = await callPull(initialSince, cursors, serverNow).catch((error) => {
+                finishPull(0, false);
+                throw error;
+              });
+              finishPull();
+              requireActive();
+              if (serverNow === undefined) serverNow = page.timestamp;
+              cursors = page.cursors;
+              pageComplete = page.complete;
 
-            this.setState({
-              progress: {
-                phase: "apply",
-                pageIndex,
-                rowsApplied: rowsApplied + thisPageRows,
-                currentTable: thisPageTopTable,
-                tablesApplied: { ...tablesApplied },
-              },
-            });
-
-            // /sync/pull returns camelCase collection names AND camelCase row
-            // fields (matching the Convex schema). WatermelonDB's local schema
-            // uses snake_case for both, so translate at every level.
-            const mapped = mapPullChanges(
-              page.changes as Record<string, ChangeBucket>,
-            ) as unknown as Record<string, ChangeBucket>;
-            return {
-              changes: await demoteExistingCreates(getDatabase(), mapped),
-              timestamp: page.timestamp,
-            };
-          },
-          pushChanges: async ({ changes, lastPulledAt }) => {
-            // Push outgoing mutations once per `syncOnce()` invocation, on
-            // the first page only. Subsequent pages skip push: the local
-            // outbox is unchanged across pages, and re-sending mutations
-            // the server already accepted would produce noisy duplicates
-            // even if they're idempotent.
-            if (pushDone) return;
-            const typedChanges = changes as Record<
-              string,
-              {
-                created: WatermelonRow[];
-                updated: WatermelonRow[];
-                deleted?: string[];
+              const finishMap = syncDiagnostics.begin(SyncPhase.PullMap, pageIndex);
+              const counts = countRows(page.changes as Record<string, ChangeBucket>);
+              thisPageRows = counts.total;
+              // Pick the table with the most rows in this page as
+              // `currentTable` — the user-visible signal of what's being
+              // applied right now. Tables map from camelCase (server) to
+              // snake_case (WM) so the UI label matches the local schema.
+              let topRows = 0;
+              for (const [table, n] of Object.entries(counts.perTable)) {
+                const snake = camelCollectionToSnake(table);
+                tablesApplied[snake] = (tablesApplied[snake] ?? 0) + n;
+                if (n > topRows) {
+                  topRows = n;
+                  thisPageTopTable = snake;
+                }
               }
-            >;
-            if (allEmpty(typedChanges)) {
-              pushDone = true;
-              return;
-            }
-            this.setState({
-              progress: {
-                phase: "push",
+
+              this.setState({
+                progress: {
+                  phase: "apply",
+                  pageIndex,
+                  rowsApplied: rowsApplied + thisPageRows,
+                  currentTable: thisPageTopTable,
+                  tablesApplied: { ...tablesApplied },
+                },
+              });
+
+              // /sync/pull returns camelCase collection names AND camelCase row
+              // fields (matching the Convex schema). WatermelonDB's local schema
+              // uses snake_case for both, so translate at every level.
+              const mapped = mapPullChanges(
+                page.changes as Record<string, ChangeBucket>,
+              ) as unknown as Record<string, ChangeBucket>;
+              finishMap(thisPageRows);
+              const finishPreparation = syncDiagnostics.begin(
+                SyncPhase.ApplyPreparation,
                 pageIndex,
-                rowsApplied,
-                currentTable: null,
-                tablesApplied: { ...tablesApplied },
-              },
-            });
-            const clientMutationId = generateUUID();
-            // WatermelonDB hands rows in snake_case (its schema's column names);
-            // /sync/push expects camelCase keys at both the collection and row
-            // level. Strip Watermelon's internal `_status` / `_changed` markers
-            // along the way — applyPushedRow on the backend doesn't read them.
-            const mapped = mapPushChanges(typedChanges);
-            const response = await callPush(
-              {
-                lastPulledAt: lastPulledAt ?? 0,
-                changes: mapped,
-                clientMutationId,
-              },
-              this.deviceId,
-            );
-            if ("rejected" in response && response.rejected.length > 0) {
-              console.warn("[SyncManager] push rejections:", response.rejected);
-            }
-            pushDone = true;
-          },
-          sendCreatedAsUpdated: false,
-        });
+              );
+              const changes = await demoteExistingCreates(getDatabase(), mapped).catch((error) => {
+                finishPreparation(thisPageRows, false);
+                throw error;
+              });
+              finishPreparation(thisPageRows);
+              requireActive();
+              // Includes Watermelon's apply, lock wait and local-change read.
+              // It is elapsed time, not a pure SQLite or CPU measurement.
+              finishApply = syncDiagnostics.begin(SyncPhase.ApplyAndReadLocal, pageIndex);
+              return {
+                changes,
+                // Watermelon requires a positive timestamp, including on a
+                // first pull. Epoch millisecond 1 safely replays POS history.
+                timestamp: pageComplete ? page.timestamp : Math.max(initialSince ?? 0, 1),
+              };
+            },
+            // Omit the callback after page one: a successful no-op callback
+            // makes Watermelon mark late local writes synced without sending.
+            pushChanges:
+              pageIndex > 1
+                ? undefined
+                : async ({ changes, lastPulledAt }) => {
+                    finishApply?.(thisPageRows);
+                    finishApply = undefined;
+                    requireActive();
+                    const typedChanges = changes as Record<
+                      string,
+                      {
+                        created: WatermelonRow[];
+                        updated: WatermelonRow[];
+                        deleted?: string[];
+                      }
+                    >;
+                    if (allEmpty(typedChanges)) {
+                      return;
+                    }
+                    this.setState({
+                      progress: {
+                        phase: "push",
+                        pageIndex,
+                        rowsApplied,
+                        currentTable: null,
+                        tablesApplied: { ...tablesApplied },
+                      },
+                    });
+                    const clientMutationId = generateUUID();
+                    // WatermelonDB hands rows in snake_case (its schema's column names);
+                    // /sync/push expects camelCase keys at both the collection and row
+                    // level. Strip Watermelon's internal `_status` / `_changed` markers
+                    // along the way — applyPushedRow on the backend doesn't read them.
+                    const finishMap = syncDiagnostics.begin(SyncPhase.PushMap, pageIndex);
+                    const mapped = mapPushChanges(typedChanges);
+                    const pushedRows = countRows(typedChanges).total;
+                    finishMap(pushedRows);
+                    const finishPush = syncDiagnostics.begin(SyncPhase.PushNetwork, pageIndex);
+                    const response = await callPush(
+                      {
+                        lastPulledAt: serverNow ?? lastPulledAt ?? 0,
+                        changes: mapped,
+                        clientMutationId,
+                      },
+                      this.deviceId,
+                    ).catch((error) => {
+                      finishPush(pushedRows, false);
+                      throw error;
+                    });
+                    finishPush(pushedRows);
+                    if ("rejected" in response && response.rejected.length > 0) {
+                      console.warn("[SyncManager] push rejections:", response.rejected);
+                    }
+                  },
+            sendCreatedAsUpdated: false,
+          });
+          finishApply?.(thisPageRows);
+          finishPage(thisPageRows);
+        } catch (error) {
+          finishApply?.(thisPageRows, false);
+          finishPage(thisPageRows, false);
+          throw error;
+        }
+
+        if (!this.started || generation !== this.generation || !this.online) return false;
 
         rowsApplied += thisPageRows;
         if (pageComplete) break;
@@ -349,13 +466,14 @@ class SyncManagerImpl {
         lastError: null,
         progress: null,
       });
+      return true;
     } catch (err) {
+      if (!this.started || generation !== this.generation || !this.online) return false;
       const msg = err instanceof Error ? err.message : String(err);
       console.error("[SyncManager]", msg);
       this.setState({ status: "error", lastError: msg, progress: null });
       this.scheduleRetry();
-    } finally {
-      this.inFlight = false;
+      return false;
     }
   }
 
@@ -363,7 +481,10 @@ class SyncManagerImpl {
     const delay = RETRY_BACKOFF_MS[Math.min(this.retryAttempt, RETRY_BACKOFF_MS.length - 1)];
     this.retryAttempt++;
     if (this.retryTimer) clearTimeout(this.retryTimer);
-    this.retryTimer = setTimeout(() => void this.syncOnce(), delay);
+    this.retryTimer = setTimeout(() => {
+      this.retryTimer = null;
+      void this.requestSync();
+    }, delay);
   }
 
   private setState(patch: Partial<SyncState>): void {
@@ -383,7 +504,9 @@ export type PageRowCounts = {
  * breakdown that excludes tables with zero activity in this page. Drives
  * `SyncProgress.rowsApplied` and `SyncProgress.tablesApplied`.
  */
-export function countRows(changes: Record<string, ChangeBucket>): PageRowCounts {
+export function countRows(
+  changes: Record<string, Omit<ChangeBucket, "deleted"> & { deleted?: string[] }>,
+): PageRowCounts {
   let total = 0;
   const perTable: Record<string, number> = {};
   for (const [table, bucket] of Object.entries(changes)) {
