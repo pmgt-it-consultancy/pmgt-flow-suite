@@ -9,10 +9,17 @@ import { subscribeToNetworkChanges } from "./networkStatus";
 import { callPull, callPush, callRegisterDevice } from "./syncEndpoints";
 import type { ChangeBucket, CursorMap, SyncState, WatermelonRow } from "./types";
 
-// Bound the pull loop so a server bug returning complete:false forever can't
-// hang the client. 50 pages * 1500 rows-per-request = 75k rows, far above any
-// realistic store's first-pull volume.
-const MAX_PULL_PAGES = 50;
+// Bound guard memory, not legitimate backlog size. A progressing pull can
+// exceed this many pages; repeated recent cursor maps fail into retry backoff.
+const RECENT_PULL_CURSORS = 50;
+
+function cursorSignature(cursors: CursorMap | undefined): string {
+  return JSON.stringify(
+    Object.entries(cursors ?? {})
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([table, value]) => [table, value.cursor, value.isDone]),
+  );
+}
 
 /**
  * Hands control back to the event loop so the JS thread can render a frame
@@ -276,6 +283,7 @@ class SyncManagerImpl {
     let rowsApplied = 0;
     const tablesApplied: Record<string, number> = {};
     let cursors: CursorMap | undefined;
+    const recentCursors = [cursorSignature(undefined)];
     let serverNow: number | undefined;
     // Capture the original `lastPulledAt` once: Convex pagination cursors
     // require a constant index range. Keep the durable watermark at that
@@ -314,6 +322,14 @@ class SyncManagerImpl {
               });
               finishPull();
               requireActive();
+              if (!page.complete) {
+                const signature = cursorSignature(page.cursors);
+                if (recentCursors.includes(signature)) {
+                  throw new Error("Sync pull repeated a recent pagination cursor");
+                }
+                recentCursors.push(signature);
+                if (recentCursors.length > RECENT_PULL_CURSORS) recentCursors.shift();
+              }
               if (serverNow === undefined) serverNow = page.timestamp;
               cursors = page.cursors;
               pageComplete = page.complete;
@@ -443,9 +459,6 @@ class SyncManagerImpl {
         if (pageComplete) break;
 
         pageIndex += 1;
-        if (pageIndex > MAX_PULL_PAGES) {
-          throw new Error(`syncOnce: did not complete within ${MAX_PULL_PAGES} pages`);
-        }
         this.setState({
           progress: {
             phase: "pull",

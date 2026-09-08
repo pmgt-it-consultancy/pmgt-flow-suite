@@ -48,11 +48,12 @@ describe("sync manager lifecycle", () => {
     }));
     jest.mocked(synchronize).mockImplementation(async ({ pullChanges, pushChanges }) => {
       await pullChanges({ lastPulledAt: 10, schemaVersion: 1, migration: null });
-      await pushChanges!({ changes: {}, lastPulledAt: 100 });
+      await pushChanges?.({ changes: {}, lastPulledAt: 100 });
     });
   });
-  afterEach(() => {
+  afterEach(async () => {
     syncManager.stop();
+    await jest.advanceTimersByTimeAsync(0);
     syncDiagnostics.disable();
     jest.restoreAllMocks();
     jest.useRealTimers();
@@ -276,7 +277,12 @@ describe("sync manager lifecycle", () => {
       json: async () =>
         url.endsWith("registerDevice")
           ? { deviceCode: "01" }
-          : { changes: {}, timestamp: 100, complete: !url.endsWith("pull") || ++pulls !== 1 },
+          : {
+              changes: {},
+              timestamp: 100,
+              complete: !url.endsWith("pull") || ++pulls !== 1,
+              cursors: { orders: { cursor: "next", isDone: false } },
+            },
     }));
     let outbox: { id: string }[] = [{ id: "initial-write" }];
     jest.mocked(synchronize).mockImplementation(async ({ pullChanges, pushChanges }) => {
@@ -388,5 +394,84 @@ describe("sync manager lifecycle", () => {
     await completion;
     unsubscribe();
     expect(synchronize).toHaveBeenCalledTimes(2);
+  });
+
+  it("finishes more than 50 progressing pages and delivers a write queued near the end", async () => {
+    let pulls = 0;
+    let durableCursor = 10;
+    let outbox: { id: string }[] = [];
+    fetchMock.mockImplementation(async (url: string) => ({
+      ok: true,
+      json: async () =>
+        url.endsWith("registerDevice")
+          ? { deviceCode: "01" }
+          : url.endsWith("push")
+            ? { success: true }
+            : {
+                changes: {},
+                timestamp: 100,
+                complete: ++pulls >= 51,
+                cursors: { orders: { cursor: String(pulls), isDone: pulls >= 51 } },
+              },
+    }));
+    jest.mocked(synchronize).mockImplementation(async ({ pullChanges, pushChanges }) => {
+      const result = await pullChanges({
+        lastPulledAt: durableCursor,
+        schemaVersion: 1,
+        migration: null,
+      });
+      if (!("timestamp" in result)) throw new Error("Expected incremental result");
+      durableCursor = result.timestamp;
+      if (pulls < 51) expect(durableCursor).toBe(10);
+      if (pulls === 50) {
+        outbox = [{ id: "late-backlog-write" }];
+        syncManager.triggerPush();
+      }
+      if (pushChanges && outbox.length) {
+        await pushChanges({
+          changes: { orders: { created: outbox, updated: [], deleted: [] } },
+          lastPulledAt: durableCursor,
+        });
+        outbox = [];
+      }
+    });
+    await syncManager.start("store");
+    await settle();
+    await jest.advanceTimersByTimeAsync(60);
+    expect(pulls).toBe(52);
+    expect(durableCursor).toBe(100);
+    expect(syncManager.getState().status).toBe("idle");
+    const pushes = fetchMock.mock.calls.filter(([url]) => url.endsWith("push"));
+    expect(pushes).toHaveLength(1);
+    expect(JSON.parse(pushes[0][1].body).changes.orders.created).toEqual([
+      { id: "late-backlog-write" },
+    ]);
+  });
+
+  it.each([
+    ["same", "same"],
+    ["first", "second", "first"],
+  ])("backs off when an incomplete pull repeats recent cursors %j", async (...tokens) => {
+    let pulls = 0;
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    fetchMock.mockImplementation(async (url: string) => ({
+      ok: true,
+      json: async () =>
+        url.endsWith("registerDevice")
+          ? { deviceCode: "01" }
+          : {
+              changes: {},
+              timestamp: 100,
+              complete: false,
+              cursors: { orders: { cursor: tokens[pulls++ % tokens.length], isDone: false } },
+            },
+    }));
+    await syncManager.start("store");
+    await settle();
+    await jest.advanceTimersByTimeAsync(10);
+    expect(syncManager.getState().status).toBe("error");
+    const failedAt = pulls;
+    await jest.advanceTimersByTimeAsync(1000);
+    expect(pulls).toBe(failedAt);
   });
 });
