@@ -268,7 +268,10 @@ export async function voidPaidOrderRefund(params: {
   }
 
   // Pre-fetch modifiers and discounts (read-only — outside writer is fine)
-  const allMods = await db.get<OrderItemModifier>("order_item_modifiers").query().fetch();
+  const allMods = await db
+    .get<OrderItemModifier>("order_item_modifiers")
+    .query(Q.where("order_item_id", Q.oneOf(activeItems.map((item) => item.id))))
+    .fetch();
   const modsByItemId = new Map<string, OrderItemModifier[]>();
   for (const m of allMods) {
     const list = modsByItemId.get(m.orderItemId) ?? [];
