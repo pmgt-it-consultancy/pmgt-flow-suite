@@ -407,6 +407,20 @@ Web deploys to Vercel with custom build command that deploys Convex first:
 cd ../../packages/backend && npx convex deploy --cmd 'cd ../../apps/web && turbo run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL
 ```
 
+## Agent skills
+
+### Issue tracker
+
+Publish specs and tickets to GitHub Issues; read `docs/agents/issue-tracker.md` before tracker operations.
+
+### Triage labels
+
+Use the default vocabulary in `docs/agents/triage-labels.md` when classifying work.
+
+### Domain docs
+
+Use the single-context glossary and ADR layout described in `docs/agents/domain.md` when exploring domains.
+
 ## Git Notes
 
 - Commit messages in this repo follow conventional commit style such as `feat(scope): summary` or `fix(scope): summary`

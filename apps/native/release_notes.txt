@@ -1,7 +1,7 @@
 ## What's New
 
-- Fixed a rare Z-report imbalance where a double-tapped checkout could record a payment twice for the same order, pushing the Cash/Card total above Net Sales. Duplicate payment attempts are now rejected during sync.
-
-## Notes
-
-- This closes a gap in offline sync: the checkout screen already prevented double payments when online, but the offline sync path didn't have the same protection until now.
+- Reduced unnecessary data loading across tables, takeout, order history, checkout, and refunds as sales history grows.
+- Improved modifier loading for dine-in and takeout, and reduced updates on unchanged cart rows and hidden screens.
+- Quantity edits now finish saving before checkout or kitchen send, with retry support when saving fails.
+- Reduced database work when adding, updating, and sending orders while preserving totals and discounts.
+- Fixed queued sync delivery and interrupted downloads, including large order backlogs.

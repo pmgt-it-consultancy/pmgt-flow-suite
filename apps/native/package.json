@@ -1,8 +1,10 @@
 {
   "name": "pmgt-flow-native",
-  "version": "3.27.1",
+  "version": "3.27.3",
   "main": "index.tsx",
   "scripts": {
+    "test:query-performance": "node scripts/test-query-performance.cjs",
+    "test:rush-hour": "pnpm test:query-performance && jest --runInBand",
     "dev": "npm run android:staging",
     "android": "expo run:android",
     "android:production": "APP_VARIANT=production expo run:android",

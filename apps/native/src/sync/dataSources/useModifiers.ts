@@ -1,6 +1,6 @@
-import { Q } from "@nozbe/watermelondb";
+import { type Model, Q, type Query } from "@nozbe/watermelondb";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   type Category,
   getDatabase,
@@ -9,7 +9,7 @@ import {
   type ModifierOption,
   type Product,
 } from "../../db";
-import { useObservable } from "../../db/useObservable";
+import { useObservable, useScreenQueryActive } from "../../db/useObservable";
 
 const MODIFIER_GROUP_COLUMNS = [
   "name",
@@ -269,64 +269,115 @@ export function useModifiersForStore(
 export function useModifiersForProduct(
   productId: Id<"products"> | undefined,
 ): ModifierGroupItem[] | undefined {
-  const watermelonGroups = useObservable<ModifierGroup>(
-    () => getDatabase().collections.get<ModifierGroup>("modifier_groups").query(),
-    [],
-    MODIFIER_GROUP_COLUMNS,
-  );
+  const active = useScreenQueryActive();
+  const [snapshot, setSnapshot] = useState<{
+    productId: string;
+    groups: ModifierGroupItem[] | undefined;
+  }>();
 
-  const watermelonOptions = useObservable<ModifierOption>(
-    () => getDatabase().collections.get<ModifierOption>("modifier_options").query(),
-    [],
-    MODIFIER_OPTION_COLUMNS,
-  );
+  useEffect(() => {
+    if (!productId || !active) return;
+    const db = getDatabase();
+    const publish = (groups: ModifierGroupItem[] | undefined) => setSnapshot({ productId, groups });
+    publish(undefined);
 
-  const watermelonAssignments = useObservable<ModifierGroupAssignment>(
-    () =>
-      getDatabase().collections.get<ModifierGroupAssignment>("modifier_group_assignments").query(),
-    [],
-    MODIFIER_ASSIGNMENT_COLUMNS,
-  );
+    // Each observation owns its downstream subscriptions. Membership changes
+    // replace that subtree, and selection changes dispose the complete chain.
+    function watch<T extends Model>(
+      query: Query<T>,
+      columns: string[],
+      next: (rows: T[]) => (() => void) | undefined,
+    ): () => void {
+      let cleanup: (() => void) | undefined;
+      let active = true;
+      const subscription = query.observeWithColumns(columns).subscribe({
+        next: (rows) => {
+          if (!active) return;
+          cleanup?.();
+          publish(undefined);
+          cleanup = next(rows);
+        },
+      });
+      return () => {
+        active = false;
+        subscription.unsubscribe();
+        cleanup?.();
+      };
+    }
 
-  const watermelonProducts = useObservable<Product>(
-    () => getDatabase().collections.get<Product>("products").query(),
-    [],
-    MODIFIER_PRODUCT_COLUMNS,
-  );
+    function resolve(product: Product, categories: Category[], categoryIds: string[]) {
+      return watch(
+        db.collections
+          .get<ModifierGroupAssignment>("modifier_group_assignments")
+          .query(
+            Q.or(Q.where("product_id", product.id), Q.where("category_id", Q.oneOf(categoryIds))),
+          ),
+        MODIFIER_ASSIGNMENT_COLUMNS,
+        (assignments) => {
+          const groupIds = [...new Set(assignments.map((a) => a.modifierGroupId))];
+          if (!groupIds.length) {
+            publish([]);
+            return;
+          }
+          return watch(
+            db.collections
+              .get<ModifierGroup>("modifier_groups")
+              .query(Q.where("id", Q.oneOf(groupIds)), Q.where("is_active", true)),
+            MODIFIER_GROUP_COLUMNS,
+            (groups) => {
+              if (!groups.length) {
+                publish([]);
+                return;
+              }
+              return watch(
+                db.collections
+                  .get<ModifierOption>("modifier_options")
+                  .query(
+                    Q.where("modifier_group_id", Q.oneOf(groups.map((g) => g.id))),
+                    Q.where("is_available", true),
+                  ),
+                MODIFIER_OPTION_COLUMNS,
+                (options) => {
+                  publish(
+                    buildModifiersByProduct(
+                      groups,
+                      options,
+                      assignments,
+                      product.storeId,
+                      [product],
+                      categories,
+                    ).get(product.id) ?? [],
+                  );
+                  return undefined;
+                },
+              );
+            },
+          );
+        },
+      );
+    }
 
-  const watermelonCategories = useObservable<Category>(
-    () => getDatabase().collections.get<Category>("categories").query(),
-    [],
-    MODIFIER_CATEGORY_COLUMNS,
-  );
+    function ancestry(
+      product: Product,
+      id: string | undefined,
+      categories: Category[],
+      ids: string[],
+    ): () => void {
+      if (!id || ids.includes(id)) return resolve(product, categories, ids);
+      return watch(
+        db.collections.get<Category>("categories").query(Q.where("id", id)),
+        MODIFIER_CATEGORY_COLUMNS,
+        (rows) => ancestry(product, rows[0]?.parentId, [...categories, ...rows], [...ids, id]),
+      );
+    }
 
-  return useMemo(() => {
-    if (!productId) return undefined;
-    if (
-      !watermelonGroups ||
-      !watermelonOptions ||
-      !watermelonAssignments ||
-      !watermelonProducts ||
-      !watermelonCategories
-    )
-      return undefined;
-    const product = watermelonProducts.find((p) => p.id === productId);
-    if (!product) return undefined;
-    const byProduct = buildModifiersByProduct(
-      watermelonGroups,
-      watermelonOptions,
-      watermelonAssignments,
-      product.storeId,
-      watermelonProducts,
-      watermelonCategories,
+    return watch(
+      db.collections.get<Product>("products").query(Q.where("id", productId)),
+      MODIFIER_PRODUCT_COLUMNS,
+      (products) =>
+        products[0] ? ancestry(products[0], products[0].categoryId, [], []) : undefined,
     );
-    return byProduct.get(productId as string) ?? [];
-  }, [
-    productId,
-    watermelonGroups,
-    watermelonOptions,
-    watermelonAssignments,
-    watermelonProducts,
-    watermelonCategories,
-  ]);
+  }, [productId, active]);
+
+  return productId && snapshot?.productId === productId ? snapshot.groups : undefined;
 }

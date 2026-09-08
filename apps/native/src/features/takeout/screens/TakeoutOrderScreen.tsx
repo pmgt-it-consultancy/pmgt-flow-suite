@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, TextInput } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
-import { useModifiersForStore, useOrderDetail, useProducts } from "../../../sync";
+import { useModifiersForProduct, useOrderDetail, useProducts } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { cancelOrder } from "../../checkout/services/checkoutMutations";
 import type { SelectedModifier } from "../../orders/components";
@@ -16,6 +16,10 @@ import {
   ModifierSelectionModal,
   VoidItemModal,
 } from "../../orders/components";
+import {
+  useCartQuantityEdits,
+  usePreventCartEditLoss,
+} from "../../orders/hooks/useCartQuantityEdits";
 import {
   addItemToOrder,
   removeItemFromOrder,
@@ -54,6 +58,8 @@ interface SelectedProduct {
 export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProps) => {
   const { storeId, orderId } = route.params;
   const { isLoading, isAuthenticated } = useAuth();
+  const quantityEdits = useCartQuantityEdits();
+  usePreventCartEditLoss(quantityEdits, navigation);
 
   // Customer name local state (synced to backend on blur)
   const [customerName, setCustomerName] = useState("");
@@ -82,19 +88,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const order = useOrderDetail(orderId);
   const products = useProducts(storeId);
 
-  // Prefetch all modifier data for the store — available instantly on product tap
-  const allModifiers = useModifiersForStore(storeId);
-  const modifiersByProduct = useMemo(() => {
-    const map = new Map<string, NonNullable<typeof allModifiers>[number]["groups"]>();
-    if (allModifiers) {
-      for (const entry of allModifiers) {
-        map.set(entry.productId, entry.groups);
-      }
-    }
-    return map;
-  }, [allModifiers]);
-
-  const modifierGroups = selectedProduct ? (modifiersByProduct.get(selectedProduct.id) ?? []) : [];
+  const modifierGroups = useModifiersForProduct(selectedProduct?.id);
 
   // Mutations — all use WatermelonDB service functions imported above
 
@@ -165,6 +159,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const activeItems = useMemo(() => {
     return order?.items.filter((i) => !i.isVoided) ?? [];
   }, [order]);
+  const activeItemsRef = useRef(activeItems);
+  activeItemsRef.current = activeItems;
 
   const cartTotal = useMemo(
     () => activeItems.reduce((sum, item) => sum + item.lineTotal, 0),
@@ -214,6 +210,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
               } else {
                 await cancelOrder({ orderId: orderId as string });
               }
+              quantityEdits.discard();
               navigation.goBack();
             } catch (error: any) {
               Alert.alert(
@@ -229,7 +226,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         },
       ],
     );
-  }, [navigation, order?.status, orderId]);
+  }, [navigation, order?.status, orderId, quantityEdits]);
 
   const handleAddProduct = useCallback((product: SelectedProduct) => {
     setSelectedProduct(product);
@@ -316,7 +313,9 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
             style: "destructive",
             onPress: async () => {
               try {
+                await quantityEdits.flush();
                 await removeItemFromOrder({ orderItemId: itemId as string });
+                quantityEdits.discard(itemId);
               } catch (error) {
                 console.error("Remove item error:", error);
                 Alert.alert("Error", "Failed to remove item");
@@ -334,29 +333,21 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         Alert.alert("Error", "Failed to update quantity");
       }
     },
-    [updateItemQuantity, removeItemFromOrder],
+    [updateItemQuantity, removeItemFromOrder, quantityEdits],
   );
 
   const handleSetQuantity = useCallback(
     async (itemId: Id<"orderItems">, targetQty: number) => {
-      try {
-        await updateItemQuantity({ orderItemId: itemId as string, quantity: targetQty });
-      } catch (error) {
-        if (__DEV__) console.error("Update quantity error:", error);
-        Alert.alert("Error", "Failed to update quantity");
-      }
+      await updateItemQuantity({ orderItemId: itemId as string, quantity: targetQty });
     },
     [updateItemQuantity],
   );
 
-  const handleVoidItem = useCallback(
-    (itemId: Id<"orderItems">) => {
-      const item = activeItems.find((i) => i._id === itemId);
-      if (!item) return;
-      setVoidingItem({ id: itemId, name: item.productName, quantity: item.quantity });
-    },
-    [activeItems],
-  );
+  const handleVoidItem = useCallback((itemId: Id<"orderItems">) => {
+    const item = activeItemsRef.current.find((i) => i._id === itemId);
+    if (!item) return;
+    setVoidingItem({ id: itemId, name: item.productName, quantity: item.quantity });
+  }, []);
 
   const handleConfirmVoid = useCallback(
     async (reason: string) => {
@@ -384,6 +375,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     setIsSending(true);
     let shouldReleaseLock = true;
     try {
+      await quantityEdits.flush();
       if (order?.status === "draft") {
         await submitDraft({ orderId: orderId as string });
       }
@@ -404,7 +396,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
         setIsSending(false);
       }
     }
-  }, [order, orderId, navigation]);
+  }, [order, orderId, navigation, quantityEdits, orderCategory, tableMarker]);
 
   // Send new items to kitchen (first-time or running bill)
   const handleSendToKitchen = useCallback(async () => {
@@ -412,6 +404,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
     setIsSending(true);
     try {
+      const savedQuantities = await quantityEdits.flush();
       // Submit draft first if needed
       if (order.status === "draft") {
         await submitDraft({ orderId: orderId as string });
@@ -433,7 +426,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
           orderDefaultServiceType: "takeout",
           items: unsentItems.map((i) => ({
             name: i.productName,
-            quantity: i.quantity,
+            quantity: savedQuantities.get(i._id) ?? i.quantity,
             notes: i.notes,
             serviceType: i.serviceType ?? "takeout",
             modifiers: i.modifiers?.map((m) => ({
@@ -467,7 +460,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
     } finally {
       setIsSending(false);
     }
-  }, [order, orderId, hasUnsentItems, isSending, activeItems, navigation]);
+  }, [order, orderId, hasUnsentItems, isSending, activeItems, navigation, quantityEdits]);
 
   // Reprint full kitchen receipt (all items)
   const handleReprintKitchenReceipt = useCallback(async () => {
@@ -795,6 +788,8 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
                 onSetQuantity={handleSetQuantity}
+                quantityEdits={quantityEdits}
+                disabled={isSending}
                 onVoidItem={item.isSentToKitchen ? handleVoidItem : undefined}
               />
             )}
@@ -1001,15 +996,15 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
       {/* Modals */}
       <ModifierSelectionModal
-        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length > 0}
+        visible={!!selectedProduct && (modifierGroups === undefined || modifierGroups.length > 0)}
         product={selectedProduct}
-        modifierGroups={modifierGroups}
-        isLoading={isAddingItem || isSending}
+        modifierGroups={modifierGroups ?? []}
+        isLoading={isAddingItem || isSending || modifierGroups === undefined}
         onClose={handleCloseModal}
         onConfirm={handleConfirmModifiers}
       />
       <AddItemModal
-        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length === 0}
+        visible={!!selectedProduct && modifierGroups !== undefined && modifierGroups.length === 0}
         product={selectedProduct}
         quantity={quantity}
         notes={notes}

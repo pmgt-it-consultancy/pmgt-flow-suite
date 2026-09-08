@@ -1,35 +1,43 @@
 import type { Model, Query } from "@nozbe/watermelondb";
-import { useEffect, useState } from "react";
+import { NavigationContext } from "@react-navigation/native";
+import { useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 
-/**
- * Subscribes a React component to a WatermelonDB query. Re-renders on
- * any change to a row matching the query (insert, update, delete).
- *
- * Usage:
- *   const products = useObservable(
- *     () => database.collections.get<Product>("products")
- *       .query(Q.where("store_id", storeId), Q.where("is_active", true))
- *       .observe(),
- *     [storeId],
- *   );
- *
- * The factory closure is only re-invoked when deps change, so you can
- * safely build queries inside it.
- *
- * Returns `undefined` until the first emission lands (parity with
- * Convex's `useQuery` loading state).
- */
+/** Screen-owned queries pause on blur. Non-screen consumers remain active. */
+export function useScreenQueryActive(): boolean {
+  const navigation = useContext(NavigationContext);
+  const subscribeToFocus = useCallback(
+    (notify: () => void) => {
+      if (!navigation) return () => {};
+      const offFocus = navigation.addListener("focus", notify);
+      const offBlur = navigation.addListener("blur", notify);
+      return () => {
+        offFocus();
+        offBlur();
+      };
+    },
+    [navigation],
+  );
+  const getFocused = useCallback(() => navigation?.isFocused() ?? true, [navigation]);
+  return useSyncExternalStore(subscribeToFocus, getFocused, getFocused);
+}
+
+/** Observe query rows while focused; caller dependencies identify the query scope. */
 export function useObservable<T extends Model>(
   factory: () => Query<T>,
   deps: ReadonlyArray<unknown>,
   observedColumns: string[] = [],
 ): T[] | undefined {
-  const [value, setValue] = useState<T[] | undefined>(undefined);
+  const active = useScreenQueryActive();
   const observedColumnsKey = observedColumns.join("|");
+  // A new scope must never expose rows from the previous store/order, even
+  // before its effect runs. Retain the last same-scope snapshot while hidden.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: caller-defined query dependencies
+  const scope = useMemo(() => ({}), [observedColumnsKey, ...deps]);
+  const [snapshot, setSnapshot] = useState<{ scope: object; rows: T[] }>();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: factory is intentionally keyed by caller-provided deps
   useEffect(() => {
-    setValue(undefined);
+    if (!active) return;
     let cancelled = false;
     let sub: { unsubscribe: () => void } | null = null;
     const columns = observedColumnsKey ? observedColumnsKey.split("|") : [];
@@ -37,14 +45,14 @@ export function useObservable<T extends Model>(
     const observable = columns.length > 0 ? query.observeWithColumns(columns) : query.observe();
     sub = observable.subscribe({
       next: (rows: T[]) => {
-        if (!cancelled) setValue(rows);
+        if (!cancelled) setSnapshot({ scope, rows });
       },
     });
     return () => {
       cancelled = true;
       sub?.unsubscribe();
     };
-  }, [observedColumnsKey, ...deps]);
+  }, [active, scope]);
 
-  return value;
+  return snapshot?.scope === scope ? snapshot.rows : undefined;
 }

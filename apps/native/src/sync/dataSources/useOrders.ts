@@ -527,9 +527,33 @@ export function useOrderHistoryQuery(params: {
     ORDER_HISTORY_COLUMNS,
   );
 
+  const displayedOrders = useMemo(() => {
+    if (!orders) return undefined;
+    let filtered = orders.filter((order) => order.status !== "draft");
+    if (status) filtered = filtered.filter((order) => order.status === status);
+    if (search) {
+      const term = search.toLowerCase();
+      filtered = filtered.filter(
+        (order) =>
+          order.orderNumber?.toLowerCase().includes(term) ||
+          order.customerName?.toLowerCase().includes(term),
+      );
+    }
+    return filtered.sort((a, b) => b.createdAt - a.createdAt).slice(0, limit ?? 50);
+  }, [orders, status, search, limit]);
+  const orderIds = useMemo(
+    () => (displayedOrders ?? []).map((order) => order.id),
+    [displayedOrders],
+  );
+
   const orderItems = useObservable<OrderItem>(
-    () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [],
+    () =>
+      getDatabase()
+        .collections.get<OrderItem>("order_items")
+        .query(
+          orderIds.length > 0 ? Q.where("order_id", Q.oneOf(orderIds)) : Q.where("order_id", NEVER),
+        ),
+    [orderIds.join(",")],
     ORDER_ITEM_COUNT_COLUMNS,
   );
 
@@ -541,7 +565,7 @@ export function useOrderHistoryQuery(params: {
 
   return useMemo<OrderHistoryEntry[] | undefined>(() => {
     if (!storeId) return undefined;
-    if (!orders || !orderItems) return undefined;
+    if (!displayedOrders || !orderItems) return undefined;
 
     const tableNameById = new Map((tables ?? []).map((t) => [t.id, t.name]));
 
@@ -554,37 +578,22 @@ export function useOrderHistoryQuery(params: {
       );
     }
 
-    let filtered = orders.filter((o) => o.status !== "draft");
-    if (status) filtered = filtered.filter((o) => o.status === status);
-    if (search) {
-      const s = search.toLowerCase();
-      filtered = filtered.filter(
-        (o) =>
-          (o.orderNumber?.toLowerCase().includes(s) ?? false) ||
-          (o.customerName?.toLowerCase().includes(s) ?? false),
-      );
-    }
-
-    return filtered
-      .slice()
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .slice(0, limit ?? 50)
-      .map((o) => ({
-        _id: o.id as Id<"orders">,
-        orderNumber: o.orderNumber,
-        orderType: o.orderType as "dine_in" | "takeout",
-        tableName: o.tableId
-          ? (tableNameById.get(o.tableId) ?? o.tableNameSnapshot)
-          : o.tableNameSnapshot,
-        customerName: o.customerName,
-        status: o.status as OrderHistoryEntry["status"],
-        netSales: o.netSales,
-        itemCount: itemCountByOrderId.get(o.id) ?? 0,
-        createdAt: o.createdAt,
-        paymentMethod: o.paymentMethod as "cash" | "card_ewallet" | undefined,
-        refundedFromOrderId: o.refundedFromOrderId as Id<"orders"> | undefined,
-      }));
-  }, [storeId, search, status, limit, orders, orderItems, tables]);
+    return displayedOrders.map((o) => ({
+      _id: o.id as Id<"orders">,
+      orderNumber: o.orderNumber,
+      orderType: o.orderType as "dine_in" | "takeout",
+      tableName: o.tableId
+        ? (tableNameById.get(o.tableId) ?? o.tableNameSnapshot)
+        : o.tableNameSnapshot,
+      customerName: o.customerName,
+      status: o.status as OrderHistoryEntry["status"],
+      netSales: o.netSales,
+      itemCount: itemCountByOrderId.get(o.id) ?? 0,
+      createdAt: o.createdAt,
+      paymentMethod: o.paymentMethod as "cash" | "card_ewallet" | undefined,
+      refundedFromOrderId: o.refundedFromOrderId as Id<"orders"> | undefined,
+    }));
+  }, [storeId, displayedOrders, orderItems, tables]);
 }
 
 // ─── useOrderDiscountsQuery ─────────────────────────────────────────
@@ -603,8 +612,11 @@ export function useOrderDiscountsQuery(
   );
 
   const items = useObservable<OrderItem>(
-    () => getDatabase().collections.get<OrderItem>("order_items").query(),
-    [],
+    () =>
+      getDatabase()
+        .collections.get<OrderItem>("order_items")
+        .query(Q.where("order_id", orderId ? String(orderId) : NEVER)),
+    [orderId],
     ["product_name"],
   );
 
