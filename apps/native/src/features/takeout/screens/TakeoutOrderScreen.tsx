@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, TextInput } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
-import { useModifiersForStore, useOrderDetail, useProducts } from "../../../sync";
+import { useModifiersForProduct, useOrderDetail, useProducts } from "../../../sync";
 import { useAuth } from "../../auth/context";
 import { cancelOrder } from "../../checkout/services/checkoutMutations";
 import type { SelectedModifier } from "../../orders/components";
@@ -88,19 +88,7 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
   const order = useOrderDetail(orderId);
   const products = useProducts(storeId);
 
-  // Prefetch all modifier data for the store — available instantly on product tap
-  const allModifiers = useModifiersForStore(storeId);
-  const modifiersByProduct = useMemo(() => {
-    const map = new Map<string, NonNullable<typeof allModifiers>[number]["groups"]>();
-    if (allModifiers) {
-      for (const entry of allModifiers) {
-        map.set(entry.productId, entry.groups);
-      }
-    }
-    return map;
-  }, [allModifiers]);
-
-  const modifierGroups = selectedProduct ? (modifiersByProduct.get(selectedProduct.id) ?? []) : [];
+  const modifierGroups = useModifiersForProduct(selectedProduct?.id);
 
   // Mutations — all use WatermelonDB service functions imported above
 
@@ -1008,15 +996,15 @@ export const TakeoutOrderScreen = ({ navigation, route }: TakeoutOrderScreenProp
 
       {/* Modals */}
       <ModifierSelectionModal
-        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length > 0}
+        visible={!!selectedProduct && (modifierGroups === undefined || modifierGroups.length > 0)}
         product={selectedProduct}
-        modifierGroups={modifierGroups}
-        isLoading={isAddingItem || isSending}
+        modifierGroups={modifierGroups ?? []}
+        isLoading={isAddingItem || isSending || modifierGroups === undefined}
         onClose={handleCloseModal}
         onConfirm={handleConfirmModifiers}
       />
       <AddItemModal
-        visible={!!selectedProduct && allModifiers !== undefined && modifierGroups.length === 0}
+        visible={!!selectedProduct && modifierGroups !== undefined && modifierGroups.length === 0}
         product={selectedProduct}
         quantity={quantity}
         notes={notes}
