@@ -1,13 +1,20 @@
 import type { Collection, Database, Model } from "@nozbe/watermelondb";
 import { Q } from "@nozbe/watermelondb";
-import { synchronize } from "@nozbe/watermelondb/sync";
+import { hasUnsyncedChanges, synchronize } from "@nozbe/watermelondb/sync";
 import { getOrCreateDeviceId } from "../auth/deviceId";
 import { getDatabase } from "../db";
 import { SyncPhase, syncDiagnostics } from "./diagnostics";
 import { generateUUID } from "./idBridge";
 import { subscribeToNetworkChanges } from "./networkStatus";
 import { callPull, callPush, callRegisterDevice } from "./syncEndpoints";
-import type { ChangeBucket, CursorMap, SyncState, WatermelonRow } from "./types";
+import type {
+  ChangeBucket,
+  CursorMap,
+  SyncOutcome,
+  SyncSafety,
+  SyncState,
+  WatermelonRow,
+} from "./types";
 
 // Bound guard memory, not legitimate backlog size. A progressing pull can
 // exceed this many pages; repeated recent cursor maps fail into retry backoff.
@@ -72,6 +79,7 @@ class SyncManagerImpl {
   private listeners = new Set<Listener>();
   private periodicTimer: ReturnType<typeof setInterval> | null = null;
   private retryTimer: ReturnType<typeof setTimeout> | null = null;
+  private retryAt: number | null = null;
   private inFlight: Promise<void> | null = null;
   private inFlightGeneration = 0;
   private pending = false;
@@ -148,6 +156,7 @@ class SyncManagerImpl {
       clearTimeout(this.retryTimer);
       this.retryTimer = null;
     }
+    this.retryAt = null;
     if (this.unsubNet) {
       this.unsubNet();
       this.unsubNet = null;
@@ -191,6 +200,31 @@ class SyncManagerImpl {
 
   async syncNow(): Promise<void> {
     return this.requestSync();
+  }
+
+  async getSafety(): Promise<SyncSafety> {
+    return {
+      isOnline: this.online,
+      isRunning: this.inFlight !== null,
+      hasUnsyncedChanges: await hasUnsyncedChanges({ database: getDatabase() }),
+    };
+  }
+
+  async syncForDelivery(): Promise<SyncOutcome> {
+    if (!this.started) return { kind: "failed", message: "Sync manager is not started" };
+    if (!this.online) return { kind: "offline" };
+    if (this.retryTimer) {
+      return { kind: "backoff", retryAt: this.retryAt ?? Date.now() };
+    }
+
+    await this.requestSync();
+
+    if (!this.online) return { kind: "offline" };
+    if (this.state.lastError) return { kind: "failed", message: this.state.lastError };
+    if (await hasUnsyncedChanges({ database: getDatabase() })) {
+      return { kind: "pending", count: 1 };
+    }
+    return { kind: "delivered", observedAt: this.state.lastPulledAt ?? Date.now() };
   }
 
   /**
@@ -494,8 +528,10 @@ class SyncManagerImpl {
     const delay = RETRY_BACKOFF_MS[Math.min(this.retryAttempt, RETRY_BACKOFF_MS.length - 1)];
     this.retryAttempt++;
     if (this.retryTimer) clearTimeout(this.retryTimer);
+    this.retryAt = Date.now() + delay;
     this.retryTimer = setTimeout(() => {
       this.retryTimer = null;
+      this.retryAt = null;
       void this.requestSync();
     }, delay);
   }

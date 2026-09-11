@@ -1,4 +1,4 @@
-import { synchronize } from "@nozbe/watermelondb/sync";
+import { hasUnsyncedChanges, synchronize } from "@nozbe/watermelondb/sync";
 import NetInfo from "@react-native-community/netinfo";
 import { SyncPhase, syncDiagnostics } from "../diagnostics";
 
@@ -18,7 +18,10 @@ jest.mock("expo-secure-store", () => ({ getItemAsync: jest.fn(async () => "devic
 jest.mock("../../db", () => ({
   getDatabase: () => ({ adapter: { getLocal: mockLocalRead, setLocal: async () => {} } }),
 }));
-jest.mock("@nozbe/watermelondb/sync", () => ({ synchronize: jest.fn() }));
+jest.mock("@nozbe/watermelondb/sync", () => ({
+  hasUnsyncedChanges: jest.fn(async () => false),
+  synchronize: jest.fn(),
+}));
 
 function deferred() {
   let resolve!: () => void;
@@ -37,6 +40,7 @@ describe("sync manager lifecycle", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.clearAllMocks();
+    jest.mocked(hasUnsyncedChanges).mockResolvedValue(false);
     global.fetch = fetchMock;
     setAuthTokenFn(async () => "token");
     fetchMock.mockImplementation(async (url: string) => ({
@@ -251,6 +255,55 @@ describe("sync manager lifecycle", () => {
     syncManager.stop();
     await jest.advanceTimersByTimeAsync(60_000);
     expect(synchronize).toHaveBeenCalledTimes(3);
+  });
+
+  it("reports a failed delivery attempt while background sync remains non-throwing", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    await syncManager.start("store");
+    await settle();
+    jest.mocked(synchronize).mockRejectedValueOnce(new Error("network unavailable"));
+
+    await expect(syncManager.syncNow()).resolves.toBeUndefined();
+    await jest.advanceTimersByTimeAsync(2_000);
+    jest.mocked(synchronize).mockRejectedValueOnce(new Error("network unavailable"));
+    const outcome = await syncManager.syncForDelivery();
+
+    expect(outcome).toEqual({ kind: "failed", message: "network unavailable" });
+  });
+
+  it("does not report delivery while Watermelon still has unsynced changes", async () => {
+    await syncManager.start("store");
+    await settle();
+    jest.mocked(hasUnsyncedChanges).mockResolvedValue(true);
+
+    const outcome = await syncManager.syncForDelivery();
+
+    expect(outcome).toEqual({ kind: "pending", count: 1 });
+  });
+
+  it("reports an offline delivery outcome without starting synchronization", async () => {
+    await syncManager.start("store");
+    await settle();
+    const notify = jest.mocked(NetInfo.addEventListener).mock.calls[0][0];
+    notify({ isConnected: false } as Parameters<typeof notify>[0]);
+    const callsBefore = jest.mocked(synchronize).mock.calls.length;
+
+    const outcome = await syncManager.syncForDelivery();
+
+    expect(outcome).toEqual({ kind: "offline" });
+    expect(synchronize).toHaveBeenCalledTimes(callsBefore);
+  });
+
+  it("exposes whether a refresh is unsafe because local changes remain", async () => {
+    await syncManager.start("store");
+    await settle();
+    jest.mocked(hasUnsyncedChanges).mockResolvedValue(true);
+
+    await expect(syncManager.getSafety()).resolves.toEqual({
+      isOnline: true,
+      isRunning: false,
+      hasUnsyncedChanges: true,
+    });
   });
 
   it("does not register or install timers if stopped during startup storage read", async () => {
