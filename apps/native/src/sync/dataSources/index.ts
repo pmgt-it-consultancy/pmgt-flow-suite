@@ -39,3 +39,4 @@ export {
   useTablesAvailable,
   useTablesListWithOrders,
 } from "./useTables";
+export { getHistoryGateway, useV2OrderHistory } from "./useV2OrderHistory";

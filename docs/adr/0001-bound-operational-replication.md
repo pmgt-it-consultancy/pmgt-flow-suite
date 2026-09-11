@@ -1,0 +1,19 @@
+# Bound operational replication and load history explicitly
+
+PMGT Flow will replace automatic full-history tablet replication with a bounded Operational Replica and explicit, on-demand Historical Cache. Pending Local Work will move to an independent durable operation journal, while versioned sync contracts and per-store/device feature flags allow the new protocol to run beside the live full-history implementation until parity and performance are proven. This preserves offline selling and financial recovery while preventing lifetime order volume from determining day-to-day POS performance; Convex and WatermelonDB remain in place until measurements of the bounded design justify changing them.
+
+Operational Order membership includes drafts, open orders, the current or otherwise unclosed Business Day, unresolved payment or synchronization exceptions, refund/replacement dependencies, and explicitly pinned historical workflows. Replica eviction is not a server-domain deletion. Day Closing requires a verifiable Sync-Clean state rather than treating completion of a background sync attempt as proof of delivery.
+
+The Operation Journal records business commands rather than replicated row mutations. Entries progress from pending through sending, server acceptance, and authoritative observation; unrecoverable automatic processing becomes an attention-required state rather than silent loss. The first redesign preserves Origin Tablet ownership of open orders. General same-LAN multi-tablet coordination remains a separate future architecture program.
+
+Replica retention depends on a Settled Business Day, not whether a Z-Report was printed. Late financial changes re-enter the Operational Replica as complete Order Aggregates. Stable financial operation identities remain attached to their resulting records rather than relying on a short-lived deduplication cache. The supported offline guarantee is seven consecutive days; aging Pending Local Work is never discarded.
+
+Release acceptance is measured on the target tablet at up to 100,000 historical server orders, 2,000 orders in one Business Day, roughly 40,000 operational order rows, 10 tablets per store, and seven exceptional unsettled Business Days. Gates are visible tap feedback under 100 ms, p95 cart updates under 300 ms, Operational Order visibility around two seconds, and no sustained latency or memory growth as server history increases.
+
+Store-level settlement requires every Active Tablet to report Sync-Clean after cutoff. When a device is unavailable, the server may produce a Preliminary Day Report, but the Business Day remains unsettled and the missing device is recorded. Offline Business Day assignments are provisional until the server validates device time and assigns the Canonical Business Day.
+
+Settle Order is one atomic local and server business operation; printing remains independently retryable. Uploading Pending Local Work, downloading operational changes, and loading historical data run independently. Transfer may be paged, but a changed Order Aggregate becomes visible atomically. Each replication stream owns a monotonic checkpoint and snapshot generation, and replica-membership removal remains distinct from domain deletion.
+
+Business Day reports are immutable numbered revisions. Late device reconciliation produces a new revision, and only a store-level settled revision is final. Device Retirement is audited and explicitly acknowledges any unrecoverable Pending Local Work. Permanent operation rejection preserves the original evidence in an attention-required state rather than automatically reversing the local projection.
+
+Journal commands retain their original schema version and are upcast by supported server handlers. Server domain mutations append their replication events atomically. The legacy Force Resync remains available only as a guarded rollback path until scoped Refresh POS Data is proven; it does not gain pruning behavior in place.

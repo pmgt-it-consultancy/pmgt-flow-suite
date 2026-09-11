@@ -3,6 +3,7 @@ import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { getBusinessDayBoundaries } from "./lib/businessDay";
+import { publishOrderAggregateEvent } from "./lib/replicationEvents";
 import {
   aggregateOrderTotals,
   calculateItemTotals,
@@ -249,6 +250,7 @@ export const createDraftOrder = mutation({
       createdBy: user._id,
       createdAt: now,
     });
+    await publishOrderAggregateEvent(ctx, { orderId, eventKind: "membership_enter" });
     return orderId;
   },
 });
@@ -956,6 +958,7 @@ export const addItem = mutation({
     // Recalculate order totals
     await recalculateOrderTotals(ctx, args.orderId);
     await recomputeOrderItemCount(ctx, args.orderId);
+    await publishOrderAggregateEvent(ctx, { orderId: args.orderId });
 
     return itemId;
   },

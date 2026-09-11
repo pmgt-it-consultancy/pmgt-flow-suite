@@ -3,6 +3,7 @@ export {
   type AvailableTable,
   type CategoryTreeNode,
   type DraftOrderEntry,
+  getHistoryGateway,
   type ModifierGroupItem,
   type ModifierOptionItem,
   type OrderDetailView,
@@ -31,9 +32,10 @@ export {
   useTablesAvailable,
   useTablesListWithOrders,
   useTakeoutOrders,
+  useV2OrderHistory,
 } from "./dataSources";
 export { useNetworkStatus } from "./networkStatus";
-export { SyncBootstrap } from "./SyncBootstrap";
+export { getLastSyncV2ShadowMismatch, SyncBootstrap } from "./SyncBootstrap";
 export { syncManager } from "./SyncManager";
 export { SyncStatusPill } from "./SyncStatusPill";
 export { callPull, callPush, callRegisterDevice, setAuthTokenFn } from "./syncEndpoints";
@@ -45,3 +47,7 @@ export type {
   SyncState,
   SyncStatus,
 } from "./types";
+export { CheckpointStore } from "./v2/checkpoints";
+export { createV2Endpoints, syncV2Endpoints } from "./v2/endpoints";
+export { OperationalReplicator } from "./v2/OperationalReplicator";
+export { isSyncV2Enabled } from "./v2/types";

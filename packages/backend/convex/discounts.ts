@@ -3,6 +3,7 @@ import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { requirePermission } from "./lib/permissions";
+import { publishOrderAggregateEvent } from "./lib/replicationEvents";
 import {
   aggregateOrderTotals,
   calculateItemTotals,
@@ -122,6 +123,7 @@ export const applyScPwdDiscount = mutation({
 
     // Recalculate order totals
     await recalculateOrderTotalsWithDiscounts(ctx, args.orderId);
+    await publishOrderAggregateEvent(ctx, { orderId: args.orderId });
 
     return discountId;
   },

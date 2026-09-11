@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, TextInput } from "react-native";
 import { XStack, YStack } from "tamagui";
 import {
@@ -11,6 +11,8 @@ import {
   useOrderDiscountsQuery,
   useOrderReceipt,
 } from "../../../sync";
+import type { HistoricalOrder } from "../../../sync/v2/HistoryGateway";
+import { mapHistoricalOrderDetail } from "../../../sync/v2/historyMapping";
 import { ManagerPinModal } from "../../checkout/components";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import type { ReceiptData } from "../../shared";
@@ -25,12 +27,13 @@ interface OrderDetailScreenProps {
   route: {
     params: {
       orderId: Id<"orders">;
+      historicalOrder?: HistoricalOrder;
     };
   };
 }
 
 export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps) => {
-  const { orderId } = route.params;
+  const { orderId, historicalOrder } = route.params;
   const formatCurrency = useFormatCurrency();
 
   const [isReprinting, setIsReprinting] = useState(false);
@@ -46,7 +49,11 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
   const [showRefundPinModal, setShowRefundPinModal] = useState(false);
 
   // Queries — read from local WatermelonDB
-  const order = useOrderDetail(orderId);
+  const localOrder = useOrderDetail(orderId);
+  const order = useMemo(
+    () => (historicalOrder ? mapHistoricalOrderDetail(historicalOrder) : localOrder),
+    [historicalOrder, localOrder],
+  );
   const receipt = useOrderReceipt(orderId);
   const discounts = useOrderDiscountsQuery(orderId);
 

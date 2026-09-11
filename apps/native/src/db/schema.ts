@@ -1,6 +1,6 @@
 import { appSchema, tableSchema } from "@nozbe/watermelondb";
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 /**
  * WatermelonDB schema mirroring the synced Convex tables.
@@ -330,6 +330,16 @@ export const watermelonSchema = appSchema({
       columns: [
         { name: "key", type: "string", isIndexed: true },
         { name: "value", type: "string" },
+      ],
+    }),
+    tableSchema({
+      name: "sync_v2_aggregates",
+      columns: [
+        { name: "store_id", type: "string", isIndexed: true },
+        { name: "order_id", type: "string", isIndexed: true },
+        { name: "aggregate_version", type: "number" },
+        { name: "payload", type: "string" },
+        { name: "updated_at", type: "number" },
       ],
     }),
   ],

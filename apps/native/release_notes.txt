@@ -1,7 +1,10 @@
 ## What's New
 
-- Reduced unnecessary data loading across tables, takeout, order history, checkout, and refunds as sales history grows.
-- Improved modifier loading for dine-in and takeout, and reduced updates on unchanged cart rows and hidden screens.
-- Quantity edits now finish saving before checkout or kitchen send, with retry support when saving fails.
-- Reduced database work when adding, updating, and sending orders while preserving totals and discounts.
-- Fixed queued sync delivery and interrupted downloads, including large order backlogs.
+- Improved Refresh POS Data so large operational snapshots are downloaded in safe, bounded pages.
+- Verified offline takeout ordering and reconnect delivery against a 10,000-order staging restaurant.
+- Added an isolated staging simulation for ongoing tablet-scale sync validation.
+
+## Notes
+
+- The bounded sync engine remains behind its rollout flag. Existing POS synchronization stays active by default.
+- Cold launches without connectivity still require the authentication cache follow-up before full offline-first rollout.

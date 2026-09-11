@@ -21,9 +21,13 @@ export function setAuthTokenFn(fn: () => Promise<string | null>): void {
   _getAuthToken = fn;
 }
 
-async function authHeader(): Promise<Record<string, string>> {
+export async function getSyncAuthToken(): Promise<string | null> {
   if (!_getAuthToken) throw new Error("syncEndpoints: setAuthTokenFn() never called");
-  const token = await _getAuthToken();
+  return _getAuthToken();
+}
+
+async function authHeader(): Promise<Record<string, string>> {
+  const token = await getSyncAuthToken();
   if (!token) throw new Error("syncEndpoints: no auth token (cashier not signed in)");
   return { Authorization: `Bearer ${token}` };
 }

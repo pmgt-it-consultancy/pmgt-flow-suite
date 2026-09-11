@@ -1,4 +1,4 @@
-import { synchronize } from "@nozbe/watermelondb/sync";
+import { hasUnsyncedChanges, synchronize } from "@nozbe/watermelondb/sync";
 import NetInfo from "@react-native-community/netinfo";
 import { SyncPhase, syncDiagnostics } from "../diagnostics";
 
@@ -10,15 +10,19 @@ if (originalUrl === undefined) delete process.env.EXPO_PUBLIC_CONVEX_URL;
 else process.env.EXPO_PUBLIC_CONVEX_URL = originalUrl;
 
 const mockLocalRead = jest.fn(async (): Promise<string | null> => "1");
+const mockLocalWrite = jest.fn(async (): Promise<void> => {});
 
 jest.mock("@react-native-community/netinfo", () => ({
   addEventListener: jest.fn(() => jest.fn()),
 }));
 jest.mock("expo-secure-store", () => ({ getItemAsync: jest.fn(async () => "device") }));
 jest.mock("../../db", () => ({
-  getDatabase: () => ({ adapter: { getLocal: mockLocalRead, setLocal: async () => {} } }),
+  getDatabase: () => ({ adapter: { getLocal: mockLocalRead, setLocal: mockLocalWrite } }),
 }));
-jest.mock("@nozbe/watermelondb/sync", () => ({ synchronize: jest.fn() }));
+jest.mock("@nozbe/watermelondb/sync", () => ({
+  hasUnsyncedChanges: jest.fn(async () => false),
+  synchronize: jest.fn(),
+}));
 
 function deferred() {
   let resolve!: () => void;
@@ -37,6 +41,7 @@ describe("sync manager lifecycle", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.clearAllMocks();
+    jest.mocked(hasUnsyncedChanges).mockResolvedValue(false);
     global.fetch = fetchMock;
     setAuthTokenFn(async () => "token");
     fetchMock.mockImplementation(async (url: string) => ({
@@ -251,6 +256,91 @@ describe("sync manager lifecycle", () => {
     syncManager.stop();
     await jest.advanceTimersByTimeAsync(60_000);
     expect(synchronize).toHaveBeenCalledTimes(3);
+  });
+
+  it("reports a failed delivery attempt while background sync remains non-throwing", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    await syncManager.start("store");
+    await settle();
+    jest.mocked(synchronize).mockRejectedValueOnce(new Error("network unavailable"));
+
+    await expect(syncManager.syncNow()).resolves.toBeUndefined();
+    await jest.advanceTimersByTimeAsync(2_000);
+    jest.mocked(synchronize).mockRejectedValueOnce(new Error("network unavailable"));
+    const outcome = await syncManager.syncForDelivery();
+
+    expect(outcome).toEqual({ kind: "failed", message: "network unavailable" });
+  });
+
+  it("does not report delivery while Watermelon still has unsynced changes", async () => {
+    await syncManager.start("store");
+    await settle();
+    jest.mocked(hasUnsyncedChanges).mockResolvedValue(true);
+
+    const outcome = await syncManager.syncForDelivery();
+
+    expect(outcome).toEqual({ kind: "pending", count: 1 });
+  });
+
+  it("reports an offline delivery outcome without starting synchronization", async () => {
+    await syncManager.start("store");
+    await settle();
+    const notify = jest.mocked(NetInfo.addEventListener).mock.calls[0][0];
+    notify({ isConnected: false } as Parameters<typeof notify>[0]);
+    const callsBefore = jest.mocked(synchronize).mock.calls.length;
+
+    const outcome = await syncManager.syncForDelivery();
+
+    expect(outcome).toEqual({ kind: "offline" });
+    expect(synchronize).toHaveBeenCalledTimes(callsBefore);
+  });
+
+  it("exposes whether a refresh is unsafe because local changes remain", async () => {
+    await syncManager.start("store");
+    await settle();
+    jest.mocked(hasUnsyncedChanges).mockResolvedValue(true);
+
+    await expect(syncManager.getSafety()).resolves.toEqual({
+      isOnline: true,
+      isRunning: false,
+      hasUnsyncedChanges: true,
+    });
+  });
+
+  it("refuses downloaded-data refresh while offline without resetting the watermark", async () => {
+    await syncManager.start("store");
+    await settle();
+    mockLocalWrite.mockClear();
+    const notify = jest.mocked(NetInfo.addEventListener).mock.calls[0][0];
+    notify({ isConnected: false } as Parameters<typeof notify>[0]);
+
+    const result = await syncManager.forceFullResync();
+
+    expect(result).toEqual({ ready: false, reason: "offline" });
+    expect(mockLocalWrite).not.toHaveBeenCalled();
+  });
+
+  it("refuses downloaded-data refresh while local changes remain", async () => {
+    await syncManager.start("store");
+    await settle();
+    mockLocalWrite.mockClear();
+    jest.mocked(hasUnsyncedChanges).mockResolvedValue(true);
+
+    const result = await syncManager.forceFullResync();
+
+    expect(result).toEqual({ ready: false, reason: "pending" });
+    expect(mockLocalWrite).not.toHaveBeenCalled();
+  });
+
+  it("resets the watermark only after delivery and a clean local database", async () => {
+    await syncManager.start("store");
+    await settle();
+    mockLocalWrite.mockClear();
+
+    const result = await syncManager.forceFullResync();
+
+    expect(result).toEqual({ ready: true });
+    expect(mockLocalWrite).toHaveBeenCalledWith("__watermelon_last_pulled_at", "0");
   });
 
   it("does not register or install timers if stopped during startup storage read", async () => {
