@@ -32,6 +32,23 @@ export type SyncState = {
   progress: SyncProgress | null;
 };
 
+export type SyncOutcome =
+  | { kind: "delivered"; observedAt: number }
+  | { kind: "offline" }
+  | { kind: "backoff"; retryAt: number }
+  | { kind: "pending"; count: number }
+  | { kind: "failed"; message: string };
+
+export type SyncSafety = {
+  isOnline: boolean;
+  isRunning: boolean;
+  hasUnsyncedChanges: boolean;
+};
+
+export type ResyncReadiness =
+  | { ready: true }
+  | { ready: false; reason: "offline" | "syncing" | "pending" | "failed" };
+
 export type WatermelonRow = {
   id: string;
   server_id?: string;

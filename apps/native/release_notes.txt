@@ -1,7 +1,11 @@
 ## What's New
 
-- Reduced unnecessary data loading across tables, takeout, order history, checkout, and refunds as sales history grows.
-- Improved modifier loading for dine-in and takeout, and reduced updates on unchanged cart rows and hidden screens.
-- Quantity edits now finish saving before checkout or kitchen send, with retry support when saving fails.
-- Reduced database work when adding, updating, and sending orders while preserving totals and discounts.
-- Fixed queued sync delivery and interrupted downloads, including large order backlogs.
+- Added a bounded sync engine that keeps current restaurant operations separate from long-term sales history.
+- Older order history can now be loaded explicitly instead of increasing routine synchronization work.
+- Added a protected Refresh POS Data option that preserves pending offline work and repairs only the affected local replica.
+- Improved Day Closing checks across registered devices, including stale-device retirement and clock-drift safeguards.
+- Added durable operation tracking and duplicate-payment protection for interrupted or retried delivery.
+
+## Notes
+
+- The new sync engine is staged behind a feature flag. Existing POS synchronization remains the default until store-level rollout checks pass.

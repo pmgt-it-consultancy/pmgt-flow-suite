@@ -445,6 +445,18 @@ describe("orders — draft takeout orders", () => {
     expect(order.orderType).toBe("takeout");
     expect(order.grossSales).toBe(0);
     expect(order.netSales).toBe(0);
+    expect(order.replicationVersion).toBe(1);
+
+    const events = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("replicationEvents")
+        .withIndex("by_store_entity", (q: any) =>
+          q.eq("storeId", storeId).eq("entityType", "order").eq("entityId", orderId),
+        )
+        .collect(),
+    );
+    expect(events).toHaveLength(1);
+    expect(events[0].eventKind).toBe("membership_enter");
   });
 
   it("should auto-increment draft labels for subsequent drafts", async () => {
@@ -935,6 +947,19 @@ describe("orders.addItem — serviceType", () => {
       productId,
       quantity: 1,
     });
+
+    const replication = await t.run(async (ctx: any) => {
+      const order = await ctx.db.get(orderId);
+      const events = await ctx.db
+        .query("replicationEvents")
+        .withIndex("by_store_entity", (q: any) =>
+          q.eq("storeId", storeId).eq("entityType", "order").eq("entityId", orderId),
+        )
+        .collect();
+      return { order, events };
+    });
+    expect(replication.order.replicationVersion).toBe(1);
+    expect(replication.events).toHaveLength(1);
 
     const item = await t.run(async (ctx: any) => ctx.db.get(itemId));
     expect(item.serviceType).toBe("dine_in");

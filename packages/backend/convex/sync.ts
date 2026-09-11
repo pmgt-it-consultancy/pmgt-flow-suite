@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { httpAction, internalAction, internalMutation, internalQuery } from "./_generated/server";
+import { publishOrderAggregateEvent } from "./lib/replicationEvents";
 import { deviceCodeFromIndex, newClientId } from "./lib/sync";
 
 /**
@@ -562,6 +563,7 @@ export const syncPushCore = internalMutation({
       return id;
     };
 
+    const touchedOrders = new Map<Id<"orders">, "membership_enter" | "upsert">();
     for (const table of PUSH_TABLE_ORDER) {
       const tableChanges = payload.changes?.[table];
       if (!tableChanges) continue;
@@ -578,7 +580,7 @@ export const syncPushCore = internalMutation({
       }
       for (const row of [...(tableChanges.created ?? []), ...(tableChanges.updated ?? [])]) {
         try {
-          await applyPushedRow({
+          const touchedOrder = await applyPushedRow({
             ctx,
             table,
             row,
@@ -587,6 +589,13 @@ export const syncPushCore = internalMutation({
             deviceId: args.deviceId,
             resolveFk,
           });
+          if (touchedOrder) {
+            const currentKind = touchedOrders.get(touchedOrder.orderId);
+            touchedOrders.set(
+              touchedOrder.orderId,
+              currentKind === "membership_enter" ? currentKind : touchedOrder.eventKind,
+            );
+          }
         } catch (e) {
           rejected.push({
             table,
@@ -595,6 +604,14 @@ export const syncPushCore = internalMutation({
           });
         }
       }
+    }
+
+    for (const [orderId, eventKind] of Array.from(touchedOrders.entries())) {
+      await publishOrderAggregateEvent(ctx, {
+        orderId,
+        eventKind,
+        operationId: payload.clientMutationId,
+      });
     }
 
     const response: PushResponse = rejected.length > 0 ? { rejected } : { success: true };
@@ -824,7 +841,9 @@ async function applyPushedRow({
   userId,
   deviceId,
   resolveFk,
-}: ApplyArgs): Promise<void> {
+}: ApplyArgs): Promise<
+  { orderId: Id<"orders">; eventKind: "membership_enter" | "upsert" } | undefined
+> {
   const row = Object.fromEntries(
     Object.entries(rawRow).map(([k, v]) => [k, v ?? undefined]),
   ) as PushChange;
@@ -931,9 +950,12 @@ async function applyPushedRow({
         originDeviceId: deviceId,
         updatedAt: Date.now(),
       };
-      if (existing) await ctx.db.patch(existing._id, data);
-      else await ctx.db.insert("orders", data);
-      return;
+      if (existing) {
+        await ctx.db.patch(existing._id, data);
+        return { orderId: existing._id, eventKind: "upsert" };
+      }
+      const orderId = await ctx.db.insert("orders", data);
+      return { orderId, eventKind: "membership_enter" };
     }
     case "tables": {
       if (!existing) throw new Error("Missing table");
@@ -982,7 +1004,7 @@ async function applyPushedRow({
       };
       if (existing) await ctx.db.patch(existing._id, data);
       else await ctx.db.insert("orderItems", data);
-      return;
+      return { orderId, eventKind: "upsert" };
     }
     case "orderItemModifiers": {
       // Append-only — second-write idempotent skip
@@ -1000,7 +1022,8 @@ async function applyPushedRow({
         clientId: row.id,
         updatedAt: Date.now(),
       });
-      return;
+      const orderItem = await ctx.db.get(orderItemId);
+      return orderItem ? { orderId: orderItem.orderId, eventKind: "upsert" } : undefined;
     }
     case "orderDiscounts": {
       if (existing) return; // append-only
@@ -1026,7 +1049,7 @@ async function applyPushedRow({
         clientId: row.id,
         updatedAt: Date.now(),
       });
-      return;
+      return { orderId, eventKind: "upsert" };
     }
     case "orderPayments": {
       if (existing) return; // append-only
@@ -1066,7 +1089,7 @@ async function applyPushedRow({
         clientId: row.id,
         updatedAt: Date.now(),
       });
-      return;
+      return { orderId, eventKind: "upsert" };
     }
     case "orderVoids": {
       if (existing) return; // append-only
@@ -1096,7 +1119,7 @@ async function applyPushedRow({
         clientId: row.id,
         updatedAt: Date.now(),
       });
-      return;
+      return { orderId, eventKind: "upsert" };
     }
     case "auditLogs": {
       if (existing) return; // append-only, idempotent

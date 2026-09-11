@@ -5,8 +5,10 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { YStack } from "tamagui";
+import { getOrCreateDeviceId } from "../../../auth/deviceId";
 import { useNetworkStatus } from "../../../sync/networkStatus";
 import { syncManager } from "../../../sync/SyncManager";
+import { isSyncV2Enabled } from "../../../sync/v2/types";
 import { useAuth } from "../../auth/context";
 import { usePrinterStore } from "../../settings/stores/usePrinterStore";
 import { PageHeader } from "../../shared/components/PageHeader";
@@ -98,6 +100,35 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
   // Mutations
   const generateReport = useMutation(api.reports.generateDailyReport);
   const logDayClosing = useMutation(api.closing.logDayClosing);
+  const confirmReadyForDayClosing = useMutation(api.closing.confirmReadyForDayClosing);
+
+  const confirmSyncClean = useCallback(async () => {
+    if (!storeId) throw new Error("Store is unavailable");
+    const outcome = await syncManager.syncForDelivery();
+    if (outcome.kind !== "delivered") {
+      throw new Error(
+        outcome.kind === "pending"
+          ? `${outcome.count} local change(s) are still pending`
+          : "Sync did not reach the server",
+      );
+    }
+    if (isSyncV2Enabled) {
+      const deviceId = await getOrCreateDeviceId();
+      const state = syncManager.getState();
+      const readiness = await confirmReadyForDayClosing({
+        storeId,
+        deviceId,
+        generation: `operational-v2:${storeId}`,
+        checkpoint: state.lastPulledAt?.toString(),
+        pendingCount: 0,
+        clientNow: Date.now(),
+      });
+      if (!readiness.ready) {
+        const count = readiness.missingDeviceIds.length + readiness.attentionDeviceIds.length;
+        throw new Error(`${count} active device(s) have not reached sync-clean state`);
+      }
+    }
+  }, [confirmReadyForDayClosing, storeId]);
 
   // Printer config
   const charsPerLine = usePrinterStore((s) => {
@@ -122,7 +153,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     }
     setIsGenerating(true);
     try {
-      await syncManager.syncNow();
+      await confirmSyncClean();
       await generateReport({ storeId, reportDate, startTime, endTime });
       await logDayClosing({ storeId, reportDate });
     } catch (_error) {
@@ -130,7 +161,16 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     } finally {
       setIsGenerating(false);
     }
-  }, [storeId, reportDate, startTime, endTime, isOnline, generateReport, logDayClosing]);
+  }, [
+    storeId,
+    reportDate,
+    startTime,
+    endTime,
+    isOnline,
+    generateReport,
+    logDayClosing,
+    confirmSyncClean,
+  ]);
 
   // Print Z-Report to thermal printer
   const handlePrintZReport = useCallback(async () => {
@@ -146,12 +186,14 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
 
     setIsSyncing(true);
     try {
-      await syncManager.syncNow();
-    } catch {
+      await confirmSyncClean();
+    } catch (error) {
       setIsSyncing(false);
       Alert.alert(
         "Sync Failed",
-        "Could not sync pending orders. Please check your connection and try again.",
+        error instanceof Error
+          ? error.message
+          : "Could not sync pending orders. Please check your connection and try again.",
       );
       return;
     }
@@ -209,6 +251,7 @@ export const DayClosingScreen = ({ navigation }: DayClosingScreenProps) => {
     paymentTransactions,
     startTime,
     endTime,
+    confirmSyncClean,
   ]);
 
   const canPrint = !!report && !isPrintingZReport && !isSyncing;

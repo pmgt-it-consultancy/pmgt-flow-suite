@@ -1,10 +1,24 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, ScrollView, TextInput } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  TextInput,
+} from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
-import { useOrderHistoryQuery } from "../../../sync";
+import {
+  getHistoryGateway,
+  isSyncV2Enabled,
+  syncManager,
+  useOrderHistoryQuery,
+  useV2OrderHistory,
+} from "../../../sync";
+import { mapHistorySummary } from "../../../sync/v2/historyMapping";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Badge, Chip, Text } from "../../shared/components/ui";
@@ -58,27 +72,58 @@ export const OrderHistoryScreen = ({ navigation }: OrderHistoryScreenProps) => {
 
   const dateRange = useMemo(() => getDateRange(datePreset), [datePreset]);
 
-  const orders = useOrderHistoryQuery({
+  const localOrders = useOrderHistoryQuery({
     storeId: user?.storeId,
     startDate: dateRange.start,
     endDate: dateRange.end,
     search: searchQuery || undefined,
     status: statusFilter === "all" ? undefined : statusFilter,
   });
+  const useRemoteHistory = isSyncV2Enabled && datePreset === "30d";
+  const remoteHistory = useV2OrderHistory(
+    user?.storeId as string | undefined,
+    {
+      startDate: dateRange.start,
+      endDate: dateRange.end,
+      search: searchQuery || undefined,
+      status: statusFilter === "all" ? undefined : statusFilter,
+      limit: 50,
+    },
+    useRemoteHistory,
+  );
+  const orders = useRemoteHistory ? remoteHistory.orders?.map(mapHistorySummary) : localOrders;
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setRefreshing(false);
-  }, []);
+    try {
+      if (useRemoteHistory) await remoteHistory.refresh();
+      else await syncManager.syncForDelivery();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [remoteHistory, useRemoteHistory]);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const handleSelectOrder = useCallback(
-    (orderId: Id<"orders">) => {
+    async (orderId: Id<"orders">) => {
+      if (useRemoteHistory && user?.storeId) {
+        try {
+          const gateway = getHistoryGateway(user.storeId as string);
+          const historicalOrder = await gateway.loadOrder(orderId);
+          await gateway.pinOrder(orderId);
+          navigation.navigate("OrderDetailScreen", { orderId, historicalOrder });
+        } catch {
+          Alert.alert(
+            "Order unavailable",
+            "Connect to the internet and try loading this order again.",
+          );
+        }
+        return;
+      }
       navigation.navigate("OrderDetailScreen", { orderId });
     },
-    [navigation],
+    [navigation, useRemoteHistory, user?.storeId],
   );
 
   const formatTime = useCallback((timestamp: number) => {

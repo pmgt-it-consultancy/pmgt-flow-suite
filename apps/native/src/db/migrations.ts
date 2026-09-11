@@ -39,5 +39,20 @@ export const watermelonMigrations = schemaMigrations({
         }),
       ],
     },
+    {
+      toVersion: 3,
+      steps: [
+        createTable({
+          name: "sync_v2_aggregates",
+          columns: [
+            { name: "store_id", type: "string", isIndexed: true },
+            { name: "order_id", type: "string", isIndexed: true },
+            { name: "aggregate_version", type: "number" },
+            { name: "payload", type: "string" },
+            { name: "updated_at", type: "number" },
+          ],
+        }),
+      ],
+    },
   ],
 });

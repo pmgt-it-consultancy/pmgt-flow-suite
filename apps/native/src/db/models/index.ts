@@ -15,5 +15,6 @@ export { Role } from "./Role";
 export { Setting } from "./Setting";
 export { Store } from "./Store";
 export { SyncMeta } from "./SyncMeta";
+export { SyncV2Aggregate } from "./SyncV2Aggregate";
 export { TableModel } from "./TableModel";
 export { User } from "./User";
