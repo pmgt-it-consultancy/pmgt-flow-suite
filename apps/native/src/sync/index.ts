@@ -3,6 +3,7 @@ export {
   type AvailableTable,
   type CategoryTreeNode,
   type DraftOrderEntry,
+  getHistoryGateway,
   type ModifierGroupItem,
   type ModifierOptionItem,
   type OrderDetailView,
@@ -31,6 +32,7 @@ export {
   useTablesAvailable,
   useTablesListWithOrders,
   useTakeoutOrders,
+  useV2OrderHistory,
 } from "./dataSources";
 export { useNetworkStatus } from "./networkStatus";
 export { getLastSyncV2ShadowMismatch, SyncBootstrap } from "./SyncBootstrap";
