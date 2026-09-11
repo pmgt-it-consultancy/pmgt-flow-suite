@@ -1,6 +1,6 @@
 import { Q } from "@nozbe/watermelondb";
 import { createTestDatabase } from "../../../db/testing/createTestDatabase";
-import { applyAggregateEnvelope } from "../aggregateApply";
+import { applyAggregateEnvelope, replaceOperationalReplica } from "../aggregateApply";
 
 describe("applyAggregateEnvelope", () => {
   it("stores one complete aggregate atomically and ignores older versions", async () => {
@@ -35,5 +35,40 @@ describe("applyAggregateEnvelope", () => {
     const raw = rows[0]._raw as Record<string, unknown>;
     expect(raw.aggregate_version).toBe(2);
     expect(JSON.parse(raw.payload as string)).toEqual(base);
+  });
+
+  it("atomically replaces one store's downloaded generation", async () => {
+    const database = createTestDatabase();
+    await applyAggregateEnvelope(database, {
+      storeId: "store-1",
+      entityId: "old-order",
+      aggregateVersion: 1,
+      aggregate: {
+        order: { _id: "old-order" },
+        items: [],
+        modifiers: [],
+        discounts: [],
+        voids: [],
+        payments: [],
+      },
+    });
+    await replaceOperationalReplica(database, "store-1", [
+      {
+        order: { _id: "new-order", replicationVersion: 3 },
+        items: [],
+        modifiers: [],
+        discounts: [],
+        voids: [],
+        payments: [],
+      },
+    ]);
+
+    const rows = await database
+      .get("sync_v2_aggregates")
+      .query(Q.where("store_id", "store-1"))
+      .fetch();
+    expect(rows.map((row) => (row._raw as Record<string, unknown>).order_id)).toEqual([
+      "new-order",
+    ]);
   });
 });

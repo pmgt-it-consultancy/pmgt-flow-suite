@@ -10,6 +10,8 @@ import { getOrCreateDeviceId } from "../../../auth/deviceId";
 import { getRefreshAccess, messageForResyncReadiness } from "../../../sync/refreshPolicy";
 import { syncManager } from "../../../sync/SyncManager";
 import type { SyncState } from "../../../sync/types";
+import { createOperationalRepair } from "../../../sync/v2/repairRuntime";
+import { isSyncV2Enabled } from "../../../sync/v2/types";
 import { useAuth } from "../../auth/context";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { Text } from "../../shared/components/ui";
@@ -206,6 +208,25 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
                   text: "Refresh",
                   style: "destructive",
                   onPress: () => {
+                    if (isSyncV2Enabled && storeId && deviceId) {
+                      void createOperationalRepair(storeId as string, deviceId)
+                        .run()
+                        .then(() =>
+                          Alert.alert(
+                            "Refresh Complete",
+                            "Operational POS data was repaired safely.",
+                          ),
+                        )
+                        .catch((error) =>
+                          Alert.alert(
+                            "Refresh Not Available",
+                            error instanceof Error
+                              ? error.message
+                              : "Repair failed. Existing POS data was retained.",
+                          ),
+                        );
+                      return;
+                    }
                     void syncManager.forceFullResync().then((readiness) => {
                       if (readiness.ready === false) {
                         Alert.alert("Refresh Not Available", messageForResyncReadiness(readiness));
