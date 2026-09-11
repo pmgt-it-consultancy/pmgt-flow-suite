@@ -3,6 +3,7 @@ import type { Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
+import { publishOrderAggregateEvent } from "./lib/replicationEvents";
 import { calculateChange } from "./lib/taxCalculations";
 
 // Helper: Release table only if no other open orders remain
@@ -108,6 +109,8 @@ async function processPaymentCore(
   if (order.orderType === "takeout" && order.takeoutStatus === "pending") {
     await ctx.db.patch(orderId, { takeoutStatus: "preparing", updatedAt: Date.now() });
   }
+
+  await publishOrderAggregateEvent(ctx, { orderId });
 
   return { success: true, totalChange };
 }

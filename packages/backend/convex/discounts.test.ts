@@ -236,6 +236,17 @@ describe("discounts — SC/PWD discount", () => {
     expect(discount.vatExemptAmount).toBe(0);
     expect(order.discountAmount).toBe(200);
     expect(order.netSales).toBe(800);
+    expect(order.replicationVersion).toBe(1);
+
+    const events = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("replicationEvents")
+        .withIndex("by_store_entity", (q: any) =>
+          q.eq("storeId", storeId).eq("entityType", "order").eq("entityId", orderId),
+        )
+        .collect(),
+    );
+    expect(events).toHaveLength(1);
   });
 
   it("should recalculate order totals with SC/PWD discount", async () => {

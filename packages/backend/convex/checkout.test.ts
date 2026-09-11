@@ -322,6 +322,7 @@ describe("checkout — processPayment (split payments)", () => {
     const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
     expect(order?.status).toBe("paid");
     expect(order?.paidAt).toBeDefined();
+    expect(order?.replicationVersion).toBe(1);
 
     const payments = await t.run(async (ctx: any) =>
       ctx.db
@@ -334,6 +335,16 @@ describe("checkout — processPayment (split payments)", () => {
     expect(payments[0].amount).toBe(10000);
     expect(payments[0].cashReceived).toBe(12000);
     expect(payments[0].changeGiven).toBe(2000);
+
+    const events = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("replicationEvents")
+        .withIndex("by_store_entity", (q: any) =>
+          q.eq("storeId", storeId).eq("entityType", "order").eq("entityId", orderId),
+        )
+        .collect(),
+    );
+    expect(events).toHaveLength(1);
   });
 
   it("should process split payment (cash + card)", async () => {

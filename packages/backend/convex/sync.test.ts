@@ -320,6 +320,184 @@ describe("sync pull", () => {
 });
 
 describe("sync push", () => {
+  it("publishes one versioned aggregate event for an accepted order push", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupSyncTestData(t);
+    const now = Date.now();
+
+    const response = await t.mutation(internal.sync.syncPushCore, {
+      storeId,
+      userId,
+      deviceId: "tablet-a",
+      payload: {
+        lastPulledAt: now,
+        clientMutationId: "aggregate-push-1",
+        changes: {
+          orders: {
+            created: [
+              {
+                id: "order-client-1",
+                orderType: "takeout",
+                status: "open",
+                grossSales: 0,
+                vatableSales: 0,
+                vatAmount: 0,
+                vatExemptSales: 0,
+                nonVatSales: 0,
+                discountAmount: 0,
+                netSales: 0,
+                createdAt: now,
+              },
+            ],
+            updated: [],
+          },
+        },
+      },
+    });
+
+    expect(response).toEqual({ success: true });
+    const result = await t.run(async (ctx: any) => {
+      const order = await ctx.db
+        .query("orders")
+        .withIndex("by_clientId", (q: any) => q.eq("clientId", "order-client-1"))
+        .unique();
+      const events = await ctx.db
+        .query("replicationEvents")
+        .withIndex("by_store_stream", (q: any) =>
+          q.eq("storeId", storeId).eq("stream", "operational_orders"),
+        )
+        .collect();
+      return { order, events };
+    });
+
+    expect(result.order.replicationVersion).toBe(1);
+    expect(result.events).toHaveLength(1);
+    expect(result.events[0]).toMatchObject({
+      entityType: "order",
+      entityId: result.order._id,
+      aggregateVersion: 1,
+      eventKind: "membership_enter",
+      operationId: "aggregate-push-1",
+    });
+  });
+
+  it("coalesces parent and child changes into one order aggregate event", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupSyncTestData(t);
+    const now = Date.now();
+    const productId = await t.run(async (ctx: any) => {
+      const categoryId = await ctx.db.insert("categories", {
+        storeId,
+        name: "Food",
+        sortOrder: 0,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      });
+      return ctx.db.insert("products", {
+        storeId,
+        categoryId,
+        name: "Burger",
+        price: 200,
+        isVatable: true,
+        isActive: true,
+        sortOrder: 0,
+        createdAt: now,
+        updatedAt: now,
+        clientId: "product-client-1",
+      });
+    });
+
+    await t.mutation(internal.sync.syncPushCore, {
+      storeId,
+      userId,
+      deviceId: "tablet-a",
+      payload: {
+        lastPulledAt: now,
+        clientMutationId: "aggregate-with-child-1",
+        changes: {
+          orders: {
+            created: [
+              {
+                id: "order-client-with-child",
+                orderType: "takeout",
+                status: "open",
+                grossSales: 200,
+                vatableSales: 178.57,
+                vatAmount: 21.43,
+                vatExemptSales: 0,
+                nonVatSales: 0,
+                discountAmount: 0,
+                netSales: 200,
+                createdAt: now,
+              },
+            ],
+            updated: [],
+          },
+          orderItems: {
+            created: [
+              {
+                id: "item-client-1",
+                orderId: "order-client-with-child",
+                productId: "product-client-1",
+                productName: "Burger",
+                productPrice: 200,
+                quantity: 1,
+                isVoided: false,
+              },
+            ],
+            updated: [],
+          },
+        },
+      },
+    });
+
+    await t.mutation(internal.sync.syncPushCore, {
+      storeId,
+      userId,
+      deviceId: "tablet-a",
+      payload: {
+        lastPulledAt: now,
+        clientMutationId: "aggregate-child-only-2",
+        changes: {
+          orderItems: {
+            created: [
+              {
+                id: "item-client-2",
+                orderId: "order-client-with-child",
+                productId: "product-client-1",
+                productName: "Burger",
+                productPrice: 200,
+                quantity: 1,
+                isVoided: false,
+              },
+            ],
+            updated: [],
+          },
+        },
+      },
+    });
+
+    const result = await t.run(async (ctx: any) => {
+      const order = await ctx.db
+        .query("orders")
+        .withIndex("by_clientId", (q: any) => q.eq("clientId", "order-client-with-child"))
+        .unique();
+      const events = await ctx.db
+        .query("replicationEvents")
+        .withIndex("by_store_entity", (q: any) =>
+          q.eq("storeId", storeId).eq("entityType", "order").eq("entityId", order._id),
+        )
+        .collect();
+      return { order, events };
+    });
+
+    expect(productId).toBeDefined();
+    expect(result.order.replicationVersion).toBe(2);
+    expect(result.events).toHaveLength(2);
+    expect(result.events[1].operationId).toBe("aggregate-child-only-2");
+  });
+
   it("updates a legacy row addressed by Convex id instead of inserting a duplicate clientId", async () => {
     const t = convexTest(schema, modules);
     const { storeId, userId } = await setupSyncTestData(t);

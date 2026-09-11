@@ -279,6 +279,7 @@ export default defineSchema({
     updatedAt: v.optional(v.number()),
     clientId: v.optional(v.string()),
     originDeviceId: v.optional(v.string()), // Tracks which tablet created the order; used for "origin tablet wins" conflict rule
+    replicationVersion: v.optional(v.number()), // Monotonic v2 aggregate version; absent on legacy rows
   })
     .index("by_store", ["storeId"])
     .index("by_status", ["status"])

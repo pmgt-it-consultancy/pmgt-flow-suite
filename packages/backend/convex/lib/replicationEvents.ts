@@ -32,3 +32,28 @@ export async function appendReplicationEvent(
     protocolVersion: 2,
   });
 }
+
+export async function publishOrderAggregateEvent(
+  ctx: MutationCtx,
+  args: {
+    orderId: Id<"orders">;
+    eventKind?: ReplicationEventKind;
+    operationId?: string;
+  },
+): Promise<number> {
+  const order = await ctx.db.get(args.orderId);
+  if (!order) throw new Error("Cannot publish replication event for missing order");
+
+  const aggregateVersion = (order.replicationVersion ?? 0) + 1;
+  await ctx.db.patch(args.orderId, { replicationVersion: aggregateVersion });
+  await appendReplicationEvent(ctx, {
+    storeId: order.storeId,
+    stream: "operational_orders",
+    entityType: "order",
+    entityId: args.orderId,
+    aggregateVersion,
+    eventKind: args.eventKind ?? "upsert",
+    operationId: args.operationId,
+  });
+  return aggregateVersion;
+}
