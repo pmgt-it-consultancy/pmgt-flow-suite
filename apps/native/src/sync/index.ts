@@ -45,3 +45,6 @@ export type {
   SyncState,
   SyncStatus,
 } from "./types";
+export { CheckpointStore } from "./v2/checkpoints";
+export { createV2Endpoints, syncV2Endpoints } from "./v2/endpoints";
+export { isSyncV2Enabled } from "./v2/types";
