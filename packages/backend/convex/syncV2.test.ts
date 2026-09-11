@@ -161,3 +161,94 @@ describe("sync v2 operational snapshot", () => {
     expect(delta.checkpoint.eventCursor).not.toBe(snapshot.checkpoint.eventCursor);
   });
 });
+
+describe("sync v2 explicit history", () => {
+  it("returns bounded store-scoped summaries and hydrates detail only by explicit id", async () => {
+    const t = convexTest(schema, modules);
+    const first = await setup(t);
+    const second = await setup(t);
+    const now = 2_000_000_000_000;
+    const firstOrder = await insertOrder(t, {
+      ...first,
+      createdAt: now - 20 * DAY_MS,
+      status: "paid",
+      suffix: "SEARCH-001",
+    });
+    await t.run(async (ctx) => {
+      await ctx.db.patch(firstOrder, {
+        customerName: "Maria Santos",
+        tableName: "Patio 4",
+        itemCount: 2,
+        replicationVersion: 4,
+      });
+      await ctx.db.insert("orderItems", {
+        orderId: firstOrder,
+        storeId: first.storeId,
+        productId: await ctx.db.insert("products", {
+          storeId: first.storeId,
+          name: "History Item",
+          categoryId: await ctx.db.insert("categories", {
+            storeId: first.storeId,
+            name: "History",
+            sortOrder: 1,
+            isActive: true,
+            createdAt: now,
+          }),
+          price: 100,
+          isVatable: true,
+          isActive: true,
+          sortOrder: 1,
+          createdAt: now,
+          updatedAt: now,
+        }),
+        productName: "History Item",
+        productPrice: 100,
+        quantity: 2,
+        isVoided: false,
+      });
+    });
+    await insertOrder(t, {
+      ...second,
+      createdAt: now - 20 * DAY_MS,
+      status: "paid",
+      suffix: "SEARCH-OTHER-STORE",
+    });
+    await insertOrder(t, {
+      ...first,
+      createdAt: now - DAY_MS,
+      status: "voided",
+      suffix: "WRONG-STATUS",
+    });
+
+    const page = await t.query(internal.syncV2.searchOrderHistoryCore, {
+      storeId: first.storeId,
+      startDate: now - 30 * DAY_MS,
+      endDate: now,
+      status: "paid",
+      search: "patio",
+      limit: 1,
+    });
+
+    expect(page.orders).toHaveLength(1);
+    expect(page.orders[0]).toMatchObject({
+      _id: firstOrder,
+      customerName: "Maria Santos",
+      tableName: "Patio 4",
+      itemCount: 2,
+    });
+    expect(page.orders[0]).not.toHaveProperty("items");
+
+    const detail = await t.query(internal.syncV2.getHistoricalOrderCore, {
+      storeId: first.storeId,
+      orderId: firstOrder,
+    });
+    expect(detail.aggregateVersion).toBe(4);
+    expect(detail.aggregate.items).toHaveLength(1);
+
+    const crossStore = await t.query(internal.syncV2.getHistoricalOrderCore, {
+      storeId: second.storeId,
+      orderId: firstOrder,
+    });
+    expect(crossStore).toBeNull();
+  });
+});

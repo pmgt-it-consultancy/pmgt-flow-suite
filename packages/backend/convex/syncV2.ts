@@ -17,6 +17,22 @@ const operationalPullRef = makeFunctionReference<
   "query",
   { storeId: Id<"stores">; eventCursor?: string; limit: number }
 >("syncV2:pullOperationalEventsCore");
+const historySearchRef = makeFunctionReference<
+  "query",
+  {
+    storeId: Id<"stores">;
+    startDate: number;
+    endDate: number;
+    status?: "paid" | "voided";
+    search?: string;
+    cursor?: string;
+    limit: number;
+  }
+>("syncV2:searchOrderHistoryCore");
+const historicalOrderRef = makeFunctionReference<
+  "query",
+  { storeId: Id<"stores">; orderId: Id<"orders"> }
+>("syncV2:getHistoricalOrderCore");
 
 const json = (data: unknown, init?: ResponseInit) =>
   new Response(JSON.stringify(data), {
@@ -228,6 +244,84 @@ export const pullOperationalEventsCore = internalQuery({
   },
 });
 
+export const searchOrderHistoryCore = internalQuery({
+  args: {
+    storeId: v.id("stores"),
+    startDate: v.number(),
+    endDate: v.number(),
+    status: v.optional(v.union(v.literal("paid"), v.literal("voided"))),
+    search: v.optional(v.string()),
+    cursor: v.optional(v.string()),
+    limit: v.number(),
+  },
+  returns: v.any(),
+  handler: async (ctx, args) => {
+    if (args.endDate < args.startDate) throw new Error("endDate must not precede startDate");
+    const limit = Math.max(1, Math.min(Math.floor(args.limit), 50));
+    const cursor = parseEventCursor(args.cursor);
+    const scanLimit = 250;
+    const upperBound = cursor ? Math.min(args.endDate, cursor.creationTime) : args.endDate;
+    const candidates = await ctx.db
+      .query("orders")
+      .withIndex("by_store_createdAt", (q) =>
+        q.eq("storeId", args.storeId).gte("createdAt", args.startDate).lte("createdAt", upperBound),
+      )
+      .order("desc")
+      .take(scanLimit);
+    const search = args.search?.trim().toLocaleLowerCase();
+    const eligible = candidates.filter((order) => {
+      if (cursor) {
+        const beforeCursor =
+          order.createdAt < cursor.creationTime ||
+          (order.createdAt === cursor.creationTime && order._id < cursor.id);
+        if (!beforeCursor) return false;
+      }
+      if (order.status === "draft" || order.status === "open") return false;
+      if (args.status && order.status !== args.status) return false;
+      if (!search) return true;
+      return [order.orderNumber, order.customerName, order.tableName].some((value) =>
+        value?.toLocaleLowerCase().includes(search),
+      );
+    });
+    const selected = eligible.slice(0, limit);
+    const lastScanned = candidates.length > 0 ? candidates[candidates.length - 1] : null;
+
+    return {
+      orders: selected.map((order) => ({
+        _id: order._id,
+        orderNumber: order.orderNumber,
+        orderType: order.orderType,
+        tableName: order.tableName,
+        customerName: order.customerName,
+        status: order.status,
+        netSales: order.netSales,
+        itemCount: order.itemCount ?? 0,
+        createdAt: order.createdAt,
+        paidAt: order.paidAt,
+        paymentMethod: order.paymentMethod,
+        aggregateVersion: order.replicationVersion ?? 0,
+      })),
+      nextCursor:
+        candidates.length === scanLimit && lastScanned
+          ? `${lastScanned.createdAt}:${lastScanned._id}`
+          : null,
+    };
+  },
+});
+
+export const getHistoricalOrderCore = internalQuery({
+  args: { storeId: v.id("stores"), orderId: v.id("orders") },
+  returns: v.any(),
+  handler: async (ctx, args) => {
+    const order = await ctx.db.get(args.orderId);
+    if (!order || order.storeId !== args.storeId) return null;
+    return {
+      aggregateVersion: order.replicationVersion ?? 0,
+      aggregate: await hydrateOrderAggregate(ctx, order),
+    };
+  },
+});
+
 export const syncV2Capabilities = httpAction(async (ctx) => {
   const storeId = await authenticatedStoreId(ctx);
   if (!storeId) return json({ error: "Unauthorized" }, { status: 401 });
@@ -269,4 +363,40 @@ export const syncV2Pull = httpAction(async (ctx, request) => {
     limit: typeof body.limit === "number" ? body.limit : 100,
   });
   return json(result);
+});
+
+export const syncV2HistorySearch = httpAction(async (ctx, request) => {
+  const storeId = await authenticatedStoreId(ctx);
+  if (!storeId) return json({ error: "Unauthorized" }, { status: 401 });
+  const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+  if (typeof body.startDate !== "number" || typeof body.endDate !== "number") {
+    return json({ error: "startDate and endDate must be numbers" }, { status: 400 });
+  }
+  if (body.status !== undefined && body.status !== "paid" && body.status !== "voided") {
+    return json({ error: "status must be paid or voided" }, { status: 400 });
+  }
+  const result = await ctx.runQuery(historySearchRef, {
+    storeId,
+    startDate: body.startDate,
+    endDate: body.endDate,
+    status: body.status as "paid" | "voided" | undefined,
+    search: typeof body.search === "string" ? body.search : undefined,
+    cursor: typeof body.cursor === "string" ? body.cursor : undefined,
+    limit: typeof body.limit === "number" ? body.limit : 50,
+  });
+  return json(result);
+});
+
+export const syncV2HistoryOrder = httpAction(async (ctx, request) => {
+  const storeId = await authenticatedStoreId(ctx);
+  if (!storeId) return json({ error: "Unauthorized" }, { status: 401 });
+  const body = (await request.json().catch(() => ({}))) as { orderId?: unknown };
+  if (typeof body.orderId !== "string") {
+    return json({ error: "orderId must be a string" }, { status: 400 });
+  }
+  const result = await ctx.runQuery(historicalOrderRef, {
+    storeId,
+    orderId: body.orderId as Id<"orders">,
+  });
+  return result ? json(result) : json({ error: "Order not found" }, { status: 404 });
 });
