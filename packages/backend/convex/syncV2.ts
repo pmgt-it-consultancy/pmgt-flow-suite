@@ -33,6 +33,17 @@ const historicalOrderRef = makeFunctionReference<
   "query",
   { storeId: Id<"stores">; orderId: Id<"orders"> }
 >("syncV2:getHistoricalOrderCore");
+const confirmDeviceStateRef = makeFunctionReference<
+  "mutation",
+  {
+    storeId: Id<"stores">;
+    deviceId: string;
+    generation: string;
+    checkpoint?: string;
+    pendingCount: number;
+    clientNow: number;
+  }
+>("closing:confirmDeviceStateCore");
 
 const json = (data: unknown, init?: ResponseInit) =>
   new Response(JSON.stringify(data), {
@@ -399,4 +410,24 @@ export const syncV2HistoryOrder = httpAction(async (ctx, request) => {
     orderId: body.orderId as Id<"orders">,
   });
   return result ? json(result) : json({ error: "Order not found" }, { status: 404 });
+});
+
+export const syncV2DeviceState = httpAction(async (ctx, request) => {
+  const storeId = await authenticatedStoreId(ctx);
+  if (!storeId) return json({ error: "Unauthorized" }, { status: 401 });
+  const deviceId = request.headers.get("x-device-id");
+  if (!deviceId) return json({ error: "Missing x-device-id header" }, { status: 400 });
+  const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+  if (typeof body.generation !== "string" || typeof body.pendingCount !== "number") {
+    return json({ error: "generation and pendingCount are required" }, { status: 400 });
+  }
+  const result = await ctx.runMutation(confirmDeviceStateRef, {
+    storeId,
+    deviceId,
+    generation: body.generation,
+    checkpoint: typeof body.checkpoint === "string" ? body.checkpoint : undefined,
+    pendingCount: body.pendingCount,
+    clientNow: typeof body.clientNow === "number" ? body.clientNow : Date.now(),
+  });
+  return json(result);
 });

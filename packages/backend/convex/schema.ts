@@ -544,6 +544,7 @@ export default defineSchema({
     lastObservedOperationId: v.optional(v.string()),
     pendingCount: v.number(),
     status: v.union(v.literal("active"), v.literal("retired"), v.literal("attention_required")),
+    clockDriftMs: v.optional(v.number()),
     updatedAt: v.number(),
   })
     .index("by_store_device_stream", ["storeId", "deviceId", "stream"])

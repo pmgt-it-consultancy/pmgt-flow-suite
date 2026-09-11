@@ -86,6 +86,14 @@ export function SyncBootstrap() {
               onShadowMismatch: (metrics) => {
                 lastShadowMismatch = metrics;
               },
+              reportCheckpoint: async (checkpoint) => {
+                await syncV2Endpoints.reportDeviceState(deviceId, {
+                  generation: checkpoint.generation,
+                  checkpoint: checkpoint.eventCursor ?? undefined,
+                  pendingCount: 0,
+                  clientNow: Date.now(),
+                });
+              },
             });
             void v2Replicator.start().catch(() => undefined);
           });

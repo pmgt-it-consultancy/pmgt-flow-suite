@@ -16,6 +16,7 @@ type ReplicatorOptions = {
   countShadowMembership?: () => Promise<number>;
   onShadowMismatch?: (metrics: { v1Count: number; v2Count: number }) => void;
   onOperationObserved?: (operationId: string) => Promise<void>;
+  reportCheckpoint?: (checkpoint: StoredCheckpoint) => Promise<void>;
 };
 
 export class OperationalReplicator {
@@ -105,6 +106,7 @@ export class OperationalReplicator {
     }
 
     await this.compareShadowMembership();
+    await this.options.reportCheckpoint?.(checkpoint);
     return checkpoint;
   }
 

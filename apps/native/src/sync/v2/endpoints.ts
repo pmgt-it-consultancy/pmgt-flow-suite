@@ -54,6 +54,15 @@ export function createV2Endpoints(options: EndpointOptions) {
       post<{
         results: Array<{ operationId: string; status: "accepted" | "rejected"; error?: string }>;
       }>("/sync/v2/commands", { commands }, { "x-device-id": deviceId }),
+    reportDeviceState: (
+      deviceId: string,
+      body: {
+        generation: string;
+        checkpoint?: string;
+        pendingCount: number;
+        clientNow: number;
+      },
+    ) => post<Record<string, unknown>>("/sync/v2/device-state", body, { "x-device-id": deviceId }),
   };
 }
 

@@ -4,6 +4,7 @@ import { registerDevice, syncPull, syncPush } from "./sync";
 import { syncV2Commands } from "./syncCommands";
 import {
   syncV2Capabilities,
+  syncV2DeviceState,
   syncV2HistoryOrder,
   syncV2HistorySearch,
   syncV2Pull,
@@ -23,5 +24,6 @@ http.route({ path: "/sync/v2/pull", method: "POST", handler: syncV2Pull });
 http.route({ path: "/sync/v2/history/search", method: "POST", handler: syncV2HistorySearch });
 http.route({ path: "/sync/v2/history/order", method: "POST", handler: syncV2HistoryOrder });
 http.route({ path: "/sync/v2/commands", method: "POST", handler: syncV2Commands });
+http.route({ path: "/sync/v2/device-state", method: "POST", handler: syncV2DeviceState });
 
 export default http;
