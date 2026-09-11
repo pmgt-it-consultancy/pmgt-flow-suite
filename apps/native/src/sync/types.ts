@@ -45,6 +45,10 @@ export type SyncSafety = {
   hasUnsyncedChanges: boolean;
 };
 
+export type ResyncReadiness =
+  | { ready: true }
+  | { ready: false; reason: "offline" | "syncing" | "pending" | "failed" };
+
 export type WatermelonRow = {
   id: string;
   server_id?: string;

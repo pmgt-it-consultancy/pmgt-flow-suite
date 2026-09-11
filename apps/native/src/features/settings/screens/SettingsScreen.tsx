@@ -7,6 +7,7 @@ import { ActivityIndicator, Alert, Modal as RNModal, ScrollView, View } from "re
 import { GestureHandlerRootView, Pressable } from "react-native-gesture-handler";
 import { XStack, YStack } from "tamagui";
 import { getOrCreateDeviceId } from "../../../auth/deviceId";
+import { getRefreshAccess, messageForResyncReadiness } from "../../../sync/refreshPolicy";
 import { syncManager } from "../../../sync/SyncManager";
 import type { SyncState } from "../../../sync/types";
 import { useAuth } from "../../auth/context";
@@ -30,7 +31,7 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
   const { user, hasPermission } = useAuth();
   const printers = usePrinterStore((s) => s.printers);
   const storeId = user?.storeId;
-  const [deviceCode, setDeviceCode] = useState(syncManager.getDeviceCode());
+  const [deviceCode] = useState(syncManager.getDeviceCode());
   const [deviceId, setDeviceId] = useState("");
   const [syncState, setSyncState] = useState<SyncState>(syncManager.getState());
 
@@ -46,9 +47,9 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
     ? syncProgress?.phase === "push"
       ? "Pushing changes…"
       : `Syncing… page ${syncProgress?.pageIndex ?? 1}`
-    : "Force Resync";
+    : "Refresh POS Data";
   const resyncSubtitle = (() => {
-    if (!isSyncing) return "Re-download all data from server";
+    if (!isSyncing) return "Verify and reload downloaded POS data";
     const p = syncProgress;
     if (!p) return "Starting…";
     if (p.phase === "push") return "Sending pending mutations to the server";
@@ -95,6 +96,7 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
     timeoutOptions.find((option) => option.value === autoLockTimeout)?.label ?? "5 minutes";
 
   const canManageAutoLock = hasPermission("system.settings");
+  const canManageSync = hasPermission("system.settings");
 
   const handleOpenTimeoutPicker = () => {
     if (!canManageAutoLock) {
@@ -183,16 +185,33 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
             { opacity: pressed || isSyncing ? 0.7 : 1 },
           ]}
           onPress={() => {
-            if (isSyncing) return;
+            const access = getRefreshAccess({
+              hasSettingsPermission: canManageSync,
+              isSyncing,
+            });
+            if (access === "permission") {
+              Alert.alert(
+                "Permission Required",
+                "Only managers with settings access can refresh downloaded POS data.",
+              );
+              return;
+            }
+            if (access === "syncing") return;
             Alert.alert(
-              "Force Resync",
-              "This will re-download all data from the server. Any unsynced local changes will still be pushed first. Continue?",
+              "Refresh POS Data",
+              "Pending changes will be sent and verified first. Downloaded data reloads only when it is safe. Continue?",
               [
                 { text: "Cancel", style: "cancel" },
                 {
-                  text: "Resync",
+                  text: "Refresh",
                   style: "destructive",
-                  onPress: () => void syncManager.forceFullResync(),
+                  onPress: () => {
+                    void syncManager.forceFullResync().then((readiness) => {
+                      if (readiness.ready === false) {
+                        Alert.alert("Refresh Not Available", messageForResyncReadiness(readiness));
+                      }
+                    });
+                  },
                 },
               ],
             );

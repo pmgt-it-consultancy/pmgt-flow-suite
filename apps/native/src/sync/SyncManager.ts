@@ -10,6 +10,7 @@ import { callPull, callPush, callRegisterDevice } from "./syncEndpoints";
 import type {
   ChangeBucket,
   CursorMap,
+  ResyncReadiness,
   SyncOutcome,
   SyncSafety,
   SyncState,
@@ -233,13 +234,22 @@ class SyncManagerImpl {
    * the local data is stale or incomplete (e.g. after a schema migration
    * or a sync bug that left the catalog empty).
    */
-  async forceFullResync(): Promise<void> {
+  async forceFullResync(): Promise<ResyncReadiness> {
+    if (!this.started || !this.online) return { ready: false, reason: "offline" };
+    if (this.inFlight) return { ready: false, reason: "syncing" };
+
+    const outcome = await this.syncForDelivery();
+    if (outcome.kind === "offline") return { ready: false, reason: "offline" };
+    if (outcome.kind === "pending") return { ready: false, reason: "pending" };
+    if (outcome.kind !== "delivered") return { ready: false, reason: "failed" };
+
     const adapter = getDatabase().adapter as unknown as {
       getLocal: (k: string) => Promise<string | null>;
       setLocal: (k: string, v: string) => Promise<void>;
     };
     await adapter.setLocal("__watermelon_last_pulled_at", "0");
-    return this.requestSync();
+    await this.requestSync();
+    return { ready: true };
   }
 
   private requestSync(): Promise<void> {

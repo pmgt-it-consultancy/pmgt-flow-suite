@@ -10,13 +10,14 @@ if (originalUrl === undefined) delete process.env.EXPO_PUBLIC_CONVEX_URL;
 else process.env.EXPO_PUBLIC_CONVEX_URL = originalUrl;
 
 const mockLocalRead = jest.fn(async (): Promise<string | null> => "1");
+const mockLocalWrite = jest.fn(async (): Promise<void> => {});
 
 jest.mock("@react-native-community/netinfo", () => ({
   addEventListener: jest.fn(() => jest.fn()),
 }));
 jest.mock("expo-secure-store", () => ({ getItemAsync: jest.fn(async () => "device") }));
 jest.mock("../../db", () => ({
-  getDatabase: () => ({ adapter: { getLocal: mockLocalRead, setLocal: async () => {} } }),
+  getDatabase: () => ({ adapter: { getLocal: mockLocalRead, setLocal: mockLocalWrite } }),
 }));
 jest.mock("@nozbe/watermelondb/sync", () => ({
   hasUnsyncedChanges: jest.fn(async () => false),
@@ -304,6 +305,42 @@ describe("sync manager lifecycle", () => {
       isRunning: false,
       hasUnsyncedChanges: true,
     });
+  });
+
+  it("refuses downloaded-data refresh while offline without resetting the watermark", async () => {
+    await syncManager.start("store");
+    await settle();
+    mockLocalWrite.mockClear();
+    const notify = jest.mocked(NetInfo.addEventListener).mock.calls[0][0];
+    notify({ isConnected: false } as Parameters<typeof notify>[0]);
+
+    const result = await syncManager.forceFullResync();
+
+    expect(result).toEqual({ ready: false, reason: "offline" });
+    expect(mockLocalWrite).not.toHaveBeenCalled();
+  });
+
+  it("refuses downloaded-data refresh while local changes remain", async () => {
+    await syncManager.start("store");
+    await settle();
+    mockLocalWrite.mockClear();
+    jest.mocked(hasUnsyncedChanges).mockResolvedValue(true);
+
+    const result = await syncManager.forceFullResync();
+
+    expect(result).toEqual({ ready: false, reason: "pending" });
+    expect(mockLocalWrite).not.toHaveBeenCalled();
+  });
+
+  it("resets the watermark only after delivery and a clean local database", async () => {
+    await syncManager.start("store");
+    await settle();
+    mockLocalWrite.mockClear();
+
+    const result = await syncManager.forceFullResync();
+
+    expect(result).toEqual({ ready: true });
+    expect(mockLocalWrite).toHaveBeenCalledWith("__watermelon_last_pulled_at", "0");
   });
 
   it("does not register or install timers if stopped during startup storage read", async () => {
