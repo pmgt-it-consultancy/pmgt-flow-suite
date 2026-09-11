@@ -1,6 +1,6 @@
 {
   "name": "pmgt-flow-native",
-  "version": "3.28.0",
+  "version": "3.28.1",
   "main": "index.tsx",
   "scripts": {
     "test:query-performance": "node scripts/test-query-performance.cjs",

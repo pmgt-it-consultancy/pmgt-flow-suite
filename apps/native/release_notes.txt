@@ -1,11 +1,10 @@
 ## What's New
 
-- Added a bounded sync engine that keeps current restaurant operations separate from long-term sales history.
-- Older order history can now be loaded explicitly instead of increasing routine synchronization work.
-- Added a protected Refresh POS Data option that preserves pending offline work and repairs only the affected local replica.
-- Improved Day Closing checks across registered devices, including stale-device retirement and clock-drift safeguards.
-- Added durable operation tracking and duplicate-payment protection for interrupted or retried delivery.
+- Improved Refresh POS Data so large operational snapshots are downloaded in safe, bounded pages.
+- Verified offline takeout ordering and reconnect delivery against a 10,000-order staging restaurant.
+- Added an isolated staging simulation for ongoing tablet-scale sync validation.
 
 ## Notes
 
-- The new sync engine is staged behind a feature flag. Existing POS synchronization remains the default until store-level rollout checks pass.
+- The bounded sync engine remains behind its rollout flag. Existing POS synchronization stays active by default.
+- Cold launches without connectivity still require the authentication cache follow-up before full offline-first rollout.
