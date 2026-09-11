@@ -11,7 +11,13 @@ const OPERATIONAL_STREAM = "operational_orders" as const;
 const PROTOCOL_VERSION = 2 as const;
 const operationalSnapshotRef = makeFunctionReference<
   "query",
-  { storeId: Id<"stores">; now: number; retentionDays: number }
+  {
+    storeId: Id<"stores">;
+    now: number;
+    retentionDays: number;
+    cursor?: string;
+    limit?: number;
+  }
 >("syncV2:getOperationalSnapshotCore");
 const operationalPullRef = makeFunctionReference<
   "query",
@@ -89,6 +95,48 @@ function parseEventCursor(cursor: string | undefined): {
   return { creationTime, id };
 }
 
+type SnapshotPhase = "recent" | "draft" | "open";
+
+function parseSnapshotCursor(
+  cursor: string | undefined,
+  now: number,
+): {
+  phase: SnapshotPhase;
+  cursor: string | null;
+  snapshotNow: number;
+} {
+  if (!cursor) return { phase: "recent", cursor: null, snapshotNow: now };
+  try {
+    const parsed = JSON.parse(cursor) as {
+      phase?: unknown;
+      cursor?: unknown;
+      snapshotNow?: unknown;
+    };
+    const parsedCursor = parsed.cursor;
+    if (
+      (parsed.phase === "recent" || parsed.phase === "draft" || parsed.phase === "open") &&
+      (parsedCursor === null || typeof parsedCursor === "string") &&
+      typeof parsed.snapshotNow === "number" &&
+      Number.isFinite(parsed.snapshotNow)
+    ) {
+      return {
+        phase: parsed.phase,
+        cursor: parsedCursor as string | null,
+        snapshotNow: parsed.snapshotNow,
+      };
+    }
+  } catch {
+    // Converted to the stable public error below.
+  }
+  throw new Error("Invalid operational snapshot cursor");
+}
+
+function nextSnapshotPhase(phase: SnapshotPhase): SnapshotPhase | null {
+  if (phase === "recent") return "draft";
+  if (phase === "draft") return "open";
+  return null;
+}
+
 async function hydrateOrderAggregate(
   ctx: QueryCtx,
   order: Doc<"orders">,
@@ -147,27 +195,31 @@ export const getOperationalSnapshotCore = internalQuery({
     storeId: v.id("stores"),
     now: v.number(),
     retentionDays: v.number(),
+    cursor: v.optional(v.string()),
+    limit: v.optional(v.number()),
   },
   returns: v.any(),
   handler: async (ctx, args) => {
     const retentionDays = Math.max(1, Math.min(Math.floor(args.retentionDays), 7));
-    const cutoff = args.now - retentionDays * DAY_MS;
-
-    const [recent, drafts, open, latestEvent] = await Promise.all([
-      ctx.db
-        .query("orders")
-        .withIndex("by_store_createdAt", (q) =>
-          q.eq("storeId", args.storeId).gte("createdAt", cutoff),
-        )
-        .collect(),
-      ctx.db
-        .query("orders")
-        .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "draft"))
-        .collect(),
-      ctx.db
-        .query("orders")
-        .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", "open"))
-        .collect(),
+    const limit = Math.max(1, Math.min(Math.floor(args.limit ?? 25), 50));
+    const snapshotCursor = parseSnapshotCursor(args.cursor, args.now);
+    const cutoff = snapshotCursor.snapshotNow - retentionDays * DAY_MS;
+    const activeStatus: "draft" | "open" = snapshotCursor.phase === "draft" ? "draft" : "open";
+    const paginationOpts = { numItems: limit, cursor: snapshotCursor.cursor };
+    const [page, latestEvent] = await Promise.all([
+      snapshotCursor.phase === "recent"
+        ? ctx.db
+            .query("orders")
+            .withIndex("by_store_createdAt", (q) =>
+              q.eq("storeId", args.storeId).gte("createdAt", cutoff),
+            )
+            .paginate(paginationOpts)
+        : ctx.db
+            .query("orders")
+            .withIndex("by_store_status", (q) =>
+              q.eq("storeId", args.storeId).eq("status", activeStatus),
+            )
+            .paginate(paginationOpts),
       ctx.db
         .query("replicationEvents")
         .withIndex("by_store_stream", (q) =>
@@ -177,18 +229,29 @@ export const getOperationalSnapshotCore = internalQuery({
         .first(),
     ]);
 
-    const roots = new Map<Id<"orders">, Doc<"orders">>();
-    for (const order of [...recent, ...drafts, ...open]) roots.set(order._id, order);
-    const aggregates = await Promise.all(
-      Array.from(roots.values())
-        .sort((a, b) => a.createdAt - b.createdAt)
-        .map((order) => hydrateOrderAggregate(ctx, order)),
-    );
+    // Recent active orders are already present in the first phase. Active phases
+    // only contribute older roots so pagination never sends an aggregate twice.
+    const roots =
+      snapshotCursor.phase === "recent"
+        ? page.page
+        : page.page.filter((order) => order.createdAt < cutoff);
+    const aggregates = await Promise.all(roots.map((order) => hydrateOrderAggregate(ctx, order)));
+    const followingPhase = page.isDone ? nextSnapshotPhase(snapshotCursor.phase) : null;
+    const hasMore = !page.isDone || followingPhase !== null;
+    const nextCursor = hasMore
+      ? JSON.stringify({
+          phase: followingPhase ?? snapshotCursor.phase,
+          cursor: followingPhase ? null : page.continueCursor,
+          snapshotNow: snapshotCursor.snapshotNow,
+        })
+      : null;
 
     return {
       protocolVersion: PROTOCOL_VERSION,
       stream: OPERATIONAL_STREAM,
       aggregates,
+      hasMore,
+      nextCursor,
       checkpoint: {
         stream: OPERATIONAL_STREAM,
         eventCursor: eventCursor(latestEvent),
@@ -348,12 +411,21 @@ export const syncV2Capabilities = httpAction(async (ctx) => {
 export const syncV2Snapshot = httpAction(async (ctx, request) => {
   const storeId = await authenticatedStoreId(ctx);
   if (!storeId) return json({ error: "Unauthorized" }, { status: 401 });
-  const body = (await request.json().catch(() => ({}))) as { retentionDays?: unknown };
+  const body = (await request.json().catch(() => ({}))) as {
+    retentionDays?: unknown;
+    cursor?: unknown;
+    limit?: unknown;
+  };
+  if (body.cursor !== undefined && typeof body.cursor !== "string") {
+    return json({ error: "cursor must be a string" }, { status: 400 });
+  }
   const retentionDays = typeof body.retentionDays === "number" ? body.retentionDays : 7;
   const result = await ctx.runQuery(operationalSnapshotRef, {
     storeId,
     now: Date.now(),
     retentionDays,
+    cursor: body.cursor as string | undefined,
+    limit: typeof body.limit === "number" ? body.limit : undefined,
   });
   return json(result);
 });

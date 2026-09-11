@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { internalMutation, internalQuery } from "./_generated/server";
 import { requireStagingLab } from "./lib/stagingLab";
 
-const LAB_CLIENT_ID = "bounded-sync-e2e-v1";
+const LAB_TIN = "STAGING-BSE2E";
 
 export const getLab = internalQuery({
   args: {},
@@ -11,7 +11,7 @@ export const getLab = internalQuery({
     requireStagingLab();
     const store = await ctx.db
       .query("stores")
-      .withIndex("by_clientId", (q) => q.eq("clientId", LAB_CLIENT_ID))
+      .withIndex("by_tin", (q) => q.eq("tin", LAB_TIN))
       .unique();
     return store ? { storeId: store._id } : null;
   },
@@ -39,9 +39,12 @@ export const prepareLab = internalMutation({
 
     const existing = await ctx.db
       .query("stores")
-      .withIndex("by_clientId", (q) => q.eq("clientId", LAB_CLIENT_ID))
+      .withIndex("by_tin", (q) => q.eq("tin", LAB_TIN))
       .unique();
     if (existing) {
+      if (existing.clientId !== undefined) {
+        await ctx.db.patch(existing._id, { clientId: undefined, updatedAt: Date.now() });
+      }
       return {
         storeId: existing._id,
         managerRoleId: managerRole._id,
@@ -54,13 +57,12 @@ export const prepareLab = internalMutation({
     const storeId = await ctx.db.insert("stores", {
       name: "Bounded Sync E2E Lab",
       address1: "Staging Emulator Lab",
-      tin: "STAGING-BSE2E",
+      tin: LAB_TIN,
       min: "STAGING-BSE2E",
       vatRate: 12,
       isActive: true,
       createdAt: now,
       updatedAt: now,
-      clientId: LAB_CLIENT_ID,
     });
     return {
       storeId,

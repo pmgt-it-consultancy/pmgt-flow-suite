@@ -39,10 +39,11 @@ it("creates one isolated lab store and reuses it on retry", async () => {
     await t.run((ctx) =>
       ctx.db
         .query("stores")
-        .withIndex("by_clientId", (q) => q.eq("clientId", "bounded-sync-e2e-v1"))
+        .withIndex("by_tin", (q) => q.eq("tin", "STAGING-BSE2E"))
         .collect(),
     ),
   ).toHaveLength(1);
+  expect(await t.run((ctx) => ctx.db.get(first.storeId))).not.toHaveProperty("clientId");
 });
 
 it("assigns dedicated users to the lab without changing another store", async () => {

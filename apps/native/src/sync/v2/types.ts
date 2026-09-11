@@ -21,6 +21,8 @@ export type OperationalSnapshot = {
   protocolVersion: 2;
   stream: "operational_orders";
   aggregates: AggregateEnvelope[];
+  hasMore?: boolean;
+  nextCursor?: string | null;
   checkpoint: StreamCheckpoint;
 };
 

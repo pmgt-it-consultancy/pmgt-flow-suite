@@ -95,6 +95,7 @@ export default defineSchema({
   })
     .index("by_parent", ["parentId"])
     .index("by_isActive", ["isActive"])
+    .index("by_tin", ["tin"])
     .index("by_updatedAt", ["updatedAt"])
     .index("by_clientId", ["clientId"]),
 

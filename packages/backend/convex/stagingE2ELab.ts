@@ -3,7 +3,6 @@
 import { createAccount } from "@convex-dev/auth/server";
 import { makeFunctionReference } from "convex/server";
 import { v } from "convex/values";
-import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { action } from "./_generated/server";
 import { requireStagingLab } from "./lib/stagingLab";
@@ -15,6 +14,13 @@ type Preparation = {
   created: boolean;
 };
 
+type ProvisionResult = {
+  storeId: Id<"stores">;
+  managerUserId: Id<"users">;
+  cashierUserId: Id<"users">;
+  storeCreated: boolean;
+};
+
 const prepareRef = makeFunctionReference<"mutation", Record<string, never>, Preparation>(
   "stagingE2ELabData:prepareLab",
 );
@@ -23,6 +29,11 @@ const assignRef = makeFunctionReference<
   { userId: Id<"users">; storeId: Id<"stores">; roleId: Id<"roles"> },
   null
 >("stagingE2ELabData:assignUser");
+const accountByEmailRef = makeFunctionReference<
+  "query",
+  { email: string },
+  { accountId: Id<"authAccounts">; userId: Id<"users"> } | null
+>("helpers/usersHelpers:getAuthAccountByEmail");
 
 export const provisionLab = action({
   args: {
@@ -37,7 +48,7 @@ export const provisionLab = action({
     cashierUserId: v.id("users"),
     storeCreated: v.boolean(),
   }),
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<ProvisionResult> => {
     requireStagingLab();
     for (const [email, password] of [
       [args.managerEmail, args.managerPassword],
@@ -51,9 +62,13 @@ export const provisionLab = action({
     }
 
     const lab = await ctx.runMutation(prepareRef, {});
-    const ensureAccount = async (email: string, password: string, name: string) => {
+    const ensureAccount = async (
+      email: string,
+      password: string,
+      name: string,
+    ): Promise<Id<"users">> => {
       const normalizedEmail = email.toLowerCase();
-      const existing = await ctx.runQuery(internal.helpers.usersHelpers.getAuthAccountByEmail, {
+      const existing = await ctx.runQuery(accountByEmailRef, {
         email: normalizedEmail,
       });
       if (existing) return existing.userId;

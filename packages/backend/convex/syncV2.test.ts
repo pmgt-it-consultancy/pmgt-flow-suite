@@ -105,11 +105,22 @@ describe("sync v2 operational snapshot", () => {
       suffix: "HISTORY",
     });
 
-    const snapshot = await t.query(internal.syncV2.getOperationalSnapshotCore, {
-      storeId,
-      now,
-      retentionDays: 7,
-    });
+    const pages: any[] = [];
+    let cursor: string | undefined;
+    do {
+      const page = await t.query(internal.syncV2.getOperationalSnapshotCore, {
+        storeId,
+        now,
+        retentionDays: 7,
+        cursor,
+      });
+      pages.push(page);
+      cursor = page.nextCursor ?? undefined;
+    } while (cursor);
+    const snapshot = {
+      ...pages[0],
+      aggregates: pages.flatMap((page) => page.aggregates),
+    };
 
     expect(snapshot.protocolVersion).toBe(2);
     expect(snapshot.stream).toBe("operational_orders");
@@ -118,6 +129,44 @@ describe("sync v2 operational snapshot", () => {
     );
     expect(snapshot.aggregates).toHaveLength(2);
     expect(snapshot.checkpoint.generation).toBeTruthy();
+  });
+
+  it("paginates snapshot aggregates so large operational windows stay within read limits", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setup(t);
+    const now = 2_000_000_000_000;
+    for (let index = 0; index < 5; index += 1) {
+      await insertOrder(t, {
+        storeId,
+        userId,
+        createdAt: now - index * 1_000,
+        status: "paid",
+        suffix: `PAGE-${index}`,
+      });
+    }
+
+    const first = await t.query(internal.syncV2.getOperationalSnapshotCore, {
+      storeId,
+      now,
+      retentionDays: 7,
+      limit: 2,
+    });
+    const second = await t.query(internal.syncV2.getOperationalSnapshotCore, {
+      storeId,
+      now: now + 1_000,
+      retentionDays: 7,
+      limit: 2,
+      cursor: first.nextCursor,
+    });
+
+    expect(first.aggregates).toHaveLength(2);
+    expect(first.hasMore).toBe(true);
+    expect(first.nextCursor).toBeTruthy();
+    expect(second.aggregates).toHaveLength(2);
+    expect(second.hasMore).toBe(true);
+    expect(second.aggregates.map((aggregate: any) => aggregate.order._id)).not.toEqual(
+      expect.arrayContaining(first.aggregates.map((aggregate: any) => aggregate.order._id)),
+    );
   });
 
   it("pulls and coalesces only aggregate events after an opaque checkpoint", async () => {
