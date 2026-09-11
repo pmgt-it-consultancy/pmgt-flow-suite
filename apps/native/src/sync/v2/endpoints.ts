@@ -35,8 +35,30 @@ export function createV2Endpoints(options: EndpointOptions) {
 
   return {
     capabilities: () => post<Record<string, unknown>>("/sync/v2/capabilities", {}),
-    snapshot: (body: { retentionDays?: number } = {}) =>
-      post<OperationalSnapshot>("/sync/v2/snapshot", body),
+    snapshot: async (body: { retentionDays?: number } = {}) => {
+      const pages: OperationalSnapshot[] = [];
+      let cursor: string | undefined;
+      let hasMore = true;
+      while (hasMore) {
+        const page = await post<OperationalSnapshot>("/sync/v2/snapshot", {
+          ...body,
+          ...(cursor ? { cursor } : {}),
+        });
+        pages.push(page);
+        hasMore = page.hasMore;
+        if (!hasMore) break;
+        if (!page.nextCursor) throw new Error("sync v2: snapshot page is missing its cursor");
+        cursor = page.nextCursor;
+      }
+
+      const first = pages[0];
+      return {
+        ...first,
+        aggregates: pages.flatMap((page) => page.aggregates),
+        hasMore: false,
+        nextCursor: null,
+      };
+    },
     pull: (body: { eventCursor?: string; limit?: number }) =>
       post<OperationalDelta>("/sync/v2/pull", body),
     searchHistory: (body: Record<string, unknown>) =>
