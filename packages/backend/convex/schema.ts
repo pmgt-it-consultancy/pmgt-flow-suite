@@ -507,6 +507,58 @@ export default defineSchema({
 
   // ===== SYNC INFRASTRUCTURE =====
 
+  replicationEvents: defineTable({
+    storeId: v.id("stores"),
+    protocolVersion: v.number(),
+    stream: v.union(
+      v.literal("store_core"),
+      v.literal("catalog"),
+      v.literal("floor"),
+      v.literal("operational_orders"),
+    ),
+    entityType: v.string(),
+    entityId: v.string(),
+    aggregateVersion: v.number(),
+    eventKind: v.union(
+      v.literal("upsert"),
+      v.literal("domain_delete"),
+      v.literal("membership_enter"),
+      v.literal("membership_leave"),
+      v.literal("business_day_settled"),
+    ),
+    operationId: v.optional(v.string()),
+  })
+    .index("by_store_stream", ["storeId", "stream"])
+    .index("by_store_entity", ["storeId", "entityType", "entityId"])
+    .index("by_operation", ["operationId"]),
+
+  deviceSyncStates: defineTable({
+    storeId: v.id("stores"),
+    deviceId: v.string(),
+    stream: v.string(),
+    generation: v.string(),
+    checkpoint: v.optional(v.string()),
+    lastObservedOperationId: v.optional(v.string()),
+    pendingCount: v.number(),
+    status: v.union(v.literal("active"), v.literal("retired"), v.literal("attention_required")),
+    updatedAt: v.number(),
+  })
+    .index("by_store_device_stream", ["storeId", "deviceId", "stream"])
+    .index("by_store_status", ["storeId", "status"]),
+
+  businessDayReportRevisions: defineTable({
+    storeId: v.id("stores"),
+    reportDate: v.string(),
+    revision: v.number(),
+    status: v.union(v.literal("preliminary"), v.literal("final")),
+    missingDeviceIds: v.array(v.string()),
+    snapshot: v.string(),
+    generatedAt: v.number(),
+    generatedBy: v.id("users"),
+  })
+    .index("by_store_date_revision", ["storeId", "reportDate", "revision"])
+    .index("by_store_date_status", ["storeId", "reportDate", "status"]),
+
   // Idempotency cache for /sync/push retries.
   // Cleaned daily by syncMaintenance.cleanupSyncedMutations cron (TTL 7 days).
   syncedMutations: defineTable({
