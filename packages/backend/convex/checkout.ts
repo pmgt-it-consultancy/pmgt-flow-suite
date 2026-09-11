@@ -34,7 +34,7 @@ async function releaseTableIfLastOrder(
 }
 
 // Core split-payment logic shared by processPayment and legacy single-method mutations
-async function processPaymentCore(
+export async function processPaymentCore(
   ctx: MutationCtx,
   orderId: Id<"orders">,
   payments: Array<{
@@ -45,6 +45,7 @@ async function processPaymentCore(
     cardReferenceNumber?: string;
   }>,
   userId: Id<"users">,
+  operationId?: string,
 ): Promise<{ success: boolean; totalChange: number }> {
   const order = await ctx.db.get(orderId);
   if (!order) throw new Error("Order not found");
@@ -72,7 +73,7 @@ async function processPaymentCore(
   }
 
   let totalChange = 0;
-  for (const payment of payments) {
+  for (const [paymentIndex, payment] of payments.entries()) {
     let changeGiven: number | undefined;
     if (payment.paymentMethod === "cash" && payment.cashReceived !== undefined) {
       changeGiven = payment.cashReceived - payment.amount;
@@ -91,6 +92,7 @@ async function processPaymentCore(
       cardReferenceNumber: payment.cardReferenceNumber,
       createdAt: Date.now(),
       createdBy: userId,
+      operationId: operationId ? `${operationId}:${paymentIndex}` : undefined,
     });
   }
 
@@ -110,7 +112,7 @@ async function processPaymentCore(
     await ctx.db.patch(orderId, { takeoutStatus: "preparing", updatedAt: Date.now() });
   }
 
-  await publishOrderAggregateEvent(ctx, { orderId });
+  await publishOrderAggregateEvent(ctx, { orderId, operationId });
 
   return { success: true, totalChange };
 }

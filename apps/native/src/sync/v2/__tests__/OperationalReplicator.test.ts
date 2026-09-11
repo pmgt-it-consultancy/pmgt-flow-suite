@@ -90,4 +90,48 @@ describe("OperationalReplicator", () => {
     await Promise.all([replicator.requestSync(), replicator.requestSync()]);
     expect(endpoints.snapshot).toHaveBeenCalledTimes(1);
   });
+
+  it("reports observed operation ids after their aggregate commits", async () => {
+    const checkpoints = new CheckpointStore(new MemoryStorage());
+    const scope = {
+      storeId: "store-1",
+      deviceId: "device-1",
+      stream: "operational_orders" as const,
+    };
+    await checkpoints.save(scope, { generation: "generation-1", eventCursor: "cursor-1" });
+    const onOperationObserved = jest.fn().mockResolvedValue(undefined);
+    const apply = jest.fn().mockResolvedValue("applied");
+    const replicator = new OperationalReplicator({
+      scope,
+      checkpoints,
+      endpoints: {
+        snapshot: jest.fn(),
+        pull: jest.fn().mockResolvedValue({
+          protocolVersion: 2,
+          stream: "operational_orders",
+          changes: [
+            {
+              entityId: "order-1",
+              aggregateVersion: 2,
+              eventKind: "upsert",
+              operationId: "operation-1",
+              aggregate,
+            },
+          ],
+          hasMore: false,
+          checkpoint: {
+            stream: "operational_orders",
+            eventCursor: "cursor-2",
+            generation: "generation-1",
+          },
+        }),
+      },
+      apply,
+      onOperationObserved,
+    });
+
+    await replicator.requestSync();
+    expect(apply).toHaveBeenCalledTimes(1);
+    expect(onOperationObserved).toHaveBeenCalledWith("operation-1");
+  });
 });

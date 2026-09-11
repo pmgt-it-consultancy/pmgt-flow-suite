@@ -499,12 +499,14 @@ export default defineSchema({
     // Sync infrastructure
     updatedAt: v.optional(v.number()),
     clientId: v.optional(v.string()),
+    operationId: v.optional(v.string()),
   })
     .index("by_order", ["orderId"])
     .index("by_store", ["storeId"])
     .index("by_store_and_method", ["storeId", "paymentMethod"])
     .index("by_store_updatedAt", ["storeId", "updatedAt"])
-    .index("by_clientId", ["clientId"]),
+    .index("by_clientId", ["clientId"])
+    .index("by_operation", ["operationId"]),
 
   // ===== SYNC INFRASTRUCTURE =====
 
@@ -559,6 +561,20 @@ export default defineSchema({
   })
     .index("by_store_date_revision", ["storeId", "reportDate", "revision"])
     .index("by_store_date_status", ["storeId", "reportDate", "status"]),
+
+  businessCommandReceipts: defineTable({
+    operationId: v.string(),
+    storeId: v.id("stores"),
+    deviceId: v.string(),
+    schemaVersion: v.number(),
+    commandKind: v.string(),
+    aggregateId: v.string(),
+    status: v.union(v.literal("accepted"), v.literal("rejected")),
+    error: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_operation", ["operationId"])
+    .index("by_store_device", ["storeId", "deviceId"]),
 
   // Idempotency cache for /sync/push retries.
   // Cleaned daily by syncMaintenance.cleanupSyncedMutations cron (TTL 7 days).

@@ -15,6 +15,7 @@ type ReplicatorOptions = {
   countV1Membership?: () => Promise<number>;
   countShadowMembership?: () => Promise<number>;
   onShadowMismatch?: (metrics: { v1Count: number; v2Count: number }) => void;
+  onOperationObserved?: (operationId: string) => Promise<void>;
 };
 
 export class OperationalReplicator {
@@ -92,6 +93,7 @@ export class OperationalReplicator {
             aggregateVersion: change.aggregateVersion,
             aggregate: change.aggregate,
           });
+          if (change.operationId) await this.options.onOperationObserved?.(change.operationId);
         }
         checkpoint = {
           generation: delta.checkpoint.generation,
