@@ -606,7 +606,7 @@ export const syncPushCore = internalMutation({
       }
     }
 
-    for (const [orderId, eventKind] of touchedOrders) {
+    for (const [orderId, eventKind] of Array.from(touchedOrders.entries())) {
       await publishOrderAggregateEvent(ctx, {
         orderId,
         eventKind,

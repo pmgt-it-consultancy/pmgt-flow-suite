@@ -73,7 +73,8 @@ export async function processPaymentCore(
   }
 
   let totalChange = 0;
-  for (const [paymentIndex, payment] of payments.entries()) {
+  for (let paymentIndex = 0; paymentIndex < payments.length; paymentIndex += 1) {
+    const payment = payments[paymentIndex];
     let changeGiven: number | undefined;
     if (payment.paymentMethod === "cash" && payment.cashReceived !== undefined) {
       changeGiven = payment.cashReceived - payment.amount;

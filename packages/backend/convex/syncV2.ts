@@ -180,7 +180,7 @@ export const getOperationalSnapshotCore = internalQuery({
     const roots = new Map<Id<"orders">, Doc<"orders">>();
     for (const order of [...recent, ...drafts, ...open]) roots.set(order._id, order);
     const aggregates = await Promise.all(
-      [...roots.values()]
+      Array.from(roots.values())
         .sort((a, b) => a.createdAt - b.createdAt)
         .map((order) => hydrateOrderAggregate(ctx, order)),
     );
@@ -228,7 +228,7 @@ export const pullOperationalEventsCore = internalQuery({
     const latestByRoot = new Map<string, Doc<"replicationEvents">>();
     for (const event of events) latestByRoot.set(event.entityId, event);
     const changes = await Promise.all(
-      [...latestByRoot.values()].map(async (event) => {
+      Array.from(latestByRoot.values()).map(async (event) => {
         const order = await ctx.db.get(event.entityId as Id<"orders">);
         return {
           entityId: event.entityId,
