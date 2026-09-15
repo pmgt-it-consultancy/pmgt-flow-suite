@@ -1,13 +1,17 @@
 package com.pmgt.pos.auth
 
 import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.unit.dp
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.serialization.json.*
 import okhttp3.mockwebserver.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -155,6 +159,7 @@ class AuthUiWorkflowTest {
                 println("AUTH_UI_TREE=${compose.onRoot(useUnmergedTree = true).printToString()}")
                 throw error
             }
+            assertManagerPaintedBounds()
             compose.onNodeWithText("Morgan").performClick()
             compose.onNodeWithText("Enter manager PIN").performTextInput("1111")
             compose.onAllNodesWithText("Unlock")[1].performClick()
@@ -248,6 +253,44 @@ class AuthUiWorkflowTest {
                 this.snapshot = snapshot
             }
         }
+
+    /** Catches a fill modifier overriding the cap, and fixed widths overflowing narrow windows. */
+    private fun assertManagerPaintedBounds() {
+        val dialog = compose.onNode(isDialog())
+        val image = dialog.captureToImage()
+        val pixels = image.toPixelMap()
+        val description =
+            compose.onNodeWithText("A manager can unlock this screen with their PIN.")
+                .fetchSemanticsNode().boundsInRoot
+        val dialogBounds = dialog.fetchSemanticsNode().boundsInRoot
+        val y = (description.center.y - dialogBounds.top).toInt()
+        // This row crosses the panel's straight sides, away from its rounded corners.
+        val whitePixels = (0 until image.width).filter { x ->
+            val color = pixels[x, y]
+            color.red > .99f && color.green > .99f && color.blue > .99f
+        }
+        assertTrue("Manager panel must paint a white surface", whitePixels.isNotEmpty())
+        val expectedWidth = with(compose.density) {
+            minOf(448.dp.roundToPx(), image.width - 32.dp.roundToPx())
+        }
+        val expectedLeft = (image.width - expectedWidth) / 2
+        println(
+            "MANAGER_PAINTED_BOUNDS window=${image.width}px " +
+                "left=${whitePixels.first()} right=${whitePixels.last() + 1} " +
+                "width=${whitePixels.last() - whitePixels.first() + 1}px expected=${expectedWidth}px"
+        )
+        assertEquals(
+            "Painted manager panel width must respect the 448dp cap and 16dp exterior gutters",
+            expectedWidth,
+            whitePixels.last() - whitePixels.first() + 1,
+        )
+        assertEquals("Painted manager panel must be centered", expectedLeft, whitePixels.first())
+        assertEquals(
+            "Painted manager panel right edge",
+            expectedLeft + expectedWidth,
+            whitePixels.last() + 1,
+        )
+    }
 
     private fun dismissManagerWithBack() {
         device.pressBack()

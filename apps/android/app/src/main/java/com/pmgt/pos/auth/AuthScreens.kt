@@ -620,8 +620,8 @@ private fun ManagerDialog(
             contentAlignment = Alignment.Center,
         ) {
             Column(
-                Modifier.fillMaxWidth()
-                    .widthIn(max = 448.dp)
+                Modifier.widthIn(max = 448.dp)
+                    .fillMaxWidth()
                     .background(Color.White, RoundedCornerShape(16.dp))
                     .clickable {}
                     .padding(20.dp),
