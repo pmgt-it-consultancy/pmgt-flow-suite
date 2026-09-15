@@ -14,6 +14,8 @@ The additive seed targets 20 categories, 20 modifier groups, 80 options, 20 cate
 
 There are 10,000 historical paid cash orders across the 90 days before September 8, 2026, plus 50 open orders (25 dine-in, 25 takeout). Every order has four lines, six total units, and four modifier snapshots. Historical orders include payment records. Expected child counts are 40,200 order items, 40,200 modifier snapshots and 10,000 payments.
 
+Post-seed indexed pagination verified every count above, including all 20 category assignments. No incoming traffic run was started. The emulator home screen shows 54 open orders: 25 SIM dine-in and 25 SIM takeout, plus four preexisting takeout orders. SIM orders display six items and modifier-inclusive totals. The remaining historical catch-up was still running at handoff; wait for `Synced` before steady-state performance measurements.
+
 These are synthetic sales and affect **staging reports**. No real payment is collected or printer invoked by the seed. Existing catalog/orders are preserved. Only new SIM tables are occupied. Deterministic keys prevent duplicate fixtures on rerun and preserve cashier edits to already seeded records. No destructive reset is provided.
 
 ## Operator commands
