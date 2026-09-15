@@ -5,7 +5,12 @@ import type { Doc, Id } from "./_generated/dataModel";
 import { httpAction, internalAction, internalMutation, internalQuery } from "./_generated/server";
 import { publishOrderAggregateEvent } from "./lib/replicationEvents";
 import { deviceCodeFromIndex, newClientId } from "./lib/sync";
-import { reconcilePushedOrder } from "./lib/totalsReconciliation";
+import {
+  paidTotalsSnapshotKey,
+  queueTotalsReconciliation,
+  reconcilePushedOrder,
+  reconciliationScope,
+} from "./lib/totalsReconciliation";
 
 /**
  * /sync/registerDevice, /sync/pull, /sync/push
@@ -570,7 +575,8 @@ export const syncPushCore = internalMutation({
       if (!tableChanges) continue;
       for (const syncId of tableChanges.deleted ?? []) {
         try {
-          await applyPushedDelete({ ctx, table, syncId });
+          const orderId = await applyPushedDelete({ ctx, table, syncId });
+          if (orderId && !touchedOrders.has(orderId)) touchedOrders.set(orderId, "upsert");
         } catch (e) {
           rejected.push({
             table,
@@ -608,13 +614,11 @@ export const syncPushCore = internalMutation({
     }
 
     for (const [orderId, eventKind] of Array.from(touchedOrders.entries())) {
-      // A rejected child makes this push incomplete; its retry performs the comparison.
-      if (rejected.length === 0) {
-        await reconcilePushedOrder(ctx, orderId, {
-          deviceId: args.deviceId,
-          mutationId: payload.clientMutationId,
-        });
-      }
+      // Check the committed accepted aggregate independently of this sale transaction.
+      await queueTotalsReconciliation(ctx, orderId, {
+        deviceId: args.deviceId,
+        mutationId: payload.clientMutationId,
+      });
       await publishOrderAggregateEvent(ctx, {
         orderId,
         eventKind,
@@ -630,6 +634,48 @@ export const syncPushCore = internalMutation({
       createdAt: Date.now(),
     });
     return response;
+  },
+});
+
+export const reconcileOrderTotals = internalMutation({
+  args: { jobId: v.id("totalsReconciliationJobs") },
+  returns: v.null(),
+  handler: async (ctx, { jobId }) => {
+    const job = await ctx.db.get(jobId);
+    if (!job || job.status === "complete") return null;
+    const latest = await ctx.db
+      .query("totalsReconciliationJobs")
+      .withIndex("by_orderId_and_generation", (q) => q.eq("orderId", job.orderId))
+      .order("desc")
+      .first();
+    const order = await ctx.db.get(job.orderId);
+    const store = await ctx.db.get(job.storeId);
+    const blockedReason =
+      latest?._id !== jobId
+        ? "snapshot_superseded"
+        : !order || !store
+          ? "snapshot_unavailable"
+          : order.status === "voided"
+            ? "void_snapshot_unavailable"
+            : reconciliationScope(store, order).scopeKey !== job.scopeKey
+              ? "scope_changed"
+              : undefined;
+    if (blockedReason) {
+      await ctx.db.patch(jobId, { blockedReason });
+      return null;
+    }
+    // Both reading the latest provenance and completing the job are atomic with the check.
+    // A failed worker rolls back here, leaving the durable pending job for recovery.
+    await reconcilePushedOrder(ctx, job.orderId, {
+      deviceId: job.deviceId,
+      mutationId: job.mutationId,
+    });
+    await ctx.db.patch(jobId, {
+      status: "complete",
+      blockedReason: undefined,
+      checkedPaidTotalsKey: order?.status === "paid" ? paidTotalsSnapshotKey(order) : undefined,
+    });
+    return null;
   },
 });
 
@@ -677,12 +723,17 @@ async function findSyncedDoc(ctx: any, table: string, syncId: string): Promise<a
   return byConvexId;
 }
 
-async function applyPushedDelete({ ctx, table, syncId }: DeleteArgs): Promise<void> {
+async function applyPushedDelete({
+  ctx,
+  table,
+  syncId,
+}: DeleteArgs): Promise<Id<"orders"> | undefined> {
   if (table !== "orderDiscounts") return;
 
   const existing = await findSyncedDoc(ctx, table, syncId);
   if (!existing) return;
   await ctx.db.delete(existing._id);
+  return existing.orderId as Id<"orders">;
 }
 
 async function resolveActorId(

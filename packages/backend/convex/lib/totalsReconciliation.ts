@@ -1,4 +1,5 @@
 import { aggregateOrderTotals, calculateChange, calculateItemTotals } from "@packages/shared";
+import { internal } from "../_generated/api";
 import type { Doc, Id } from "../_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 import { getBusinessDayBoundaries } from "./businessDay";
@@ -13,6 +14,125 @@ const moneyFields = [
   "netSales",
 ] as const;
 
+export function paidTotalsSnapshotKey(order: Doc<"orders">) {
+  return JSON.stringify([
+    ...moneyFields.map((field) => order[field]),
+    order.paymentMethod,
+    order.cashReceived,
+    order.changeGiven,
+  ]);
+}
+
+export function reconciliationScope(store: Doc<"stores">, order: Doc<"orders">) {
+  const boundaries = getBusinessDayBoundaries(store.schedule, order.createdAt);
+  return {
+    reportDate: boundaries.businessDate,
+    // The relevant schedule boundaries and VAT rate are part of the reference snapshot.
+    scopeKey: JSON.stringify([order.storeId, order.createdAt, boundaries, store.vatRate]),
+  };
+}
+
+export async function scheduleTotalsReconciliation(
+  ctx: MutationCtx,
+  jobId: Id<"totalsReconciliationJobs">,
+) {
+  try {
+    const scheduledFunctionId = await ctx.scheduler.runAfter(
+      0,
+      internal.sync.reconcileOrderTotals,
+      {
+        jobId,
+      },
+    );
+    await ctx.db.patch(jobId, { scheduledFunctionId });
+  } catch {
+    // The durable pending record keeps closing blocked and permits an explicit retry.
+    await ctx.db.patch(jobId, { scheduledFunctionId: undefined });
+  }
+}
+
+export async function queueTotalsReconciliation(
+  ctx: MutationCtx,
+  orderId: Id<"orders">,
+  evidence: { deviceId: string; mutationId: string },
+) {
+  const order = await ctx.db.get(orderId);
+  if (!order) return;
+  const store = await ctx.db.get(order.storeId);
+  if (!store) return;
+  const scope = reconciliationScope(store, order);
+  const existing = await ctx.db
+    .query("totalsReconciliationJobs")
+    .withIndex("by_orderId_and_generation", (q) => q.eq("orderId", orderId))
+    .order("desc")
+    .first();
+  // A full void retains historical money. Keep the completed check and any
+  // unresolved discrepancy when that exact paid snapshot has already been checked.
+  if (
+    order.status === "voided" &&
+    existing?.status === "complete" &&
+    existing.scopeKey === scope.scopeKey &&
+    existing.checkedPaidTotalsKey === paidTotalsSnapshotKey(order)
+  )
+    return;
+  // The historical paid aggregate is no longer available after a void. Retain its
+  // provenance instead of replacing it with an unchecked void's mutation ID.
+  if (order.status === "voided" && existing?.status === "pending") {
+    await ctx.db.patch(existing._id, { blockedReason: "void_snapshot_unavailable" });
+    return;
+  }
+  const sameScope =
+    existing?.scopeKey === scope.scopeKey
+      ? existing
+      : await ctx.db
+          .query("totalsReconciliationJobs")
+          .withIndex("by_orderId_and_scopeKey", (q) =>
+            q.eq("orderId", orderId).eq("scopeKey", scope.scopeKey),
+          )
+          .unique();
+  if (existing?.status === "pending" && existing._id !== sameScope?._id) {
+    await ctx.db.patch(existing._id, { blockedReason: "snapshot_superseded" });
+  }
+  const generation = (existing?.generation ?? 0) + 1;
+  const blockedReason = order.status === "voided" ? "void_snapshot_unavailable" : undefined;
+  const jobId = sameScope
+    ? sameScope._id
+    : await ctx.db.insert("totalsReconciliationJobs", {
+        storeId: order.storeId,
+        orderId,
+        ...scope,
+        ...evidence,
+        status: "pending",
+        generation,
+        orderCreatedAt: order.createdAt,
+        blockedReason,
+      });
+  if (sameScope) {
+    await ctx.db.patch(jobId, { ...evidence, generation, status: "pending", blockedReason });
+    const scheduled = sameScope.scheduledFunctionId
+      ? await ctx.db.system.get(sameScope.scheduledFunctionId)
+      : null;
+    if (
+      sameScope.status === "pending" &&
+      (scheduled?.state.kind === "pending" || scheduled?.state.kind === "inProgress")
+    )
+      return;
+  }
+  await scheduleTotalsReconciliation(ctx, jobId);
+}
+
+export function pendingTotalsReconciliations(
+  ctx: Pick<QueryCtx, "db">,
+  storeId: Id<"stores">,
+  reportDate: string,
+) {
+  return ctx.db
+    .query("totalsReconciliationJobs")
+    .withIndex("by_storeId_and_reportDate_and_status", (q) =>
+      q.eq("storeId", storeId).eq("reportDate", reportDate).eq("status", "pending"),
+    );
+}
+
 /** Run after all related rows in a successful push, never between parent/child writes. */
 export async function reconcilePushedOrder(
   ctx: MutationCtx,
@@ -20,11 +140,12 @@ export async function reconcilePushedOrder(
   evidence: { deviceId: string; mutationId: string },
 ): Promise<void> {
   const order = await ctx.db.get(orderId);
-  if (!order) return;
+  if (!order) throw new Error("Order snapshot unavailable");
   // A void preserves the settled snapshot; recomputing from now-voided items would be false evidence.
-  if (order.status === "voided") return;
+  if (order.status === "voided") throw new Error("Voided order snapshot unavailable");
   const store = await ctx.db.get(order.storeId);
-  if (!store) return;
+  if (!store) throw new Error("Store snapshot unavailable");
+  const reportDate = getBusinessDayBoundaries(store.schedule, order.createdAt).businessDate;
   const items = await ctx.db
     .query("orderItems")
     .withIndex("by_order", (q) => q.eq("orderId", orderId))
@@ -86,10 +207,12 @@ export async function reconcilePushedOrder(
     reconciledTotals.paymentTotal = totals.netSales;
     if (calculateChange(totals.netSales, paid) !== 0) fields.push("paymentTotal");
   }
-  const unresolved = await ctx.db
+  const orderDivergences = await ctx.db
     .query("totalsDivergences")
     .withIndex("by_orderId_and_status", (q) => q.eq("orderId", orderId).eq("status", "unresolved"))
     .collect();
+  // A check on a new Business Day cannot resolve or deduplicate another day's evidence.
+  const unresolved = orderDivergences.filter((record) => record.reportDate === reportDate);
   if (fields.length === 0) {
     for (const record of unresolved)
       await ctx.db.patch(record._id, {
@@ -105,7 +228,7 @@ export async function reconcilePushedOrder(
   await ctx.db.insert("totalsDivergences", {
     storeId: order.storeId,
     orderId,
-    reportDate: getBusinessDayBoundaries(store.schedule, order.createdAt).businessDate,
+    reportDate,
     ...evidence,
     status: "unresolved",
     deviceTotals,
