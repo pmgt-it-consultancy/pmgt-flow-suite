@@ -32,4 +32,11 @@ Public boundary: suspend ConvexHttp.query(path: String, args: JsonObject), mutat
 
 ## Remaining tasks
 
+### Implemented shared Android boundaries
+
+- `PosApplication` owns one `ConvexHttp`, `AuthRepository`, and `LockState`; downstream repositories reuse these instances.
+- `ConvexHttp.query`, `mutation`, and `action` accept a function path and `JsonObject` arguments and return `JsonElement`. `httpAction(path, args, headers)` targets the site's HTTP endpoints; sync supplies `x-device-id` through its headers argument. `unauthenticatedAction` is reserved for the auth protocol.
+- `AuthRepository` installs the transport's suspending `freshToken` supplier. Consumers do not implement their own token refresh. Its `StateFlow<AuthState>` exposes the typed `SignedInUser`, assigned `selectedStoreId`, loading, and error; permission membership uses `hasPermission`. Public lifecycle operations are `signIn`, `restore`, `reloadUser`, and `signOut`.
+- Storage and sync may use JSON rows at their boundary; feature repositories must map them to typed domain/render models. Database operations run off the main thread, and committed invalidations must not expose partial transactions.
+
 Use the approved one-file ticket briefs in .scratch/kotlin-migration/issues in dependency order. Task 8 (#36) can proceed independently against existing backend endpoints. All shared Android interfaces must be recorded in this plan before downstream implementation. Task 2 owns db/ and adoption; Task 3 owns sync/; Task 4 owns money/ and fixtures; Tasks 5–7 and 9–13 own feature UI/repositories. Task 14 runs complete verification and reviews against baseline ede976f4c566b055fb47c8a9b6b412ecf880acac.
