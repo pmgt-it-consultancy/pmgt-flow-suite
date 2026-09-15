@@ -29,6 +29,6 @@ class MainActivity : ComponentActivity() {
     override fun onStop() { services.lock.onBackground(); super.onStop() }
     override fun onStart() {
         super.onStart()
-        lifecycleScope.launch { services.auth.state.value.user?.let { services.lock.onForeground(it) } }
+        lifecycleScope.launch { services.lock.onForeground(services.auth.state.value.user) }
     }
 }

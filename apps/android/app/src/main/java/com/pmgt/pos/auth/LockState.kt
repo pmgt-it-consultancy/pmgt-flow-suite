@@ -3,6 +3,7 @@ package com.pmgt.pos.auth
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 
@@ -42,8 +43,8 @@ class LockState(private val storage: LockStorage, private val http: ConvexHttp, 
     fun setCurrentRoute(name: String) { route = name; resetActivity() }
     fun resetActivity() { lastActivity = now(); timerStartedAt = now(); mutableState.value = state.value.copy(showIdleWarning = false) }
     fun onBackground() { backgroundAt = now() }
-    suspend fun onForeground(user: SignedInUser) {
-        if (backgroundAt != null && timeoutMs != null && now() - lastActivity >= timeoutMs!! && !state.value.snapshot.isLocked && userHasPin) lock(user, "idle_timeout")
+    suspend fun onForeground(user: SignedInUser?) {
+        if (user != null && backgroundAt != null && timeoutMs != null && now() - lastActivity >= timeoutMs!! && !state.value.snapshot.isLocked && userHasPin) lock(user, "idle_timeout")
         backgroundAt = null
         timerStartedAt = now()
     }
@@ -59,7 +60,11 @@ class LockState(private val storage: LockStorage, private val http: ConvexHttp, 
         if (!userHasPin || state.value.snapshot.isLocked) return
         save(state.value.snapshot.copy(isLocked = true, lockedAt = now(), lockedUserId = user.id, lockedUserName = user.name, lockedUserRole = user.role?.name ?: "Staff"))
         mutableState.value = LockUiState(state.value.snapshot)
-        user.storeId?.let { store -> runCatching { http.mutation("screenLock:screenLock", buildJsonObject { put("storeId", store); put("trigger", trigger) }) } }
+        user.storeId?.let { store ->
+            try { http.mutation("screenLock:screenLock", buildJsonObject { put("storeId", store); put("trigger", trigger) }) }
+            catch (error: CancellationException) { throw error }
+            catch (_: Exception) { }
+        }
     }
 
     fun cooldownSeconds(): Int = ((state.value.cooldownUntil?.minus(now()) ?: 0).coerceAtLeast(0) + 999).div(1000).toInt()

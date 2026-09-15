@@ -2,6 +2,7 @@ package com.pmgt.pos.auth
 
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -23,6 +24,48 @@ class AuthWorkflowTest {
             runCatching { auth.reloadUser() }
             assertFalse(auth.state.value.isAuthenticated)
             assertNull(http.token)
+        }
+    }
+
+    @Test fun `delayed reload cannot restore a signed out session`() = runTest {
+        MockWebServer().use { server ->
+            val storage = MemorySessionStorage().apply { write(SessionTokens("access", "refresh")) }
+            val auth = AuthRepository(ConvexHttp(server.url("/").toString()), storage)
+            server.success("""{"_id":"cashier","role":null}"""); auth.restore()
+            server.enqueue(MockResponse().setBodyDelay(500, java.util.concurrent.TimeUnit.MILLISECONDS).setBody("""{"status":"success","value":{"_id":"cashier","role":null}}"""))
+            server.success("null")
+            val reload = async { runCatching { auth.reloadUser() } }
+            delay(50); auth.signOut(); reload.await()
+            assertFalse(auth.state.value.isAuthenticated)
+            assertNull(storage.read())
+        }
+    }
+
+    @Test fun `delayed reload from session A cannot overwrite newly signed in session B`() = runTest {
+        MockWebServer().use { server ->
+            val storage = MemorySessionStorage().apply { write(SessionTokens("access-a", "refresh-a")) }
+            val auth = AuthRepository(ConvexHttp(server.url("/").toString()), storage)
+            server.success("""{"_id":"a","name":"A","role":null}"""); auth.restore()
+            server.enqueue(MockResponse().setBodyDelay(500, java.util.concurrent.TimeUnit.MILLISECONDS).setBody("""{"status":"success","value":{"_id":"a","name":"A","role":null}}"""))
+            server.success("""{"tokens":{"token":"access-b","refreshToken":"refresh-b"}}""")
+            server.success("""{"_id":"b","name":"B","role":null}""")
+            val stale = async { auth.reloadUser() }
+            delay(50); auth.signIn("b@example.com", "password"); stale.await()
+            assertEquals("b", auth.state.value.user?.id)
+            assertEquals("access-b", storage.read()?.token)
+        }
+    }
+
+    @Test fun `cancelled logout still revokes and durably clears session`() = runTest {
+        MockWebServer().use { server ->
+            val storage = SuspendingSessionStorage(SessionTokens("access", "refresh"))
+            val auth = AuthRepository(ConvexHttp(server.url("/").toString()), storage)
+            server.success("""{"_id":"cashier","role":null}"""); auth.restore(); server.success("null")
+            val logout = launch(start = CoroutineStart.UNDISPATCHED) { auth.signOut() }; logout.cancelAndJoin()
+            assertFalse(auth.state.value.isAuthenticated)
+            assertNull(storage.value)
+            server.takeRequest()
+            assertEquals("auth:signOut", Json.parseToJsonElement(server.takeRequest().body.readUtf8()).jsonObject["path"]?.jsonPrimitive?.content)
         }
     }
 
@@ -115,4 +158,10 @@ class AuthWorkflowTest {
             assertEquals("Bearer access", server.takeRequest().getHeader("Authorization"))
         }
     }
+}
+
+private class SuspendingSessionStorage(initial: SessionTokens?) : SessionStorage {
+    var value = initial
+    override suspend fun read(): SessionTokens? { yield(); return value }
+    override suspend fun write(tokens: SessionTokens?) { yield(); value = tokens }
 }

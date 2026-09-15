@@ -3,6 +3,8 @@ package com.pmgt.pos.auth
 import com.pmgt.pos.transport.ConvexException
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +27,7 @@ class AuthRepository(private val http: ConvexHttp, private val storage: SessionS
     val state: StateFlow<AuthState> = mutableState.asStateFlow()
     private val mutex = Mutex()
     private var tokens: SessionTokens? = null
+    private var generation = 0L
     init { http.freshToken = { freshAccessToken() } }
 
     fun hasPermission(permission: String) = state.value.user?.role?.permissions?.contains(permission) == true
@@ -54,17 +57,22 @@ class AuthRepository(private val http: ConvexHttp, private val storage: SessionS
     }
 
     suspend fun reloadUser() {
+        val requestedGeneration = mutex.withLock { generation }
         val value = try { http.query("sessions:getCurrentUser") }
         catch (e: ConvexException) {
-            if (e.statusCode == 401 || e.statusCode == 403 || e.message.orEmpty().contains("Authentication required")) mutex.withLock { clear() }
+            if (e.statusCode == 401 || e.statusCode == 403 || e.message.orEmpty().contains("Authentication required")) mutex.withLock {
+                if (generation == requestedGeneration) clearLocked()
+            }
             throw e
         }
-        if (value == JsonNull) { clear(); return }
+        if (value == JsonNull) { mutex.withLock { if (generation == requestedGeneration) clearLocked() }; return }
         val user = value.jsonObject
         val role = (user["role"] as? JsonObject)?.let {
             UserRole(it.string("_id"), it.string("name"), it["permissions"]!!.jsonArray.map { p -> p.jsonPrimitive.content }.toSet(), it.string("scopeLevel"))
         }
-        mutableState.value = AuthState(SignedInUser(user.string("_id"), user.optionalString("name") ?: "User", user.optionalString("email"), user.optionalString("storeId"), role))
+        mutex.withLock {
+            if (generation == requestedGeneration) mutableState.value = AuthState(SignedInUser(user.string("_id"), user.optionalString("name") ?: "User", user.optionalString("email"), user.optionalString("storeId"), role))
+        }
     }
 
     suspend fun freshAccessToken(forceRefresh: Boolean = false): String? = mutex.withLock {
@@ -86,14 +94,17 @@ class AuthRepository(private val http: ConvexHttp, private val storage: SessionS
             tokens?.token
         } catch (e: ConvexException) {
             // A rejected refresh has no offline session fallback.
-            if (e.statusCode < 500 || e.message.orEmpty().contains("refresh token", ignoreCase = true) || e.message.orEmpty().contains("Session expired")) clear()
+            if (e.statusCode < 500 || e.message.orEmpty().contains("refresh token", ignoreCase = true) || e.message.orEmpty().contains("Session expired")) clearLocked()
             throw e
         }
     }
 
-    suspend fun signOut() {
-        // Clear locally even if the server is unreachable, matching Convex Auth's client.
-        try { http.action("auth:signOut") } finally { mutex.withLock { clear() } }
+    suspend fun signOut() = withContext(NonCancellable) {
+        // Reserve this transition so an older reload cannot publish while revocation is in flight.
+        val logoutGeneration = mutex.withLock { ++generation }
+        try { http.action("auth:signOut") } finally {
+            mutex.withLock { if (generation == logoutGeneration) clearLocked() }
+        }
     }
 
     private suspend fun acceptTokens(value: JsonElement) {
@@ -102,9 +113,10 @@ class AuthRepository(private val http: ConvexHttp, private val storage: SessionS
         storage.write(next) // Publish only after durable token rotation.
         tokens = next
         http.token = next.token
+        generation++
     }
 
-    private suspend fun clear() { storage.write(null); tokens = null; http.token = null; mutableState.value = AuthState() }
+    private suspend fun clearLocked() { storage.write(null); tokens = null; http.token = null; generation++; mutableState.value = AuthState() }
 }
 
 internal fun JsonObject.string(key: String) = getValue(key).jsonPrimitive.content
