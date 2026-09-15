@@ -591,11 +591,21 @@ export default defineSchema({
     scopeKey: v.string(),
     blockedReason: v.optional(v.string()),
     checkedPaidTotalsKey: v.optional(v.string()),
+    checkedPaidSnapshotId: v.optional(v.id("totalsReconciliationSnapshots")),
+    checkedPaidMutationId: v.optional(v.string()),
     scheduledFunctionId: v.optional(v.id("_scheduled_functions")),
   })
     .index("by_orderId_and_generation", ["orderId", "generation"])
     .index("by_orderId_and_scopeKey", ["orderId", "scopeKey"])
     .index("by_storeId_and_reportDate_and_status", ["storeId", "reportDate", "status"]),
+
+  // Worker-only payload: keep the sale-path job metadata independent of aggregate size.
+  totalsReconciliationSnapshots: defineTable({
+    orderId: v.id("orders"),
+    aggregateKey: v.string(),
+    voidedItemIds: v.array(v.id("orderItems")),
+    mutationId: v.string(),
+  }),
 
   // Immutable evidence of device/server money disagreement, resolved only by a matching recheck.
   totalsDivergences: defineTable({

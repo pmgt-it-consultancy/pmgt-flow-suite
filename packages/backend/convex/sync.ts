@@ -6,8 +6,10 @@ import { httpAction, internalAction, internalMutation, internalQuery } from "./_
 import { publishOrderAggregateEvent } from "./lib/replicationEvents";
 import { deviceCodeFromIndex, newClientId } from "./lib/sync";
 import {
+  financialAggregateSnapshotKey,
   paidTotalsSnapshotKey,
   queueTotalsReconciliation,
+  readOrderFinancialAggregate,
   reconcilePushedOrder,
   reconciliationScope,
 } from "./lib/totalsReconciliation";
@@ -655,25 +657,49 @@ export const reconcileOrderTotals = internalMutation({
         ? "snapshot_superseded"
         : !order || !store
           ? "snapshot_unavailable"
-          : order.status === "voided"
-            ? "void_snapshot_unavailable"
-            : reconciliationScope(store, order).scopeKey !== job.scopeKey
-              ? "scope_changed"
-              : undefined;
+          : reconciliationScope(store, order).scopeKey !== job.scopeKey
+            ? "scope_changed"
+            : undefined;
     if (blockedReason) {
       await ctx.db.patch(jobId, { blockedReason });
       return null;
     }
+    if (order?.status === "voided") {
+      const retained = job.checkedPaidSnapshotId
+        ? await ctx.db.get(job.checkedPaidSnapshotId)
+        : null;
+      const aggregate = retained ? await readOrderFinancialAggregate(ctx, order._id) : null;
+      const previouslyVoided = new Set(retained?.voidedItemIds ?? []);
+      const matches =
+        aggregate &&
+        financialAggregateSnapshotKey(order, aggregate) === retained?.aggregateKey &&
+        aggregate.itemInputs.every(({ item }) => !previouslyVoided.has(item._id) || item.isVoided);
+      await ctx.db.patch(
+        jobId,
+        matches
+          ? { status: "complete", blockedReason: undefined }
+          : { blockedReason: "void_snapshot_unavailable" },
+      );
+      return null;
+    }
     // Both reading the latest provenance and completing the job are atomic with the check.
     // A failed worker rolls back here, leaving the durable pending job for recovery.
-    await reconcilePushedOrder(ctx, job.orderId, {
+    const snapshot = await reconcilePushedOrder(ctx, job.orderId, {
       deviceId: job.deviceId,
       mutationId: job.mutationId,
     });
+    let checkedPaidSnapshotId = job.checkedPaidSnapshotId;
+    if (order?.status === "paid") {
+      const data = { orderId: job.orderId, ...snapshot, mutationId: job.mutationId };
+      if (checkedPaidSnapshotId) await ctx.db.patch(checkedPaidSnapshotId, data);
+      else checkedPaidSnapshotId = await ctx.db.insert("totalsReconciliationSnapshots", data);
+    }
     await ctx.db.patch(jobId, {
       status: "complete",
       blockedReason: undefined,
       checkedPaidTotalsKey: order?.status === "paid" ? paidTotalsSnapshotKey(order) : undefined,
+      checkedPaidSnapshotId: order?.status === "paid" ? checkedPaidSnapshotId : undefined,
+      checkedPaidMutationId: order?.status === "paid" ? job.mutationId : undefined,
     });
     return null;
   },

@@ -116,6 +116,196 @@ async function setup() {
 }
 
 describe("Totals Reconciliation at push and closing boundaries", () => {
+  it("blocks both days when an unchecked paid sale is moved and voided before its worker", async () => {
+    const { t, actor, storeId, push } = await setup();
+    await push();
+    expect(
+      await push(
+        111,
+        "moved-void",
+        false,
+        {},
+        {
+          status: "voided",
+          createdAt: createdAt + 86400000,
+        },
+      ),
+    ).toEqual({ success: true });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    for (const reportDate of ["2026-09-15", "2026-09-16"]) {
+      await expect(
+        actor.mutation(api.closing.logDayClosing, { storeId, reportDate }),
+      ).rejects.toThrow("Totals Reconciliation pending");
+    }
+    expect(
+      await actor.query(api.closing.getPendingTotalsReconciliations, {
+        storeId,
+        reportDate: "2026-09-15",
+      }),
+    ).toMatchObject([{ mutationId: "sale-1", status: "failed" }]);
+    expect(
+      await actor.query(api.closing.getPendingTotalsReconciliations, {
+        storeId,
+        reportDate: "2026-09-16",
+      }),
+    ).toMatchObject([{ mutationId: "moved-void", status: "failed" }]);
+  });
+
+  it("recognizes an unchanged verified aggregate after a fresh replay and overtaking void", async () => {
+    const { t, actor, storeId, productId, push } = await setup();
+    await push(112);
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    await push(112, "identical-replay");
+    expect(
+      await push(
+        112,
+        "void-replayed-sale",
+        false,
+        {
+          orderItems: {
+            updated: [
+              {
+                id: "item-1",
+                orderId: "order-1",
+                productId,
+                productName: "Meal",
+                productPrice: 112,
+                quantity: 1,
+                isVoided: true,
+              },
+            ],
+          },
+        },
+        { status: "voided" },
+      ),
+    ).toEqual({ success: true });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    await expect(
+      actor.mutation(api.closing.logDayClosing, {
+        storeId,
+        reportDate: "2026-09-15",
+      }),
+    ).resolves.toBeNull();
+    expect(await t.run((ctx) => ctx.db.query("totalsReconciliationJobs").collect())).toMatchObject([
+      { mutationId: "void-replayed-sale", checkedPaidMutationId: "sale-1" },
+    ]);
+  });
+
+  it.each([
+    {
+      kind: "modifier",
+      changes: {
+        orderItemModifiers: {
+          created: [
+            {
+              id: "new-modifier",
+              orderItemId: "item-1",
+              modifierGroupName: "Add-ons",
+              modifierOptionName: "Extra",
+              priceAdjustment: 20,
+            },
+          ],
+        },
+      },
+    },
+    {
+      kind: "discount",
+      changes: {
+        orderDiscounts: {
+          created: [
+            {
+              id: "new-discount",
+              orderId: "order-1",
+              discountType: "manual",
+              customerName: "",
+              customerId: "",
+              quantityApplied: 0,
+              discountAmount: 20,
+              vatExemptAmount: 0,
+            },
+          ],
+        },
+      },
+    },
+    {
+      kind: "payment",
+      changes: {
+        orderPayments: {
+          created: [
+            {
+              id: "new-payment",
+              orderId: "order-1",
+              paymentMethod: "cash",
+              amount: 50,
+              createdAt,
+            },
+          ],
+        },
+      },
+    },
+  ])("blocks a new $kind on a formerly checked aggregate when its replay is overtaken by void", async ({
+    changes,
+  }) => {
+    const { t, actor, storeId, push } = await setup();
+    await push(112);
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    expect(await push(112, "changed-child-replay", false, changes)).toEqual({ success: true });
+    await push(112, "void-changed-replay", false, {}, { status: "voided" });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    await expect(
+      actor.mutation(api.closing.logDayClosing, {
+        storeId,
+        reportDate: "2026-09-15",
+      }),
+    ).rejects.toThrow("Totals Reconciliation pending");
+  });
+
+  it.each([
+    false,
+    true,
+  ])("blocks changed child money despite unchanged checked parent totals (replay=%s)", async (replay) => {
+    const { t, actor, storeId, productId, push } = await setup();
+    await push(112);
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    if (replay) await push(112, "identical-replay");
+    expect(
+      await push(
+        112,
+        "void-altered-child",
+        false,
+        {
+          orderItems: {
+            updated: [
+              {
+                id: "item-1",
+                orderId: "order-1",
+                productId,
+                productName: "Meal",
+                productPrice: 224,
+                quantity: 1,
+                isVoided: true,
+              },
+            ],
+          },
+        },
+        { status: "voided" },
+      ),
+    ).toEqual({ success: true });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    await expect(
+      actor.mutation(api.closing.logDayClosing, {
+        storeId,
+        reportDate: "2026-09-15",
+      }),
+    ).rejects.toThrow("Totals Reconciliation pending");
+    expect(
+      await actor.query(api.closing.getTotalsDivergences, {
+        storeId,
+        reportDate: "2026-09-15",
+      }),
+    ).toEqual([]);
+  });
+
   it("keeps a verified paid snapshot closeable after a void preserves its historical totals", async () => {
     const { t, actor, storeId, productId, push } = await setup();
     await push(112);

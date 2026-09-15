@@ -66,18 +66,14 @@ export async function queueTotalsReconciliation(
     .withIndex("by_orderId_and_generation", (q) => q.eq("orderId", orderId))
     .order("desc")
     .first();
-  // A full void retains historical money. Keep the completed check and any
-  // unresolved discrepancy when that exact paid snapshot has already been checked.
+  // The historical paid aggregate is no longer available after a void. Retain its
+  // provenance only within the same scope. A moved void also needs its own day gate.
   if (
     order.status === "voided" &&
-    existing?.status === "complete" &&
+    existing?.status === "pending" &&
     existing.scopeKey === scope.scopeKey &&
-    existing.checkedPaidTotalsKey === paidTotalsSnapshotKey(order)
-  )
-    return;
-  // The historical paid aggregate is no longer available after a void. Retain its
-  // provenance instead of replacing it with an unchecked void's mutation ID.
-  if (order.status === "voided" && existing?.status === "pending") {
+    !existing.checkedPaidSnapshotId
+  ) {
     await ctx.db.patch(existing._id, { blockedReason: "void_snapshot_unavailable" });
     return;
   }
@@ -94,7 +90,10 @@ export async function queueTotalsReconciliation(
     await ctx.db.patch(existing._id, { blockedReason: "snapshot_superseded" });
   }
   const generation = (existing?.generation ?? 0) + 1;
-  const blockedReason = order.status === "voided" ? "void_snapshot_unavailable" : undefined;
+  const blockedReason =
+    order.status === "voided" && !sameScope?.checkedPaidSnapshotId
+      ? "void_snapshot_unavailable"
+      : undefined;
   const jobId = sameScope
     ? sameScope._id
     : await ctx.db.insert("totalsReconciliationJobs", {
@@ -121,6 +120,74 @@ export async function queueTotalsReconciliation(
   await scheduleTotalsReconciliation(ctx, jobId);
 }
 
+// Called only by the independent worker. The same reads supply both calculation
+// inputs and the retained financial snapshot; the sale transaction never scans children.
+export async function readOrderFinancialAggregate(ctx: MutationCtx, orderId: Id<"orders">) {
+  const items = await ctx.db
+    .query("orderItems")
+    .withIndex("by_order", (q) => q.eq("orderId", orderId))
+    .collect();
+  const discounts = await ctx.db
+    .query("orderDiscounts")
+    .withIndex("by_order", (q) => q.eq("orderId", orderId))
+    .collect();
+  const payments = await ctx.db
+    .query("orderPayments")
+    .withIndex("by_order", (q) => q.eq("orderId", orderId))
+    .collect();
+  const itemInputs = await Promise.all(
+    items.map(async (item) => {
+      const product = await ctx.db.get(item.productId);
+      const modifiers = await ctx.db
+        .query("orderItemModifiers")
+        .withIndex("by_orderItem", (q) => q.eq("orderItemId", item._id))
+        .collect();
+      return { item, isVatable: product?.isVatable ?? false, modifiers };
+    }),
+  );
+  return { itemInputs, discounts, payments };
+}
+
+export function financialAggregateSnapshotKey(
+  order: Doc<"orders">,
+  aggregate: Awaited<ReturnType<typeof readOrderFinancialAggregate>>,
+) {
+  const byId = <T extends { _id: string }>(rows: T[]) =>
+    [...rows].sort((a, b) => a._id.localeCompare(b._id));
+  // Exact canonical values, not a lossy hash. Ignore sync timestamps and void
+  // metadata; a full void may mark previously active items voided without changing money.
+  return JSON.stringify([
+    paidTotalsSnapshotKey(order),
+    [...aggregate.itemInputs]
+      .sort((a, b) => a.item._id.localeCompare(b.item._id))
+      .map(({ item, isVatable, modifiers }) => [
+        item._id,
+        item.productId,
+        item.productPrice,
+        item.quantity,
+        isVatable,
+        byId(modifiers).map((m) => [m._id, m.priceAdjustment]),
+      ]),
+    byId(aggregate.discounts).map((d) => [
+      d._id,
+      d.orderItemId,
+      d.discountType,
+      d.quantityApplied,
+      d.discountAmount,
+      d.vatExemptAmount,
+    ]),
+    byId(aggregate.payments).map((p) => [
+      p._id,
+      p.paymentMethod,
+      p.amount,
+      p.cashReceived,
+      p.changeGiven,
+      p.cardPaymentType,
+      p.cardReferenceNumber,
+    ]),
+  ]);
+}
+
 export function pendingTotalsReconciliations(
   ctx: Pick<QueryCtx, "db">,
   storeId: Id<"stores">,
@@ -138,7 +205,7 @@ export async function reconcilePushedOrder(
   ctx: MutationCtx,
   orderId: Id<"orders">,
   evidence: { deviceId: string; mutationId: string },
-): Promise<void> {
+): Promise<{ aggregateKey: string; voidedItemIds: Id<"orderItems">[] }> {
   const order = await ctx.db.get(orderId);
   if (!order) throw new Error("Order snapshot unavailable");
   // A void preserves the settled snapshot; recomputing from now-voided items would be false evidence.
@@ -146,39 +213,27 @@ export async function reconcilePushedOrder(
   const store = await ctx.db.get(order.storeId);
   if (!store) throw new Error("Store snapshot unavailable");
   const reportDate = getBusinessDayBoundaries(store.schedule, order.createdAt).businessDate;
-  const items = await ctx.db
-    .query("orderItems")
-    .withIndex("by_order", (q) => q.eq("orderId", orderId))
-    .collect();
-  const discounts = await ctx.db
-    .query("orderDiscounts")
-    .withIndex("by_order", (q) => q.eq("orderId", orderId))
-    .collect();
-  const calculations = await Promise.all(
-    items
-      .filter((item) => !item.isVoided)
-      .map(async (item) => {
-        const product = await ctx.db.get(item.productId);
-        const modifiers = await ctx.db
-          .query("orderItemModifiers")
-          .withIndex("by_orderItem", (q) => q.eq("orderItemId", item._id))
-          .collect();
-        const modifierTotal = modifiers.reduce(
-          (sum, modifier) => sum + modifier.priceAdjustment,
-          0,
-        );
-        const discountedQuantity = discounts
-          .filter((d) => d.orderItemId === item._id)
-          .reduce((sum, d) => sum + d.quantityApplied, 0);
-        return calculateItemTotals(
-          item.productPrice + modifierTotal,
-          item.quantity,
-          product?.isVatable ?? false,
-          discountedQuantity,
-          store.vatRate,
-        );
-      }),
-  );
+  const aggregate = await readOrderFinancialAggregate(ctx, orderId);
+  const { itemInputs, discounts, payments } = aggregate;
+  const snapshot = {
+    aggregateKey: financialAggregateSnapshotKey(order, aggregate),
+    voidedItemIds: itemInputs.filter(({ item }) => item.isVoided).map(({ item }) => item._id),
+  };
+  const calculations = itemInputs
+    .filter(({ item }) => !item.isVoided)
+    .map(({ item, isVatable, modifiers }) => {
+      const modifierTotal = modifiers.reduce((sum, modifier) => sum + modifier.priceAdjustment, 0);
+      const discountedQuantity = discounts
+        .filter((d) => d.orderItemId === item._id)
+        .reduce((sum, d) => sum + d.quantityApplied, 0);
+      return calculateItemTotals(
+        item.productPrice + modifierTotal,
+        item.quantity,
+        isVatable,
+        discountedQuantity,
+        store.vatRate,
+      );
+    });
   const totals = aggregateOrderTotals(calculations);
   const globalDiscount = discounts
     .filter((d) => !d.orderItemId)
@@ -196,10 +251,6 @@ export async function reconcilePushedOrder(
     reconciledTotals[field] = totals[field];
     if (order[field] !== totals[field]) fields.push(field);
   }
-  const payments = await ctx.db
-    .query("orderPayments")
-    .withIndex("by_order", (q) => q.eq("orderId", orderId))
-    .collect();
   // Older orders only have legacy payment fields. Compare payment rows only when they exist.
   if (order.status === "paid" && payments.length > 0) {
     const paid = payments.reduce((sum, payment) => sum + payment.amount, 0);
@@ -220,11 +271,11 @@ export async function reconcilePushedOrder(
         resolvedAt: Date.now(),
         resolvedByMutationId: evidence.mutationId,
       });
-    return;
+    return snapshot;
   }
   // A new mutation with the identical mismatch must not flood the closing screen.
   if (unresolved.some((record) => sameEvidence(record, deviceTotals, reconciledTotals, fields)))
-    return;
+    return snapshot;
   await ctx.db.insert("totalsDivergences", {
     storeId: order.storeId,
     orderId,
@@ -236,6 +287,7 @@ export async function reconcilePushedOrder(
     fields,
     createdAt: Date.now(),
   });
+  return snapshot;
 }
 
 function sameEvidence(
