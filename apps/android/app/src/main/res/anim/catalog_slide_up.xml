@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- React Native 0.81 catalyst_slide_up: preserve the platform short duration and parent travel. -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@android:integer/config_shortAnimTime"
+    android:fromYDelta="100%p"
+    android:toYDelta="0%p" />
