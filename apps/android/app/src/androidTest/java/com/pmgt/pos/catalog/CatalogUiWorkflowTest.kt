@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
@@ -68,6 +70,88 @@ class CatalogUiWorkflowTest {
         val file = File(context.getExternalFilesDir(null), "catalog-$name.png")
         check(device.takeScreenshot(file))
         device.executeShellCommand("cp ${file.absolutePath} /sdcard/Download/catalog-$name.png")
+    }
+
+    @Test
+    fun takeoutSimpleQuantityAndNotesSurviveModifierVisibilityButPriceAndModifierSessionsReset() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val db = PosDatabase(AndroidSqliteDriver(LegacySqlSchema, context, null))
+        CatalogDatabaseContract.seed(db)
+        val repository = LocalCatalogRepository(db, Dispatchers.IO)
+        val product = SelectedProduct("orphan", "Open special", 0.0, true, true, 10.0, 20.0)
+        val selected = mutableStateOf<SelectedProduct?>(product)
+        compose.setContent {
+            ProductSelectionSheet(
+                "s",
+                selected.value,
+                repository,
+                CatalogEntryPoint.Takeout,
+                false,
+                { selected.value = null },
+                {},
+            )
+        }
+        fun awaitTitle(title: String) {
+            compose.waitUntil(5000) {
+                compose.onAllNodesWithText(title).fetchSemanticsNodes().isNotEmpty()
+            }
+        }
+        fun groupActive(active: Boolean) {
+            db.updateLocal(
+                "modifier_groups",
+                "inactiveGroup",
+                JsonObject(row("inactiveGroup", "is_active" to active) - "id"),
+            )
+        }
+        awaitTitle("Add to Order")
+        compose.onNodeWithContentDescription("Increase quantity").performClick()
+        compose.onNodeWithContentDescription("Increase quantity").performClick()
+        compose.onNodeWithTag("product-notes").performTextInput("Simple notes")
+        compose.onNodeWithTag("product-notes").performImeAction()
+        compose.onNodeWithTag("product-price").performTextReplacement("17")
+        groupActive(true)
+        awaitTitle("Customize Order")
+        compose.onNodeWithTag("product-quantity").assertTextEquals("1")
+        compose
+            .onNodeWithTag("product-notes")
+            .assert(
+                SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString(""))
+            )
+        compose.onNodeWithTag("product-price").assertTextEquals("10")
+        compose.onNodeWithContentDescription("Increase quantity").performClick()
+        compose.onNodeWithTag("product-notes").performTextInput("Modifier notes")
+        compose.onNodeWithTag("product-notes").performImeAction()
+        compose.onNodeWithTag("product-price").performTextReplacement("18")
+        groupActive(false)
+        awaitTitle("Add to Order")
+        compose.onNodeWithTag("product-quantity").assertTextEquals("3")
+        compose.onNodeWithTag("product-notes").assertTextEquals("Simple notes")
+        compose.onNodeWithTag("product-price").assertTextEquals("10")
+        groupActive(true)
+        awaitTitle("Customize Order")
+        compose.onNodeWithTag("product-quantity").assertTextEquals("1")
+        compose
+            .onNodeWithTag("product-notes")
+            .assert(
+                SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString(""))
+            )
+        compose.onNodeWithTag("product-price").assertTextEquals("10")
+        groupActive(false)
+        awaitTitle("Add to Order")
+        compose.onNodeWithTag("product-quantity").assertTextEquals("3")
+        compose.onNodeWithTag("product-notes").assertTextEquals("Simple notes")
+        compose.onNodeWithContentDescription("Close product").performClick()
+        compose.onNodeWithTag("product-sheet").assertDoesNotExist()
+        compose.runOnIdle { selected.value = product }
+        awaitTitle("Add to Order")
+        compose.onNodeWithTag("product-quantity").assertTextEquals("1")
+        compose
+            .onNodeWithTag("product-notes")
+            .assert(
+                SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString(""))
+            )
+        compose.onNodeWithTag("product-price").assertTextEquals("10")
+        db.close()
     }
 
     @Test

@@ -58,8 +58,20 @@ fun ProductOptionsSheet(
     onConfirm: (ProductChoice) -> Unit,
 ) {
     val custom = usesModifierSheet(entryPoint, product, groups)
+    // RN's order screen owns AddItem quantity/notes above both modal visibility branches.
+    // Keep them across modifier availability changes, but not across product selection sessions.
+    var simpleQuantity by remember(product.id) { mutableStateOf(1) }
+    var simpleNotes by remember(product.id) { mutableStateOf("") }
     key(product.id, custom) {
-        var session by remember { mutableStateOf(ModifierSelection.opened(product)) }
+        var session by remember {
+            mutableStateOf(
+                ModifierSelection.opened(product)
+                    .copy(
+                        quantity = if (custom) 1 else simpleQuantity,
+                        notes = if (custom) "" else simpleNotes,
+                    )
+            )
+        }
         val shownGroups = if (custom) groups.orEmpty() else emptyList()
         LaunchedEffect(shownGroups) { session = session.refreshed(shownGroups) }
         val busy = sending || custom && groups == null
@@ -121,7 +133,10 @@ fun ProductOptionsSheet(
                         }
                         NotesField(
                             session.notes,
-                            { session = session.copy(notes = it) },
+                            {
+                                session = session.copy(notes = it)
+                                if (!custom) simpleNotes = it
+                            },
                             custom,
                             confirm,
                         )
@@ -145,6 +160,7 @@ fun ProductOptionsSheet(
                                 Color(0xFFEF4444),
                             ) {
                                 session = session.copy(quantity = maxOf(1, session.quantity - 1))
+                                if (!custom) simpleQuantity = session.quantity
                             }
                             Label(
                                 session.quantity.toString(),
@@ -166,6 +182,7 @@ fun ProductOptionsSheet(
                                 Color(0xFF22C55E),
                             ) {
                                 session = session.copy(quantity = session.quantity + 1)
+                                if (!custom) simpleQuantity = session.quantity
                             }
                         }
                         Spacer(Modifier.height(12.dp))
