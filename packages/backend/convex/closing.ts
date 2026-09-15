@@ -2,10 +2,34 @@ import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
 import { appendReplicationEvent } from "./lib/replicationEvents";
+import { unresolvedTotalsDivergences } from "./lib/totalsReconciliation";
 
 const STREAM = "operational_orders";
 const CLOCK_DRIFT_WARNING_MS = 2 * 60 * 1000;
 const CLOCK_DRIFT_BLOCK_MS = 10 * 60 * 1000;
+
+export const getTotalsDivergences = query({
+  args: { storeId: v.id("stores"), reportDate: v.string() },
+  returns: v.array(
+    v.object({
+      orderId: v.id("orders"),
+      deviceTotals: v.record(v.string(), v.number()),
+      reconciledTotals: v.record(v.string(), v.number()),
+      fields: v.array(v.string()),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    const user = await getAuthenticatedUser(ctx);
+    if (!user || user.storeId !== args.storeId) throw new Error("Authentication required");
+    const records = await unresolvedTotalsDivergences(ctx, args.storeId, args.reportDate);
+    return records.map(({ orderId, deviceTotals, reconciledTotals, fields }) => ({
+      orderId,
+      deviceTotals,
+      reconciledTotals,
+      fields,
+    }));
+  },
+});
 
 async function readiness(ctx: { db: any }, storeId: any) {
   const devices = await ctx.db
@@ -167,6 +191,10 @@ export const logDayClosing = mutation({
     const user = await getAuthenticatedUser(ctx);
     if (!user) {
       throw new Error("Authentication required");
+    }
+    const divergences = await unresolvedTotalsDivergences(ctx, args.storeId, args.reportDate);
+    if (divergences.length > 0) {
+      throw new Error("Unresolved Totals Divergences require attention before final day closing");
     }
     const closingFlag = await ctx.db
       .query("appConfig")

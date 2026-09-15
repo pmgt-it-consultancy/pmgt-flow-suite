@@ -578,6 +578,24 @@ export default defineSchema({
     .index("by_operation", ["operationId"])
     .index("by_store_device", ["storeId", "deviceId"]),
 
+  // Immutable evidence of device/server money disagreement, resolved only by a matching recheck.
+  totalsDivergences: defineTable({
+    storeId: v.id("stores"),
+    orderId: v.id("orders"),
+    reportDate: v.string(),
+    deviceId: v.string(),
+    mutationId: v.string(),
+    status: v.union(v.literal("unresolved"), v.literal("resolved")),
+    deviceTotals: v.record(v.string(), v.number()),
+    reconciledTotals: v.record(v.string(), v.number()),
+    fields: v.array(v.string()),
+    createdAt: v.number(),
+    resolvedAt: v.optional(v.number()),
+    resolvedByMutationId: v.optional(v.string()),
+  })
+    .index("by_orderId_and_status", ["orderId", "status"])
+    .index("by_storeId_and_reportDate_and_status", ["storeId", "reportDate", "status"]),
+
   // Idempotency cache for /sync/push retries.
   // Cleaned daily by syncMaintenance.cleanupSyncedMutations cron (TTL 7 days).
   syncedMutations: defineTable({

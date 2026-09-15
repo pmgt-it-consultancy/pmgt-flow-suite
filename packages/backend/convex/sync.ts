@@ -5,6 +5,7 @@ import type { Doc, Id } from "./_generated/dataModel";
 import { httpAction, internalAction, internalMutation, internalQuery } from "./_generated/server";
 import { publishOrderAggregateEvent } from "./lib/replicationEvents";
 import { deviceCodeFromIndex, newClientId } from "./lib/sync";
+import { reconcilePushedOrder } from "./lib/totalsReconciliation";
 
 /**
  * /sync/registerDevice, /sync/pull, /sync/push
@@ -607,6 +608,13 @@ export const syncPushCore = internalMutation({
     }
 
     for (const [orderId, eventKind] of Array.from(touchedOrders.entries())) {
+      // A rejected child makes this push incomplete; its retry performs the comparison.
+      if (rejected.length === 0) {
+        await reconcilePushedOrder(ctx, orderId, {
+          deviceId: args.deviceId,
+          mutationId: payload.clientMutationId,
+        });
+      }
       await publishOrderAggregateEvent(ctx, {
         orderId,
         eventKind,
