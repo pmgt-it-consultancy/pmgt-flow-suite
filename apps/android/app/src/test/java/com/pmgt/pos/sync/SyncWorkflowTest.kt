@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.serialization.json.*
+import kotlinx.serialization.encodeToString
 import okhttp3.mockwebserver.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -24,7 +25,7 @@ class SyncWorkflowTest {
         return PosDatabase(driver)
     }
     private fun row(id: String, name: String = "Guest") = buildJsonObject {
-        put("id", id); put("customer_name", name)
+        put("id", id); put("customer_name", name); put("store_id", "store")
     }
     private fun page(changes: String = "{}", complete: Boolean = true, cursor: Int = 1, timestamp: Long = 100) =
         """{"changes":$changes,"cursors":{"orders":{"cursor":"$cursor","isDone":$complete}},"complete":$complete,"timestamp":$timestamp}"""
@@ -94,7 +95,7 @@ class SyncWorkflowTest {
             h.db.setLocalValue("__watermelon_last_pulled_at", "50")
             h.db.insertLocal("orders", row("accepted"))
             h.db.insertLocal("orders", row("rejected"))
-            h.db.insertLocal("app_config", buildJsonObject { put("id", "counter"); put("key", "orderCounter.test"); put("value", "3") })
+            h.db.insertLocal("app_config", buildJsonObject { put("id", "counter"); put("key", "unknown.business"); put("value", "3"); put("store_id", "store") })
             h.handler = { if (it.path == "/sync/push") response("""{"rejected":[{"table":"orders","clientId":"rejected","reason":"conflict"}]}""") else response(page()) }
             h.sync.start("store")
             eventually { h.sync.state.value.status == SyncStatus.Error }
@@ -307,6 +308,89 @@ class SyncWorkflowTest {
             assertNotNull(h.db.get("orders", "gone"))
             assertTrue(h.sync.syncForDelivery() is SyncOutcome.Delivered)
             assertNull(h.db.get("orders", "gone"))
+        }
+    }
+
+    @Test fun localOrderCounterDoesNotInterruptPagedSaleDeliveryOrResync() = runBlocking {
+        Harness(database()).use { h ->
+            h.db.insertLocal("app_config", buildJsonObject { put("id", "counter"); put("key", "orderCounter.dine_in.2026-09-15"); put("value", "42") })
+            h.db.applyRemote("app_config", listOf(buildJsonObject { put("id", "updated-counter"); put("key", "orderCounter.takeout.2026-09-15"); put("value", "3") }), emptyList(), emptyList())
+            h.db.updateLocal("app_config", "updated-counter", buildJsonObject { put("value", "4") })
+            h.db.insertLocal("app_config", buildJsonObject { put("id", "deleted-counter"); put("key", "orderCounter.dine_in.2026-09-14"); put("value", "8") })
+            h.db.deleteLocal("app_config", "deleted-counter")
+            val counters = h.db.select("app_config")
+            h.db.insertLocal("orders", row("sale"))
+            // Retry an envelope persisted by the previous implementation, which included counters.
+            h.db.setLocalValue(SAVED_PUSH_KEY, syncJson.encodeToString(SavedPush("store", "test-device", h.db.pendingChanges(), 100, "counter-sale-retry")))
+            var pulls = 0
+            h.handler = { if (it.path == "/sync/push") response("""{"success":true}""") else {
+                pulls++
+                response(page(complete = pulls != 1, cursor = pulls))
+            } }
+            h.sync.start("store")
+            eventually { h.sync.state.value.status == SyncStatus.Error || h.sync.state.value.lastPulledAt != null }
+            assertEquals(SyncStatus.Idle, h.sync.state.value.status)
+            assertEquals(2, pulls)
+            assertTrue(h.sync.syncForDelivery() is SyncOutcome.Delivered)
+            assertEquals(ResyncResult.Ready, h.sync.forceFullResync())
+            assertEquals(counters, h.db.select("app_config"))
+            assertEquals(3, h.db.pendingCount()) // Original created/updated/deleted markers are preserved.
+            for (request in h.requests.filter { it.path == "/sync/push" }) {
+                val changes = Json.parseToJsonElement(request.body.clone().readUtf8()).jsonObject["changes"]!!.jsonObject
+                assertFalse(changes.containsKey("appConfig"))
+            }
+        }
+    }
+
+    @Test fun foreignPendingWorkAddedAfterStartIsNeverPushed() = runBlocking {
+        Harness(database()).use { h ->
+            h.handler = { if (it.path == "/sync/push") response("""{"success":true}""") else response(page()) }
+            val startup = TabletStartup({ AdoptedStorage(h.db, "test-device") }, h.http, h.scope, Dispatchers.IO, h.online)
+            assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+            val manager = startup.sync.value!!
+            eventually { manager.state.value.lastPulledAt != null }
+            h.db.insertLocal("orders", JsonObject(row("foreign") + ("store_id" to JsonPrimitive("other-store"))))
+            val pending = h.db.get("orders", "foreign")
+            assertFalse(manager.syncForDelivery() is SyncOutcome.Delivered)
+            assertEquals(pending, h.db.get("orders", "foreign"))
+            assertEquals(0, h.requests.count { it.path == "/sync/push" })
+            assertTrue(startup.state.value.adoption is AdoptionState.Blocked)
+            startup.stop()
+        }
+    }
+
+    @Test fun validChildOnlyWorkResolvesItsStoredParentAndLocalStoreAlias() = runBlocking {
+        Harness(database()).use { h ->
+            h.db.applyRemote("stores", listOf(buildJsonObject { put("id", "local-store"); put("server_id", "store") }), emptyList(), emptyList())
+            h.db.applyRemote("orders", listOf(buildJsonObject { put("id", "parent"); put("store_id", "local-store") }), emptyList(), emptyList())
+            h.db.applyRemote("order_items", listOf(buildJsonObject { put("id", "item"); put("order_id", "parent") }), emptyList(), emptyList())
+            h.db.insertLocal("order_item_modifiers", buildJsonObject { put("id", "modifier"); put("order_item_id", "item"); put("price_adjustment", 10) })
+            h.handler = { if (it.path == "/sync/push") response("""{"success":true}""") else response(page()) }
+            h.sync.start("store")
+            eventually { h.sync.state.value.lastPulledAt != null || h.sync.state.value.status == SyncStatus.Error }
+            assertEquals(0, h.db.pendingCount())
+            assertEquals("synced", h.db.get("order_item_modifiers", "modifier")!!.string("_status"))
+            assertTrue(h.sync.syncForDelivery() is SyncOutcome.Delivered)
+        }
+    }
+
+    @Test fun invalidSavedScopeOrTypesInsertedAfterReadyNeverReachPush() = runBlocking {
+        for (scopeMismatch in listOf(true, false)) Harness(database()).use { h ->
+            h.db.insertLocal("orders", row("saved"))
+            val snapshot = h.db.pendingChanges()
+            h.db.acknowledge(snapshot, emptySet())
+            h.handler = { if (it.path == "/sync/push") response("""{"success":true}""") else response(page()) }
+            h.sync.start("store")
+            eventually { h.sync.state.value.lastPulledAt != null }
+            val bucket = snapshot.changes.getValue("orders").jsonObject
+            val original = bucket.getValue("created").jsonArray.single().jsonObject
+            val malformed = JsonObject(original + if (scopeMismatch) ("store_id" to JsonPrimitive("other-store")) else ("gross_sales" to JsonPrimitive("invalid")))
+            val damaged = snapshot.copy(changes = JsonObject(snapshot.changes + ("orders" to JsonObject(bucket + ("created" to JsonArray(listOf(malformed)))))))
+            val encoded = syncJson.encodeToString(SavedPush("store", "test-device", damaged, 100, "saved-mutation"))
+            h.db.setLocalValue(SAVED_PUSH_KEY, encoded)
+            assertTrue(h.sync.syncForDelivery() is SyncOutcome.Failed)
+            assertEquals(0, h.requests.count { it.path == "/sync/push" })
+            assertEquals(encoded, h.db.localValue(SAVED_PUSH_KEY))
         }
     }
 }

@@ -8,6 +8,7 @@ import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.*
+import kotlinx.serialization.encodeToString
 import okhttp3.mockwebserver.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -22,7 +23,7 @@ class StartupWorkflowTest {
         return PosDatabase(driver)
     }
     private fun seed(db: PosDatabase, table: String = "orders", id: String = "local", server: String = "server") {
-        db.applyRemote(table, listOf(buildJsonObject { put("id", id); put("server_id", server) }), emptyList(), emptyList())
+        db.applyRemote(table, listOf(buildJsonObject { put("id", id); put("server_id", server); put("store_id", "store") }), emptyList(), emptyList())
     }
     private val emptyPage = """{"changes":{},"cursors":{},"complete":true,"timestamp":100}"""
     private fun success(value: String) = MockResponse().setBody("""{"status":"success","value":$value}""")
@@ -32,7 +33,7 @@ class StartupWorkflowTest {
         for (offline in listOf(true, false)) {
             val db = database()
             seed(db)
-            db.insertLocal("orders", buildJsonObject { put("id", "unsent") })
+            db.insertLocal("orders", buildJsonObject { put("id", "unsent"); put("store_id", "store") })
             val before = db.integrity()
             MockWebServer().use { server ->
                 val paths = CopyOnWriteArrayList<String>()
@@ -63,7 +64,7 @@ class StartupWorkflowTest {
         seed(db)
         seed(db, id = "deleted", server = "deleted-server"); db.deleteLocal("orders", "deleted")
         seed(db, table = "audit_logs", id = "audit", server = "audit-server")
-        db.insertLocal("orders", buildJsonObject { put("id", "unsent") })
+        db.insertLocal("orders", buildJsonObject { put("id", "unsent"); put("store_id", "store") })
         MockWebServer().use { server ->
             val requests = CopyOnWriteArrayList<RecordedRequest>()
             server.dispatcher = object : Dispatcher() {
@@ -182,5 +183,90 @@ class StartupWorkflowTest {
             assertNull(startup.sync.value)
             assertEquals(before, db.integrity())
         } finally { startup.stop(); scope.cancel(); db.close() }
+    }
+
+    @Test fun foreignOrUnresolvedPendingParentsAndChildrenBlockBeforeRegistration() = runBlocking {
+        for (scenario in listOf("parent", "item", "modifier", "payment", "orphan")) {
+            val db = database()
+            val parent = buildJsonObject { put("id", "parent"); put("store_id", "other-store") }
+            if (scenario == "parent") db.insertLocal("orders", parent)
+            else {
+                if (scenario != "orphan") db.applyRemote("orders", listOf(parent), emptyList(), emptyList())
+                when (scenario) {
+                    "item", "orphan" -> db.insertLocal("order_items", buildJsonObject { put("id", "child"); put("order_id", "parent") })
+                    "modifier" -> {
+                        db.applyRemote("order_items", listOf(buildJsonObject { put("id", "item"); put("order_id", "parent") }), emptyList(), emptyList())
+                        db.insertLocal("order_item_modifiers", buildJsonObject { put("id", "child"); put("order_item_id", "item") })
+                    }
+                    "payment" -> db.insertLocal("order_payments", buildJsonObject { put("id", "child"); put("order_id", "parent"); put("store_id", "store") })
+                }
+            }
+            val before = db.integrity()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp("http://127.0.0.1:1/"), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                assertTrue("Scenario: $scenario", startup.adopt("user", "store") is AdoptionState.Blocked)
+                assertNull(startup.sync.value)
+                assertEquals(before, db.integrity())
+            } finally { startup.stop(); scope.cancel(); db.close() }
+        }
+    }
+
+    @Test fun matchingEnvelopeCannotHideForeignSavedRowsOrParentEvidence() = runBlocking {
+        for (childOnly in listOf(false, true)) {
+            val db = database()
+            db.applyRemote("orders", listOf(buildJsonObject { put("id", "parent"); put("store_id", "other-store") }), emptyList(), emptyList())
+            if (childOnly) db.insertLocal("order_items", buildJsonObject { put("id", "child"); put("order_id", "parent") })
+            else db.insertLocal("orders", buildJsonObject { put("id", "foreign"); put("store_id", "other-store") })
+            val snapshot = db.pendingChanges()
+            db.acknowledge(snapshot, emptySet()) // Current pending is clean; replay must still validate its old rows.
+            val encoded = syncJson.encodeToString(SavedPush("store", "test-device", snapshot, 100, "saved-mutation"))
+            db.setLocalValue(SAVED_PUSH_KEY, encoded)
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp("http://127.0.0.1:1/"), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Blocked)
+                assertNull(startup.sync.value)
+                assertEquals(encoded, db.localValue(SAVED_PUSH_KEY))
+            } finally { startup.stop(); scope.cancel(); db.close() }
+        }
+    }
+
+    @Test fun savedRawSchemaTypesAndTombstoneEvidenceAreValidatedBeforeReady() = runBlocking {
+        val corruptions = listOf(
+            Triple("orders", "gross_sales", JsonPrimitive("wrong")),
+            Triple("orders", "gross_sales", buildJsonObject { put("amount", 1) }),
+            Triple("orders", "gross_sales", JsonNull),
+            Triple("orders", "customer_name", JsonPrimitive(42)),
+            Triple("orders", "customer_name", buildJsonArray { add("wrong") }),
+            Triple("order_items", "is_voided", JsonPrimitive("true")),
+            Triple("order_items", "is_voided", JsonPrimitive(1)),
+            Triple("order_items", "is_voided", buildJsonObject { put("wrong", true) }),
+        )
+        for ((table, field, corrupt) in corruptions) for (deleted in listOf(false, true)) {
+            val db = database()
+            db.applyRemote("orders", listOf(buildJsonObject { put("id", "parent"); put("store_id", "store") }), emptyList(), emptyList())
+            db.insertLocal(table, buildJsonObject { put("id", "local"); if (table == "orders") put("store_id", "store") else put("order_id", "parent") })
+            if (deleted) db.deleteLocal(table, "local")
+            val snapshot = db.pendingChanges()
+            val damaged = if (deleted) {
+                val tombstones = snapshot.deletedRows.getValue(table)
+                val old = tombstones.getValue("local")
+                snapshot.copy(deletedRows = snapshot.deletedRows + (table to (tombstones + ("local" to old.copy(row = JsonObject(old.row + (field to corrupt)))))))
+            } else {
+                val bucket = snapshot.changes.getValue(table).jsonObject
+                val old = bucket.getValue("created").jsonArray.single().jsonObject
+                snapshot.copy(changes = JsonObject(snapshot.changes + (table to JsonObject(bucket + ("created" to JsonArray(listOf(JsonObject(old + (field to corrupt)))))))))
+            }
+            val encoded = syncJson.encodeToString(SavedPush("store", "test-device", damaged, 100, "saved-mutation"))
+            db.setLocalValue(SAVED_PUSH_KEY, encoded)
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp("http://127.0.0.1:1/"), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                assertTrue("$table.$field deleted=$deleted", startup.adopt("user", "store") is AdoptionState.Blocked)
+                assertNull(startup.sync.value)
+                assertEquals(encoded, db.localValue(SAVED_PUSH_KEY))
+            } finally { startup.stop(); scope.cancel(); db.close() }
+        }
     }
 }

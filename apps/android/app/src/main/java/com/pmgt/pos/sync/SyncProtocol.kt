@@ -63,13 +63,30 @@ internal fun SavedPush.validate(store: String, device: String) {
     var count = 0
     for ((table, value) in snapshot.changes) {
         check(table !in LegacyTables.localOnly)
-        val fields = LegacyTables.tables.getValue(table).map { it.name }.toSet() + setOf("id", "_status", "_changed")
+        val columns = LegacyTables.tables.getValue(table)
+        val names = columns.map { it.name }.toSet()
+        val fields = names + setOf("id", "_status", "_changed")
         val bucket = syncJson.decodeFromJsonElement<ChangeBucket>(value)
         fun verifyRow(row: JsonObject, status: String) {
             check(row.keys == fields)
-            check(!row.getValue("id").jsonPrimitive.content.isBlank())
-            check(row.getValue("_status").jsonPrimitive.content == status)
-            check(row.getValue("_changed").jsonPrimitive.content.split(',').filter { it.isNotBlank() }.all { it in fields })
+            fun text(field: String): String {
+                val value = row.getValue(field)
+                check(value is JsonPrimitive && value.isString)
+                return value.content
+            }
+            check(text("id").isNotBlank())
+            check(text("_status") == status)
+            check(text("_changed").split(',').filter { it.isNotBlank() }.all { it in names })
+            for (column in columns) {
+                val value = row.getValue(column.name)
+                if (value == JsonNull) { check(column.optional); continue }
+                check(value is JsonPrimitive)
+                check(when (column.type) {
+                    "number" -> !value.isString && value.doubleOrNull?.isFinite() == true
+                    "boolean" -> !value.isString && value.booleanOrNull != null
+                    else -> value.isString
+                })
+            }
         }
         bucket.created.forEach { verifyRow(it, "created") }
         bucket.updated.forEach { verifyRow(it, "updated") }

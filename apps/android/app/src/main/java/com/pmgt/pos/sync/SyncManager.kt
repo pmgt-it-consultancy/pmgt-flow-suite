@@ -18,6 +18,7 @@ class SyncManager(
     private val online: StateFlow<Boolean>,
     private val now: () -> Long = System::currentTimeMillis,
     private val sessionIsCurrent: () -> Boolean = { true },
+    private val onBlocked: (String) -> Unit = {},
 ) {
     private val monitor = Any()
     private val current = MutableStateFlow(SyncState())
@@ -37,12 +38,13 @@ class SyncManager(
         var attempt = 0
         var registered = false
         var resyncing = false
+        var blocked: String? = null
     }
 
     suspend fun start(storeId: String) {
         require(storeId.isNotBlank() && deviceId.isNotBlank())
         synchronized(monitor) {
-            if (session?.storeId == storeId) return
+            if (session?.let { it.storeId == storeId && it.job.isActive && it.blocked == null } == true) return
             stop()
             val active = Session(storeId, scope)
             session = active
@@ -116,7 +118,7 @@ class SyncManager(
             }
             val reset = database(active) {
                 db.transaction {
-                    if (db.pendingCount() != 0 || !db.localValue(SAVED_PUSH_KEY).isNullOrEmpty()) false
+                    if (pendingWork(db, active.storeId, deviceId).current.rowCount() != 0 || !db.localValue(SAVED_PUSH_KEY).isNullOrEmpty()) false
                     else { db.setLocalValue(WATERMARK, "0"); true }
                 }
             }
@@ -124,22 +126,31 @@ class SyncManager(
             syncNow()
             return if (delivery(active) is SyncOutcome.Delivered) ResyncResult.Ready
                 else ResyncResult.Unavailable(ResyncResult.Reason.Failed)
+        } catch (blocked: com.pmgt.pos.db.AdoptionBlocked) {
+            quarantine(active, blocked.message!!)
+            return ResyncResult.Unavailable(ResyncResult.Reason.Failed)
         } finally {
             synchronized(monitor) { active.resyncing = false }
         }
     }
 
     private suspend fun delivery(active: Session): SyncOutcome {
+        active.blocked?.let { return SyncOutcome.Failed(it) }
         if (!online.value) return SyncOutcome.Offline
         checkActive(active)
         current.value.lastError?.let { return SyncOutcome.Failed(it) }
-        val count = database(active) { db.pendingCount() }
+        val count = try {
+            database(active) { pendingWork(db, active.storeId, deviceId).current.rowCount() }
+        } catch (blocked: com.pmgt.pos.db.AdoptionBlocked) {
+            quarantine(active, blocked.message!!)
+            return SyncOutcome.Failed(blocked.message!!)
+        }
         return if (count > 0) SyncOutcome.Pending(count) else SyncOutcome.Delivered(current.value.lastPulledAt ?: now())
     }
 
     /** Caller holds monitor. Install lazy work before it can publish state or accept another request. */
     private fun request(active: Session): Deferred<Unit>? {
-        if (session !== active || !active.job.isActive || !sessionIsCurrent()) return null
+        if (session !== active || !active.job.isActive || !sessionIsCurrent() || active.blocked != null) return null
         active.pending = true
         active.flight?.let { return it }
         if (!online.value || active.retryAt != null) return null
@@ -170,6 +181,9 @@ class SyncManager(
                     synchronized(monitor) { checkActive(active); active.attempt = 0 }
                 } catch (cancelled: CancellationException) {
                     throw cancelled
+                } catch (blocked: com.pmgt.pos.db.AdoptionBlocked) {
+                    quarantine(active, blocked.message!!)
+                    return
                 } catch (_: Exception) {
                     synchronized(monitor) {
                         checkActive(active)
@@ -199,6 +213,7 @@ class SyncManager(
     }
 
     private suspend fun syncOnce(active: Session) {
+        database(active) { pendingWork(db, active.storeId, deviceId) }
         publish(active) { it.copy(status = SyncStatus.Syncing, progress = SyncProgress(SyncPhase.Pull, 1)) }
         if (!active.registered) {
             val result = http.httpAction("/sync/registerDevice", buildJsonObject { put("deviceId", deviceId); put("storeId", active.storeId) }).jsonObject
@@ -245,8 +260,10 @@ class SyncManager(
     private suspend fun push(active: Session, timestamp: Long) {
         val saved = database(active) {
             db.transaction {
-                db.localValue(SAVED_PUSH_KEY)?.takeIf { it.isNotEmpty() }?.let { syncJson.decodeFromString<SavedPush>(it) }
-                    ?: db.pendingChanges().takeIf { snapshot -> snapshot.changes.values.any { syncJson.decodeFromJsonElement<ChangeBucket>(it).size > 0 } }
+                val work = pendingWork(db, active.storeId, deviceId)
+                val replay = work.saved?.takeIf { it.snapshot.forDelivery().rowCount() > 0 }
+                if (work.saved != null && replay == null) db.setLocalValue(SAVED_PUSH_KEY, "")
+                replay ?: work.current.takeIf { it.rowCount() > 0 }
                         ?.let { snapshot ->
                             SavedPush(active.storeId, deviceId, snapshot, timestamp, UUID.randomUUID().toString()).also {
                                 db.setLocalValue(SAVED_PUSH_KEY, syncJson.encodeToString(it))
@@ -255,10 +272,11 @@ class SyncManager(
             }
         } ?: return
         saved.validate(active.storeId, deviceId)
+        val deliverySnapshot = saved.snapshot.forDelivery()
         checkActive(active)
         val response = http.httpAction("/sync/push", buildJsonObject {
             put("lastPulledAt", saved.lastPulledAt)
-            put("changes", wireChanges(saved.snapshot.changes))
+            put("changes", wireChanges(deliverySnapshot.changes))
             put("clientMutationId", saved.clientMutationId)
         }, mapOf("x-device-id" to deviceId)).jsonObject
         checkActive(active)
@@ -270,14 +288,14 @@ class SyncManager(
             rejected += snake(rejection.getValue("table").jsonPrimitive.content) to rejection.getValue("clientId").jsonPrimitive.content
         }
         // v1 ignores these buckets without a rejection. They were not delivered.
-        saved.snapshot.changes.filterKeys { it !in PUSH_TABLES }.forEach { (table, value) ->
+        deliverySnapshot.changes.filterKeys { it !in PUSH_TABLES }.forEach { (table, value) ->
             val bucket = syncJson.decodeFromJsonElement<ChangeBucket>(value)
             (bucket.created + bucket.updated).forEach { rejected += table to it.getValue("id").jsonPrimitive.content }
             bucket.deleted.forEach { rejected += table to it }
         }
         database(active) {
             db.transaction {
-                db.acknowledge(saved.snapshot, rejected)
+                db.acknowledge(deliverySnapshot, rejected)
                 db.setLocalValue(SAVED_PUSH_KEY, "")
             }
         }
@@ -288,6 +306,19 @@ class SyncManager(
     private fun checkActive(active: Session) {
         if (session !== active || !active.job.isActive || !sessionIsCurrent()) throw CancellationException("Sync session stopped")
         if (!online.value) throw CancellationException("Sync session offline")
+    }
+
+    private fun quarantine(active: Session, message: String) {
+        synchronized(monitor) {
+            if (session !== active) return
+            active.blocked = message
+            active.pending = false
+            current.value = current.value.copy(status = SyncStatus.Error, lastError = message, progress = null)
+            active.job.children.filter { it !== active.flight }.forEach { it.cancel() }
+            // Finish the shared flight normally so delivery callers receive a typed failure.
+            active.flight?.invokeOnCompletion { active.job.cancel() } ?: active.job.cancel()
+        }
+        onBlocked(message)
     }
 
     /** Serialize session invalidation with commits: a stopped generation cannot acknowledge later. */

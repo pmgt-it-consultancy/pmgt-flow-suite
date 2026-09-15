@@ -60,16 +60,12 @@ class TabletStartup(
                 // Retain ownership even if cancellation arrives while the guarded open is finishing.
                 synchronized(monitor) { storage } ?: openStorage().also { synchronized(monitor) { storage = it } }
             }
-            withContext(io) {
-                adopted.database.localValue(SAVED_PUSH_KEY)?.takeIf { it.isNotEmpty() }?.let { encoded ->
-                    try {
-                        syncJson.decodeFromString<SavedPush>(encoded).validate(storeId, adopted.deviceId)
-                    } catch (_: Exception) {
-                        throw AdoptionBlocked("Saved pending synchronization could not be verified. Tablet data is preserved; repair is required before continuing.")
-                    }
+            val verifier = AdoptionVerifier({
+                adopted.database.transaction {
+                    pendingWork(adopted.database, storeId, adopted.deviceId)
+                    adopted.database.integrity()
                 }
-            }
-            val verifier = AdoptionVerifier(adopted.database::integrity, { references ->
+            }, { references ->
                 verifyReferences(references, storeId)
             }, io)
             val result = verifier.verify()
@@ -79,7 +75,15 @@ class TabletStartup(
                 current.value = TabletStartupState(userId, storeId, result)
                 if (result is AdoptionState.Ready) {
                     SyncManager(adopted.database, http, adopted.deviceId, scope, io, online,
-                        sessionIsCurrent = { isCurrent(epoch, userId, storeId) }).also { manager.value = it }
+                        sessionIsCurrent = { isCurrent(epoch, userId, storeId) },
+                        onBlocked = { message ->
+                            synchronized(monitor) {
+                                if (isCurrent(epoch, userId, storeId)) {
+                                    current.value = TabletStartupState(userId, storeId, AdoptionState.Blocked(message))
+                                    manager.value = null
+                                }
+                            }
+                        }).also { manager.value = it }
                 } else null
             }
             ready?.start(storeId)
