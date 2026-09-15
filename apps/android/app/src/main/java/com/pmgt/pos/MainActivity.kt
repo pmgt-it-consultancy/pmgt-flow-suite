@@ -69,6 +69,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val holder = rememberSaveableStateHolder()
             val scope = rememberCoroutineScope()
+            val logout = remember { RootLogout(services.auth, scope) }
             PosAuthShell(services.auth, services.lock, services.http, startup = services.startup) {
                 user ->
                 val database = services.startup.database
@@ -101,10 +102,7 @@ class MainActivity : ComponentActivity() {
                             hasPin = lockState.pinUserId == user.id && lockState.userHasPin,
                             onLock = { scope.launch { services.lock.lock(user) } },
                             onLogout = {
-                                scope.launch {
-                                    holder.removeState("${user.id}:${user.storeId}")
-                                    services.auth.signOut()
-                                }
+                                logout { holder.removeState("${user.id}:${user.storeId}") }
                             },
                             refreshHistory = {
                                 sync?.syncForDelivery()
