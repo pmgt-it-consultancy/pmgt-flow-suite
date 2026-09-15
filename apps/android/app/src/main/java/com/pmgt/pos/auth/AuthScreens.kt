@@ -12,17 +12,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.*
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.input.*
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pmgt.pos.BuildConfig
 import com.pmgt.pos.R
@@ -40,7 +43,17 @@ private val Page = Color(0xFFF9FAFB)
 private val Danger = Color(0xFFDC2626)
 private val Icons = FontFamily(Font(R.font.ionicons))
 
-private data class UiAlert(val id: Long = 0, val title: String, val message: String)
+private enum class UnlockOperation {
+    STAFF,
+    MANAGER,
+}
+
+private data class UiAlert(
+    val id: Long = 0,
+    val title: String,
+    val message: String,
+    val operation: UnlockOperation? = null,
+)
 
 @Composable
 fun PosAuthShell(
@@ -97,71 +110,82 @@ fun PosAuthShell(
     }
     MaterialTheme(colorScheme = lightColorScheme(primary = Brand)) {
         Box(Modifier.fillMaxSize().background(Brand)) {
-        Surface(
-            Modifier.fillMaxSize()
-                .windowInsetsPadding(WindowInsets.statusBars.only(WindowInsetsSides.Top)),
-            color = Color.White,
-        ) {
-            when {
-                session.user == null ->
-                    LoginScreen(busy || session.loading, configured) { e, p, failed ->
-                        perform {
-                            try {
-                                auth.signIn(e, p)
-                            } catch (error: CancellationException) {
-                                throw error
-                            } catch (_: Exception) {
-                                failed(
-                                    auth.state.value.error
-                                        ?: "An unexpected error occurred. Please try again."
-                                )
+            Surface(
+                Modifier.fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.statusBars.only(WindowInsetsSides.Top)),
+                color = Color.White,
+            ) {
+                when {
+                    session.user == null ->
+                        LoginScreen(busy || session.loading, configured) { e, p, failed ->
+                            perform {
+                                try {
+                                    auth.signIn(e, p)
+                                } catch (error: CancellationException) {
+                                    throw error
+                                } catch (_: Exception) {
+                                    failed(
+                                        auth.state.value.error
+                                            ?: "An unexpected error occurred. Please try again."
+                                    )
+                                }
                             }
                         }
-                    }
-                locked.snapshot.isLocked ->
-                    LockScreen(lock, session.user!!, http, busy, lockError) { s, p, m ->
-                        perform {
-                            try {
-                                lock.unlock(s, p, m)?.let {
+                    locked.snapshot.isLocked ->
+                        LockScreen(
+                            lock,
+                            session.user!!,
+                            http,
+                            busy,
+                            lockError,
+                            { lockError = null },
+                        ) { s, p, m ->
+                            perform {
+                                try {
+                                    lock.unlock(s, p, m)?.let {
+                                        lockError =
+                                            UiAlert(
+                                                ++eventId,
+                                                if (m == null) "Invalid PIN"
+                                                else "Manager Override Failed",
+                                                it,
+                                                if (m == null) UnlockOperation.STAFF
+                                                else UnlockOperation.MANAGER,
+                                            )
+                                    }
+                                } catch (error: CancellationException) {
+                                    throw error
+                                } catch (_: Exception) {
                                     lockError =
                                         UiAlert(
                                             ++eventId,
-                                            if (m == null) "Invalid PIN"
-                                            else "Manager Override Failed",
-                                            it,
+                                            "Error",
+                                            if (m == null) "Failed to verify PIN. Please try again."
+                                            else "Failed to verify manager PIN.",
+                                            if (m == null) UnlockOperation.STAFF
+                                            else UnlockOperation.MANAGER,
                                         )
                                 }
-                            } catch (error: CancellationException) {
-                                throw error
-                            } catch (_: Exception) {
-                                lockError =
-                                    UiAlert(
-                                        ++eventId,
-                                        "Error",
-                                        if (m == null) "Failed to verify PIN. Please try again."
-                                        else "Failed to verify manager PIN.",
-                                    )
                             }
                         }
-                    }
-                else ->
-                    Box(Modifier.fillMaxSize()) {
-                        content(session.user!!)
-                        if (locked.showIdleWarning)
-                            IdleWarning(
-                                lock.lockDeadline() ?: System.currentTimeMillis(),
-                                lock::resetActivity,
-                            )
-                        if (showTestControls)
-                            Row(Modifier.align(Alignment.TopEnd).padding(8.dp)) {
-                                TextButton({ perform { lock.lock(session.user!!) } }) {
-                                    Text("Lock screen")
+                    else ->
+                        Box(Modifier.fillMaxSize()) {
+                            content(session.user!!)
+                            if (locked.showIdleWarning)
+                                IdleWarning(
+                                    lock.lockDeadline() ?: System.currentTimeMillis(),
+                                    lock::resetActivity,
+                                )
+                            if (showTestControls)
+                                Row(Modifier.align(Alignment.TopEnd).padding(8.dp)) {
+                                    TextButton({ perform { lock.lock(session.user!!) } }) {
+                                        Text("Lock screen")
+                                    }
+                                    TextButton({ perform { auth.signOut() } }) { Text("Sign out") }
                                 }
-                                TextButton({ perform { auth.signOut() } }) { Text("Sign out") }
-                            }
-                    }
+                        }
+                }
             }
-        }
         }
     }
 }
@@ -277,17 +301,13 @@ private fun AuthInput(
                 .alpha(if (busy) .5f else 1f)
                 .background(Color.White, shape)
                 .border(1.dp, Ink, shape)
-                // 22dp reproduces Tamagui's $4 token plus the native TextInput inset on this target.
+                // 22dp reproduces Tamagui's $4 token plus the native TextInput inset on this
+                // target.
                 .padding(horizontal = 22.dp, vertical = 13.dp),
         decorationBox = { innerField ->
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
                 if (value.isEmpty())
-                    Text(
-                        hint,
-                        color = Color(0xFF9CA3AF),
-                        fontSize = 16.sp,
-                        letterSpacing = 0.sp,
-                    )
+                    Text(hint, color = Color(0xFF9CA3AF), fontSize = 16.sp, letterSpacing = 0.sp)
                 innerField()
             }
         },
@@ -317,13 +337,7 @@ private fun PrimaryButton(
     ) {
         if (loading && showSpinner)
             CircularProgressIndicator(Modifier.size(22.dp), color = Color.White, strokeWidth = 2.dp)
-        else
-            Text(
-                label,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Normal,
-                letterSpacing = 0.sp,
-            )
+        else Text(label, fontSize = 18.sp, fontWeight = FontWeight.Normal, letterSpacing = 0.sp)
     }
 
 @Composable
@@ -333,6 +347,7 @@ private fun LockScreen(
     http: ConvexHttp,
     busy: Boolean,
     error: UiAlert?,
+    consumeError: () -> Unit,
     unlock: (String, String, String?) -> Unit,
 ) {
     val locked by lock.state.collectAsStateWithLifecycle()
@@ -350,10 +365,11 @@ private fun LockScreen(
         }
     }
     LaunchedEffect(error?.id) {
-        if (error != null && error.title != "Manager Override Failed") {
+        if (error?.operation == UnlockOperation.STAFF) {
             alert = error
             pin = ""
             for (target in listOf(12f, -12f, 8f, 0f)) shake.animateTo(target, tween(50))
+            consumeError()
         }
     }
     val format = SimpleDateFormat("h:mm a", Locale.getDefault())
@@ -432,7 +448,7 @@ private fun LockScreen(
         )
     }
     if (manager)
-        ManagerDialog(user, http, busy, error, { manager = false }) { id, p ->
+        ManagerDialog(user, http, busy, error, consumeError, { manager = false }) { id, p ->
             user.storeId?.let { unlock(it, p, id) }
         }
     alert?.let { a ->
@@ -548,6 +564,7 @@ private fun ManagerDialog(
     http: ConvexHttp,
     busy: Boolean,
     error: UiAlert?,
+    consumeError: () -> Unit,
     close: () -> Unit,
     submit: (String, String) -> Unit,
 ) {
@@ -576,111 +593,128 @@ private fun ManagerDialog(
         }
     }
     LaunchedEffect(error?.id) {
-        if (error != null && error.title.contains("Manager")) {
+        if (error?.operation == UnlockOperation.MANAGER) {
             pin = ""
             alert = error
+            consumeError()
         }
     }
-    Box(
-        Modifier.fillMaxSize().background(Color.Black.copy(alpha = .5f)).clickable { close() },
-        contentAlignment = Alignment.Center,
+    Dialog(
+        onDismissRequest = close,
+        properties =
+            DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false,
+            ),
     ) {
-        Column(
-            Modifier.widthIn(max = 448.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .background(Color.White, RoundedCornerShape(16.dp))
-                .clickable(enabled = false) {}
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        val outerScroll = rememberScrollState()
+        Box(
+            Modifier.fillMaxSize()
+                .background(Color.Black.copy(alpha = .5f))
+                .clickable { close() }
+                .windowInsetsPadding(WindowInsets.ime)
+                .verticalScroll(outerScroll)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text("Manager Override", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-                Icon(62026, 24.sp, Muted, "Close", Modifier.clickable { close() }.padding(8.dp))
-            }
-            Text(
-                "A manager can unlock this screen with their PIN.",
-                color = Muted,
-                fontSize = 14.sp,
-            )
-            Text("Select Manager", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
             Column(
-                Modifier.heightIn(max = 220.dp).verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                Modifier.fillMaxWidth()
+                    .widthIn(max = 448.dp)
+                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .clickable {}
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                when {
-                    managers == null ->
-                        Box(
-                            Modifier.fillMaxWidth().height(48.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            CircularProgressIndicator(Modifier.size(22.dp))
-                        }
-                    failed ->
-                        Text("Could not load managers. Check your connection.", color = Danger)
-                    managers!!.isEmpty() ->
-                        Text(
-                            "No managers with PINs available. Contact your administrator.",
-                            color = Muted,
-                            textAlign = TextAlign.Center,
-                        )
-                    else ->
-                        managers!!.forEach { m ->
-                            val id = m.string("_id")
-                            Row(
-                                Modifier.fillMaxWidth()
-                                    .background(
-                                        if (selected == id) Color(0xFFDBEAFE) else Page,
-                                        RoundedCornerShape(10.dp),
-                                    )
-                                    .border(
-                                        1.dp,
-                                        if (selected == id) Brand else Color(0xFFE5E7EB),
-                                        RoundedCornerShape(10.dp),
-                                    )
-                                    .clickable { selected = id }
-                                    .padding(16.dp, 12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Column {
-                                    Text(
-                                        m.optionalString("name") ?: "Manager",
-                                        fontWeight = FontWeight.SemiBold,
-                                    )
-                                    Text(
-                                        m.optionalString("roleName") ?: "Manager",
-                                        color = Muted,
-                                        fontSize = 13.sp,
-                                    )
-                                }
-                                if (selected == id) Icon(61982, 20.sp, Brand, "Selected")
-                            }
-                        }
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("Manager Override", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                    Icon(62026, 24.sp, Muted, "Close", Modifier.clickable { close() }.padding(8.dp))
                 }
-            }
-            if (selected != null) {
-                Text("Enter PIN", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                AuthInput(
-                    pin,
-                    { pin = it.filter(Char::isDigit).take(6) },
-                    "Enter manager PIN",
-                    busy,
-                    KeyboardType.NumberPassword,
-                    ImeAction.Done,
-                    true,
+                Text(
+                    "A manager can unlock this screen with their PIN.",
+                    color = Muted,
+                    fontSize = 14.sp,
                 )
-            }
-            PrimaryButton(
-                if (busy) "Verifying..." else "Unlock",
-                busy,
-                Modifier.fillMaxWidth(),
-                selected != null && pin.isNotEmpty(),
-            ) {
-                submit(requireNotNull(selected), pin)
+                Text("Select Manager", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Column(
+                    Modifier.heightIn(max = 220.dp).verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    when {
+                        managers == null ->
+                            Box(
+                                Modifier.fillMaxWidth().height(48.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                CircularProgressIndicator(Modifier.size(22.dp))
+                            }
+                        failed ->
+                            Text("Could not load managers. Check your connection.", color = Danger)
+                        managers!!.isEmpty() ->
+                            Text(
+                                "No managers with PINs available. Contact your administrator.",
+                                color = Muted,
+                                textAlign = TextAlign.Center,
+                            )
+                        else ->
+                            managers!!.forEach { m ->
+                                val id = m.string("_id")
+                                Row(
+                                    Modifier.fillMaxWidth()
+                                        .background(
+                                            if (selected == id) Color(0xFFDBEAFE) else Page,
+                                            RoundedCornerShape(10.dp),
+                                        )
+                                        .border(
+                                            1.dp,
+                                            if (selected == id) Brand else Color(0xFFE5E7EB),
+                                            RoundedCornerShape(10.dp),
+                                        )
+                                        .clickable { selected = id }
+                                        .padding(16.dp, 12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    Column {
+                                        Text(
+                                            m.optionalString("name") ?: "Manager",
+                                            fontWeight = FontWeight.SemiBold,
+                                        )
+                                        Text(
+                                            m.optionalString("roleName") ?: "Manager",
+                                            color = Muted,
+                                            fontSize = 13.sp,
+                                        )
+                                    }
+                                    if (selected == id) Icon(61982, 20.sp, Brand, "Selected")
+                                }
+                            }
+                    }
+                }
+                if (selected != null) {
+                    Text("Enter PIN", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                    AuthInput(
+                        pin,
+                        { pin = it.filter(Char::isDigit).take(6) },
+                        "Enter manager PIN",
+                        busy,
+                        KeyboardType.NumberPassword,
+                        ImeAction.Done,
+                        true,
+                    )
+                }
+                PrimaryButton(
+                    if (busy) "Verifying..." else "Unlock",
+                    busy,
+                    Modifier.fillMaxWidth().testTag("manager-unlock"),
+                    selected != null && pin.isNotEmpty(),
+                ) {
+                    submit(requireNotNull(selected), pin)
+                }
             }
         }
     }

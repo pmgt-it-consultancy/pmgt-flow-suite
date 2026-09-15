@@ -1,6 +1,7 @@
 package com.pmgt.pos.auth
 
 import com.pmgt.pos.transport.ConvexHttp
+import java.util.Base64
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.*
@@ -14,6 +15,11 @@ class AuthWorkflowTest {
 
     private fun MockWebServer.success(value: String) =
         enqueue(MockResponse().setBody("""{"status":"success","value":$value}"""))
+
+    private fun jwt(expirySeconds: Long): String {
+        val encoder = Base64.getUrlEncoder().withoutPadding()
+        return "${encoder.encodeToString("{}".toByteArray())}.${encoder.encodeToString("""{"exp":$expirySeconds}""".toByteArray())}.signature"
+    }
 
     @Test
     fun `server revoked session returns to login`() = runTest {
@@ -49,19 +55,36 @@ class AuthWorkflowTest {
     @Test
     fun `sign out clears session when expired token refreshes during revocation`() = runTest {
         MockWebServer().use { server ->
+            var now = 1_000_000L
             val storage =
                 MemorySessionStorage().apply { write(SessionTokens(expiredToken, "refresh")) }
-            server.success("""{"tokens":{"token":"fresh-access","refreshToken":"fresh-refresh"}}""")
-            server.success("""{"_id":"cashier","name":"Cashier","role":null}""")
-            val auth = AuthRepository(ConvexHttp(server.url("/").toString()), storage)
-            auth.restore()
+            val restoredToken = jwt(expirySeconds = 2_000)
+            val logoutToken = jwt(expirySeconds = 4_000)
             server.success(
-                """{"tokens":{"token":"logout-access","refreshToken":"logout-refresh"}}"""
+                """{"tokens":{"token":"$restoredToken","refreshToken":"fresh-refresh"}}"""
+            )
+            server.success("""{"_id":"cashier","name":"Cashier","role":null}""")
+            val auth = AuthRepository(ConvexHttp(server.url("/").toString()), storage) { now }
+            auth.restore()
+            now = 2_000_000L
+            server.success(
+                """{"tokens":{"token":"$logoutToken","refreshToken":"logout-refresh"}}"""
             )
             server.success("null")
             auth.signOut()
             assertNull(storage.read())
             assertFalse(auth.state.value.isAuthenticated)
+            val paths =
+                List(4) {
+                    Json.parseToJsonElement(server.takeRequest().body.readUtf8())
+                        .jsonObject["path"]!!
+                        .jsonPrimitive
+                        .content
+                }
+            assertEquals(
+                listOf("auth:signIn", "sessions:getCurrentUser", "auth:signIn", "auth:signOut"),
+                paths,
+            )
         }
     }
 

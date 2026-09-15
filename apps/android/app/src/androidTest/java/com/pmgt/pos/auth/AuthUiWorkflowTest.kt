@@ -3,6 +3,8 @@ package com.pmgt.pos.auth
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.serialization.json.*
 import okhttp3.mockwebserver.*
@@ -12,6 +14,7 @@ import org.junit.Test
 /** Deterministic HTTP-backed UI workflow; credentials never leave the emulator. */
 class AuthUiWorkflowTest {
     @get:Rule val compose = createComposeRule()
+    private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @Test
     fun loginMatchesNativeValidationAndRetainsCredentialsAfterFailure() {
@@ -53,14 +56,22 @@ class AuthUiWorkflowTest {
     @Test
     fun cashierSignsInLocksUsesSixDotsAndManagerModalThenUnlocksAndSignsOut() {
         MockWebServer().use { server ->
+            val requestedPaths = java.util.Collections.synchronizedList(mutableListOf<String>())
             server.dispatcher =
                 object : Dispatcher() {
                     override fun dispatch(request: RecordedRequest): MockResponse {
                         val body = Json.parseToJsonElement(request.body.readUtf8()).jsonObject
                         val path = body["path"]?.jsonPrimitive?.content
+                        requestedPaths += path.orEmpty()
                         if (
                             path == "screenLockActions:screenUnlock" &&
                                 body["args"]!!.jsonObject["pin"]!!.jsonPrimitive.content == "9999"
+                        )
+                            return MockResponse().setResponseCode(503)
+                        if (
+                            path == "screenLockActions:screenUnlockOverride" &&
+                                body["args"]!!.jsonObject["managerPin"]!!.jsonPrimitive.content ==
+                                    "9999"
                         )
                             return MockResponse().setResponseCode(503)
                         val value =
@@ -89,7 +100,8 @@ class AuthUiWorkflowTest {
                                             .jsonObject["managerPin"]!!
                                             .jsonPrimitive
                                             .content == "2222"
-                                    ) """{"success":true}"""
+                                    )
+                                        """{"success":true}"""
                                     else """{"success":false,"error":"Manager PIN is incorrect."}"""
                                 else -> return MockResponse().setResponseCode(500)
                             }
@@ -129,12 +141,19 @@ class AuthUiWorkflowTest {
             compose.onNodeWithContentDescription("PIN digit 1 of 6, empty").assertExists()
             compose.onNodeWithContentDescription("PIN digit 6 of 6, empty").assertExists()
             compose.onNodeWithText("Clear").assertDoesNotExist()
+            compose.onNodeWithText("1").performClick()
             compose.onNodeWithText("Manager Override").performClick()
             compose
                 .onNodeWithText("A manager can unlock this screen with their PIN.")
                 .assertExists()
-            compose.waitUntil(10_000) {
-                compose.onAllNodesWithText("Morgan").fetchSemanticsNodes().isNotEmpty()
+            try {
+                compose.waitUntil(10_000) {
+                    compose.onAllNodesWithText("Morgan").fetchSemanticsNodes().isNotEmpty()
+                }
+            } catch (error: Throwable) {
+                println("AUTH_REQUEST_PATHS=$requestedPaths")
+                println("AUTH_UI_TREE=${compose.onRoot(useUnmergedTree = true).printToString()}")
+                throw error
             }
             compose.onNodeWithText("Morgan").performClick()
             compose.onNodeWithText("Enter manager PIN").performTextInput("1111")
@@ -148,7 +167,47 @@ class AuthUiWorkflowTest {
             compose.onNodeWithText("Manager PIN is incorrect.").assertExists()
             compose.onNodeWithText("OK").performClick()
             compose.onNodeWithText("Enter manager PIN").assertExists()
-            compose.onNodeWithContentDescription("Close").performClick()
+            compose.onNodeWithText("Enter manager PIN").performTextInput("9999")
+            compose
+                .onNodeWithTag("manager-unlock")
+                .performScrollTo()
+                .assertIsDisplayed()
+                .performClick()
+            compose.waitUntil(10_000) {
+                compose
+                    .onAllNodesWithText("Failed to verify manager PIN.")
+                    .fetchSemanticsNodes()
+                    .isNotEmpty()
+            }
+            compose.onNodeWithText("OK").performClick()
+            compose.onNodeWithText("Enter manager PIN").assertExists()
+            compose.onNodeWithText("Enter manager PIN").performTextInput("9999")
+            compose
+                .onNodeWithTag("manager-unlock")
+                .performScrollTo()
+                .assertIsDisplayed()
+                .performClick()
+            compose.waitUntil(10_000) {
+                compose
+                    .onAllNodesWithText("Failed to verify manager PIN.")
+                    .fetchSemanticsNodes()
+                    .isNotEmpty()
+            }
+            compose.onNodeWithText("OK").performClick()
+            dismissManagerWithBack()
+            compose
+                .onNodeWithText("A manager can unlock this screen with their PIN.")
+                .assertDoesNotExist()
+            compose.onNodeWithContentDescription("PIN digit 1 of 6, filled").assertExists()
+            compose.onNodeWithText("Manager Override").performClick()
+            compose.waitUntil(10_000) {
+                compose.onAllNodesWithText("Morgan").fetchSemanticsNodes().isNotEmpty()
+            }
+            dismissManagerWithBack()
+            compose
+                .onNodeWithText("A manager can unlock this screen with their PIN.")
+                .assertDoesNotExist()
+            compose.onNodeWithContentDescription("Backspace").performClick()
             listOf("9", "9", "9", "9").forEach { compose.onNodeWithText(it).performClick() }
             compose.onNodeWithText("Unlock").performClick()
             compose.waitUntil(10_000) {
@@ -189,4 +248,16 @@ class AuthUiWorkflowTest {
                 this.snapshot = snapshot
             }
         }
+
+    private fun dismissManagerWithBack() {
+        device.pressBack()
+        compose.waitForIdle()
+        if (
+            compose
+                .onAllNodesWithText("A manager can unlock this screen with their PIN.")
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        ) device.pressBack()
+        compose.waitForIdle()
+    }
 }
