@@ -29,6 +29,9 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pmgt.pos.BuildConfig
 import com.pmgt.pos.R
+import com.pmgt.pos.db.AdoptionState
+import com.pmgt.pos.sync.AdoptionGate
+import com.pmgt.pos.sync.TabletStartup
 import com.pmgt.pos.transport.ConvexHttp
 import java.text.SimpleDateFormat
 import java.util.*
@@ -62,10 +65,12 @@ fun PosAuthShell(
     http: ConvexHttp,
     configured: Boolean = BuildConfig.CONVEX_URL.isNotBlank(),
     showTestControls: Boolean = false,
+    startup: TabletStartup? = null,
     content: @Composable (SignedInUser) -> Unit = { SessionHome(it) },
 ) {
     val session by auth.state.collectAsStateWithLifecycle()
     val locked by lock.state.collectAsStateWithLifecycle()
+    val tablet = startup?.state?.collectAsStateWithLifecycle()?.value
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
     var lockError by remember { mutableStateOf<UiAlert?>(null) }
@@ -168,6 +173,11 @@ fun PosAuthShell(
                                 }
                             }
                         }
+                    startup != null && session.selectedStoreId != null &&
+                        (tablet?.userId != session.user!!.id || tablet.storeId != session.selectedStoreId || tablet.adoption !is AdoptionState.Ready) ->
+                        AdoptionGate(tablet?.adoption ?: AdoptionState.PendingVerification(), busy || tablet?.verifying == true) {
+                            perform { startup.adopt(session.user!!.id, session.selectedStoreId!!) }
+                        }
                     else ->
                         Box(Modifier.fillMaxSize()) {
                             content(session.user!!)
@@ -181,7 +191,7 @@ fun PosAuthShell(
                                     TextButton({ perform { lock.lock(session.user!!) } }) {
                                         Text("Lock screen")
                                     }
-                                    TextButton({ perform { auth.signOut() } }) { Text("Sign out") }
+                                    TextButton({ perform { startup?.stop(); auth.signOut() } }) { Text("Sign out") }
                                 }
                         }
                 }

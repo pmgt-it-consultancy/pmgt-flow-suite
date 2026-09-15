@@ -12,13 +12,32 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import com.pmgt.pos.auth.*
+import com.pmgt.pos.db.AndroidDatabase
+import com.pmgt.pos.db.DeviceIdentity
+import com.pmgt.pos.sync.*
 import com.pmgt.pos.transport.ConvexHttp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class PosApplication : Application() {
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     val http by lazy { ConvexHttp(BuildConfig.CONVEX_URL) }
     val auth by lazy { AuthRepository(http, AndroidSessionStorage(this)) }
     val lock by lazy { LockState(AndroidLockStorage(this), http) }
+    private val network by lazy { AndroidNetwork(this, applicationScope) }
+    val startup by lazy {
+        TabletStartup({
+            val database = AndroidDatabase.open(this)
+            AdoptedStorage(database, DeviceIdentity.readOrCreate(this, adopting = true))
+        }, http, applicationScope, Dispatchers.IO, network.online)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        startup.bind(auth.state)
+    }
 }
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +55,7 @@ class MainActivity : ComponentActivity() {
             hide(WindowInsetsCompat.Type.navigationBars())
             systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
-        setContent { PosAuthShell(services.auth, services.lock, services.http) }
+        setContent { PosAuthShell(services.auth, services.lock, services.http, startup = services.startup) }
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
