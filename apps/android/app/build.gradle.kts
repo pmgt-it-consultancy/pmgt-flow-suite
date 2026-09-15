@@ -28,6 +28,8 @@ android {
     buildFeatures { compose = true; buildConfig = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
+    sourceSets.getByName("test").java.srcDir("src/sharedTest/java")
+    sourceSets.getByName("androidTest").java.srcDir("src/sharedTest/java")
 }
 dependencies {
     implementation("app.cash.sqldelight:android-driver:2.1.0")

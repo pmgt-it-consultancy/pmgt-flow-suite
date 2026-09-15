@@ -24,6 +24,8 @@ data class LockUiState(
     val failedAttempts: Int = 0,
     val cooldownUntil: Long? = null,
     val showIdleWarning: Boolean = false,
+    val userHasPin: Boolean = false,
+    val pinUserId: String? = null,
 )
 
 interface LockStorage {
@@ -39,8 +41,8 @@ class LockState(
 ) {
     private val mutableState = MutableStateFlow(LockUiState(storage.read()))
     val state = mutableState.asStateFlow()
-    var userHasPin = false
-        private set
+    val userHasPin: Boolean get() = state.value.userHasPin
+    private var configurationVersion = 0L
 
     var timeoutMs: Long? = null
         private set
@@ -51,12 +53,16 @@ class LockState(
     private var route = "HomeScreen"
 
     suspend fun configure(user: SignedInUser) {
-        userHasPin =
+        resetConfiguration()
+        val version = configurationVersion
+        val hasPin =
             http
                 .query("screenLock:getUserHasPin", buildJsonObject { put("userId", user.id) })
                 .jsonPrimitive
                 .boolean
-        timeoutMs =
+        if (version != configurationVersion) return
+        mutableState.value = state.value.copy(userHasPin = hasPin, pinUserId = user.id)
+        val timeout =
             user.storeId?.let { storeId ->
                 http
                     .query(
@@ -68,7 +74,15 @@ class LockState(
                     .takeIf { it > 0 }
                     ?.let { (it * 60_000).toLong() }
             }
+        if (version != configurationVersion) return
+        timeoutMs = timeout
         resetActivity()
+    }
+
+    fun resetConfiguration() {
+        configurationVersion++
+        timeoutMs = null
+        mutableState.value = state.value.copy(userHasPin = false, pinUserId = null)
     }
 
     fun setRouteHistory(routes: List<StoredLockRoute>) {
@@ -132,7 +146,7 @@ class LockState(
                 lockedUserRole = user.role?.name ?: "Staff",
             )
         )
-        mutableState.value = LockUiState(state.value.snapshot)
+        mutableState.value = LockUiState(state.value.snapshot, userHasPin = userHasPin, pinUserId = state.value.pinUserId)
         user.storeId?.let { store ->
             try {
                 http.mutation(
@@ -192,7 +206,7 @@ class LockState(
 
     fun clearLock() {
         save(LockSnapshot(routeHistory = state.value.snapshot.routeHistory))
-        mutableState.value = LockUiState(state.value.snapshot)
+        mutableState.value = LockUiState(state.value.snapshot, userHasPin = userHasPin, pinUserId = state.value.pinUserId)
         resetActivity()
     }
 

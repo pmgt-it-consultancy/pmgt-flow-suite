@@ -90,7 +90,7 @@ fun PosAuthShell(
     }
     LaunchedEffect(auth, configured) { if (configured) auth.restore() }
     LaunchedEffect(session.user?.id) {
-        val user = session.user ?: return@LaunchedEffect
+        val user = session.user ?: run { lock.resetConfiguration(); return@LaunchedEffect }
         try {
             lock.configure(user)
         } catch (e: CancellationException) {

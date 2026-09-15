@@ -16,6 +16,23 @@ class LockWorkflowTest {
     private val cashier = SignedInUser("cashier", "Alex", null, "store", UserRole("role", "Cashier", emptySet(), "branch"))
     private fun MockWebServer.success(value: String) = enqueue(MockResponse().setBody("""{"status":"success","value":$value}"""))
 
+    @Test fun `PIN capability changes publish observable header state`() = runTest {
+        MockWebServer().use { server ->
+            val lock = LockState(Storage(), ConvexHttp(server.url("/").toString()))
+            val before = lock.state.value
+            server.success("true"); server.success("0"); lock.configure(cashier)
+            assertTrue(lock.userHasPin)
+            assertNotEquals(before, lock.state.value)
+            assertEquals(cashier.id, lock.state.value.pinUserId)
+            server.enqueue(MockResponse().setResponseCode(503))
+            runCatching { lock.configure(cashier.copy(id = "other")) }
+            assertFalse(lock.userHasPin)
+            assertNull(lock.state.value.pinUserId)
+            lock.resetConfiguration()
+            assertFalse(lock.state.value.userHasPin)
+        }
+    }
+
     @Test fun `returning to login clears background bookkeeping before later sign in`() = runTest {
         MockWebServer().use { server ->
             var now = 1_000L

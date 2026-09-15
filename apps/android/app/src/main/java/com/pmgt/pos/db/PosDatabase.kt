@@ -44,16 +44,7 @@ class PosDatabase(private val driver: SqlDriver) : AutoCloseable {
     fun select(table: String, where: String = "1", args: List<Any?> = emptyList(), orderBy: String = "", limit: Int? = null): List<Row> {
         val columns = columns(table)
         val names = listOf("id", "_changed", "_status") + columns.map { it.name }
-        checkPredicate(where, names.toSet())
-        val ordering = if (orderBy.isBlank()) "" else {
-            require(orderBy.split(',').all { part ->
-                val words = part.trim().split(Regex("\\s+"))
-                words.first() in names && (words.size == 1 || words.size == 2 && words[1].uppercase() in setOf("ASC", "DESC"))
-            }) { "Unsupported order expression" }
-            " ORDER BY $orderBy"
-        }
-        require(limit == null || limit >= 0) { "Invalid limit" }
-        val sql = "SELECT ${names.joinToString { "\"$it\"" }} FROM \"$table\" WHERE $where$ordering${limit?.let { " LIMIT $it" }.orEmpty()}"
+        val sql = selectSql(table, where, orderBy, limit)
         return driver.executeQuery(null, sql, { cursor ->
             val result = mutableListOf<Row>()
             while (cursor.next().value) {
@@ -69,6 +60,37 @@ class PosDatabase(private val driver: SqlDriver) : AutoCloseable {
             }
             QueryResult.Value(result)
         }, args.size) { bind(args) }.value
+    }
+
+    /** Same validated query and bindings as select; diagnostics never execute arbitrary SQL. */
+    @Synchronized
+    fun explainSelect(table: String, where: String = "1", args: List<Any?> = emptyList(), orderBy: String = "", limit: Int? = null): List<String> =
+        driver.executeQuery(null, "EXPLAIN QUERY PLAN " + selectSql(table, where, orderBy, limit), { cursor ->
+            val rows = mutableListOf<String>()
+            while (cursor.next().value) rows += cursor.getString(3).orEmpty()
+            QueryResult.Value(rows)
+        }, args.size) { bind(args) }.value
+
+    /** Additive access paths only; caller must have passed adoption and run on IO. */
+    @Synchronized
+    fun prepareBrowseIndexes(): Unit = transaction {
+        driver.execute(null, "CREATE INDEX IF NOT EXISTS kotlin_orders_store_status_created ON orders(store_id,status,created_at DESC,id)", 0)
+        driver.execute(null, "CREATE INDEX IF NOT EXISTS kotlin_orders_store_created ON orders(store_id,created_at DESC,id)", 0)
+        driver.execute(null, "CREATE INDEX IF NOT EXISTS kotlin_tables_store_active_sort ON tables(store_id,is_active,sort_order)", 0)
+    }
+
+    private fun selectSql(table: String, where: String, orderBy: String, limit: Int?): String {
+        val names = listOf("id", "_changed", "_status") + columns(table).map { it.name }
+        checkPredicate(where, names.toSet())
+        val ordering = if (orderBy.isBlank()) "" else {
+            require(orderBy.split(',').all { part ->
+                val words = part.trim().split(Regex("\\s+"))
+                words.first() in names && (words.size == 1 || words.size == 2 && words[1].uppercase() in setOf("ASC", "DESC"))
+            }) { "Unsupported order expression" }
+            " ORDER BY $orderBy"
+        }
+        require(limit == null || limit >= 0) { "Invalid limit" }
+        return "SELECT ${names.joinToString { "\"$it\"" }} FROM \"$table\" WHERE $where$ordering${limit?.let { " LIMIT $it" }.orEmpty()}"
     }
 
     @Synchronized
