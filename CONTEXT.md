@@ -97,3 +97,21 @@ _Avoid_: Clear Cache, Force Resync
 **Sync-Clean**:
 A verified state in which the server has accepted all Pending Local Work, no financial synchronization exceptions remain, and the device has observed the required server checkpoint.
 _Avoid_: Sync finished, online
+
+## Money
+
+**Device-Computed Totals**:
+The money figures an Origin Tablet calculates for an Order Aggregate and sends to the server, which the server records without independently verifying them.
+_Avoid_: Client totals, local totals
+
+**Totals Reconciliation**:
+The server's independent recalculation of an Order Aggregate's money figures from its items, compared against the Device-Computed Totals it received.
+_Avoid_: Validation, totals check
+
+**Totals Divergence**:
+A recorded disagreement between Device-Computed Totals and Totals Reconciliation; it is raised for correction and never prevents a sale from being accepted.
+_Avoid_: Rounding error, sync mismatch
+
+**Ledger-Compatible Arithmetic**:
+The requirement that any reimplementation of the money calculations reproduce the existing results exactly, so that already-settled Business Days remain reproducible.
+_Avoid_: Correct arithmetic, precise arithmetic
