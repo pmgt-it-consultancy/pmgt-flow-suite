@@ -9,6 +9,8 @@
 ## Global Constraints
 
 - 1:1 behavior; no sync v2 or offline-auth feature.
+- 1:1 UI as well: existing RN screens, assets, labels, sizing, modal structure and navigation are the reference. No Material defaults or adaptive redesign may replace them.
+- Apply android-clean-architecture, android-jetpack-compose and kotlin-coroutines-flows as implementation guidance: explicit domain/data/UI boundaries, hoisted render state, lifecycle-aware collection and cancellation-safe work. Retain the approved SQLDelight/OkHttp stack; do not add frameworks merely because skill examples use them.
 - No worktrees; branch feat/kotlin-pos-migration.
 - Preserve binary64 money arithmetic including epsilon and JavaScript rounding.
 - Preserve existing IDs, pending work, and rollback-compatible SQLite writes.
