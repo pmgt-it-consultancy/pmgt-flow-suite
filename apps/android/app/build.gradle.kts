@@ -1,6 +1,7 @@
 import java.util.Properties
 
 plugins {
+    id("app.cash.sqldelight")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
@@ -29,6 +30,8 @@ android {
     kotlinOptions { jvmTarget = "17" }
 }
 dependencies {
+    implementation("app.cash.sqldelight:android-driver:2.1.0")
+    testImplementation("app.cash.sqldelight:sqlite-driver:2.1.0")
     implementation(platform("androidx.compose:compose-bom:2025.09.01"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.core:core-ktx:1.17.0")
@@ -48,4 +51,11 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+}
+sqldelight {
+    databases {
+        create("LegacyDatabase") {
+            packageName.set("com.pmgt.pos.db.generated")
+        }
+    }
 }
