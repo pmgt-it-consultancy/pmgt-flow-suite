@@ -16,8 +16,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.pmgt.pos.auth.*
 import com.pmgt.pos.browse.*
+import com.pmgt.pos.catalog.LocalCatalogRepository
 import com.pmgt.pos.db.AndroidDatabase
 import com.pmgt.pos.db.DeviceIdentity
+import com.pmgt.pos.orders.EditorSessions
+import com.pmgt.pos.orders.LocalOrderRepository
 import com.pmgt.pos.sync.*
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.CoroutineScope
@@ -69,6 +72,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val holder = rememberSaveableStateHolder()
             val scope = rememberCoroutineScope()
+            val editors = remember { EditorSessions(scope) }
+            val authState by services.auth.state.collectAsStateWithLifecycle()
+            LaunchedEffect(authState.user?.id, authState.user?.storeId) { editors.clear() }
             val logout = remember { RootLogout(services.auth, scope) }
             PosAuthShell(services.auth, services.lock, services.http, startup = services.startup) {
                 user ->
@@ -111,6 +117,26 @@ class MainActivity : ComponentActivity() {
                             onRoute = { services.lock.setCurrentRoute(it) },
                             syncStatus = syncState?.status ?: SyncStatus.Idle,
                             onRetrySync = { scope.launch { sync?.syncNow() } },
+                            catalogRepository =
+                                remember(database) {
+                                    LocalCatalogRepository(database, Dispatchers.IO)
+                                },
+                            entryRepository =
+                                remember(database, sync) {
+                                    LocalOrderRepository(
+                                        database,
+                                        Dispatchers.IO,
+                                        {
+                                            DeviceIdentity.readOrCreate(
+                                                applicationContext,
+                                                adopting = true,
+                                            )
+                                        },
+                                        { sync?.deviceCode?.value.orEmpty() },
+                                        { sync?.triggerPush() },
+                                    )
+                                },
+                            editorSessions = editors,
                         )
                     }
             }

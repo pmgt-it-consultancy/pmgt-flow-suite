@@ -79,6 +79,12 @@ class PosDatabase(private val driver: SqlDriver) : AutoCloseable {
         driver.execute(null, "CREATE INDEX IF NOT EXISTS kotlin_tables_store_active_sort ON tables(store_id,is_active,sort_order)", 0)
     }
 
+    /** Additive request lookup only; not a uniqueness guarantee. */
+    @Synchronized
+    fun prepareOrderIndexes(): Unit = transaction {
+        driver.execute(null, "CREATE INDEX IF NOT EXISTS kotlin_orders_request_id ON orders(request_id)", 0)
+    }
+
     private fun selectSql(table: String, where: String, orderBy: String, limit: Int?): String {
         val names = listOf("id", "_changed", "_status") + columns(table).map { it.name }
         checkPredicate(where, names.toSet())
@@ -266,8 +272,17 @@ class PosDatabase(private val driver: SqlDriver) : AutoCloseable {
 
     private fun put(table: String, row: Row) {
         validateFields(table, row)
-        val names = row.keys.toList()
-        driver.execute(null, "INSERT OR REPLACE INTO \"$table\" (${names.joinToString { "\"$it\"" }}) VALUES (${names.joinToString { "?" }})", names.size) {
+        // Model updates must retain SQLite rowid/query order, as the RN adapter's UPDATE does.
+        // REPLACE deletes/reinserts text-PK rows, changing cart order and binary64 fold order.
+        // Keep this inside the caller's existing serialized transaction; compatible with API26.
+        val existing = get(table, requireId(row)) != null
+        val names = if (existing) row.keys.filter { it != "id" } + "id" else row.keys.toList()
+        val sql = if (existing) {
+            "UPDATE \"$table\" SET ${names.dropLast(1).joinToString { "\"$it\" = ?" }} WHERE id = ?"
+        } else {
+            "INSERT INTO \"$table\" (${names.joinToString { "\"$it\"" }}) VALUES (${names.joinToString { "?" }})"
+        }
+        driver.execute(null, sql, names.size) {
             names.forEachIndexed { i, key ->
                 val value = row[key]!!.jsonPrimitive
                 when {

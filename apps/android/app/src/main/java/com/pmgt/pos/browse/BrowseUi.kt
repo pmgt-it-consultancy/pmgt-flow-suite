@@ -59,6 +59,10 @@ internal enum class Glyph(val code: Int) {
     Check(0xf21f),
     Document(0xf2b4),
     Done(0xf225),
+    Cart(0xf203),
+    FilledCart(0xf202),
+    Remove(0xf520),
+    BagAdd(0xf159),
 }
 
 @Composable
@@ -165,6 +169,8 @@ internal fun PageHeader(
     onStatus: () -> Unit,
     right: @Composable RowScope.() -> Unit = {},
     badges: @Composable RowScope.() -> Unit = {},
+    titleSize: Int = 18,
+    titleWeight: FontWeight = FontWeight.Bold,
 ) {
     Column(Modifier.background(Color.White)) {
         Row(
@@ -178,7 +184,7 @@ internal fun PageHeader(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Label(title, 18, weight = FontWeight.Bold)
+                    Label(title, titleSize, weight = titleWeight)
                     badges()
                 }
                 subtitle?.let { Label(it, 14, BrowseColors.Muted) }

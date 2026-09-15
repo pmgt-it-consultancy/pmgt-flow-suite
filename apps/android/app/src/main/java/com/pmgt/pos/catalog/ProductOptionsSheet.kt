@@ -38,13 +38,16 @@ fun ProductSelectionSheet(
     sending: Boolean,
     onClose: () -> Unit,
     onConfirm: (ProductChoice) -> Unit,
+    stateOwner: ProductOptionsMemory? = null,
 ) {
     if (product == null) return
     key(storeId, product.id, repository) {
+        val memory = stateOwner ?: remember(storeId, product.id) { ProductOptionsMemory(product) }
         val flow =
             remember(storeId, product.id, repository) { repository.modifiers(storeId, product.id) }
-        val groups by flow.collectAsStateWithLifecycle(initialValue = null)
-        ProductOptionsSheet(product, groups, entryPoint, sending, onClose, onConfirm)
+        val groups by flow.collectAsStateWithLifecycle(initialValue = memory.lastGroups)
+        LaunchedEffect(groups) { memory.lastGroups = groups }
+        ProductOptionsSheet(product, groups, entryPoint, sending, onClose, onConfirm, memory)
     }
 }
 
@@ -56,22 +59,16 @@ fun ProductOptionsSheet(
     sending: Boolean,
     onClose: () -> Unit,
     onConfirm: (ProductChoice) -> Unit,
+    stateOwner: ProductOptionsMemory? = null,
 ) {
     val custom = usesModifierSheet(entryPoint, product, groups)
     // RN's order screen owns AddItem quantity/notes above both modal visibility branches.
     // Keep them across modifier availability changes, but not across product selection sessions.
-    var simpleQuantity by remember(product.id) { mutableStateOf(1) }
-    var simpleNotes by remember(product.id) { mutableStateOf("") }
+    val memory = stateOwner ?: remember(product.id) { ProductOptionsMemory(product) }
+    var simpleQuantity by memory.simpleQuantity
+    var simpleNotes by memory.simpleNotes
     key(product.id, custom) {
-        var session by remember {
-            mutableStateOf(
-                ModifierSelection.opened(product)
-                    .copy(
-                        quantity = if (custom) 1 else simpleQuantity,
-                        notes = if (custom) "" else simpleNotes,
-                    )
-            )
-        }
+        var session by remember(memory, custom) { memory.selection(custom) }
         val shownGroups = if (custom) groups.orEmpty() else emptyList()
         LaunchedEffect(shownGroups) { session = session.refreshed(shownGroups) }
         val busy = sending || custom && groups == null
