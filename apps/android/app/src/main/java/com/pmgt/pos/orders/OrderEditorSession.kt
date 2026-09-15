@@ -92,6 +92,7 @@ class OrderEditorSession(
     private val locks = mutableMapOf<String, Mutex>()
     private var nextDraft = 0
     private var lastCustomer: String? = null
+    private var hadCustomerSnapshot = false
     private var pendingKitchen: KitchenRequest? = null
 
     private data class PendingAdd(
@@ -110,12 +111,13 @@ class OrderEditorSession(
     fun loaded(cart: OrderCart?) {
         mutable.update { current ->
             val customer =
-                if (cart?.customerName != lastCustomer && !cart?.customerName.isNullOrEmpty())
-                    cart!!.customerName!!
+                if (cart != null && (!hadCustomerSnapshot || cart.customerName != lastCustomer))
+                    cart.customerName.orEmpty()
                 else current.customer
             current.copy(cart = cart, customer = customer)
         }
         lastCustomer = cart?.customerName
+        hadCustomerSnapshot = cart != null
         cart?.lines?.forEach { edits.acknowledge(it.id) }
     }
 

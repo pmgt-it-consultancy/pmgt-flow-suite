@@ -87,7 +87,9 @@ fun OrderEditorScreen(
                         emit(null)
                     }
                 }
-            val cart by flow.collectAsStateWithLifecycle(initialValue = null)
+            // RN useObservable keeps its same-order snapshot while blurred. A remount's
+            // loading state must not masquerade as a missing order/customer-field change.
+            val cart by flow.collectAsStateWithLifecycle(initialValue = state.cart)
             LaunchedEffect(cart) { session.loaded(cart) }
         }
     }
@@ -350,6 +352,8 @@ fun OrderEditorScreen(
         }
     if (dialogs.modal == "tab")
         EntryDialog("Edit Tab Name", { dialogs.modal = null }) {
+            val focus = remember { FocusRequester() }
+            LaunchedEffect(Unit) { focus.requestFocus() }
             Label(
                 "Customize the name for this tab. Leave blank to use the default name.",
                 14,
@@ -361,7 +365,7 @@ fun OrderEditorScreen(
                 dialogs.input,
                 { dialogs.input = it.take(50) },
                 default,
-                Modifier.fillMaxWidth().testTag("tab-name"),
+                Modifier.fillMaxWidth().testTag("tab-name").focusRequester(focus),
             )
             EntryButton(
                 "Reset to Default",
@@ -395,7 +399,7 @@ fun OrderEditorScreen(
     if (dialogs.modal == "transfer") {
         val flow = remember(repository) { repository.availableTables(session.route.storeId) }
         val tables by flow.collectAsStateWithLifecycle(initialValue = null)
-        EntryDialog("Transfer Table", { dialogs.modal = null }) {
+        EntryDialog("Transfer Table", { dialogs.modal = null }, scrollable = false) {
             Label("Move order from ${state.tableName} to:", 14, BrowseColors.Muted)
             Spacer(Modifier.height(16.dp))
             if (tables == null) Loading(Modifier.height(100.dp))
@@ -429,6 +433,8 @@ fun OrderEditorScreen(
     if (dialogs.modal == "bill") EntryBill(state, { dialogs.modal = null })
     dialogs.voiding?.let { line ->
         EntryDialog("Void Item", { dialogs.voiding = null }) {
+            val focus = remember { FocusRequester() }
+            LaunchedEffect(Unit) { focus.requestFocus() }
             Label(
                 "${numberText(line.item.quantity)}x ${line.item.productName}",
                 weight = FontWeight.Medium,
@@ -443,7 +449,7 @@ fun OrderEditorScreen(
                 dialogs.input,
                 { dialogs.input = it },
                 "Reason for voiding...",
-                Modifier.fillMaxWidth().testTag("void-reason"),
+                Modifier.fillMaxWidth().testTag("void-reason").focusRequester(focus),
             )
             Spacer(Modifier.height(16.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -558,6 +564,7 @@ internal fun EntryDialog(
     onClose: () -> Unit,
     pax: Boolean = false,
     wide: Boolean = false,
+    scrollable: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Dialog(
@@ -579,9 +586,17 @@ internal fun EntryDialog(
             Column(
                 Modifier.then(
                         if (wide) Modifier.fillMaxWidth(.9f)
-                        else Modifier.width(if (pax) 288.dp else 448.dp)
+                        else if (pax) Modifier.width(288.dp)
+                        else
+                            Modifier.padding(horizontal = 16.dp)
+                                .widthIn(max = 448.dp)
+                                .fillMaxWidth()
                     )
                     .background(Color.White, RoundedCornerShape(16.dp))
+                    .then(
+                        if (scrollable && !pax) Modifier.verticalScroll(rememberScrollState())
+                        else Modifier
+                    )
                     .padding(if (pax) 24.dp else 20.dp)
                     .testTag("entry-dialog")
             ) {
@@ -602,7 +617,7 @@ internal fun EntryDialog(
 
 @Composable
 private fun EntryBill(state: EditorState, close: () -> Unit) {
-    EntryDialog("Current Bill", close, wide = true) {
+    EntryDialog("Current Bill", close, wide = true, scrollable = false) {
         Label(
             "${state.tableName.takeIf { it.isNotEmpty() }?.plus(" - ").orEmpty()}Order #${state.cart?.orderNumber.orEmpty()}",
             14,

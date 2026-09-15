@@ -28,6 +28,129 @@ class OrderLockUiTest {
     @get:Rule val compose = createComposeRule()
 
     @Test
+    fun unsavedCustomerSurvivesActualLockAndDelayedSameOrderReload() {
+        MockWebServer().use { server ->
+            server.dispatcher =
+                object : okhttp3.mockwebserver.Dispatcher() {
+                    override fun dispatch(request: RecordedRequest): MockResponse {
+                        val path =
+                            Json.parseToJsonElement(request.body.readUtf8())
+                                .jsonObject["path"]!!
+                                .jsonPrimitive
+                                .content
+                        val value =
+                            when (path) {
+                                "auth:signIn" ->
+                                    """{"tokens":{"token":"test-access","refreshToken":"test-refresh"}}"""
+                                "sessions:getCurrentUser" ->
+                                    """{"_id":"u","name":"Ana","storeId":"s","role":{"_id":"r","name":"Cashier","scopeLevel":"branch","permissions":[]}}"""
+                                "screenLock:getUserHasPin" -> "true"
+                                "screenLock:getAutoLockTimeout" -> "60"
+                                "screenLockActions:screenUnlock" -> """{"success":true}"""
+                                else -> "null"
+                            }
+                        return MockResponse().setBody("""{"status":"success","value":$value}""")
+                    }
+                }
+            val http = ConvexHttp(server.url("/").toString())
+            val auth = AuthRepository(http, MemorySessionStorage())
+            val lock =
+                LockState(
+                    object : LockStorage {
+                        override fun read() = LockSnapshot()
+
+                        override fun write(snapshot: LockSnapshot) {}
+                    },
+                    http,
+                )
+            runBlocking { auth.signIn("a@b.test", "password") }
+            val db =
+                PosDatabase(
+                    AndroidSqliteDriver(
+                        LegacySqlSchema,
+                        ApplicationProvider.getApplicationContext<Context>(),
+                        null,
+                    )
+                )
+            db.applyRemote("stores", listOf(row("s", "vat_rate" to 12)), emptyList(), emptyList())
+            val local = LocalOrderRepository(db, Dispatchers.IO, { "test" })
+            val id = runBlocking {
+                local.createDraft("s").also { local.customer(it, name = "Alice") }
+            }
+            val observing = AtomicInteger()
+            val starts = AtomicInteger()
+            val cancelledBlurSaves = AtomicInteger()
+            val reload = CompletableDeferred<Unit>()
+            val repo =
+                object : OrderEntryRepository by local {
+                    override fun cart(storeId: String, orderId: String): Flow<OrderCart?> = flow {
+                        observing.incrementAndGet()
+                        try {
+                            if (starts.incrementAndGet() > 1) reload.await()
+                            emitAll(local.cart(storeId, orderId))
+                        } finally {
+                            observing.decrementAndGet()
+                        }
+                    }
+
+                    override suspend fun customer(
+                        orderId: String,
+                        name: String?,
+                        category: String?,
+                        marker: String?,
+                    ) {
+                        if (name != null) {
+                            cancelledBlurSaves.incrementAndGet()
+                            throw CancellationException("Blur save cancelled by lock")
+                        }
+                        local.customer(orderId, name, category, marker)
+                    }
+                }
+            compose.setContent {
+                val scope = rememberCoroutineScope()
+                val owners = remember { EditorSessions(scope) }
+                PosAuthShell(auth, lock, http, configured = false) { user ->
+                    val session =
+                        owners.get(
+                            "${user.id}:${user.storeId}",
+                            "takeout",
+                            EditorRoute("s", orderId = id, takeout = true),
+                            repo,
+                        )
+                    OrderEditorScreen(
+                        session,
+                        repo,
+                        LocalCatalogRepository(db, Dispatchers.IO),
+                        {},
+                        {},
+                        {},
+                    )
+                }
+            }
+            compose.waitUntil(5000) {
+                compose.onAllNodesWithTag("customer-name").fetchSemanticsNodes().isNotEmpty()
+            }
+            compose.onNodeWithTag("customer-name").assertTextEquals("Alice")
+            compose.onNodeWithTag("customer-name").performTextReplacement("Alicia")
+            compose.onNodeWithTag("table-marker").performClick()
+            compose.waitUntil(5000) { cancelledBlurSaves.get() == 1 }
+            runBlocking { lock.lock(auth.state.value.user!!) }
+            compose.waitUntil(5000) { lock.state.value.snapshot.isLocked && observing.get() == 0 }
+            compose.onNodeWithTag("customer-name").assertDoesNotExist()
+            assertEquals("Alice", db.get("orders", id)!!.string("customer_name"))
+            runBlocking { lock.unlock("s", "1234") }
+            compose.waitUntil(5000) { starts.get() == 2 }
+            compose.onNodeWithTag("customer-name").assertTextEquals("Alicia")
+            reload.complete(Unit)
+            compose.waitUntil(5000) {
+                compose.onAllNodesWithTag("customer-name").fetchSemanticsNodes().isNotEmpty()
+            }
+            compose.onNodeWithTag("customer-name").assertTextEquals("Alicia")
+            assertEquals("Alice", db.get("orders", id)!!.string("customer_name"))
+        }
+    }
+
+    @Test
     fun actualManualAndIdleLockRetainDraftAndStopHiddenCatalogObservation() {
         MockWebServer().use { server ->
             server.dispatcher =
