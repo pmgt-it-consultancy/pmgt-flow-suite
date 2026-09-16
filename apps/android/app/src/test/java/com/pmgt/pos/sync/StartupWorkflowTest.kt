@@ -435,6 +435,124 @@ class StartupWorkflowTest {
         }
     }
 
+    /**
+     * The full sweep resolves every order reference by paging the whole orders table back with no
+     * `since` cursor. Measured at 104 seconds on a real store. It is a one-time integrity gate, so
+     * once a store has passed it a later launch spot-checks a bounded sample instead of re-paging.
+     */
+    @Test fun aVerifiedStoreSpotChecksInsteadOfRepagingTheWholeReplica() = runBlocking {
+        val db = database()
+        repeat(40) { index -> seed(db, id = "local-$index", server = "server-$index") }
+        val receipts = InMemoryAdoptionReceipts()
+        val pulled = (0 until 40).joinToString(",") {
+            """{"id":"local-$it","server_id":"server-$it","storeId":"store"}"""
+        }
+        MockWebServer().use { server ->
+            val paths = CopyOnWriteArrayList<String>()
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    paths += request.path!!
+                    return when (request.path) {
+                        "/sync/pull" -> MockResponse().setBody(
+                            """{"changes":{"orders":{"created":[$pulled],"updated":[],"deleted":[]}},"cursors":{"orders":{"cursor":null,"isDone":true}},"complete":true,"timestamp":100}"""
+                        )
+                        "/sync/registerDevice" -> MockResponse().setBody("""{"deviceCode":"07"}""")
+                        "/api/query" -> {
+                            // Echo the requested id back: the spot check rejects a mismatched _id.
+                            val asked = Json.parseToJsonElement(request.body.clone().readUtf8())
+                                .jsonObject["args"]!!.jsonObject["orderId"]!!.jsonPrimitive.content
+                            success("""{"_id":"$asked","storeId":"store"}""")
+                        }
+                        else -> MockResponse().setBody(emptyPage)
+                    }
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            fun startup() = TabletStartup(
+                { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
+                scope, Dispatchers.IO, MutableStateFlow(true), receipts = receipts,
+            )
+            try {
+                val first = startup()
+                assertTrue(first.adopt("user", "store") is AdoptionState.Ready)
+                assertTrue("the first adoption still sweeps", paths.count { it == "/sync/pull" } > 0)
+                first.stop()
+
+                paths.clear()
+                val second = startup()
+                assertTrue(second.adopt("user", "store") is AdoptionState.Ready)
+                assertEquals("a verified store must not page the replica again", 0, paths.count { it == "/sync/pull" })
+                val checks = paths.count { it == "/api/query" }
+                assertTrue("expected a bounded spot check, saw $checks", checks in 1..20)
+                second.stop()
+            } finally { scope.cancel() }
+        }
+        db.close()
+    }
+
+    /**
+     * The spot check is an optimisation. If the lookup it relies on errors — as orders:get does
+     * against some real data — adoption must fall back to the full sweep, not strand the till.
+     */
+    @Test fun aFailingSpotCheckFallsBackToTheFullSweep() = runBlocking {
+        val db = database(); seed(db)
+        val receipts = InMemoryAdoptionReceipts()
+        receipts.write(AdoptionReceipt("store", "test-device"))
+        MockWebServer().use { server ->
+            val paths = CopyOnWriteArrayList<String>()
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    paths += request.path!!
+                    return when (request.path) {
+                        "/api/query" -> MockResponse().setResponseCode(500)
+                        "/sync/pull" -> MockResponse().setBody(
+                            """{"changes":{"orders":{"created":[{"id":"local","server_id":"server","storeId":"store"}],"updated":[],"deleted":[]}},"cursors":{"orders":{"cursor":null,"isDone":true}},"complete":true,"timestamp":100}"""
+                        )
+                        "/sync/registerDevice" -> MockResponse().setBody("""{"deviceCode":"07"}""")
+                        else -> MockResponse().setBody(emptyPage)
+                    }
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup(
+                { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
+                scope, Dispatchers.IO, MutableStateFlow(true), receipts = receipts,
+            )
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+                assertTrue("a broken lookup must not stop the sweep running", paths.contains("/sync/pull"))
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    /** The spot check is a real gate: a sampled reference the server has lost still blocks. */
+    @Test fun aSpotCheckStillBlocksWhenTheServerHasLostAnOrder() = runBlocking {
+        val db = database()
+        repeat(40) { index -> seed(db, id = "local-$index", server = "server-$index") }
+        val receipts = InMemoryAdoptionReceipts()
+        receipts.write(AdoptionReceipt("store", "test-device"))
+        MockWebServer().use { server ->
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest) =
+                    if (request.path == "/api/query") success("null") else MockResponse().setBody(emptyPage)
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup(
+                { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
+                scope, Dispatchers.IO, MutableStateFlow(true), receipts = receipts,
+            )
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Blocked)
+                assertNull(startup.sync.value)
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
     private fun seedStore(db: PosDatabase, id: String, server: String, name: String) {
         db.applyRemote("stores", listOf(buildJsonObject { put("id", id); put("server_id", server); put("name", name) }), emptyList(), emptyList())
     }

@@ -10,7 +10,9 @@ it("requires every non-retired registered device to be sync-clean before final c
   const { storeId, userId } = await t.run(async (ctx) => {
     const roleId = await ctx.db.insert("roles", {
       name: "Manager",
-      permissions: ["reports.generate"],
+      // retireDevice now needs devices.manage: it writes the Sync-Clean evidence that Device
+      // Retirement gates on, so it carries the same authority as moving a tablet.
+      permissions: ["reports.generate", "devices.manage"],
       scopeLevel: "branch",
       isSystem: false,
     });

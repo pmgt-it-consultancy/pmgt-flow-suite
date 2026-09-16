@@ -7,6 +7,13 @@ import { requirePermission } from "./lib/permissions";
 import { deviceCodeFromIndex } from "./lib/sync";
 
 /**
+ * How recently a tablet must have reported itself Sync-Clean for retirement to trust it. A zero
+ * reported last week says nothing about a tablet that has been selling offline since; the manager
+ * flow runs Sync Now immediately before retiring, so a short window is all it needs.
+ */
+const SYNC_CLEAN_EVIDENCE_WINDOW_MS = 15 * 60 * 1000;
+
+/**
  * Moving a tablet between stores is two audited halves: Device Retirement takes it out of one
  * store's reconciliation, Device Commissioning makes it an Active Tablet of the next. Plain
  * registration refuses a store change outright, so this is the only sanctioned route.
@@ -81,6 +88,13 @@ export const retire = mutation({
     if (pending > 0) {
       throw new Error(
         `This tablet still has ${pending} record(s) waiting to sync. Clear them before retiring it.`,
+      );
+    }
+    const reportedAt = Math.max(...states.map((state) => state.updatedAt));
+    if (Date.now() - reportedAt > SYNC_CLEAN_EVIDENCE_WINDOW_MS) {
+      throw new Error(
+        "This tablet last reported that it was Sync-Clean too long ago to rely on. " +
+          "Run Sync Now on the tablet, then retire it.",
       );
     }
 

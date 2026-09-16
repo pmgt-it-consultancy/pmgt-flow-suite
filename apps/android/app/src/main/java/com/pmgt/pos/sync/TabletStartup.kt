@@ -10,6 +10,9 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.*
 
+/** How many order references a spot check verifies; enough to catch a wholesale mismatch. */
+private const val SPOT_CHECK_SAMPLE = 10
+
 data class AdoptedStorage(val database: PosDatabase, val deviceId: String)
 
 /** Blocked and ForeignStore are decisions, not transient failures, so they are never retried. */
@@ -33,6 +36,7 @@ class TabletStartup(
     private val online: StateFlow<Boolean>,
     /** Backoff between automatic attempts; the last entry is the cap. */
     private val retryDelays: List<Long> = listOf(5_000, 10_000, 20_000, 40_000, 60_000),
+    private val receipts: AdoptionReceipts = InMemoryAdoptionReceipts(),
 ) {
     private val monitor = Any()
     private val adoptionMutex = Mutex()
@@ -94,6 +98,7 @@ class TabletStartup(
                     Telemetry.event("adoption_foreign_store", "store_id" to storeId, "local_store_id" to result.localStoreId)
                 current.value = TabletStartupState(userId, storeId, result)
                 if (result is AdoptionState.Ready) {
+                    receipts.write(AdoptionReceipt(storeId, adopted.deviceId))
                     SyncManager(adopted.database, http, adopted.deviceId, scope, io, online,
                         sessionIsCurrent = { isCurrent(epoch, userId, storeId) },
                         onBlocked = { message ->
@@ -184,6 +189,36 @@ class TabletStartup(
         }
     }
 
+    private fun storageDeviceId(): String? = synchronized(monitor) { storage?.deviceId }
+
+    /**
+     * The full sweep pages the entire orders table back with no cursor to resolve every reference —
+     * 104 seconds on a real store, paid on every launch. It is a one-time integrity gate, so once a
+     * store has passed it later launches verify a bounded sample through indexed lookups instead.
+     *
+     * This is narrower than the sweep, deliberately: it detects a replica that belongs to a
+     * different dataset, which is what the gate exists for, at a cost a till can pay while a queue
+     * is waiting. A reference the sample does not reach is left to sync to reconcile.
+     */
+    private suspend fun spotCheck(references: List<ServerReference>, storeId: String): ServerReferenceVerification {
+        val live = references.filter { it.table == "orders" && it.localStatus != "deleted" }
+        if (live.isEmpty()) return ServerReferenceVerification.Verified
+        val step = maxOf(1, live.size / SPOT_CHECK_SAMPLE)
+        val sample = live.filterIndexed { index, _ -> index % step == 0 }.take(SPOT_CHECK_SAMPLE)
+        for (reference in sample) {
+            currentCoroutineContext().ensureActive()
+            val result = http.query("orders:get", buildJsonObject { put("orderId", reference.serverId) })
+            if (result == JsonNull) return ServerReferenceVerification.Missing
+            val order = result.jsonObject
+            if (order["_id"]?.jsonPrimitive?.content != reference.serverId ||
+                order["storeId"]?.jsonPrimitive?.content != storeId
+            ) {
+                return ServerReferenceVerification.Missing
+            }
+        }
+        return ServerReferenceVerification.Verified
+    }
+
     fun stop() = synchronized(monitor) {
         generation++
         manager.value?.stop()
@@ -210,6 +245,22 @@ class TabletStartup(
     private suspend fun verifyReferences(references: List<ServerReference>, storeId: String): ServerReferenceVerification {
         if (references.isEmpty()) return ServerReferenceVerification.Verified
         if (!online.value) return ServerReferenceVerification.Unavailable
+        val deviceId = storageDeviceId()
+        if (deviceId != null && receipts.read() == AdoptionReceipt(storeId, deviceId)) {
+            // The spot check is an optimisation, never a new way to fail. A Missing verdict is real
+            // evidence and is returned; anything else falls through to the full sweep, so the worst
+            // case is the behaviour we already had rather than a till that cannot open.
+            val quick =
+                try {
+                    spotCheck(references, storeId)
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (failure: Exception) {
+                    Telemetry.nonFatal("adoption.spot_check", failure)
+                    null
+                }
+            if (quick != null) return quick
+        }
         val unresolvedOrders = references.filter { it.table == "orders" }.toMutableList()
         val cursor = PullCursor()
         var ordersExhausted: Boolean

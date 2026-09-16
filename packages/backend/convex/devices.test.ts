@@ -103,6 +103,48 @@ describe("Device Retirement", () => {
     ).rejects.toThrow(/Sync-Clean/);
   });
 
+  /**
+   * A zero reported last week says nothing about a tablet that has been selling offline since.
+   * Sync-Clean has to be current evidence, not any evidence.
+   */
+  it("refuses when the Sync-Clean evidence is stale", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, asUser } = await setup(t);
+    await t.mutation(internal.sync.registerDeviceCore, { deviceId: "tablet-1", storeId });
+    await reportPending(t, storeId, "tablet-1", 0);
+    await t.run(async (ctx: any) => {
+      const state = await ctx.db
+        .query("deviceSyncStates")
+        .withIndex("by_store_device_stream", (q: any) =>
+          q.eq("storeId", storeId).eq("deviceId", "tablet-1"),
+        )
+        .first();
+      await ctx.db.patch(state._id, { updatedAt: Date.now() - 7 * 24 * 60 * 60 * 1000 });
+    });
+
+    await expect(
+      asUser.mutation(api.devices.retire, { deviceId: "tablet-1", storeId }),
+    ).rejects.toThrow(/Sync Now/i);
+  });
+
+  /**
+   * closing.retireDevice writes pendingCount 0 and status retired. Without the same permission it
+   * is a one-call way for anyone at the store to manufacture the evidence retirement gates on.
+   */
+  it("requires devices.manage to retire a device from reconciliation", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, asUser } = await setup(t, ["reports.daily"]);
+    await t.mutation(internal.sync.registerDeviceCore, { deviceId: "tablet-1", storeId });
+
+    await expect(
+      asUser.mutation(api.closing.retireDevice, {
+        storeId,
+        deviceId: "tablet-1",
+        reason: "swapped",
+      }),
+    ).rejects.toThrow(/devices.manage/);
+  });
+
   it("retires a Sync-Clean tablet, retains the row and writes one audit entry", async () => {
     const t = convexTest(schema, modules);
     const { storeId, asUser, userId } = await setup(t);

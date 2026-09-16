@@ -19,6 +19,7 @@ import com.pmgt.pos.auth.*
 import com.pmgt.pos.browse.*
 import com.pmgt.pos.catalog.LocalCatalogRepository
 import com.pmgt.pos.checkout.*
+import com.pmgt.pos.db.AndroidAdoptionReceipts
 import com.pmgt.pos.db.AndroidDatabase
 import com.pmgt.pos.db.DeviceIdentity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -72,6 +73,7 @@ class PosApplication : Application() {
             applicationScope,
             Dispatchers.IO,
             network.online,
+            receipts = AndroidAdoptionReceipts(this),
         )
     }
 

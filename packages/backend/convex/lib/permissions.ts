@@ -80,6 +80,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, Permission[]> = {
     "users.manage",
     "stores.view",
     "stores.manage",
+    "devices.manage",
   ],
   Manager: [
     "orders.create",
@@ -99,6 +100,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, Permission[]> = {
     "reports.print_eod",
     "users.view",
     "stores.view",
+    "devices.manage",
   ],
   Staff: [
     "orders.create",

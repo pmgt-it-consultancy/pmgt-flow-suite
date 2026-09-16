@@ -203,6 +203,9 @@ export const retireDevice = mutation({
   handler: async (ctx, args) => {
     const user = await getAuthenticatedUser(ctx);
     if (!user || user.storeId !== args.storeId) throw new Error("Authentication required");
+    // This writes pendingCount 0 and status retired, which is exactly the evidence Device
+    // Retirement gates on, so it needs the same authority rather than any signed-in user's.
+    await requirePermission(ctx, user._id, "devices.manage");
     const existing = await ctx.db
       .query("deviceSyncStates")
       .withIndex("by_store_device_stream", (q) =>
