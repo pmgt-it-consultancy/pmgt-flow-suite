@@ -149,6 +149,32 @@ class OrderEditorSessionTest {
     }
 
     @Test
+    fun prepareBillPersistsOnlyMetadataEditedInTheCurrentSession() = runTest {
+        database().use { db ->
+            val repo = LocalOrderRepository(db, UnconfinedTestDispatcher(testScheduler), { "d" })
+            val id = repo.createDraft("s")
+            repo.customer(id, name = "Alice", marker = "old")
+            val session =
+                OrderEditorSession(
+                    EditorRoute("s", orderId = id, takeout = true),
+                    repo,
+                    backgroundScope,
+                ) {}
+            session.loaded(repo.cart("s", id).first())
+
+            session.prepareBill()
+            assertEquals("Alice", db.get("orders", id)!!.string("customer_name"))
+            assertEquals("old", db.get("orders", id)!!.string("table_marker"))
+
+            session.customerText("")
+            session.markerText("")
+            session.prepareBill()
+            assertNull(db.get("orders", id)!!.string("customer_name"))
+            assertNull(db.get("orders", id)!!.string("table_marker"))
+        }
+    }
+
+    @Test
     fun rapidIncrementReadsLatestQueueQuantityWithoutWaitingForAComposeFrame() = runTest {
         database().use { db ->
             val repo = LocalOrderRepository(db, UnconfinedTestDispatcher(testScheduler), { "d" })
