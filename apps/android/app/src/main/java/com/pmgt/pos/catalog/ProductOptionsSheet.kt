@@ -1,5 +1,7 @@
 package com.pmgt.pos.catalog
 
+import com.pmgt.pos.posDialogProperties
+
 import android.view.WindowManager
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -22,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pmgt.pos.R
@@ -81,7 +82,7 @@ fun ProductOptionsSheet(
         Dialog(
             onDismissRequest = onClose,
             properties =
-                DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
+                posDialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
         ) {
             HideSystemBarsInDialog()
             val window = (LocalView.current.parent as? DialogWindowProvider)?.window
@@ -98,8 +99,6 @@ fun ProductOptionsSheet(
                 Box(
                     Modifier.fillMaxSize()
                         .background(Color.Black.copy(alpha = .5f))
-                        .clickable(onClick = onClose)
-                        .semantics { contentDescription = "Close product backdrop" }
                 )
                 Column(
                     Modifier.fillMaxWidth()

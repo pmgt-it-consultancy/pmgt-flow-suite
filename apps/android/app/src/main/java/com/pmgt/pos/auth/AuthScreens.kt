@@ -1,5 +1,7 @@
 package com.pmgt.pos.auth
 
+import com.pmgt.pos.posDialogProperties
+
 import com.pmgt.pos.browse.HideSystemBarsInDialog
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -30,7 +32,6 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pmgt.pos.BuildConfig
 import com.pmgt.pos.R
@@ -320,7 +321,8 @@ private fun LoginScreen(
     }
     alert?.let { a ->
         AlertDialog(
-            { alert = null },
+            properties = posDialogProperties(),
+            onDismissRequest = { alert = null },
             title = { Text(a.title) },
             text = { Text(a.message) },
             confirmButton = { TextButton({ alert = null }) { Text("OK") } },
@@ -541,7 +543,8 @@ private fun LockScreen(
         }
     alert?.let { a ->
         AlertDialog(
-            { alert = null },
+            properties = posDialogProperties(),
+            onDismissRequest = { alert = null },
             title = { Text(a.title) },
             text = { Text(a.message) },
             confirmButton = { TextButton({ alert = null }) { Text("OK") } },
@@ -690,9 +693,8 @@ private fun ManagerDialog(
     Dialog(
         onDismissRequest = close,
         properties =
-            DialogProperties(
+            posDialogProperties(
                 dismissOnBackPress = true,
-                dismissOnClickOutside = true,
                 usePlatformDefaultWidth = false,
                 decorFitsSystemWindows = false,
             ),
@@ -702,7 +704,6 @@ private fun ManagerDialog(
         Box(
             Modifier.fillMaxSize()
                 .background(Color.Black.copy(alpha = .5f))
-                .clickable { close() }
                 .windowInsetsPadding(WindowInsets.ime)
                 .verticalScroll(outerScroll)
                 .padding(horizontal = 16.dp),
@@ -809,7 +810,8 @@ private fun ManagerDialog(
     }
     alert?.let { a ->
         AlertDialog(
-            { alert = null },
+            properties = posDialogProperties(),
+            onDismissRequest = { alert = null },
             title = { Text(a.title) },
             text = { Text(a.message) },
             confirmButton = { TextButton({ alert = null }) { Text("OK") } },

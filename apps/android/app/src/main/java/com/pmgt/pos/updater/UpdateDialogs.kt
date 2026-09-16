@@ -1,5 +1,7 @@
 package com.pmgt.pos.updater
 
+import com.pmgt.pos.posDialogProperties
+
 import com.pmgt.pos.browse.HideSystemBarsInDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,7 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 
 /**
  * Ports RN `UpdateDialog.tsx`. The forced modal has no dismissal in the source and keeps none
@@ -26,7 +27,7 @@ import androidx.compose.ui.window.DialogProperties
 fun OptionalUpdateDialog(info: UpdateInfo, onGoToUpdates: () -> Unit, onDismiss: () -> Unit) {
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+        properties = posDialogProperties(usePlatformDefaultWidth = false),
     ) {
         HideSystemBarsInDialog()
         Column(
@@ -66,9 +67,8 @@ fun ForceUpdateModal(info: UpdateInfo, onGoToUpdates: () -> Unit) {
     Dialog(
         onDismissRequest = {},
         properties =
-            DialogProperties(
+            posDialogProperties(
                 dismissOnBackPress = false,
-                dismissOnClickOutside = false,
                 usePlatformDefaultWidth = false,
             ),
     ) {

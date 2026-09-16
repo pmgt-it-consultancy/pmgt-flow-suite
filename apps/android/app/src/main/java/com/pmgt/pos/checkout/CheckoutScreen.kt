@@ -1,5 +1,7 @@
 package com.pmgt.pos.checkout
 
+import com.pmgt.pos.posDialogProperties
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -319,6 +321,7 @@ fun CheckoutScreen(
     }
     if (state.removing != null)
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = session::cancelRemoval,
             title = { Text("Remove Discount") },
             text = { Text("Are you sure you want to remove this discount?") },
@@ -328,6 +331,7 @@ fun CheckoutScreen(
     state.alert?.let { alert ->
         key(alert.occurrence) {
             AlertDialog(
+                properties = posDialogProperties(),
                 onDismissRequest = session::dismissAlert,
                 title = { Text(alert.title) },
                 text = { Text(alert.message) },

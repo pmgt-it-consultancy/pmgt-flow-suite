@@ -1,5 +1,7 @@
 package com.pmgt.pos.closing
 
+import com.pmgt.pos.posDialogProperties
+
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.*
@@ -51,6 +53,7 @@ fun DayClosingScreen(
     val notice = state.notice
     if (notice != null) {
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = controller::consumeNotice,
             confirmButton = { TextButton(onClick = controller::consumeNotice) { Text("OK") } },
             title = { ClosingText(notice.title, 18, Gray900, FontWeight.SemiBold) },

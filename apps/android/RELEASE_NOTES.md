@@ -21,6 +21,7 @@
 
 - Keeps the POS in landscape on Android 16 tablets.
 - Requires a second back press within two seconds before leaving the till, preventing accidental exits.
+- Prevents outside taps from dismissing PIN prompts, confirmations, alerts, and other dialogs; use Back or an explicit action instead.
 - Keeps Refresh Report available during a Day Closing load so a new request can replace stale report generation.
 - Fixes product-sheet reloads, modifier input preservation, status indicators, home-card sizing, printer reconnects, PIN entry, manager unlock, logout recovery, and kiosk behavior.
 

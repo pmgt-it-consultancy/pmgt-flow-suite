@@ -1,5 +1,7 @@
 package com.pmgt.pos.browse
 
+import com.pmgt.pos.posDialogProperties
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.pmgt.pos.closing.DayClosingScreen
 import com.pmgt.pos.printer.settings.PrinterSettingsScreen
 import com.pmgt.pos.settings.AutoLockUpdateResult
@@ -662,9 +663,8 @@ fun PosBrowseRoot(
             Dialog(
                 onDismissRequest = {},
                 properties =
-                    DialogProperties(
+                    posDialogProperties(
                         dismissOnBackPress = false,
-                        dismissOnClickOutside = false,
                         usePlatformDefaultWidth = false,
                     ),
             ) {
@@ -740,6 +740,7 @@ fun PosBrowseRoot(
     }
     if (confirmRefresh && modules != null)
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { confirmRefresh = false },
             title = { Text("Refresh POS Data") },
             text = {
@@ -761,6 +762,7 @@ fun PosBrowseRoot(
         )
     refreshNotice?.let { notice ->
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { refreshNotice = null },
             title = { Text(notice.first) },
             text = { Text(notice.second) },
@@ -769,6 +771,7 @@ fun PosBrowseRoot(
     }
     if (unavailable)
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { unavailable = false },
             title = { Text("Unavailable") },
             text = { Text("This action is not available in this build yet.") },
@@ -776,6 +779,7 @@ fun PosBrowseRoot(
         )
     if (receiptUnavailable)
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = {},
             title = { Text("Unavailable") },
             text = { Text("Receipt printing is not available in this build yet.") },
@@ -800,6 +804,7 @@ fun PosBrowseRoot(
             recoveryDecisions++
         }
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = ::later,
             title = { Text("Saved checkout") },
             text = {
@@ -835,6 +840,7 @@ fun PosBrowseRoot(
     }
     actionError?.let { message ->
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { actionError = null },
             title = { Text("Error") },
             text = { Text(message) },
