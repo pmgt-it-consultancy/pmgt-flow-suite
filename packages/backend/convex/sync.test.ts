@@ -1171,6 +1171,68 @@ describe("sync push", () => {
     expect(auditLog?.userId).toBe(managerId);
   });
 
+  it("accepts legacy Android order voids as full-order voids", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupSyncTestData(t);
+    const now = Date.now();
+
+    await t.run(async (ctx: any) =>
+      ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "T-I001",
+        orderType: "takeout",
+        status: "voided",
+        grossSales: 500,
+        vatableSales: 446.43,
+        vatAmount: 53.57,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 500,
+        createdBy: userId,
+        createdAt: now,
+        updatedAt: now,
+        clientId: "legacy-void-order-client-id",
+        originDeviceId: "tablet-i",
+      }),
+    );
+
+    const response = await t.withIdentity({ subject: userId }).fetch("/sync/push", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-device-id": "tablet-i",
+      },
+      body: JSON.stringify({
+        lastPulledAt: now,
+        clientMutationId: "legacy-order-void-push",
+        changes: {
+          orderVoids: {
+            created: [
+              {
+                id: "legacy-order-void-client-id",
+                orderId: "legacy-void-order-client-id",
+                voidType: "order",
+                reason: "Order cancelled by cashier",
+                approvedBy: "",
+                requestedBy: "",
+                amount: 500,
+                createdAt: now + 1,
+              },
+            ],
+            updated: [],
+          },
+        },
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ success: true });
+    const voidRecord = await t.run(async (ctx: any) => ctx.db.query("orderVoids").first());
+    expect(voidRecord?.voidType).toBe("full_order");
+    expect(voidRecord?.clientId).toBe("legacy-order-void-client-id");
+  });
+
   it("reassigns duplicate incoming order numbers using the device code", async () => {
     const t = convexTest(schema, modules);
     const { storeId, userId } = await setupSyncTestData(t);

@@ -159,6 +159,19 @@ class OrderRepositoryTest {
     }
 
     @Test
+    fun cancelRecordsCanonicalFullOrderVoid() = runBlocking {
+        database().use { db ->
+            val repo = LocalOrderRepository(db, Dispatchers.Unconfined, { "d" })
+            val orderId = repo.createOrder(NewOrder("s"))
+
+            repo.cancel(orderId)
+
+            assertEquals("voided", db.get("orders", orderId)?.string("status"))
+            assertEquals("full_order", db.select("order_voids").single().string("void_type"))
+        }
+    }
+
+    @Test
     fun firstSendRetainsCommittedIdentityOnRecalcFailureAndRetryUsesExistingSnapshots() =
         runBlocking {
             database().use { db ->

@@ -220,7 +220,7 @@ object OrderDatabaseContract {
         assertEquals("voided", db.get("orders", order)!!.string("status"))
         assertEquals("occupied", db.get("tables", "t")!!.string("status"))
         val cancellation = db.select("order_voids", "order_id = ?", listOf(order)).single()
-        assertEquals("order", cancellation.string("void_type"))
+        assertEquals("full_order", cancellation.string("void_type"))
         assertEquals("Order cancelled by cashier", cancellation.string("reason"))
         assertEquals("", cancellation.string("approved_by"))
         assertEquals("", cancellation.string("requested_by"))

@@ -86,7 +86,7 @@ class LocalOrderRepository(
                         fields(
                             "id" to voidId,
                             "order_id" to orderId,
-                            "void_type" to "order",
+                            "void_type" to "full_order",
                             "reason" to "Order cancelled by cashier",
                             "approved_by" to "",
                             "requested_by" to "",
@@ -114,7 +114,7 @@ class LocalOrderRepository(
                         order.string("table_id").takeUnless { it.isNullOrEmpty() } ==
                             commit.tableId &&
                         evidence.string("order_id") == commit.orderId &&
-                        evidence.string("void_type") == "order" &&
+                        evidence.string("void_type") == "full_order" &&
                         evidence.string("reason") == "Order cancelled by cashier" &&
                         evidence.string("approved_by").isNullOrEmpty() &&
                         evidence.string("requested_by").isNullOrEmpty()

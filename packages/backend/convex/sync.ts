@@ -1190,6 +1190,7 @@ async function applyPushedRow({
     }
     case "orderVoids": {
       if (existing) return; // append-only
+      const voidType = row.voidType === "order" ? "full_order" : row.voidType;
       const orderId = (await resolveFk("orders", row.orderId as string | undefined)) as
         | Id<"orders">
         | undefined;
@@ -1204,7 +1205,7 @@ async function applyPushedRow({
       await ctx.db.insert("orderVoids", {
         orderId,
         storeId,
-        voidType: row.voidType as Doc<"orderVoids">["voidType"],
+        voidType: voidType as Doc<"orderVoids">["voidType"],
         orderItemId,
         reason: row.reason as string,
         approvedBy: await resolveActorId(resolveFk, row.approvedBy, userId),
