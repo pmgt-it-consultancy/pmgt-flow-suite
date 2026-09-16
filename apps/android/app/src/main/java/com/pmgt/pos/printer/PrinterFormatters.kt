@@ -95,7 +95,6 @@ object ReceiptFormatter {
         text("${row("Vatable Sales", currency(document.vatableSales), charsPerLine)}\n")
         text("${row("VAT 12%", currency(document.vatAmount), charsPerLine)}\n")
         text("${row("VAT-Exempt", currency(document.vatExemptSales), charsPerLine)}\n")
-
         if (document.discounts.isNotEmpty()) {
             text("\n")
             text("${line('-', charsPerLine)}\n")
@@ -231,6 +230,7 @@ object BillFormatter {
         text("${row("Vatable Sales", currency(document.vatableSales), charsPerLine)}\n")
         text("${row("VAT 12%", currency(document.vatAmount), charsPerLine)}\n")
         text("${row("VAT-Exempt", currency(document.vatExemptSales), charsPerLine)}\n")
+        text("${row("Non-VAT Sales", currency(document.nonVatSales), charsPerLine)}\n")
 
         if (document.discounts.isNotEmpty()) {
             text("\n")

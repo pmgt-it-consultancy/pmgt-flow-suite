@@ -37,6 +37,7 @@ class BillMappingTest {
         assertEquals("Extra rice", bill.items.single().modifiers.single().optionName)
         assertEquals(1, bill.discounts.size)
         assertEquals(DiscountType.CUSTOM, bill.discounts.single().type)
+        assertEquals(0.0, bill.nonVatSales, 0.0)
         assertEquals(350.0, bill.total, 0.0)
     }
 
@@ -80,7 +81,7 @@ class BillMappingTest {
             OrderCart(
                 id = "order-1",
                 storeId = "store-1",
-                orderType = "take_out",
+                orderType = "takeout",
                 status = "draft",
                 orderNumber = "T-0042",
                 tableId = null,

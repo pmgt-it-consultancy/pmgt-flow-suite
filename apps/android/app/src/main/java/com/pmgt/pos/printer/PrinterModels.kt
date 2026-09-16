@@ -67,6 +67,7 @@ data class BillDocument(
     val vatableSales: Double,
     val vatAmount: Double,
     val vatExemptSales: Double,
+    val nonVatSales: Double,
     val total: Double,
     val orderDefaultServiceType: ServiceType? = null,
     val printedAt: LocalDateTime,

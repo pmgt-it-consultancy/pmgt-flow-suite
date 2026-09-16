@@ -385,7 +385,7 @@ internal fun EntryCart(
                 Spacer(Modifier.height(10.dp))
             }
             if (takeout || (!state.draftMode && state.count > 0)) {
-                if (takeout) {
+                if (takeout && state.lines.isNotEmpty()) {
                     EntryButton(
                         "View Bill",
                         onBill,
@@ -393,6 +393,7 @@ internal fun EntryCart(
                         Color.White,
                         BrowseColors.Brand,
                         glyph = Glyph.Receipt,
+                        enabled = !sending && "checkout" !in state.busy,
                         outline = true,
                         borderColor = BrowseColors.Brand,
                         fontSize = 16,

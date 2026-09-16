@@ -31,7 +31,7 @@
 - Consumes: `CheckoutView`, `OrderCart`, `CheckoutDiscount`, and existing printer item/discount/service enums.
 - Produces: `BillDocument`; `CheckoutView.toBill(cashierName: String, printedAt: LocalDateTime): BillDocument`; `BillFormatter.format(document: BillDocument, charsPerLine: Int): List<PrinterCall>`.
 
-- [ ] **Step 1: Write failing formatter and mapping tests**
+- [x] **Step 1: Write failing formatter and mapping tests**
 
 Create representative tests that build an open order with a modifier, discount, tax totals, store metadata, table marker, and cashier. Assert that mapping preserves those values. Flatten `PrinterCall.Text.text` from the formatted output and assert it contains `BILL`, order/item/tax/total content, and does not contain `Receipt #:`, `Payment Method`, `Amount Tendered`, `Change`, `Card`, or `Ref #`.
 
@@ -47,7 +47,7 @@ assertFalse(output.contains("Change"))
 assertFalse(output.contains("Receipt #:"))
 ```
 
-- [ ] **Step 2: Run the focused tests and verify red**
+- [x] **Step 2: Run the focused tests and verify red**
 
 Run:
 
@@ -58,7 +58,7 @@ cd apps/android
 
 Expected: compilation fails because `BillDocument`, `BillFormatter`, and `toBill` do not exist.
 
-- [ ] **Step 3: Add the immutable bill model and mapper**
+- [x] **Step 3: Add the immutable bill model and mapper**
 
 Add `BillDocument` with store identity/contact/footer, order identity/type/category/table/marker/pax, cashier, non-voided items, discounts, totals, default service type, and print time. Implement:
 
@@ -71,7 +71,7 @@ fun CheckoutView.toBill(
 
 Map only the captured local `CheckoutView`; do not query or mutate data inside the mapper.
 
-- [ ] **Step 4: Add the dedicated pure formatter**
+- [x] **Step 4: Add the dedicated pure formatter**
 
 Implement:
 
@@ -83,11 +83,11 @@ object BillFormatter {
 
 Format store metadata, centered `BILL`, order metadata, non-voided items and modifiers, discounts, tax breakdown, total, non-official footer, feed, and cut. Do not add any payment or receipt-number branch.
 
-- [ ] **Step 5: Run focused tests and verify green**
+- [x] **Step 5: Run focused tests and verify green**
 
 Run the Step 2 command. Expected: both test classes pass.
 
-- [ ] **Step 6: Compile Kotlin production and test sources**
+- [x] **Step 6: Compile Kotlin production and test sources**
 
 Run:
 
@@ -111,7 +111,7 @@ Expected: build succeeds.
 - Consumes: `BillFormatter.format`, `CheckoutView.toBill`, `PrinterSettingsController` state/transport, `OrderEditorScreen`'s existing coroutine error wrapper.
 - Produces: `PrinterSettingsController.printBill(document: BillDocument)` and `OrderEditorScreen(..., printBill: suspend (String) -> Unit = ...)`.
 
-- [ ] **Step 1: Write the failing Compose interaction test**
+- [x] **Step 1: Write the failing Compose interaction test**
 
 Extend the real-editor Compose test with injected counters:
 
@@ -131,7 +131,7 @@ OrderEditorScreen(
 
 Use a persisted takeout draft containing an item. Assert the vertical bounds place `View Bill` above `Proceed to Payment`; open the modal; tap `Print Bill`; wait for `billPrints == 1`; assert `checkoutCalls == 0` and the order remains open/draft.
 
-- [ ] **Step 2: Run the focused connected test and verify red**
+- [x] **Step 2: Run the focused connected test and verify red**
 
 Run:
 
@@ -142,17 +142,17 @@ cd apps/android
 
 Expected: compilation fails because the print boundary and button do not exist.
 
-- [ ] **Step 3: Add receipt-printer bill support**
+- [x] **Step 3: Add receipt-printer bill support**
 
 Implement `PrinterSettingsController.printBill(document)` by selecting the receipt printer, connecting with the same surfaced failures as `printReceipt`, formatting with `BillFormatter` and the selected paper width, and writing exactly one document. Do not consult the minimal-receipt toggle because the bill format must retain its `BILL` heading and totals.
 
-- [ ] **Step 4: Add the takeout View Bill and modal Print Bill actions**
+- [x] **Step 4: Add the takeout View Bill and modal Print Bill actions**
 
 Add a full-width outlined `View Bill` action immediately before the takeout `Proceed to Payment` action. Preserve the existing dine-in placement. Extend `EntryBill` with `printing: Boolean` and `onPrint: () -> Unit`; add a full-width primary button labeled `Print Bill` or `Printing...`; disable it while printing.
 
 In `OrderEditorScreen`, inject the suspending print function and call it through the existing `run("Unable to print bill")` wrapper. Set and clear screen-owned in-flight state in `try/finally`, leave the modal open, and block repeat taps.
 
-- [ ] **Step 5: Wire the latest local snapshot in PosBrowseRoot**
+- [x] **Step 5: Wire the latest local snapshot in PosBrowseRoot**
 
 Pass a lambda that:
 
@@ -166,11 +166,11 @@ printerModules.printers.printBill(view.toBill(user.name, LocalDateTime.now()))
 
 This read-only path must not call `settle`, drawer operations, audit logging, or any order mutation.
 
-- [ ] **Step 6: Run the focused UI test and verify green**
+- [x] **Step 6: Run the focused UI test and verify green**
 
 Run the Step 2 command. Expected: `OrderDialogUiTest` passes on the connected emulator/device.
 
-- [ ] **Step 7: Re-run Kotlin compilation and focused unit tests**
+- [x] **Step 7: Re-run Kotlin compilation and focused unit tests**
 
 Run:
 
@@ -191,7 +191,7 @@ Expected: build and tests succeed.
 - Consumes: complete working tree diff against design commit `cecdf51`.
 - Produces: verified and reviewed implementation commit on the current branch.
 
-- [ ] **Step 1: Run formatting and static checks**
+- [x] **Step 1: Run formatting and static checks**
 
 Run:
 
@@ -202,7 +202,7 @@ cd apps/android && ./gradlew lintDebug
 
 Expected: both commands succeed; if repository-wide unrelated failures exist, record exact evidence and run the narrowest relevant checks.
 
-- [ ] **Step 2: Run the full Android unit suite once**
+- [x] **Step 2: Run the full Android unit suite once**
 
 Run:
 
@@ -213,11 +213,11 @@ cd apps/android
 
 Expected: all Android JVM unit tests pass.
 
-- [ ] **Step 3: Review the implementation on both required axes**
+- [x] **Step 3: Review the implementation on both required axes**
 
-Use fixed point `cecdf51` and diff command `git diff cecdf51...HEAD` after creating a temporary implementation commit, or `git diff cecdf51` before it. Run the repository-standards review and approved-spec review separately, fix all material findings, and repeat relevant checks.
+Use fixed point `d3f5589` and diff command `git diff d3f5589...HEAD` after creating a temporary implementation commit, or `git diff d3f5589` before it. Run the repository-standards review and approved-spec review separately, fix all material findings, and repeat relevant checks.
 
-- [ ] **Step 4: Inspect scope and whitespace**
+- [x] **Step 4: Inspect scope and whitespace**
 
 Run:
 
@@ -229,7 +229,7 @@ git diff --stat cecdf51
 
 Expected: only the plan and Kotlin bill feature/test files are changed; `.drift/` remains untracked and uncommitted; no whitespace errors.
 
-- [ ] **Step 5: Commit the implementation**
+- [x] **Step 5: Commit the implementation**
 
 Run:
 

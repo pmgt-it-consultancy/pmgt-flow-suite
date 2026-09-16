@@ -329,6 +329,7 @@ class OrderEditorUiWorkflowTest {
         compose.waitUntil(5000) {
             compose.onAllNodesWithTag("customer-name").fetchSemanticsNodes().isNotEmpty()
         }
+        compose.onNodeWithText("View Bill").assertDoesNotExist()
         compose.onNodeWithTag("customer-name").assertTextEquals("Ana")
         compose
             .onNodeWithTag("table-marker")
