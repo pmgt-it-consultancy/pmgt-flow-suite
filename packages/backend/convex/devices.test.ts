@@ -127,6 +127,29 @@ describe("Device Retirement", () => {
     ).rejects.toThrow(/Sync Now/i);
   });
 
+  /** Freshness is read from the oldest stream, since pendingCount is summed across all of them. */
+  it("refuses when any one stream's evidence is stale", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, asUser } = await setup(t);
+    await t.mutation(internal.sync.registerDeviceCore, { deviceId: "tablet-1", storeId });
+    await reportPending(t, storeId, "tablet-1", 0);
+    await t.run(async (ctx: any) =>
+      ctx.db.insert("deviceSyncStates", {
+        storeId,
+        deviceId: "tablet-1",
+        stream: "payments",
+        generation: "g1",
+        pendingCount: 0,
+        status: "active",
+        updatedAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
+      }),
+    );
+
+    await expect(
+      asUser.mutation(api.devices.retire, { deviceId: "tablet-1", storeId }),
+    ).rejects.toThrow(/Sync Now/i);
+  });
+
   /**
    * closing.retireDevice writes pendingCount 0 and status retired. Without the same permission it
    * is a one-call way for anyone at the store to manufacture the evidence retirement gates on.
@@ -275,5 +298,39 @@ describe("Device Commissioning", () => {
       storeId: storeB,
     });
     expect(result.deviceCode).toBeTruthy();
+  });
+});
+
+describe("devices.manage backfill", () => {
+  it("grants devices.manage to roles that can already manage a store, and is idempotent", async () => {
+    const t = convexTest(schema, modules);
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("roles", {
+        name: "Legacy Admin",
+        permissions: ["stores.manage", "reports.daily"],
+        scopeLevel: "branch",
+        isSystem: false,
+      });
+      await ctx.db.insert("roles", {
+        name: "Cashier",
+        permissions: ["orders.create"],
+        scopeLevel: "branch",
+        isSystem: false,
+      });
+    });
+
+    expect((await t.mutation(internal.devices.planDeviceManagementBackfill, {})).roles).toEqual([
+      "Legacy Admin",
+    ]);
+    expect(await t.mutation(internal.devices.backfillDeviceManagement, {})).toEqual({ updated: 1 });
+    expect(await t.mutation(internal.devices.backfillDeviceManagement, {})).toEqual({ updated: 0 });
+
+    const roles = await t.run(async (ctx: any) => ctx.db.query("roles").collect());
+    expect(roles.find((r: any) => r.name === "Legacy Admin").permissions).toContain(
+      "devices.manage",
+    );
+    expect(roles.find((r: any) => r.name === "Cashier").permissions).not.toContain(
+      "devices.manage",
+    );
   });
 });

@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
-import { type MutationCtx, mutation } from "./_generated/server";
+import { internalMutation, type MutationCtx, mutation } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
 import { activeDeviceBinding } from "./lib/deviceBinding";
 import { requirePermission } from "./lib/permissions";
@@ -90,7 +90,9 @@ export const retire = mutation({
         `This tablet still has ${pending} record(s) waiting to sync. Clear them before retiring it.`,
       );
     }
-    const reportedAt = Math.max(...states.map((state) => state.updatedAt));
+    // One row per stream, and pendingCount is summed across them, so freshness has to be read the
+    // same way: the oldest stream's evidence is what the whole tablet can be trusted to.
+    const reportedAt = Math.min(...states.map((state) => state.updatedAt));
     if (Date.now() - reportedAt > SYNC_CLEAN_EVIDENCE_WINDOW_MS) {
       throw new Error(
         "This tablet last reported that it was Sync-Clean too long ago to rely on. " +
@@ -157,5 +159,47 @@ export const commission = mutation({
       `Commissioned device ${deviceCode} to store ${args.storeId}`,
     );
     return { deviceCode };
+  },
+});
+
+/**
+ * One-shot migration. DEFAULT_ROLE_PERMISSIONS is only read when seeding, so roles already in the
+ * database do not gain devices.manage on deploy — and closing.retireDevice now requires it, so a
+ * manager retiring a lost tablet would start failing at day closing. Grants it to every role that
+ * can already manage a store, which is the same authority this permission was split out of.
+ *
+ * Dry run:  npx convex run devices:planDeviceManagementBackfill
+ * Apply:    npx convex run devices:backfillDeviceManagement
+ * Add --prod to either when running against production.
+ */
+const CAN_MANAGE_STORES = "stores.manage" as const;
+
+export const planDeviceManagementBackfill = internalMutation({
+  args: {},
+  returns: v.object({ roles: v.array(v.string()) }),
+  handler: async (ctx) => {
+    const roles = await ctx.db.query("roles").collect();
+    return {
+      roles: roles
+        .filter((role) => role.permissions.includes(CAN_MANAGE_STORES))
+        .filter((role) => !role.permissions.includes("devices.manage"))
+        .map((role) => role.name),
+    };
+  },
+});
+
+export const backfillDeviceManagement = internalMutation({
+  args: {},
+  returns: v.object({ updated: v.number() }),
+  handler: async (ctx) => {
+    const roles = await ctx.db.query("roles").collect();
+    let updated = 0;
+    for (const role of roles) {
+      if (!role.permissions.includes(CAN_MANAGE_STORES)) continue;
+      if (role.permissions.includes("devices.manage")) continue;
+      await ctx.db.patch(role._id, { permissions: [...role.permissions, "devices.manage"] });
+      updated += 1;
+    }
+    return { updated };
   },
 });

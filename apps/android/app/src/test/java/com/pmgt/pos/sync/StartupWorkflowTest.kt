@@ -443,7 +443,7 @@ class StartupWorkflowTest {
     @Test fun aVerifiedStoreSpotChecksInsteadOfRepagingTheWholeReplica() = runBlocking {
         val db = database()
         repeat(40) { index -> seed(db, id = "local-$index", server = "server-$index") }
-        val receipts = InMemoryAdoptionReceipts()
+        val evidence = InMemoryAdoptionEvidence()
         val pulled = (0 until 40).joinToString(",") {
             """{"id":"local-$it","server_id":"server-$it","storeId":"store"}"""
         }
@@ -471,7 +471,7 @@ class StartupWorkflowTest {
             val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
             fun startup() = TabletStartup(
                 { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
-                scope, Dispatchers.IO, MutableStateFlow(true), receipts = receipts,
+                scope, Dispatchers.IO, MutableStateFlow(true), evidence = evidence,
             )
             try {
                 val first = startup()
@@ -492,13 +492,75 @@ class StartupWorkflowTest {
     }
 
     /**
+     * An empty replica verifies trivially, so recording that as "this store passed the sweep" would
+     * let the first real pull land behind evidence that was never earned. The sweep must actually
+     * have run against references before it counts.
+     */
+    @Test fun aTriviallyEmptyReplicaDoesNotCountAsAVerifiedStore() = runBlocking {
+        val db = database()
+        val evidence = InMemoryAdoptionEvidence()
+        MockWebServer().use { server ->
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest) =
+                    if (request.path == "/sync/registerDevice") MockResponse().setBody("""{"deviceCode":"07"}""")
+                    else MockResponse().setBody(emptyPage)
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup(
+                { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
+                scope, Dispatchers.IO, MutableStateFlow(true), evidence = evidence,
+            )
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+                assertNull("an empty replica has not earned a sweep", evidence.read())
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    /**
+     * References arrive in rowid order, so the tail is the newest orders. A sample that always stops
+     * short of it would let a corrupted newest reference escape on every launch, forever.
+     */
+    @Test fun theSpotCheckAlwaysReachesTheNewestReference() = runBlocking {
+        val db = database()
+        repeat(40) { index -> seed(db, id = "local-$index", server = "server-$index") }
+        val evidence = InMemoryAdoptionEvidence()
+        evidence.write(AdoptionEvidence("store", "test-device"))
+        MockWebServer().use { server ->
+            val asked = CopyOnWriteArrayList<String>()
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    if (request.path != "/api/query") return MockResponse().setBody(emptyPage)
+                    val id = Json.parseToJsonElement(request.body.clone().readUtf8())
+                        .jsonObject["args"]!!.jsonObject["orderId"]!!.jsonPrimitive.content
+                    asked += id
+                    return success("""{"_id":"$id","storeId":"store"}""")
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup(
+                { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
+                scope, Dispatchers.IO, MutableStateFlow(true), evidence = evidence,
+            )
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+                assertTrue("the newest reference must be checked, saw $asked", asked.contains("server-39"))
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    /**
      * The spot check is an optimisation. If the lookup it relies on errors — as orders:get does
      * against some real data — adoption must fall back to the full sweep, not strand the till.
      */
     @Test fun aFailingSpotCheckFallsBackToTheFullSweep() = runBlocking {
         val db = database(); seed(db)
-        val receipts = InMemoryAdoptionReceipts()
-        receipts.write(AdoptionReceipt("store", "test-device"))
+        val evidence = InMemoryAdoptionEvidence()
+        evidence.write(AdoptionEvidence("store", "test-device"))
         MockWebServer().use { server ->
             val paths = CopyOnWriteArrayList<String>()
             server.dispatcher = object : Dispatcher() {
@@ -518,7 +580,7 @@ class StartupWorkflowTest {
             val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
             val startup = TabletStartup(
                 { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
-                scope, Dispatchers.IO, MutableStateFlow(true), receipts = receipts,
+                scope, Dispatchers.IO, MutableStateFlow(true), evidence = evidence,
             )
             try {
                 assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
@@ -532,8 +594,8 @@ class StartupWorkflowTest {
     @Test fun aSpotCheckStillBlocksWhenTheServerHasLostAnOrder() = runBlocking {
         val db = database()
         repeat(40) { index -> seed(db, id = "local-$index", server = "server-$index") }
-        val receipts = InMemoryAdoptionReceipts()
-        receipts.write(AdoptionReceipt("store", "test-device"))
+        val evidence = InMemoryAdoptionEvidence()
+        evidence.write(AdoptionEvidence("store", "test-device"))
         MockWebServer().use { server ->
             server.dispatcher = object : Dispatcher() {
                 override fun dispatch(request: RecordedRequest) =
@@ -543,7 +605,7 @@ class StartupWorkflowTest {
             val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
             val startup = TabletStartup(
                 { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
-                scope, Dispatchers.IO, MutableStateFlow(true), receipts = receipts,
+                scope, Dispatchers.IO, MutableStateFlow(true), evidence = evidence,
             )
             try {
                 assertTrue(startup.adopt("user", "store") is AdoptionState.Blocked)

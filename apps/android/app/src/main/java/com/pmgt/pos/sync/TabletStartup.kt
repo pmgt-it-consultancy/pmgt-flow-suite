@@ -36,11 +36,12 @@ class TabletStartup(
     private val online: StateFlow<Boolean>,
     /** Backoff between automatic attempts; the last entry is the cap. */
     private val retryDelays: List<Long> = listOf(5_000, 10_000, 20_000, 40_000, 60_000),
-    private val receipts: AdoptionReceipts = InMemoryAdoptionReceipts(),
+    private val evidence: AdoptionEvidenceStore = InMemoryAdoptionEvidence(),
 ) {
     private val monitor = Any()
     private val adoptionMutex = Mutex()
     private val retryMutex = Mutex()
+    @Volatile private var sweptStoreId: String? = null
     @Volatile private var generation = 0L
     private var storage: AdoptedStorage? = null
     private var binding: Job? = null
@@ -73,6 +74,7 @@ class TabletStartup(
     suspend fun adopt(userId: String, storeId: String): AdoptionState = adoptionMutex.withLock {
         val epoch = synchronized(monitor) {
             stop()
+            sweptStoreId = null
             current.value = TabletStartupState(userId, storeId, verifying = true)
             generation
         }
@@ -98,7 +100,9 @@ class TabletStartup(
                     Telemetry.event("adoption_foreign_store", "store_id" to storeId, "local_store_id" to result.localStoreId)
                 current.value = TabletStartupState(userId, storeId, result)
                 if (result is AdoptionState.Ready) {
-                    receipts.write(AdoptionReceipt(storeId, adopted.deviceId))
+                    // An empty replica verifies trivially; recording that would let the first
+                    // real pull land behind evidence the sweep never earned.
+                    if (sweptStoreId == storeId) evidence.write(AdoptionEvidence(storeId, adopted.deviceId))
                     SyncManager(adopted.database, http, adopted.deviceId, scope, io, online,
                         sessionIsCurrent = { isCurrent(epoch, userId, storeId) },
                         onBlocked = { message ->
@@ -189,8 +193,6 @@ class TabletStartup(
         }
     }
 
-    private fun storageDeviceId(): String? = synchronized(monitor) { storage?.deviceId }
-
     /**
      * The full sweep pages the entire orders table back with no cursor to resolve every reference —
      * 104 seconds on a real store, paid on every launch. It is a one-time integrity gate, so once a
@@ -200,11 +202,14 @@ class TabletStartup(
      * different dataset, which is what the gate exists for, at a cost a till can pay while a queue
      * is waiting. A reference the sample does not reach is left to sync to reconcile.
      */
-    private suspend fun spotCheck(references: List<ServerReference>, storeId: String): ServerReferenceVerification {
+    private suspend fun spotCheck(references: List<ServerReference>, storeId: String): ServerReferenceVerification? {
         val live = references.filter { it.table == "orders" && it.localStatus != "deleted" }
-        if (live.isEmpty()) return ServerReferenceVerification.Verified
-        val step = maxOf(1, live.size / SPOT_CHECK_SAMPLE)
-        val sample = live.filterIndexed { index, _ -> index % step == 0 }.take(SPOT_CHECK_SAMPLE)
+        // Nothing live to sample is not evidence of anything: let the caller run the full sweep.
+        if (live.isEmpty()) return null
+        // References arrive in rowid order, so the tail is the newest and always worth checking.
+        // The rest are drawn fresh each launch, so repeated launches accumulate coverage rather
+        // than re-checking one fixed set and letting the same rows escape forever.
+        val sample = (listOf(live.last()) + live.shuffled().take(SPOT_CHECK_SAMPLE - 1)).distinct()
         for (reference in sample) {
             currentCoroutineContext().ensureActive()
             val result = http.query("orders:get", buildJsonObject { put("orderId", reference.serverId) })
@@ -245,8 +250,8 @@ class TabletStartup(
     private suspend fun verifyReferences(references: List<ServerReference>, storeId: String): ServerReferenceVerification {
         if (references.isEmpty()) return ServerReferenceVerification.Verified
         if (!online.value) return ServerReferenceVerification.Unavailable
-        val deviceId = storageDeviceId()
-        if (deviceId != null && receipts.read() == AdoptionReceipt(storeId, deviceId)) {
+        val tablet = deviceId
+        if (tablet != null && evidence.read() == AdoptionEvidence(storeId, tablet)) {
             // The spot check is an optimisation, never a new way to fail. A Missing verdict is real
             // evidence and is returned; anything else falls through to the full sweep, so the worst
             // case is the behaviour we already had rather than a till that cannot open.
@@ -278,6 +283,9 @@ class TabletStartup(
             ordersExhausted = page.cursors["orders"]?.isDone == true
             yield()
         } while (unresolvedOrders.isNotEmpty() && !ordersExhausted && !page.complete)
+        // Past this point the sweep has genuinely run against real references, which is what the
+        // evidence written after a Ready result attests to.
+        sweptStoreId = storeId
         for ((serverId, sameServer) in unresolvedOrders.groupBy { it.serverId }) {
             val result = http.query("orders:get", buildJsonObject { put("orderId", serverId) })
             if (result == JsonNull) {
