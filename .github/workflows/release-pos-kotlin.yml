@@ -142,4 +142,5 @@ jobs:
           tag_name: kotlin-v${{ steps.version.outputs.version }}-${{ steps.variant.outputs.name }}
           name: POS Kotlin ${{ steps.version.outputs.version }} (${{ steps.variant.outputs.name }})
           prerelease: ${{ steps.variant.outputs.prerelease }}
+          body_path: apps/android/RELEASE_NOTES.md
           files: ${{ steps.apk.outputs.path }}

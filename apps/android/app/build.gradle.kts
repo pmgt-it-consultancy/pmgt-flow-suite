@@ -32,10 +32,10 @@ android {
         applicationId = "com.pmgt.pos"
         minSdk = 26
         targetSdk = 36
-        // Own version line, starting at 1.0.0. versionCode is MMmmpp so 1.0.0 -> 10000.
-        versionCode = 10000
-        versionName = "1.0.0"
-        buildConfigField("String", "UPDATE_VERSION", "\"1.0.0\"")
+        // Own version line. versionCode is MMmmpp, so 1.1.0 -> 10100.
+        versionCode = 10100
+        versionName = "1.1.0"
+        buildConfigField("String", "UPDATE_VERSION", "\"1.1.0\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     // Telemetry writes to logcat on every caught failure, so host tests need android.util.Log to
