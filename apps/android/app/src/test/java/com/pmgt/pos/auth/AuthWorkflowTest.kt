@@ -21,6 +21,56 @@ class AuthWorkflowTest {
         return "${encoder.encodeToString("{}".toByteArray())}.${encoder.encodeToString("""{"exp":$expirySeconds}""".toByteArray())}.signature"
     }
 
+    /**
+     * A till that is already signed in must never flash the login form on a cold start. Until
+     * restore has decided, "no user yet" is not the same as "signed out", and only the repository
+     * can tell them apart.
+     */
+    @Test
+    fun `session is undecided until restore finishes`() = runTest {
+        MockWebServer().use { server ->
+            val storage = MemorySessionStorage().apply { write(SessionTokens("access", "refresh")) }
+            val auth = AuthRepository(ConvexHttp(server.url("/").toString()), storage)
+            assertFalse("a fresh repository has not decided yet", auth.state.value.restored)
+            server.success("""{"_id":"cashier","name":"Cashier","role":null}""")
+            auth.restore()
+            assertTrue(auth.state.value.restored)
+            assertEquals("cashier", auth.state.value.user?.id)
+        }
+    }
+
+    @Test
+    fun `restore decides even when there is no stored session`() = runTest {
+        MockWebServer().use { server ->
+            val auth = AuthRepository(ConvexHttp(server.url("/").toString()), MemorySessionStorage())
+            auth.restore()
+            assertTrue(auth.state.value.restored)
+            assertNull(auth.state.value.user)
+        }
+    }
+
+    @Test
+    fun `restore decides even when the server cannot be reached`() = runTest {
+        MockWebServer().use { server ->
+            val storage = MemorySessionStorage().apply { write(SessionTokens("access", "refresh")) }
+            server.enqueue(MockResponse().setResponseCode(503))
+            val auth = AuthRepository(ConvexHttp(server.url("/").toString()), storage)
+            auth.restore()
+            assertTrue("an unreachable server must not leave the till on a splash", auth.state.value.restored)
+        }
+    }
+
+    @Test
+    fun `signing in never returns the till to the undecided state`() = runTest {
+        MockWebServer().use { server ->
+            val auth = AuthRepository(ConvexHttp(server.url("/").toString()), MemorySessionStorage())
+            auth.restore()
+            server.enqueue(MockResponse().setResponseCode(401))
+            runCatching { auth.signIn("cashier@test.com", "wrong") }
+            assertTrue("a failed sign-in stays on the login form", auth.state.value.restored)
+        }
+    }
+
     @Test
     fun `server revoked session returns to login`() = runTest {
         MockWebServer().use { server ->

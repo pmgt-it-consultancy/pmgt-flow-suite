@@ -34,6 +34,12 @@ data class AuthState(
     val user: SignedInUser? = null,
     val loading: Boolean = false,
     val error: String? = null,
+    /**
+     * False only before restore has decided. A till that is already signed in must not flash the
+     * login form on a cold start, and "no user yet" cannot be told apart from "signed out" without
+     * this: both leave [user] null.
+     */
+    val restored: Boolean = false,
 ) {
     val isAuthenticated
         get() = user != null
@@ -67,7 +73,7 @@ class AuthRepository(
         state.value.user?.role?.permissions?.contains(permission) == true
 
     suspend fun signIn(email: String, password: String) {
-        mutableState.value = AuthState(loading = true)
+        mutableState.value = AuthState(loading = true, restored = true)
         try {
             mutex.withLock {
                 acceptTokens(
@@ -89,7 +95,7 @@ class AuthRepository(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            mutableState.value = AuthState(error = authError(e))
+            mutableState.value = AuthState(error = authError(e), restored = true)
             throw e
         }
     }
@@ -102,14 +108,15 @@ class AuthRepository(
                 http.token = tokens?.token
             }
             if (tokens == null) {
-                mutableState.value = AuthState()
+                mutableState.value = AuthState(restored = true)
                 return
             }
             reloadUser()
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            mutableState.value = AuthState(error = "Connect to the internet and sign in again.")
+            mutableState.value =
+                AuthState(error = "Connect to the internet and sign in again.", restored = true)
         }
     }
 
@@ -151,7 +158,8 @@ class AuthRepository(
                             user.optionalString("email"),
                             user.optionalString("storeId"),
                             role,
-                        )
+                        ),
+                        restored = true,
                     )
         }
     }
@@ -230,7 +238,7 @@ class AuthRepository(
         tokens = null
         http.token = null
         generation++
-        mutableState.value = AuthState()
+        mutableState.value = AuthState(restored = true)
     }
 }
 

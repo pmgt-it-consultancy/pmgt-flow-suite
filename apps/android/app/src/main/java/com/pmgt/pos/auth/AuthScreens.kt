@@ -127,6 +127,10 @@ fun PosAuthShell(
                 color = Color.White,
             ) {
                 when {
+                    // Until restore has decided, a signed-in till would otherwise show the login
+                    // form and then replace it. The `configured` guard matters: without a Convex
+                    // URL restore never runs, and the login screen is what explains that.
+                    !session.restored && configured -> SplashScreen()
                     session.user == null ->
                         LoginScreen(busy || session.loading, configured) { e, p, failed ->
                             perform {
@@ -208,6 +212,31 @@ fun PosAuthShell(
                 }
             }
         }
+    }
+}
+
+/**
+ * Shown only while the stored session is being restored. It carries the same brand mark as the
+ * login screen so that resolving to either destination is a change of content, not of surface.
+ */
+@Composable
+private fun SplashScreen() {
+    Column(
+        Modifier.fillMaxSize().background(Page).testTag("splash"),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painterResource(R.drawable.logo_full),
+            "PMGT Flow Suite",
+            Modifier.fillMaxWidth(0.5f).height(224.dp),
+            contentScale = ContentScale.Fit,
+        )
+        CircularProgressIndicator(
+            Modifier.padding(top = 32.dp).size(36.dp),
+            color = Brand,
+            strokeWidth = 3.dp,
+        )
     }
 }
 
