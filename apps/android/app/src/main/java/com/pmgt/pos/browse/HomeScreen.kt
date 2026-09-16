@@ -112,6 +112,7 @@ internal fun HomeScreen(
         ) {
             Row(
                 Modifier.fillMaxWidth()
+                    .height(IntrinsicSize.Min)
                     .shadow(3.dp, RoundedCornerShape(20.dp))
                     .background(Color.White, RoundedCornerShape(20.dp))
                     .border(1.dp, Color(0xFFDCE7EF), RoundedCornerShape(20.dp))
@@ -121,9 +122,10 @@ internal fun HomeScreen(
                 Column(
                     Modifier.width(230.dp)
                         .heightIn(min = 132.dp)
+                        .fillMaxHeight()
                         .background(Color(0xFF0F172A), RoundedCornerShape(18.dp))
                         .padding(horizontal = 18.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                 ) {
                     Text(
                         "CURRENT TIME",
@@ -154,14 +156,17 @@ internal fun HomeScreen(
                 if (summary == null)
                     Box(
                         Modifier.weight(1f)
-                            .height(132.dp)
+                            .fillMaxHeight()
                             .background(Color(0xFFF8FBFD), RoundedCornerShape(18.dp)),
                         contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator(Modifier.size(24.dp), color = BrowseColors.Brand)
                     }
                 else
-                    Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        Modifier.weight(1f).fillMaxHeight(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
                         ScoreCard(
                             summary.totalOrdersToday.toString(),
                             "Orders",
@@ -192,6 +197,7 @@ internal fun HomeScreen(
                         Column(
                             Modifier.weight(1.2f)
                                 .heightIn(min = 132.dp)
+                                .fillMaxHeight()
                                 .background(Color(0xFFF8FBFD), RoundedCornerShape(18.dp))
                                 .border(
                                     1.dp,
@@ -428,7 +434,11 @@ private fun ScoreCard(
     modifier: Modifier,
 ) {
     Column(
-        modifier.heightIn(min = 132.dp).background(tint, RoundedCornerShape(18.dp)).padding(16.dp),
+        modifier
+            .heightIn(min = 132.dp)
+            .fillMaxHeight()
+            .background(tint, RoundedCornerShape(18.dp))
+            .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(
