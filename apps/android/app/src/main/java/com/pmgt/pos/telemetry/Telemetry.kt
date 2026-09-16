@@ -1,5 +1,6 @@
 package com.pmgt.pos.telemetry
 
+import android.util.Log
 import com.pmgt.pos.transport.ConvexException
 import java.io.IOException
 
@@ -21,6 +22,7 @@ interface TelemetrySink {
  * sent until the application installs a sink.
  */
 object Telemetry {
+    const val tag = "PmgtPos"
     @Volatile private var sink: TelemetrySink? = null
     @Volatile private var lastScreen: String? = null
 
@@ -49,6 +51,9 @@ object Telemetry {
      * would push out real faults. A [ConvexException] is a server answer, not connectivity.
      */
     fun nonFatal(operation: String, error: Throwable, vararg context: Pair<String, String>) {
+        // Logged before the filter below: an unreachable network is dropped from Crashlytics on
+        // purpose, which otherwise leaves a timeout-shaped failure with no trace anywhere at all.
+        Log.w(tag, "$operation failed: ${error.javaClass.simpleName}: ${error.message}", error)
         if (error is IOException && error !is ConvexException) return
         sink?.nonFatal(operation, error, context.toMap())
     }

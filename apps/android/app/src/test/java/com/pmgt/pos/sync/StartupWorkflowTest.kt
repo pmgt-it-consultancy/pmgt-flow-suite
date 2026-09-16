@@ -366,6 +366,45 @@ class StartupWorkflowTest {
         db.close()
     }
 
+    /**
+     * A cold start reaches adoption before the connectivity callback has reported a validated
+     * network, so verification sees an offline flag and stops. Sync recovers on reconnection; the
+     * gate must too, or the till waits on a network that arrived a second later.
+     */
+    @Test fun offlineVerificationRecoversWhenConnectivityArrives() = runBlocking {
+        val db = database(); seed(db)
+        MockWebServer().use { server ->
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse = when (request.path) {
+                    "/sync/pull" -> MockResponse().setBody(
+                        """{"changes":{"orders":{"created":[{"id":"local","server_id":"server","storeId":"store"}],"updated":[],"deleted":[]}},"cursors":{"orders":{"cursor":null,"isDone":true}},"complete":true,"timestamp":100}"""
+                    )
+                    "/sync/registerDevice" -> MockResponse().setBody("""{"deviceCode":"07"}""")
+                    else -> MockResponse().setBody(emptyPage)
+                }
+            }
+            server.start()
+            val online = MutableStateFlow(false)
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()), scope, Dispatchers.IO, online)
+            try {
+                val auth = MutableStateFlow(AuthState(user = SignedInUser("user", "Cashier", null, "store", null)))
+                startup.bind(auth)
+                // userId is only set once adopt() is under way, so this cannot match the initial
+                // state, which is already PendingVerification with verifying = false.
+                eventually {
+                    startup.state.value.userId == "user" &&
+                        startup.state.value.adoption is AdoptionState.PendingVerification &&
+                        !startup.state.value.verifying
+                }
+                assertNull(startup.sync.value)
+                online.value = true
+                eventually { startup.state.value.adoption is AdoptionState.Ready }
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
     @Test fun damagedSavedPushBlocksBeforeAdvertisingAdoptionReady() = runBlocking {
         val db = database()
         db.setLocalValue("__kotlin_sync_retry_v1", "damaged-pending-snapshot")

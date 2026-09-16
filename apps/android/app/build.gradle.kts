@@ -38,6 +38,11 @@ android {
         buildConfigField("String", "UPDATE_VERSION", "\"1.0.0\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    // Telemetry writes to logcat on every caught failure, so host tests need android.util.Log to
+    // no-op rather than throw. Only calls that would already have thrown are affected.
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
     // Present only when a keystore is supplied (CI, or a workstation that has one). Without it
     // staging falls back to the debug key and release stays unsigned, which is what a local
     // verification build wants.

@@ -1,5 +1,6 @@
 package com.pmgt.pos.db
 
+import com.pmgt.pos.telemetry.Telemetry
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,7 +47,8 @@ class AdoptionVerifier(
                 throw cancelled
             } catch (blocked: AdoptionBlocked) {
                 AdoptionState.Blocked(blocked.message ?: "Local adoption is blocked.")
-            } catch (_: Exception) {
+            } catch (failure: Exception) {
+                Telemetry.nonFatal("adoption.verify", failure)
                 AdoptionState.PendingVerification()
             }
         }

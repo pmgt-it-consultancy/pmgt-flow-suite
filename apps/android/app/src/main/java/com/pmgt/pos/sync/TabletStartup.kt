@@ -46,10 +46,13 @@ class TabletStartup(
         check(binding == null) { "Startup is already observing authentication" }
         authState = auth
         binding = scope.launch {
-            auth.map { it.user?.let { user -> user.id to user.storeId } }.distinctUntilChanged().collectLatest { identity ->
-                stop()
-                if (identity != null && identity.second != null) adopt(identity.first, identity.second!!)
+            launch {
+                auth.map { it.user?.let { user -> user.id to user.storeId } }.distinctUntilChanged().collectLatest { identity ->
+                    stop()
+                    if (identity != null && identity.second != null) adopt(identity.first, identity.second!!)
+                }
             }
+            launch { retryWhenConnectivityArrives() }
         }
     }
 
@@ -115,6 +118,28 @@ class TabletStartup(
                 current.value = TabletStartupState(userId, storeId, result)
             }
             result
+        }
+    }
+
+    /**
+     * Verification treats an offline flag as a terminal outcome, and a cold start reaches adoption
+     * before the connectivity callback has reported a validated network. Without this the till waits
+     * on "verifying" forever for a network that arrived a second later. Sync recovers the same way.
+     */
+    private suspend fun retryWhenConnectivityArrives() {
+        online.collect { connected ->
+            if (!connected) return@collect
+            val stale = synchronized(monitor) {
+                current.value.takeIf { it.adoption is AdoptionState.PendingVerification && !it.verifying }
+            }
+            val userId = stale?.userId ?: return@collect
+            val storeId = stale.storeId ?: return@collect
+            try {
+                adopt(userId, storeId)
+            } catch (ended: CancellationException) {
+                // adopt() cancels itself when the session moves on; only propagate our own cancellation.
+                currentCoroutineContext().ensureActive()
+            }
         }
     }
 
