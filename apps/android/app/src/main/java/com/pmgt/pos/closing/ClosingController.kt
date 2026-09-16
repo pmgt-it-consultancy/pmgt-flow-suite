@@ -132,10 +132,19 @@ class ClosingController(
     }
 
     fun generate() {
+        if (key() == null) return
+        // The source keeps Refresh live while a date loads. Generation reloads the selection when
+        // it ends, so the tap supersedes the in-flight load rather than being silently dropped.
+        val superseded = state.value.operation == ClosingOperation.Refreshing
+        if (superseded) {
+            epoch++
+            operationJob?.cancel()
+            update { it.copy(operation = null) }
+        }
         val key = key() ?: return
         if (state.value.operation != null) return
         update { it.copy(finalized = false) }
-        launch(ClosingOperation.Generating, key) { operationKey ->
+        launch(ClosingOperation.Generating, key, loading = superseded) { operationKey ->
             var generated = false
             try {
                 readyAfterDelivery(operationKey)
@@ -156,7 +165,7 @@ class ClosingController(
                     if (generated) error.message ?: "Failed to finalize closing." else "Failed to generate report.",
                 )
             } finally {
-                if (generated && isCurrent(operationKey)) {
+                if ((generated || superseded) && isCurrent(operationKey)) {
                     try {
                         loadSelection(operationKey)
                     } catch (cancelled: CancellationException) {
@@ -314,9 +323,14 @@ class ClosingController(
         }
     }
 
-    private fun launch(operation: ClosingOperation, key: Key, block: suspend (Key) -> Unit) {
+    private fun launch(
+        operation: ClosingOperation,
+        key: Key,
+        loading: Boolean = operation == ClosingOperation.Refreshing,
+        block: suspend (Key) -> Unit,
+    ) {
         if (state.value.operation != null) return
-        update { it.copy(operation = operation, loading = operation == ClosingOperation.Refreshing, notice = null) }
+        update { it.copy(operation = operation, loading = loading, notice = null) }
         operationJob = scope.launchOperation(key, block)
     }
 

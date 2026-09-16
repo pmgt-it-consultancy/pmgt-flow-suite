@@ -297,6 +297,69 @@ class ClosingWorkflowTest {
     }
 
     @Test
+    fun `refresh tapped while a date is still loading generates instead of being dropped`() = runTest {
+        val loadStarted = CompletableDeferred<Unit>()
+        val releaseLoad = CompletableDeferred<Unit>()
+        val repository = FakeClosingRepository().apply {
+            reportLoader = { _, date ->
+                if (date == "2026-09-15" && generateCalls == 0) {
+                    loadStarted.complete(Unit)
+                    releaseLoad.await()
+                    report(id = "stale", date = date, startTime = "15:30", endTime = "21:13")
+                } else report(id = "generated", date = date)
+            }
+        }
+        val printed = mutableListOf<List<PrinterCall>>()
+        val controller = controller(repository = repository, printer = { printed += it })
+        controller.bind("store")
+        controller.awaitIdle()
+        controller.selectDate("2026-09-15")
+        loadStarted.await()
+
+        controller.generate()
+        assertEquals(ClosingOperation.Generating, controller.state.value.operation)
+        assertTrue(controller.state.value.loading)
+        releaseLoad.complete(Unit)
+        controller.awaitIdle()
+
+        assertEquals(1, repository.generateCalls)
+        assertEquals("generated", controller.state.value.report?.id)
+        controller.print()
+        controller.awaitIdle()
+        assertEquals(1, printed.size)
+    }
+
+    @Test
+    fun `a blocked refresh that superseded a load still shows the selected date`() = runTest {
+        val online = MutableStateFlow(true)
+        val loadStarted = CompletableDeferred<Unit>()
+        val releaseLoad = CompletableDeferred<Unit>()
+        var loads = 0
+        val repository = FakeClosingRepository().apply {
+            reportLoader = { _, date ->
+                if (date == "2026-09-15" && loads++ == 0) {
+                    loadStarted.complete(Unit)
+                    releaseLoad.await()
+                }
+                report(id = "loaded", date = date)
+            }
+        }
+        val controller = controller(repository = repository, online = online)
+        controller.bind("store")
+        controller.awaitIdle()
+        controller.selectDate("2026-09-15")
+        loadStarted.await()
+
+        online.value = false
+        controller.generate()
+        controller.awaitIdle()
+
+        assertEquals(0, repository.generateCalls)
+        assertTrue(controller.state.value.notice?.message.orEmpty().contains("WiFi"))
+        assertEquals("loaded", controller.state.value.report?.id)
+    }
+
+    @Test
     fun `cancellation during the local readiness read is never a blocked closing`() = runTest {
         // Every other suspend catch in the controller rethrows cancellation; this read must too,
         // or disposing the screen mid-check reports a spurious closing block to the next session.

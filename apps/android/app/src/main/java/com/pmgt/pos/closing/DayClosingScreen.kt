@@ -115,7 +115,9 @@ private fun ClosingHeader(
             } else {
                 OutlinedButton(
                     onClick = onGenerate,
-                    enabled = state.operation == null && state.selectedDate != null,
+                    enabled =
+                        (state.operation == null || state.operation == ClosingOperation.Refreshing) &&
+                            state.selectedDate != null,
                     modifier = Modifier.height(40.dp),
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, Brand),
