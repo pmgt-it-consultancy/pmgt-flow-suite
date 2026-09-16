@@ -1,5 +1,7 @@
 package com.pmgt.pos.browse
 
+import com.pmgt.pos.posDialogProperties
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -82,11 +83,11 @@ internal fun TablesScreen(
         Dialog(
             onDismissRequest = { selected = null },
             properties =
-                DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
+                posDialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
         ) {
             HideSystemBarsInDialog()
             BoxWithConstraints(Modifier.fillMaxSize()) {
-                Box(Modifier.fillMaxSize().clickable { selected = null })
+                Box(Modifier.fillMaxSize())
                 Column(
                     Modifier.align(Alignment.BottomCenter)
                         .fillMaxWidth()

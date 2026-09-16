@@ -1,5 +1,7 @@
 package com.pmgt.pos.checkout
 
+import com.pmgt.pos.posDialogProperties
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -313,6 +315,7 @@ internal fun ManagerApprovalDialog(
     state.error?.let { alert ->
         key(alert.occurrence) {
             AlertDialog(
+                properties = posDialogProperties(),
                 onDismissRequest = session::dismissError,
                 title = { Text(alert.title) },
                 text = { Text(alert.message) },

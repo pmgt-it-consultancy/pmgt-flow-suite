@@ -1,5 +1,7 @@
 package com.pmgt.pos.settings
 
+import com.pmgt.pos.posDialogProperties
+
 import com.pmgt.pos.browse.HideSystemBarsInDialog
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -27,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.pmgt.pos.R
 
 @Composable
@@ -206,14 +207,11 @@ private fun AutoLockDialog(
 ) {
     Dialog(
         onDismissRequest = { if (!updating) onDismiss() },
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+        properties = posDialogProperties(usePlatformDefaultWidth = false),
     ) {
         HideSystemBarsInDialog()
         Box(
-            Modifier.fillMaxSize().background(Color.Black.copy(alpha = .4f)).clickable(
-                enabled = !updating,
-                onClick = onDismiss,
-            ),
+            Modifier.fillMaxSize().background(Color.Black.copy(alpha = .4f)),
             contentAlignment = Alignment.Center,
         ) {
             Column(

@@ -1,5 +1,7 @@
 package com.pmgt.pos.printer.settings
 
+import com.pmgt.pos.posDialogProperties
+
 import com.pmgt.pos.browse.HideSystemBarsInDialog
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
@@ -204,6 +206,7 @@ fun PrinterSettingsScreen(
     }
     removeCandidate?.let { printer ->
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { removeCandidate = null },
             title = { Text("Remove Printer") },
             text = { Text("Remove \"${printer.name}\" from the app and unpair it from this device?") },
@@ -230,6 +233,7 @@ fun PrinterSettingsScreen(
     }
     reconnectCandidate?.let { printer ->
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { reconnectCandidate = null },
             title = { Text("Reconnect Failed") },
             text = {
@@ -254,6 +258,7 @@ fun PrinterSettingsScreen(
     }
     message?.let { (title, text) ->
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { message = null },
             title = { Text(title) },
             text = { Text(text) },
@@ -384,7 +389,10 @@ private fun ScanPrintersDialog(controller: PrinterSettingsController, close: () 
             close()
         }
     }
-    Dialog(onDismissRequest = { if (!busy) close() }) {
+    Dialog(
+        onDismissRequest = { if (!busy) close() },
+        properties = posDialogProperties(),
+    ) {
         HideSystemBarsInDialog()
         Surface(
             Modifier.fillMaxWidth().heightIn(max = 680.dp).testTag("printer-scan-dialog"),
@@ -493,6 +501,7 @@ private fun ScanPrintersDialog(controller: PrinterSettingsController, close: () 
     }
     paperDevice?.let { (device, role) ->
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { paperDevice = null },
             title = { Text("Paper Width") },
             text = { Text("Select the paper width for this printer") },
@@ -524,7 +533,7 @@ private fun EditPrinterDialog(
     var name by remember(printer.id) { mutableStateOf(printer.name) }
     var role by remember(printer.id) { mutableStateOf(printer.role) }
     var width by remember(printer.id) { mutableStateOf(printer.paperWidth) }
-    Dialog(onDismissRequest = close) {
+    Dialog(onDismissRequest = close, properties = posDialogProperties()) {
         HideSystemBarsInDialog()
         Surface(shape = RoundedCornerShape(16.dp), color = Color.White) {
             Column(Modifier.widthIn(max = 480.dp).padding(20.dp)) {

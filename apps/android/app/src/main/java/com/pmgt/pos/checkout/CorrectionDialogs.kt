@@ -1,5 +1,7 @@
 package com.pmgt.pos.checkout
 
+import com.pmgt.pos.posDialogProperties
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +30,7 @@ internal fun CorrectionDialogs(
     state.saved?.let { saved ->
         val kind = saved.input.kind
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = session::later,
             title = { Text("Saved $kind") },
             text = {
@@ -260,7 +263,8 @@ internal fun CorrectionDialogs(
             if (state.completed != null) completed()
         }
         AlertDialog(
-            dismiss,
+            properties = posDialogProperties(),
+            onDismissRequest = dismiss,
             title = { Text(alert.title) },
             text = { Text(alert.message) },
             confirmButton = { TextButton(dismiss) { Text("OK") } },

@@ -1,5 +1,7 @@
 package com.pmgt.pos.checkout
 
+import com.pmgt.pos.posDialogProperties
+
 import android.view.WindowManager
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -153,7 +155,7 @@ internal fun CheckoutModal(
     Dialog(
         close,
         properties =
-            DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
+            posDialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
         HideSystemBarsInDialog()
         val window = (LocalView.current.parent as? DialogWindowProvider)?.window
@@ -168,8 +170,6 @@ internal fun CheckoutModal(
             Box(
                 Modifier.fillMaxSize()
                     .background(Color.Black.copy(alpha = .5f))
-                    .clickable(onClick = close)
-                    .semantics { contentDescription = "Close checkout backdrop" }
             )
             Column(
                 Modifier.then(
