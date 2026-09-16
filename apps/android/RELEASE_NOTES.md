@@ -1,37 +1,11 @@
-## What’s new
+## Update validation release
 
-### Complete native POS workflow
-
-- Adds the Kotlin POS as an independently installable app with authentication, screen lock, catalog browsing, modifier selection, order entry, checkout, receipt printing, settings, day closing, and in-app updates.
-- Preserves existing order and payment behavior with shared money, printer, correction, and Z-report fixtures.
-
-### Safer tablet commissioning
-
-- Binds each tablet to one store and adds managed move and retirement workflows.
-- Refuses a replica from another store, recovers adoption after delayed connectivity, and prevents unsafe store changes while local work is pending.
-- Blocks day closing when financial reconciliation finds a totals mismatch.
-
-### Faster, clearer operation
-
-- Reduces a representative adopted-tablet cold start from about 104 seconds to 10–13 seconds while keeping the session splash visible during restore.
-- Retries transient Convex query failures and shows the server’s diagnostic message when recovery is exhausted.
-- Adds Firebase Crashlytics and Analytics for release diagnostics.
-
-### Tablet and interface fixes
-
-- Keeps the POS in landscape on Android 16 tablets.
-- Requires a second back press within two seconds before leaving the till, preventing accidental exits.
-- Prevents outside taps from dismissing PIN prompts, confirmations, alerts, and other dialogs; use Back or an explicit action instead.
-- Keeps Refresh Report available during a Day Closing load so a new request can replace stale report generation.
-- Fixes product-sheet reloads, modifier input preservation, status indicators, home-card sizing, printer reconnects, PIN entry, manager unlock, logout recovery, and kiosk behavior.
-
-## Rollout requirement
-
-Deploy the matching backend and run the `devices.manage` role backfill before assigning device-management roles in production.
+- Publishes version 1.2.1 so installed 1.2.0 tablets can exercise the complete in-app update flow.
+- Fixes Kotlin release-tag parsing so the updater recognizes `kotlin-v1.2.1-production` and `kotlin-v1.2.1-staging` as version 1.2.1.
+- Contains the same POS features and dialog-safety behavior delivered in 1.2.0.
 
 ## Verification
 
-- 295 Android host tests passed.
+- 300 Android host tests passed.
 - Android `lintDebug` passed.
-- 269 backend tests passed.
-- Backend type checking passed.
+- 273 backend tests and backend type checking passed.

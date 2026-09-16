@@ -21,6 +21,13 @@ function compareSemver(a: string, b: string): number {
  */
 const KOTLIN_TAG_PREFIX = "kotlin-";
 
+export function releaseVersion(tag: string): string {
+  return tag
+    .replace(new RegExp(`^${KOTLIN_TAG_PREFIX}`), "")
+    .replace(/^v/, "")
+    .replace(/-(staging|production)$/, "");
+}
+
 export const checkForUpdate = action({
   args: { currentVersion: v.string(), variant: v.string(), product: v.optional(v.string()) },
   returns: v.union(
@@ -74,11 +81,6 @@ export const checkForUpdate = action({
     // Find the latest release matching the app's variant (staging or production)
     const variantSuffix = args.variant === "production" ? "-production" : "-staging";
     const isKotlin = args.product === "kotlin";
-    const stripTag = (tag: string) =>
-      tag
-        .replace(new RegExp(`^${KOTLIN_TAG_PREFIX}`), "")
-        .replace(/^v/, "")
-        .replace(/-(staging|production)$/, "");
     const matchingReleases = releases
       .filter(
         (r: { tag_name: string; assets: { name: string }[] }) =>
@@ -88,7 +90,7 @@ export const checkForUpdate = action({
           r.assets?.some((a: { name: string }) => a.name.endsWith(".apk")),
       )
       .sort((a: { tag_name: string }, b: { tag_name: string }) =>
-        compareSemver(stripTag(b.tag_name), stripTag(a.tag_name)),
+        compareSemver(releaseVersion(b.tag_name), releaseVersion(a.tag_name)),
       );
     const release = matchingReleases[0] ?? null;
 
@@ -104,8 +106,7 @@ export const checkForUpdate = action({
       return { updateAvailable: false as const };
     }
 
-    // Strip "v" prefix and variant suffix to get the semver
-    const latestVersion = release.tag_name.replace(/^v/, "").replace(/-(staging|production)$/, "");
+    const latestVersion = releaseVersion(release.tag_name);
 
     if (compareSemver(latestVersion, args.currentVersion) <= 0) {
       return { updateAvailable: false as const };
