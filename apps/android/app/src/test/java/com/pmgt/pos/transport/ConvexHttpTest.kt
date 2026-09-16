@@ -4,6 +4,8 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -11,6 +13,51 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class ConvexHttpTest {
+    @Test fun aTransientServerFailureIsRetriedForAReadOnlyQuery() = runBlocking {
+        MockWebServer().use { server ->
+            server.enqueue(
+                MockResponse()
+                    .setResponseCode(500)
+                    .setBody("""{"message":"Temporary internal error"}"""),
+            )
+            server.enqueue(
+                MockResponse().setBody("""{"status":"success","value":{"_id":"order-1"}}"""),
+            )
+            server.start()
+
+            val result = ConvexHttp(server.url("/").toString()).query(
+                "orders:get",
+                buildJsonObject {},
+            )
+
+            assertEquals("order-1", result.jsonObject["_id"]!!.jsonPrimitive.content)
+            assertEquals(2, server.requestCount)
+        }
+    }
+
+    @Test fun aServerFailurePreservesTheConvexErrorMessage() = runBlocking {
+        MockWebServer().use { server ->
+            repeat(3) {
+                server.enqueue(
+                    MockResponse()
+                        .setResponseCode(500)
+                        .setBody(
+                            """{"message":"Return value validation failed at .items[0].serviceType"}""",
+                        ),
+                )
+            }
+            server.start()
+
+            val failure = assertThrows(ConvexException::class.java) {
+                runBlocking {
+                    ConvexHttp(server.url("/").toString()).query("orders:get", buildJsonObject {})
+                }
+            }
+
+            assertTrue(failure.message, failure.message!!.contains(".items[0].serviceType"))
+        }
+    }
+
     /**
      * Stock OkHttp defaults give a request ten seconds, which a 1500-row pull page over tablet
      * Wi-Fi routinely exceeds. The budget is sized for that page, not for a small function call.

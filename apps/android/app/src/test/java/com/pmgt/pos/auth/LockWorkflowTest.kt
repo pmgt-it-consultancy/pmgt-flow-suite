@@ -24,8 +24,9 @@ class LockWorkflowTest {
             assertTrue(lock.userHasPin)
             assertNotEquals(before, lock.state.value)
             assertEquals(cashier.id, lock.state.value.pinUserId)
-            server.enqueue(MockResponse().setResponseCode(503))
+            repeat(3) { server.enqueue(MockResponse().setResponseCode(503)) }
             runCatching { lock.configure(cashier.copy(id = "other")) }
+            assertEquals("read-only PIN lookup retries transient server failures", 5, server.requestCount)
             assertFalse(lock.userHasPin)
             assertNull(lock.state.value.pinUserId)
             lock.resetConfiguration()

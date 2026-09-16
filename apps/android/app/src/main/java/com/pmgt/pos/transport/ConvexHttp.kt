@@ -1,6 +1,7 @@
 package com.pmgt.pos.transport
 
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.delay
 import kotlinx.serialization.json.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -35,7 +36,18 @@ class ConvexHttp(
 ) {
     @Volatile var token: String? = null
     var freshToken: (suspend () -> String?)? = null
-    suspend fun query(path: String, args: JsonObject = buildJsonObject {}) = function("query", path, args)
+    suspend fun query(path: String, args: JsonObject = buildJsonObject {}): JsonElement {
+        val retryDelays = listOf(250L, 500L)
+        for (attempt in 0..retryDelays.size) {
+            try {
+                return function("query", path, args)
+            } catch (failure: ConvexException) {
+                if (failure.statusCode !in 500..599 || attempt == retryDelays.size) throw failure
+                delay(retryDelays[attempt])
+            }
+        }
+        error("unreachable")
+    }
     suspend fun mutation(path: String, args: JsonObject = buildJsonObject {}) = function("mutation", path, args)
     suspend fun action(path: String, args: JsonObject = buildJsonObject {}) = function("action", path, args)
     suspend fun unauthenticatedAction(path: String, args: JsonObject) = function("action", path, args, false)
@@ -70,7 +82,9 @@ class ConvexHttp(
                         try {
                             val text = it.body?.string().orEmpty()
                             if (!it.isSuccessful) throw ConvexException(it.code, runCatching {
-                                Json.parseToJsonElement(text).jsonObject["errorMessage"]?.jsonPrimitive?.content
+                                val error = Json.parseToJsonElement(text).jsonObject
+                                error["errorMessage"]?.jsonPrimitive?.contentOrNull
+                                    ?: error["message"]?.jsonPrimitive?.contentOrNull
                             }.getOrNull() ?: "Server request failed (${it.code})")
                             val result = Json.parseToJsonElement(text)
                             if (continuation.isActive) continuation.resume(result)

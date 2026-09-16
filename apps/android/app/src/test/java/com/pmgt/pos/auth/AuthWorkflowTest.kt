@@ -53,10 +53,11 @@ class AuthWorkflowTest {
     fun `restore decides even when the server cannot be reached`() = runTest {
         MockWebServer().use { server ->
             val storage = MemorySessionStorage().apply { write(SessionTokens("access", "refresh")) }
-            server.enqueue(MockResponse().setResponseCode(503))
+            repeat(3) { server.enqueue(MockResponse().setResponseCode(503)) }
             val auth = AuthRepository(ConvexHttp(server.url("/").toString()), storage)
             auth.restore()
             assertTrue("an unreachable server must not leave the till on a splash", auth.state.value.restored)
+            assertEquals("read-only auth lookup retries transient server failures", 3, server.requestCount)
         }
     }
 
@@ -251,10 +252,11 @@ class AuthWorkflowTest {
             val storage = MemorySessionStorage()
             storage.write(SessionTokens("access", "refresh"))
             val auth = AuthRepository(ConvexHttp(server.url("/").toString()), storage)
-            server.enqueue(MockResponse().setResponseCode(503))
+            repeat(3) { server.enqueue(MockResponse().setResponseCode(503)) }
             auth.restore()
             assertFalse(auth.state.value.isAuthenticated)
             assertFalse(auth.hasPermission("orders.create"))
+            assertEquals("identity lookup exhausts safe retries before denying the session", 3, server.requestCount)
         }
     }
 
