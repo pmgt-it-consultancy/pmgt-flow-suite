@@ -1,5 +1,7 @@
 package com.pmgt.pos.orders
 
+import com.pmgt.pos.posDialogProperties
+
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
@@ -483,6 +485,7 @@ fun OrderEditorScreen(
     }
     dialogs.removing?.let { line ->
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { dialogs.removing = null },
             title = { Text("Remove Item") },
             text = { Text("Are you sure you want to remove this item?") },
@@ -500,6 +503,7 @@ fun OrderEditorScreen(
     if (dialogs.cancelling) {
         val draft = session.route.takeout && state.cart?.status == "draft"
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { dialogs.cancelling = false },
             title = { Text(if (draft) "Discard Draft" else "Cancel Order") },
             text = {
@@ -533,6 +537,7 @@ fun OrderEditorScreen(
     }
     dialogs.error?.let { (title, message) ->
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { dialogs.error = null },
             title = { Text(title) },
             text = { Text(message) },
@@ -541,6 +546,7 @@ fun OrderEditorScreen(
     }
     if (dialogs.success)
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = {},
             title = { Text("Sent") },
             text = {
@@ -572,7 +578,7 @@ internal fun EntryDialog(
     Dialog(
         onClose,
         properties =
-            DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
+            posDialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
         HideSystemBarsInDialog()
         val window = (LocalView.current.parent as? DialogWindowProvider)?.window
@@ -584,7 +590,6 @@ internal fun EntryDialog(
             Box(
                 Modifier.fillMaxSize()
                     .background(Color.Black.copy(alpha = .5f))
-                    .clickable(onClick = onClose)
             )
             Column(
                 Modifier.then(

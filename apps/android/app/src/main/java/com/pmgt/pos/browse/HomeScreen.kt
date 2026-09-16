@@ -1,5 +1,7 @@
 package com.pmgt.pos.browse
 
+import com.pmgt.pos.posDialogProperties
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -386,6 +388,7 @@ internal fun HomeScreen(
     }
     if (confirmLogout)
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { confirmLogout = false },
             title = { Text("Logout") },
             text = { Text("Are you sure you want to logout?") },

@@ -1,5 +1,7 @@
 package com.pmgt.pos.settings
 
+import com.pmgt.pos.posDialogProperties
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 
 /** Source `formatLastSync`; a stale or absent sync is shown in red. */
 internal fun formatLastSync(timestamp: Long?, now: Long): Pair<String, Boolean> {
@@ -78,8 +79,8 @@ fun SystemStatusDropdown(
     onClose: () -> Unit,
 ) {
     val (lastSync, staleSync) = formatLastSync(status.lastSuccessfulSyncAt, now)
-    Dialog(onDismissRequest = onClose, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Box(Modifier.fillMaxSize().clickable(onClick = onClose)) {
+    Dialog(onDismissRequest = onClose, properties = posDialogProperties(usePlatformDefaultWidth = false)) {
+        Box(Modifier.fillMaxSize()) {
             Column(
                 Modifier.align(Alignment.TopEnd)
                     .padding(top = 8.dp, end = 16.dp)

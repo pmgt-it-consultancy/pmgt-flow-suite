@@ -1,5 +1,7 @@
 package com.pmgt.pos.browse
 
+import com.pmgt.pos.posDialogProperties
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +15,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 
 @Composable
 internal fun OrderDetailScreen(
@@ -214,7 +215,7 @@ internal fun TakeoutDetailModal(
     onClose: () -> Unit,
     onAction: (BrowseAction) -> Unit,
 ) {
-    Dialog(onClose, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    Dialog(onClose, properties = posDialogProperties(usePlatformDefaultWidth = false)) {
         Column(
             Modifier.fillMaxWidth(.9f)
                 .heightIn(max = 720.dp)

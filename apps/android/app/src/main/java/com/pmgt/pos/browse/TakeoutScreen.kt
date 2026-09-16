@@ -1,5 +1,7 @@
 package com.pmgt.pos.browse
 
+import com.pmgt.pos.posDialogProperties
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -199,6 +201,7 @@ internal fun TakeoutScreen(
     }
     discard?.let { draft ->
         AlertDialog(
+            properties = posDialogProperties(),
             onDismissRequest = { discard = null },
             title = { Text("Discard Draft") },
             text = { Text("Discard \"${draftName(draft)}\"? This cannot be undone.") },
