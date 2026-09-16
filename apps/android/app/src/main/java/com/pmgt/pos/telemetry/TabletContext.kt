@@ -23,6 +23,7 @@ fun reportTabletContext(state: TabletStartupState, deviceId: String?) {
                     is AdoptionState.PendingVerification -> "pending_verification"
                     is AdoptionState.Ready -> "ready"
                     is AdoptionState.Blocked -> "blocked"
+                    is AdoptionState.ForeignStore -> "foreign_store"
                 }
         },
     )

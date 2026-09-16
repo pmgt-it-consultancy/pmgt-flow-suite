@@ -11,11 +11,17 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.*
 
 data class AdoptedStorage(val database: PosDatabase, val deviceId: String)
+
+/** Blocked and ForeignStore are decisions, not transient failures, so they are never retried. */
+internal fun TabletStartupState.awaitingVerification(): Boolean =
+    userId != null && storeId != null && !verifying && adoption is AdoptionState.PendingVerification
 data class TabletStartupState(
     val userId: String? = null,
     val storeId: String? = null,
     val adoption: AdoptionState = AdoptionState.PendingVerification(),
     val verifying: Boolean = false,
+    /** When the next automatic attempt is due, for the gate to show. Null when none is scheduled. */
+    val nextRetryAt: Long? = null,
 )
 
 /** Authenticated adoption gate. Storage/identity open exactly once, through the guarded adapter. */
@@ -25,6 +31,9 @@ class TabletStartup(
     private val scope: CoroutineScope,
     private val io: CoroutineDispatcher,
     private val online: StateFlow<Boolean>,
+    /** Backoff between automatic attempts; the last entry is the cap. */
+    private val retryDelays: List<Long> = listOf(5_000, 10_000, 20_000, 40_000, 60_000),
+    private val now: () -> Long = System::currentTimeMillis,
 ) {
     private val monitor = Any()
     private val adoptionMutex = Mutex()
@@ -53,6 +62,7 @@ class TabletStartup(
                 }
             }
             launch { retryWhenConnectivityArrives() }
+            launch { healWhileUnverified() }
         }
     }
 
@@ -74,7 +84,7 @@ class TabletStartup(
                 }
             }, { references ->
                 verifyReferences(references, storeId)
-            }, io)
+            }, io, storeId)
             val result = verifier.verify()
             currentCoroutineContext().ensureActive()
             val ready = synchronized(monitor) {
@@ -127,19 +137,44 @@ class TabletStartup(
      * on "verifying" forever for a network that arrived a second later. Sync recovers the same way.
      */
     private suspend fun retryWhenConnectivityArrives() {
-        online.collect { connected ->
-            if (!connected) return@collect
-            val stale = synchronized(monitor) {
-                current.value.takeIf { it.adoption is AdoptionState.PendingVerification && !it.verifying }
+        online.collect { connected -> if (connected) reattempt() }
+    }
+
+    /**
+     * Connectivity arriving is only one way to get stuck. A request that failed while the network
+     * was already up has no reconnection to wait for, so attempts also run on a backoff timer. The
+     * till heals itself; the gate's button skips the wait rather than being the only way out.
+     */
+    private suspend fun healWhileUnverified() {
+        var attempt = 0
+        while (currentCoroutineContext().isActive) {
+            if (synchronized(monitor) { !current.value.awaitingVerification() }) {
+                attempt = 0
+                current.first { it.awaitingVerification() }
+                continue
             }
-            val userId = stale?.userId ?: return@collect
-            val storeId = stale.storeId ?: return@collect
-            try {
-                adopt(userId, storeId)
-            } catch (ended: CancellationException) {
-                // adopt() cancels itself when the session moves on; only propagate our own cancellation.
-                currentCoroutineContext().ensureActive()
+            val wait = retryDelays[minOf(attempt, retryDelays.lastIndex)]
+            attempt++
+            val due = now() + wait
+            synchronized(monitor) {
+                if (current.value.awaitingVerification()) current.value = current.value.copy(nextRetryAt = due)
             }
+            delay(wait)
+            reattempt()
+        }
+    }
+
+    /** Re-runs adoption only for a live session that is still waiting on verification. */
+    private suspend fun reattempt() {
+        val stale = synchronized(monitor) { current.value.takeIf { it.awaitingVerification() } } ?: return
+        val userId = stale.userId ?: return
+        val storeId = stale.storeId ?: return
+        Telemetry.event("adoption_retry", "store_id" to storeId)
+        try {
+            adopt(userId, storeId)
+        } catch (ended: CancellationException) {
+            // adopt() cancels itself when the session moves on; only propagate our own cancellation.
+            currentCoroutineContext().ensureActive()
         }
     }
 

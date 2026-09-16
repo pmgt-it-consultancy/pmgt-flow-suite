@@ -6,15 +6,31 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 class ConvexException(val statusCode: Int, message: String) : IOException(message)
 
+/**
+ * Stock OkHttp defaults give every request ten seconds, which a 1500-row pull page over tablet
+ * Wi-Fi routinely exceeds; the request then fails and, because adoption treats one failure as
+ * terminal, the till stalls. These budgets are sized for that page rather than a small function
+ * call, and the call timeout exists so a stalled request cannot hang for the whole service.
+ */
+object ConvexClients {
+    fun default(): OkHttpClient = OkHttpClient.Builder()
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .callTimeout(180, TimeUnit.SECONDS)
+        .build()
+}
+
 /** Shared authenticated HTTP boundary for functions and the existing /sync HTTP actions. */
 class ConvexHttp(
     private val deploymentUrl: String,
-    private val client: OkHttpClient = OkHttpClient(),
+    private val client: OkHttpClient = ConvexClients.default(),
     private val siteUrl: String = deploymentUrl.replace(".convex.cloud", ".convex.site"),
 ) {
     @Volatile var token: String? = null

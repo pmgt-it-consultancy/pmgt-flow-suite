@@ -5,11 +5,15 @@ import app.cash.sqldelight.db.SqlDriver
 
 data class ServerReference(val table: String, val localId: String, val serverId: String, val localStatus: String)
 
+/** Which store commissioned this replica. Empty on a tablet that has never been commissioned. */
+data class LocalStore(val localId: String, val serverId: String?, val name: String)
+
 data class AdoptionIntegrity(
     val rowCounts: Map<String, Long>,
     val pendingCounts: Map<String, Long>,
     val localValues: Map<String, String>,
     val serverReferences: List<ServerReference>,
+    val localStores: List<LocalStore> = emptyList(),
 )
 
 /** Pure read-only validation, also used BEFORE Android's mutating open-helper constructor. */
@@ -44,6 +48,7 @@ object LegacyIntegrity {
         val counts = linkedMapOf<String, Long>()
         val pending = linkedMapOf<String, Long>()
         val references = mutableListOf<ServerReference>()
+        val stores = mutableListOf<LocalStore>()
         for ((table, columns) in LegacyTables.tables) {
             val names = listOf("id", "_changed", "_status") + columns.map { it.name }
             val info = query("PRAGMA table_info(\"$table\")")
@@ -68,6 +73,11 @@ object LegacyIntegrity {
                 references += query("SELECT id, server_id, _status FROM \"$table\" WHERE server_id IS NOT NULL AND server_id != ''")
                     .map { ServerReference(table, it[0]!!, it[1]!!, it[2]!!) }
             }
+            // Same three-column probe width as the reference query above.
+            if (table == "stores") {
+                stores += query("SELECT id, server_id, name FROM \"stores\"")
+                    .map { LocalStore(it[0]!!, it[1], it[2].orEmpty()) }
+            }
         }
         val storageInfo = query("PRAGMA table_info(\"local_storage\")")
         requireSafe(storageInfo.map { it[1] }.toSet() == setOf("key", "value"), "Incompatible local preference storage.")
@@ -76,6 +86,6 @@ object LegacyIntegrity {
         for (key in listOf("__watermelon_last_pulled_at", "__watermelon_last_pulled_schema_version")) {
             requireSafe(values[key] == null || values[key]!!.toLongOrNull()?.let { it >= 0 } == true, "Invalid saved sync cursor. Adoption is blocked.")
         }
-        return AdoptionIntegrity(counts, pending, values, references)
+        return AdoptionIntegrity(counts, pending, values, references, stores)
     }
 }

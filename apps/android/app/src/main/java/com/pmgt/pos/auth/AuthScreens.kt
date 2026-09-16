@@ -181,7 +181,12 @@ fun PosAuthShell(
                         }
                     startup != null && session.selectedStoreId != null &&
                         (tablet?.userId != session.user!!.id || tablet.storeId != session.selectedStoreId || tablet.adoption !is AdoptionState.Ready) ->
-                        AdoptionGate(tablet?.adoption ?: AdoptionState.PendingVerification(), busy || tablet?.verifying == true) {
+                        AdoptionGate(
+                            tablet?.adoption ?: AdoptionState.PendingVerification(),
+                            busy || tablet?.verifying == true,
+                            signOut = { perform { startup.stop(); auth.signOut() } },
+                            nextRetryAt = tablet?.nextRetryAt,
+                        ) {
                             perform { startup.adopt(session.user!!.id, session.selectedStoreId!!) }
                         }
                     else ->

@@ -367,6 +367,133 @@ class StartupWorkflowTest {
     }
 
     /**
+     * A failure with connectivity already up has no reconnection to wait for. Without a timer the
+     * till parks until a human taps, which is the whole defect: it must heal on its own.
+     */
+    @Test fun aFailedVerificationIsRetriedOnATimerUntilItSucceeds() = runBlocking {
+        val db = database(); seed(db)
+        MockWebServer().use { server ->
+            var pulls = 0
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse = when (request.path) {
+                    "/sync/pull" ->
+                        if (++pulls <= 2) MockResponse().setResponseCode(503)
+                        else MockResponse().setBody(
+                            """{"changes":{"orders":{"created":[{"id":"local","server_id":"server","storeId":"store"}],"updated":[],"deleted":[]}},"cursors":{"orders":{"cursor":null,"isDone":true}},"complete":true,"timestamp":100}"""
+                        )
+                    "/sync/registerDevice" -> MockResponse().setBody("""{"deviceCode":"07"}""")
+                    else -> MockResponse().setBody(emptyPage)
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup(
+                { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
+                scope, Dispatchers.IO, MutableStateFlow(true), retryDelays = listOf(20L),
+            )
+            try {
+                startup.bind(MutableStateFlow(AuthState(user = SignedInUser("user", "Cashier", null, "store", null))))
+                eventually { startup.state.value.adoption is AdoptionState.Ready }
+                assertTrue("expected more than one attempt, saw $pulls", pulls > 1)
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    /** Retrying must never turn a real refusal into an accident. Both terminal states stay put. */
+    @Test fun terminalRefusalsAreNeverRetried() = runBlocking {
+        for (scenario in listOf("foreign", "blocked")) {
+            val db = database(); seed(db)
+            if (scenario == "foreign") seedStore(db, "local-store", "other-store", "Test Store A")
+            MockWebServer().use { server ->
+                val paths = CopyOnWriteArrayList<String>()
+                server.dispatcher = object : Dispatcher() {
+                    override fun dispatch(request: RecordedRequest): MockResponse {
+                        paths += request.path!!
+                        return if (request.path == "/api/query") success("null") else MockResponse().setBody(emptyPage)
+                    }
+                }
+                server.start()
+                val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+                val startup = TabletStartup(
+                    { AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()),
+                    scope, Dispatchers.IO, MutableStateFlow(true), retryDelays = listOf(20L),
+                )
+                try {
+                    startup.bind(MutableStateFlow(AuthState(user = SignedInUser("user", "Cashier", null, "store", null))))
+                    val expected: (AdoptionState) -> Boolean =
+                        if (scenario == "foreign") ({ it is AdoptionState.ForeignStore })
+                        else ({ it is AdoptionState.Blocked })
+                    eventually { expected(startup.state.value.adoption) }
+                    val settled = paths.size
+                    delay(200)
+                    assertTrue("$scenario must stay terminal", expected(startup.state.value.adoption))
+                    assertEquals("$scenario must not keep retrying", settled, paths.size)
+                } finally { startup.stop(); scope.cancel() }
+            }
+            db.close()
+        }
+    }
+
+    private fun seedStore(db: PosDatabase, id: String, server: String, name: String) {
+        db.applyRemote("stores", listOf(buildJsonObject { put("id", id); put("server_id", server); put("name", name) }), emptyList(), emptyList())
+    }
+
+    /**
+     * The replica belongs to whichever store commissioned the tablet. Signing in from another store
+     * cannot resolve any of its references, so the gate must say so from local evidence alone rather
+     * than spend a full pull discovering it.
+     */
+    @Test fun aReplicaFromAnotherStoreIsRefusedWithoutTouchingTheNetwork() = runBlocking {
+        val db = database(); seed(db)
+        seedStore(db, "local-store", "other-store", "Test Store A")
+        MockWebServer().use { server ->
+            val paths = CopyOnWriteArrayList<String>()
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    paths += request.path!!
+                    return MockResponse().setBody(emptyPage)
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                val result = startup.adopt("user", "store")
+                assertTrue("expected ForeignStore, got $result", result is AdoptionState.ForeignStore)
+                val refused = result as AdoptionState.ForeignStore
+                assertEquals("Test Store A", refused.localStoreName)
+                assertEquals("other-store", refused.localStoreId)
+                assertEquals("store", refused.expectedStoreId)
+                assertEquals(0, refused.pendingLocalWork)
+                assertTrue("refusal must not reach the network, saw $paths", paths.isEmpty())
+                assertNull(startup.sync.value)
+                assertNull(startup.database)
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    /** A tablet that has never been commissioned has no store rows; that is not a mismatch. */
+    @Test fun anUncommissionedReplicaIsNotTreatedAsAForeignStore() = runBlocking {
+        val db = database()
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        MockWebServer().use { server ->
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest) =
+                    if (request.path == "/sync/registerDevice") MockResponse().setBody("""{"deviceCode":"07"}""")
+                    else MockResponse().setBody(emptyPage)
+            }
+            server.start()
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    /**
      * A cold start reaches adoption before the connectivity callback has reported a validated
      * network, so verification sees an offline flag and stops. Sync recovers on reconnection; the
      * gate must too, or the till waits on a network that arrived a second later.
