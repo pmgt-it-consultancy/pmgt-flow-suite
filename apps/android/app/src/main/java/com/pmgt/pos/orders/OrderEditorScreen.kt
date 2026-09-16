@@ -41,11 +41,15 @@ fun OrderEditorScreen(
     printKitchen: suspend (KitchenRequest) -> Unit = {
         error("Kitchen printing is not available in this build yet. The order is saved locally.")
     },
+    printBill: suspend (String) -> Unit = {
+        error("Receipt printing is not available in this build.")
+    },
 ) {
     val state by session.state.collectAsStateWithLifecycle()
     val pending by session.edits.pending.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val dialogs = session.dialogs
+    var billPrinting by remember { mutableStateOf(false) }
     fun run(title: String = "Error", block: suspend () -> Unit) {
         scope.launch {
             try {
@@ -257,7 +261,12 @@ fun OrderEditorScreen(
                         if (state.draftMode && state.lines.isEmpty()) back()
                         else dialogs.cancelling = true
                     },
-                    { dialogs.modal = "bill" },
+                    {
+                        run("Quantity not saved") {
+                            session.prepareBill()
+                            dialogs.modal = "bill"
+                        }
+                    },
                     {
                         run {
                             state.cart?.let { cart ->
@@ -434,7 +443,24 @@ fun OrderEditorScreen(
                 }
         }
     }
-    if (dialogs.modal == "bill") EntryBill(state, { dialogs.modal = null })
+    if (dialogs.modal == "bill")
+        EntryBill(
+            state,
+            billPrinting,
+            {
+                if (!billPrinting) {
+                    run("Unable to print bill") {
+                        billPrinting = true
+                        try {
+                            printBill(requireNotNull(state.orderId))
+                        } finally {
+                            billPrinting = false
+                        }
+                    }
+                }
+            },
+            { dialogs.modal = null },
+        )
     dialogs.voiding?.let { line ->
         EntryDialog("Void Item", { dialogs.voiding = null }) {
             val focus = remember { FocusRequester() }
@@ -624,7 +650,12 @@ internal fun EntryDialog(
 }
 
 @Composable
-private fun EntryBill(state: EditorState, close: () -> Unit) {
+private fun EntryBill(
+    state: EditorState,
+    printing: Boolean,
+    onPrint: () -> Unit,
+    close: () -> Unit,
+) {
     EntryDialog("Current Bill", close, wide = true, scrollable = false) {
         Label(
             "${state.tableName.takeIf { it.isNotEmpty() }?.plus(" - ").orEmpty()}Order #${state.cart?.orderNumber.orEmpty()}",
@@ -674,5 +705,13 @@ private fun EntryBill(state: EditorState, close: () -> Unit) {
                     Label(money(amount ?: 0.0))
                 }
             }
+        Spacer(Modifier.height(16.dp))
+        EntryButton(
+            if (printing) "Printing..." else "Print Bill",
+            onPrint,
+            Modifier.fillMaxWidth(),
+            enabled = !printing,
+            glyph = Glyph.Print,
+        )
     }
 }

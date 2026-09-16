@@ -167,6 +167,103 @@ object ReceiptFormatter {
     }
 }
 
+/** Pure pre-settlement bill formatter. Payment and official receipt fields cannot be represented. */
+object BillFormatter {
+    fun format(document: BillDocument, charsPerLine: Int): List<PrinterCall> = buildList {
+        align(PrinterAlignment.CENTER)
+        text("${document.storeName}\n", BOLD)
+        document.storeAddress.ifTruthy { text("$it\n") }
+        document.storeTin.ifTruthy { text("TIN: $it\n") }
+        document.storeContactNumber.ifTruthy { text("Tel: $it\n") }
+        document.storeTelephone.ifTruthy { text("Phone: $it\n") }
+        document.storeEmail.ifTruthy { text("$it\n") }
+        document.storeWebsite.ifTruthy { text("$it\n") }
+        text("${line('-', charsPerLine)}\n")
+        text("BILL\n", LARGE)
+        text("${line('-', charsPerLine)}\n")
+
+        align(PrinterAlignment.LEFT)
+        text("Order #: ${document.orderNumber}\n")
+        text("Date: ${dateTime(document.printedAt)}\n")
+        val typeLabel =
+            when (document.orderCategory) {
+                OrderCategory.DINE_IN -> "Dine-In"
+                OrderCategory.TAKEOUT -> "Takeout"
+                null -> orderTypeLabel(document.orderType)
+            }
+        text("Type: $typeLabel\n")
+        document.tableName.ifTruthy { text("Table: $it\n") }
+        document.tableMarker.ifTruthy { text("Table Marker: $it\n") }
+        document.pax?.takeIf { it != 0.0 && !it.isNaN() }?.let { text("Pax: ${jsNumber(it)}\n") }
+        text("Cashier: ${document.cashierName}\n")
+        document.customerName.ifTruthy { text("Customer: $it\n") }
+
+        text("${line('-', charsPerLine)}\n")
+        align(PrinterAlignment.CENTER)
+        text("ORDER ITEMS\n", BOLD)
+        align(PrinterAlignment.LEFT)
+
+        val orderDefault =
+            document.orderDefaultServiceType
+                ?: when (document.orderCategory) {
+                    OrderCategory.DINE_IN -> ServiceType.DINE_IN
+                    OrderCategory.TAKEOUT -> ServiceType.TAKEOUT
+                    null ->
+                        if (document.orderType == OrderType.DINE_IN) ServiceType.DINE_IN
+                        else ServiceType.TAKEOUT
+                }
+        document.items.forEach { item ->
+            val serviceType = item.serviceType ?: orderDefault
+            text("${item.name}\n")
+            text("  ${if (serviceType == ServiceType.TAKEOUT) "Takeout" else "Dine-In"}\n")
+            item.modifiers.forEach { modifier ->
+                val suffix =
+                    if (modifier.priceAdjustment > 0) " (${currency(modifier.priceAdjustment)})"
+                    else ""
+                text("  + ${modifier.optionName}$suffix\n")
+            }
+            val detail = "  ${jsNumber(item.quantity)}x ${currency(item.price)}"
+            text("${row(detail, currency(item.total), charsPerLine)}\n")
+        }
+
+        text("${line('-', charsPerLine)}\n")
+        text("${row("Subtotal", currency(document.subtotal), charsPerLine)}\n")
+        text("${row("Vatable Sales", currency(document.vatableSales), charsPerLine)}\n")
+        text("${row("VAT 12%", currency(document.vatAmount), charsPerLine)}\n")
+        text("${row("VAT-Exempt", currency(document.vatExemptSales), charsPerLine)}\n")
+
+        if (document.discounts.isNotEmpty()) {
+            text("\n")
+            text("${line('-', charsPerLine)}\n")
+            align(PrinterAlignment.CENTER)
+            text("DISCOUNTS\n", BOLD)
+            align(PrinterAlignment.LEFT)
+            document.discounts.forEach { discount ->
+                val prefix =
+                    when (discount.type) {
+                        DiscountType.SC -> "SC"
+                        DiscountType.PWD -> "PWD"
+                        DiscountType.CUSTOM -> "Discount"
+                    }
+                text("$prefix: ${discount.customerName}\n")
+                text("ID: ${discount.customerId}\n")
+                text("${row(discount.itemName, "-${currency(discount.amount)}", charsPerLine)}\n")
+                text("\n")
+            }
+            val totalDiscount = document.discounts.sumOf { it.amount }
+            text("${row("Total Discount", "-${currency(totalDiscount)}", charsPerLine)}\n")
+        }
+
+        text("${row("TOTAL", currency(document.total), charsPerLine)}\n", BOLD)
+        text("${line('-', charsPerLine)}\n")
+        align(PrinterAlignment.CENTER)
+        text("${document.storeFooter.takeIf { it.isTruthy() } ?: "Thank you for your patronage!"}\n")
+        text("This does not serve as an official receipt\n")
+        val feed = if (charsPerLine >= 48) "\n\n\n\n\n\n" else "\n\n\n"
+        text("Powered by PMGT Flow Suite$feed", cut = true)
+    }
+}
+
 object KitchenTicketFormatter {
     fun format(document: KitchenTicketDocument, charsPerLine: Int): List<PrinterCall> =
         buildList {

@@ -1,5 +1,7 @@
 package com.pmgt.pos.printer.settings
 
+import com.pmgt.pos.printer.BillDocument
+import com.pmgt.pos.printer.BillFormatter
 import com.pmgt.pos.printer.KitchenTicketDocument
 import com.pmgt.pos.printer.KitchenTicketFormatter
 import com.pmgt.pos.printer.PrinterCall
@@ -410,6 +412,28 @@ class PrinterSettingsController(
             )
         if (!transport.writeDocument(printer.id, calls)) {
             throw reported("write", printer.id, PrinterOperationFailed("Failed to send receipt"))
+        }
+    }
+
+    /** Prints a pre-settlement bill through the configured receipt printer. */
+    suspend fun printBill(document: BillDocument) {
+        val printer =
+            mutableState.value.receiptPrinter
+                ?: throw PrinterOperationFailed("No receipt printer configured")
+        if (!connectPrinter(printer.id)) {
+            throw reported(
+                "connect",
+                printer.id,
+                PrinterOperationFailed("Failed to connect to receipt printer"),
+            )
+        }
+        if (
+            !transport.writeDocument(
+                printer.id,
+                BillFormatter.format(document, printer.paperWidth.charsPerLine),
+            )
+        ) {
+            throw reported("write", printer.id, PrinterOperationFailed("Failed to send bill"))
         }
     }
 

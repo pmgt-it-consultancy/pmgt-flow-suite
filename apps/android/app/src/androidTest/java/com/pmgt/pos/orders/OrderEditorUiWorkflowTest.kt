@@ -20,6 +20,7 @@ import com.pmgt.pos.browse.BrowseDatabaseContract.row
 import com.pmgt.pos.catalog.LocalCatalogRepository
 import com.pmgt.pos.db.*
 import java.io.File
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers
@@ -305,6 +306,8 @@ class OrderEditorUiWorkflowTest {
             repo.createDraft("s").also { repo.customer(it, "Ana", "dine_in", "old") }
         }
         val checkout = AtomicReference<CheckoutRoute>()
+        val billPrints = AtomicInteger()
+        val billedQuantity = AtomicReference<Double>()
         compose.setContent {
             val scope = rememberCoroutineScope()
             val session = remember {
@@ -317,6 +320,10 @@ class OrderEditorUiWorkflowTest {
                 {},
                 {},
                 checkout::set,
+                printBill = {
+                    billedQuantity.set(repo.cart("s", it).filterNotNull().first().lines.single().quantity)
+                    billPrints.incrementAndGet()
+                },
             )
         }
         compose.waitUntil(5000) {
@@ -340,6 +347,21 @@ class OrderEditorUiWorkflowTest {
         compose.onNodeWithText("Add 1 to Order").performClick()
         compose.waitUntil(5000) { db.select("order_items").isNotEmpty() }
         compose.onNodeWithContentDescription("Increase Chicken quantity").performClick()
+        val viewBillTop = compose.onNodeWithText("View Bill").fetchSemanticsNode().boundsInRoot.top
+        val paymentTop =
+            compose.onNodeWithText("Proceed to Payment").fetchSemanticsNode().boundsInRoot.top
+        assertTrue("View Bill must appear above payment", viewBillTop < paymentTop)
+        compose.onNodeWithText("View Bill").performClick()
+        compose.waitUntil(5000) {
+            compose.onAllNodesWithText("Print Bill").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText("Print Bill").performClick()
+        compose.waitUntil(5000) { billPrints.get() == 1 }
+        assertEquals(2.0, billedQuantity.get(), 0.0)
+        assertNull(checkout.get())
+        assertEquals("draft", db.get("orders", id)!!.string("status"))
+        compose.onNodeWithText("Current Bill").assertExists()
+        compose.onNodeWithContentDescription("Close dialog").performClick()
         val paymentPixels =
             compose.onNodeWithText("Proceed to Payment").captureToImage().toPixelMap()
         assertEquals(Color(0xFF0D87E1).toArgb(), paymentPixels[paymentPixels.width / 2, 4].toArgb())

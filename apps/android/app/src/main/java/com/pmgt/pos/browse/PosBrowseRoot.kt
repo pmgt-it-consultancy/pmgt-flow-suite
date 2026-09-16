@@ -557,6 +557,21 @@ fun PosBrowseRoot(
                                         request.toTicket(java.time.LocalDateTime.now())
                                     )
                                 },
+                                printBill = { orderId ->
+                                    val view =
+                                        checkoutRepository
+                                            ?.observe(checkoutOwner, orderId)
+                                            ?.first()
+                                            ?: error("Bill is unavailable. Please try again.")
+                                    val activeModules =
+                                        modules
+                                            ?: error(
+                                                "Receipt printing is not available in this build."
+                                            )
+                                    activeModules.printers.printBill(
+                                        view.toBill(user.name, java.time.LocalDateTime.now())
+                                    )
+                                },
                             )
                         }
                     "SettingsScreen" ->

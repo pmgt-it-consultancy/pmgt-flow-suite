@@ -43,6 +43,35 @@ data class ReceiptPayment(
     val cardReferenceNumber: String? = null,
 )
 
+/** Current order snapshot printed before settlement; deliberately carries no payment fields. */
+data class BillDocument(
+    val storeName: String,
+    val storeAddress: String? = null,
+    val storeTin: String? = null,
+    val storeContactNumber: String? = null,
+    val storeTelephone: String? = null,
+    val storeEmail: String? = null,
+    val storeWebsite: String? = null,
+    val storeFooter: String? = null,
+    val orderNumber: String,
+    val tableName: String? = null,
+    val tableMarker: String? = null,
+    val orderCategory: OrderCategory? = null,
+    val pax: Double? = null,
+    val orderType: OrderType,
+    val cashierName: String,
+    val customerName: String? = null,
+    val items: List<ReceiptItem>,
+    val subtotal: Double,
+    val discounts: List<ReceiptDiscount>,
+    val vatableSales: Double,
+    val vatAmount: Double,
+    val vatExemptSales: Double,
+    val total: Double,
+    val orderDefaultServiceType: ServiceType? = null,
+    val printedAt: LocalDateTime,
+)
+
 data class ReceiptDocument(
     val storeName: String,
     val storeAddress: String? = null,

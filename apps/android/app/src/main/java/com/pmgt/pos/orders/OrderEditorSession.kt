@@ -257,6 +257,12 @@ class OrderEditorSession(
         }
     }
 
+    /** Flushes visible cart edits before the bill reads its immutable local order snapshot. */
+    suspend fun prepareBill() {
+        edits.flush()
+        finishPendingAdd()
+    }
+
     suspend fun leave() {
         if (state.value.needsRecalculation) {
             repository.recalculate(requireNotNull(state.value.orderId))

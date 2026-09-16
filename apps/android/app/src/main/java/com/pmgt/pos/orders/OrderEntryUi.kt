@@ -385,7 +385,21 @@ internal fun EntryCart(
                 Spacer(Modifier.height(10.dp))
             }
             if (takeout || (!state.draftMode && state.count > 0)) {
-                if (!takeout) Spacer(Modifier.height(8.dp))
+                if (takeout) {
+                    EntryButton(
+                        "View Bill",
+                        onBill,
+                        Modifier.fillMaxWidth(),
+                        Color.White,
+                        BrowseColors.Brand,
+                        glyph = Glyph.Receipt,
+                        outline = true,
+                        borderColor = BrowseColors.Brand,
+                        fontSize = 16,
+                        vertical = 14,
+                    )
+                    Spacer(Modifier.height(10.dp))
+                } else Spacer(Modifier.height(8.dp))
                 EntryButton(
                     if (takeout) "Proceed to Payment" else "Close Table",
                     onCheckout,
