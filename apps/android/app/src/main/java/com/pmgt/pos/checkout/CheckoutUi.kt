@@ -130,14 +130,13 @@ internal fun CheckoutField(
         visualTransformation = transformation,
         singleLine = true,
         decorationBox = { inner ->
-            Box {
-                if (value.isEmpty())
-                    Label(
-                        placeholder,
-                        size,
-                        Color(0xFF9CA3AF),
-                        modifier = if (center) Modifier.align(Alignment.Center) else Modifier,
-                    )
+            // The decoration box must take the full width, otherwise the inner field is measured
+            // to its text and a centred textAlign has nothing to centre within.
+            Box(
+                Modifier.fillMaxWidth(),
+                contentAlignment = if (center) Alignment.Center else Alignment.CenterStart,
+            ) {
+                if (value.isEmpty()) Label(placeholder, size, Color(0xFF9CA3AF))
                 inner()
             }
         },
@@ -156,6 +155,7 @@ internal fun CheckoutModal(
         properties =
             DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
+        HideSystemBarsInDialog()
         val window = (LocalView.current.parent as? DialogWindowProvider)?.window
         SideEffect {
             window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)

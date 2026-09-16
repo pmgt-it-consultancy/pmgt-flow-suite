@@ -22,6 +22,7 @@ import com.pmgt.pos.printer.settings.PrinterSettingsScreen
 import com.pmgt.pos.settings.AutoLockUpdateResult
 import com.pmgt.pos.settings.SettingsRefreshResult
 import com.pmgt.pos.settings.SettingsScreen
+import com.pmgt.pos.settings.SystemStatusDropdown
 import com.pmgt.pos.sync.SyncStatus
 import com.pmgt.pos.updater.ForceUpdateModal
 import com.pmgt.pos.updater.OptionalUpdateDialog
@@ -136,6 +137,7 @@ fun PosBrowseRoot(
     var refreshNotice by remember { mutableStateOf<Pair<String, String>?>(null) }
     var confirmRefresh by remember { mutableStateOf(false) }
     var reprinting by remember { mutableStateOf(false) }
+    var statusVisible by remember { mutableStateOf(false) }
     var preview by remember { mutableStateOf<ReceiptPreviewRequest?>(null) }
     var receiptResult by remember { mutableStateOf(PreviewPrintResult.NONE) }
     var kitchenResult by remember { mutableStateOf(PreviewPrintResult.NONE) }
@@ -356,6 +358,8 @@ fun PosBrowseRoot(
                                 }
                         }
                 }
+                is BrowseAction.SystemStatus ->
+                    if (modules == null) unavailable = true else statusVisible = true
                 is BrowseAction.Settings ->
                     if (modules == null) unavailable = true else route = "SettingsScreen"
                 is BrowseAction.DayClosing ->
@@ -616,6 +620,26 @@ fun PosBrowseRoot(
                         )
             }
     }
+    if (statusVisible && modules != null) {
+        val settingsState by modules.settings.state.collectAsStateWithLifecycle()
+        LaunchedEffect(modules.settings) { modules.settings.load() }
+        SystemStatusDropdown(
+            status = settingsState.systemStatus,
+            now = System.currentTimeMillis(),
+            onRetryServer = onRetrySync,
+            onReconnectReceipt = {
+                modules.printers.state.value.receiptPrinter?.let { printer ->
+                    scope.launch { modules.printers.reconnect(printer.id) }
+                }
+            },
+            onReconnectKitchen = {
+                modules.printers.state.value.kitchenPrinter?.let { printer ->
+                    scope.launch { modules.printers.reconnect(printer.id) }
+                }
+            },
+            onClose = { statusVisible = false },
+        )
+    }
     preview?.let { sale ->
         if (modules != null) {
             val printerState by modules.printers.state.collectAsStateWithLifecycle()
@@ -631,6 +655,7 @@ fun PosBrowseRoot(
                         usePlatformDefaultWidth = false,
                     ),
             ) {
+                HideSystemBarsInDialog()
                 Surface(
                     Modifier.fillMaxWidth(0.94f).fillMaxHeight(0.92f),
                     shape = RoundedCornerShape(16.dp),

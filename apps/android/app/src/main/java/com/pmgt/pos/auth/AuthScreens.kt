@@ -1,5 +1,6 @@
 package com.pmgt.pos.auth
 
+import com.pmgt.pos.browse.HideSystemBarsInDialog
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
@@ -619,6 +620,7 @@ private fun ManagerDialog(
                 decorFitsSystemWindows = false,
             ),
     ) {
+        HideSystemBarsInDialog()
         val outerScroll = rememberScrollState()
         Box(
             Modifier.fillMaxSize()

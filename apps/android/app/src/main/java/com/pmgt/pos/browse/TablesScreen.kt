@@ -84,6 +84,7 @@ internal fun TablesScreen(
             properties =
                 DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
         ) {
+            HideSystemBarsInDialog()
             BoxWithConstraints(Modifier.fillMaxSize()) {
                 Box(Modifier.fillMaxSize().clickable { selected = null })
                 Column(

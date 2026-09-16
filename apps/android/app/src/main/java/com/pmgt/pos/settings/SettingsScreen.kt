@@ -1,5 +1,6 @@
 package com.pmgt.pos.settings
 
+import com.pmgt.pos.browse.HideSystemBarsInDialog
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -213,6 +214,7 @@ private fun AutoLockDialog(
         onDismissRequest = { if (!updating) onDismiss() },
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
+        HideSystemBarsInDialog()
         Box(
             Modifier.fillMaxSize().background(Color.Black.copy(alpha = .4f)).clickable(
                 enabled = !updating,

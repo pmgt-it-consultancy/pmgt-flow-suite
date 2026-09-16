@@ -1,5 +1,6 @@
 package com.pmgt.pos.printer.settings
 
+import com.pmgt.pos.browse.HideSystemBarsInDialog
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -384,6 +385,7 @@ private fun ScanPrintersDialog(controller: PrinterSettingsController, close: () 
         }
     }
     Dialog(onDismissRequest = { if (!busy) close() }) {
+        HideSystemBarsInDialog()
         Surface(
             Modifier.fillMaxWidth().heightIn(max = 680.dp).testTag("printer-scan-dialog"),
             shape = RoundedCornerShape(16.dp),
@@ -523,6 +525,7 @@ private fun EditPrinterDialog(
     var role by remember(printer.id) { mutableStateOf(printer.role) }
     var width by remember(printer.id) { mutableStateOf(printer.paperWidth) }
     Dialog(onDismissRequest = close) {
+        HideSystemBarsInDialog()
         Surface(shape = RoundedCornerShape(16.dp), color = Color.White) {
             Column(Modifier.widthIn(max = 480.dp).padding(20.dp)) {
                 Label("Edit Printer", 20, BrowseColors.Ink, FontWeight.Bold)

@@ -3,6 +3,7 @@ package com.pmgt.pos
 import android.app.Application
 import android.os.Bundle
 import android.view.MotionEvent
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -87,6 +88,9 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(android.graphics.Color.rgb(13, 135, 225)),
             navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
         )
+        // A till must not sleep during service. This keeps the display on while the app is in
+        // the foreground; the in-app auto-lock still locks the session on its own timer.
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         WindowCompat.getInsetsController(window, window.decorView).apply {
             isAppearanceLightStatusBars = false
             hide(WindowInsetsCompat.Type.navigationBars())
@@ -137,6 +141,9 @@ class MainActivity : ComponentActivity() {
                                 AndroidPrinterDeviceManager(applicationContext),
                                 requestEnable = {
                                     val prompt = CompletableDeferred<Boolean>()
+                                    // A superseded prompt never receives its own result, so
+                                    // release it rather than leaving its caller suspended.
+                                    enablePrompt?.complete(false)
                                     enablePrompt = prompt
                                     enableLauncher.launch(
                                         AndroidPrinterBluetoothPlatform.requestEnableIntent()
@@ -147,6 +154,7 @@ class MainActivity : ComponentActivity() {
                                 requestPermissions = {
                                     val missing = bluetoothPlatform.requiredPermissionNames()
                                     val prompt = CompletableDeferred<Boolean>()
+                                    permissionPrompt?.complete(false)
                                     permissionPrompt = prompt
                                     permissionLauncher.launch(missing)
                                     prompt.await()

@@ -79,6 +79,7 @@ fun ProductOptionsSheet(
             properties =
                 DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
         ) {
+            HideSystemBarsInDialog()
             val window = (LocalView.current.parent as? DialogWindowProvider)?.window
             SideEffect {
                 // RN's transparent modal has only its explicit 50% backdrop, not an extra dim

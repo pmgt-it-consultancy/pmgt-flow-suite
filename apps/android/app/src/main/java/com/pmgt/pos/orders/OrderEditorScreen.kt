@@ -574,6 +574,7 @@ internal fun EntryDialog(
         properties =
             DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
+        HideSystemBarsInDialog()
         val window = (LocalView.current.parent as? DialogWindowProvider)?.window
         SideEffect {
             window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)

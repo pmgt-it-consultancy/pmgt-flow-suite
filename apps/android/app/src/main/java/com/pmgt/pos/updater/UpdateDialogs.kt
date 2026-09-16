@@ -1,5 +1,6 @@
 package com.pmgt.pos.updater
 
+import com.pmgt.pos.browse.HideSystemBarsInDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ fun OptionalUpdateDialog(info: UpdateInfo, onGoToUpdates: () -> Unit, onDismiss:
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
+        HideSystemBarsInDialog()
         Column(
             Modifier.fillMaxWidth(0.8f).widthIn(max = 400.dp)
                 .background(Color.White, RoundedCornerShape(16.dp))
@@ -70,6 +72,7 @@ fun ForceUpdateModal(info: UpdateInfo, onGoToUpdates: () -> Unit) {
                 usePlatformDefaultWidth = false,
             ),
     ) {
+        HideSystemBarsInDialog()
         Column(
             Modifier.fillMaxSize().background(Color.White).padding(32.dp),
             verticalArrangement = Arrangement.Center,
