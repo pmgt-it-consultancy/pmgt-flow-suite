@@ -225,12 +225,12 @@ class PosDatabase(private val driver: SqlDriver) : AutoCloseable {
 
     /** Read only reserved checkout pointers, never scan model rows or unrelated local secrets. */
     @Synchronized
-    internal fun checkoutPointers(): Map<String, String> = driver.executeQuery(null,
+    internal fun checkoutPointers(settled: Boolean = false): Map<String, String> = driver.executeQuery(null,
         "SELECT key,value FROM local_storage WHERE key >= ? AND key < ? AND value != ''", { cursor ->
             val rows = linkedMapOf<String, String>()
-            while (cursor.next().value) rows[cursor.getString(0)!!.removePrefix("kotlin.checkout.active:")] = cursor.getString(1)!!
+            while (cursor.next().value) rows[cursor.getString(0)!!.removePrefix(if (settled) "kotlin.checkout.settled:" else "kotlin.checkout.active:")] = cursor.getString(1)!!
             QueryResult.Value(rows)
-        }, 2) { bindString(0, "kotlin.checkout.active:"); bindString(1, "kotlin.checkout.active;") }.value
+        }, 2) { bindString(0, if (settled) "kotlin.checkout.settled:" else "kotlin.checkout.active:"); bindString(1, if (settled) "kotlin.checkout.settled;" else "kotlin.checkout.active;") }.value
 
     @Synchronized
     fun setLocalValue(key: String, value: String): Unit = transaction {

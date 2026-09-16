@@ -12,6 +12,7 @@ class LocalCheckoutRepository(
     private val io: CoroutineDispatcher,
     private val currentOwner: () -> CheckoutOwner?,
     private val triggerPush: () -> Unit = {},
+    private val clock: () -> Long = System::currentTimeMillis,
 ) : CheckoutRepository {
     override suspend fun recoverablePayment(owner: CheckoutOwner, orderId: String): CheckoutRoute? =
         withContext(io) {
@@ -34,23 +35,32 @@ class LocalCheckoutRepository(
         db.changes
             .map {
                 db.transaction {
-                    db.checkoutPointers().mapNotNull { (orderId, id) ->
-                        try {
-                            val journal = requireNotNull(loadJournal(db, orderId, id))
-                            validateJournal(db, journal, orderId, id)
-                            if (journal.owner.storeId != storeId) null
-                            else
-                                PendingFinancialAction(
-                                    orderId,
-                                    journal.kind,
-                                    if (fingerprint(db, orderId) == journal.fingerprint)
-                                        FinancialActionState.Recoverable
-                                    else FinancialActionState.Conflicted,
+                    val active = db.checkoutPointers()
+                    val settled = db.checkoutPointers(settled = true)
+                    (active.map { Triple(it.key, it.value, false) } +
+                            settled.map { Triple(it.key, it.value, true) })
+                        .mapNotNull { (orderId, id, isSettled) ->
+                            try {
+                                val journal = requireNotNull(loadJournal(db, orderId, id))
+                                validateJournal(db, journal, orderId, id)
+                                check(
+                                    journal.done == isSettled &&
+                                        (!isSettled || journal.kind == "payment")
                                 )
-                        } catch (_: Exception) {
-                            PendingFinancialAction(null, null, FinancialActionState.Unreadable)
+                                check(if (isSettled) orderId !in active else orderId !in settled)
+                                if (journal.owner.storeId != storeId || journal.done) null
+                                else
+                                    PendingFinancialAction(
+                                        orderId,
+                                        journal.kind,
+                                        if (fingerprint(db, orderId) == journal.fingerprint)
+                                            FinancialActionState.Recoverable
+                                        else FinancialActionState.Conflicted,
+                                    )
+                            } catch (_: Exception) {
+                                PendingFinancialAction(null, null, FinancialActionState.Unreadable)
+                            }
                         }
-                    }
                 }
             }
             .distinctUntilChanged()
@@ -115,10 +125,10 @@ class LocalCheckoutRepository(
         withContext(io) {
             val context = currentCoroutineContext()
             val result =
-            synchronized(db) {
-                checkOwner(owner, route.orderId)
-                check(PaymentMath.validIdentities(lines)) { "Payment lines are invalid" }
-                val old = activeJournal(db, route.orderId) ?: settledJournal(db, route.orderId)
+                synchronized(db) {
+                    checkOwner(owner, route.orderId)
+                    check(PaymentMath.validIdentities(lines)) { "Payment lines are invalid" }
+                    val old = activeJournal(db, route.orderId) ?: settledJournal(db, route.orderId)
                     if (old != null) {
                         check(
                             old.kind == "payment" &&
@@ -157,7 +167,7 @@ class LocalCheckoutRepository(
                         ) {
                             "Please enter a valid payment amount"
                         }
-                        val now = System.currentTimeMillis()
+                        val now = 0L
                         val complete =
                             CompletedCheckout(
                                 view,
@@ -168,58 +178,21 @@ class LocalCheckoutRepository(
                                 now,
                                 PaymentMath.coverage(lines, due).totalChange,
                             )
-                        val steps = recalculationWrites(graph).toMutableList()
-                        payments.forEach { p ->
-                            steps +=
-                                CheckoutWrite(
-                                    "order_payments",
-                                    uid(),
-                                    "insert",
-                                    fields(
-                                        "order_id" to route.orderId,
-                                        "store_id" to owner.storeId,
-                                        "payment_method" to p.paymentMethod,
-                                        "amount" to p.amount,
-                                        "cash_received" to p.cashReceived?.takeUnless { it == 0.0 },
-                                        "change_given" to p.changeGiven?.takeUnless { it == 0.0 },
-                                        "card_payment_type" to
-                                            p.cardPaymentType?.takeIf { it.isNotEmpty() },
-                                        "card_reference_number" to
-                                            p.cardReferenceNumber?.takeIf { it.isNotEmpty() },
-                                        "created_at" to now,
-                                        "created_by" to "",
-                                    ),
-                                )
-                        }
-                        val first = payments.first()
-                        steps +=
-                            CheckoutWrite(
-                                "orders",
-                                route.orderId,
-                                "update",
-                                fields(
-                                    "status" to "paid",
-                                    "payment_method" to first.paymentMethod,
-                                    "cash_received" to first.cashReceived?.takeUnless { it == 0.0 },
-                                    "change_given" to first.changeGiven?.takeUnless { it == 0.0 },
-                                    "card_payment_type" to first.cardPaymentType,
-                                    "card_reference_number" to first.cardReferenceNumber,
-                                    "paid_at" to now,
-                                    "paid_by" to "",
-                                ),
-                            )
-                        val journal =
+                        val draft =
                             CheckoutJournal(
                                 uid(),
                                 owner,
                                 route.orderId,
                                 "payment",
                                 fingerprint(db, route.orderId),
-                                steps,
+                                emptyList(),
                                 tableId =
                                     graph.parent.string("table_id")?.takeIf { it.isNotEmpty() },
                                 completion = complete,
+                                baseline = captureBaseline(db, graph),
+                                allocatedIds = payments.map { uid() },
                             )
+                        val journal = draft.copy(steps = canonicalSteps(draft))
                         saveNew(db, journal)
                         requireNotNull(finish(journal, owner, context).completion)
                     }
@@ -264,63 +237,37 @@ class LocalCheckoutRepository(
                     ) {
                         "Please complete the discount details"
                     }
-                    val rows =
-                        input.itemIds.map { id ->
-                            val item =
-                                requireNotNull(graph.items.find { it.string("id") == id }) {
-                                    "Discount item is unavailable"
-                                }
-                            check(
-                                graph.discounts
-                                    .filter { it.string("order_item_id") == id }
-                                    .fold(0.0) { sum, d -> sum + d.number("quantity_applied") } ==
-                                    0.0
-                            ) {
-                                "This item already has a discount"
+                    input.itemIds.forEach { id ->
+                        val item =
+                            requireNotNull(graph.items.find { it.string("id") == id }) {
+                                "Discount item is unavailable"
                             }
-                            val product =
-                                requireNotNull(graph.products[item.string("product_id")]) {
-                                    "Discount product is unavailable"
-                                }
-                            val amount =
-                                com.pmgt.pos.money.Money.scPwdDiscount(
-                                    graph.unitPrice(item),
-                                    if (product.boolean("is_vatable")) graph.vatRate else 0.0,
-                                )
-                            fields(
-                                "id" to uid(),
-                                "order_id" to orderId,
-                                "order_item_id" to id,
-                                "discount_type" to input.type,
-                                "customer_name" to input.customerName.trim(),
-                                "customer_id" to input.customerId.trim(),
-                                "quantity_applied" to 1.0,
-                                "discount_amount" to amount.discountAmount,
-                                "vat_exempt_amount" to amount.vatExemptAmount,
-                                "approved_by" to approval.managerId,
-                                "created_at" to System.currentTimeMillis(),
-                            )
+                        check(
+                            graph.discounts
+                                .filter { it.string("order_item_id") == id }
+                                .fold(0.0) { sum, d -> sum + d.number("quantity_applied") } == 0.0
+                        ) {
+                            "This item already has a discount"
                         }
-                    val steps =
-                        rows.map {
-                            CheckoutWrite(
-                                "order_discounts",
-                                it.string("id")!!,
-                                "insert",
-                                JsonObject(it - "id"),
-                            )
-                        } + recalculationWrites(graph.copy(discounts = graph.discounts + rows))
-                    val journal =
+                        requireNotNull(graph.products[item.string("product_id")]) {
+                            "Discount product is unavailable"
+                        }
+                    }
+                    val draft =
                         CheckoutJournal(
                             actionId,
                             owner,
                             orderId,
                             "discount",
                             fingerprint(db, orderId),
-                            steps,
+                            emptyList(),
                             input = intent,
                             managerId = approval.managerId,
+                            baseline = captureBaseline(db, graph),
+                            allocatedIds = input.itemIds.map { uid() },
                         )
+                    val journal = draft.copy(steps = canonicalSteps(draft))
+                    validateJournal(db, journal, orderId, actionId)
                     saveNew(db, journal)
                     finish(journal, owner, context)
                 }
@@ -357,25 +304,19 @@ class LocalCheckoutRepository(
                     check(graph.discounts.any { it.string("id") == discountId }) {
                         "Discount is unavailable"
                     }
-                    val steps =
-                        listOf(CheckoutWrite("order_discounts", discountId, "delete", fields())) +
-                            recalculationWrites(
-                                graph.copy(
-                                    discounts =
-                                        graph.discounts.filter { it.string("id") != discountId }
-                                )
-                            )
-                    val journal =
+                    val draft =
                         CheckoutJournal(
                             actionId,
                             owner,
                             orderId,
                             "remove",
                             fingerprint(db, orderId),
-                            steps,
+                            emptyList(),
                             input = discountId,
                             managerId = approval.managerId,
+                            baseline = captureBaseline(db, graph),
                         )
+                    val journal = draft.copy(steps = canonicalSteps(draft))
                     saveNew(db, journal)
                     finish(journal, owner, context)
                 }
@@ -401,7 +342,15 @@ class LocalCheckoutRepository(
             journal =
                 db.transaction {
                     if (journal.next < journal.steps.size) {
-                        val step = journal.steps[journal.next]
+                        val planned = journal.steps[journal.next]
+                        val stamped =
+                            if ("created_at" in planned.values || "paid_at" in planned.values)
+                                journal.copy(
+                                    executedAt = journal.executedAt + (journal.next to clock())
+                                )
+                            else journal
+                        val executing = stamped.copy(steps = canonicalSteps(stamped))
+                        val step = executing.steps[journal.next]
                         when (step.operation) {
                             "insert" ->
                                 db.insertLocal(
@@ -412,7 +361,7 @@ class LocalCheckoutRepository(
                             "delete" -> db.deleteLocal(step.table, step.id)
                             else -> error("Unknown checkout phase")
                         }
-                        journal
+                        executing
                             .copy(
                                 next = journal.next + 1,
                                 fingerprint = fingerprint(db, journal.orderId),
@@ -437,12 +386,19 @@ class LocalCheckoutRepository(
                             )
                                 db.updateLocal("tables", tableId, fields("status" to "available"))
                         }
-                        journal.copy(done = true).also {
-                            saveJournal(db, it)
-                            db.setLocalValue(activeKey(it.orderId), "")
-                            if (it.kind == "payment")
-                                db.setLocalValue(settledKey(it.orderId), it.id)
-                        }
+                        val completedAt = clock()
+                        journal
+                            .copy(
+                                done = true,
+                                completedAt = completedAt,
+                                completion = journal.completion?.copy(transactionAt = completedAt),
+                            )
+                            .also {
+                                saveJournal(db, it)
+                                db.setLocalValue(activeKey(it.orderId), "")
+                                if (it.kind == "payment")
+                                    db.setLocalValue(settledKey(it.orderId), it.id)
+                            }
                     }
                 }
             if (journal.done) return journal
