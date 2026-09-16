@@ -15,11 +15,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pmgt.pos.R
+import com.pmgt.pos.browse.SystemIndicator
 import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,7 +39,12 @@ private val Gray900 = Color(0xFF111827)
 
 /** Task 12 screen seam. Store/session binding remains explicit at the root owner. */
 @Composable
-fun DayClosingScreen(storeId: String, controller: ClosingController, onBack: () -> Unit) {
+fun DayClosingScreen(
+    storeId: String,
+    controller: ClosingController,
+    onBack: () -> Unit,
+    onSystemStatus: () -> Unit = {},
+) {
     LaunchedEffect(storeId, controller) { controller.bind(storeId) }
     DisposableEffect(controller) { onDispose(controller::dispose) }
     val state by controller.state.collectAsState()
@@ -50,7 +59,7 @@ fun DayClosingScreen(storeId: String, controller: ClosingController, onBack: () 
     }
 
     Column(Modifier.fillMaxSize().background(Gray100)) {
-        ClosingHeader(state, onBack, controller::generate)
+        ClosingHeader(state, onBack, controller::generate, onSystemStatus)
         state.selectedDate?.let { selected ->
             state.todayBusinessDate?.let { today ->
                 DateNavigation(selected, today, controller::selectDate)
@@ -72,7 +81,12 @@ fun DayClosingScreen(storeId: String, controller: ClosingController, onBack: () 
 }
 
 @Composable
-private fun ClosingHeader(state: ClosingState, onBack: () -> Unit, onGenerate: () -> Unit) {
+private fun ClosingHeader(
+    state: ClosingState,
+    onBack: () -> Unit,
+    onGenerate: () -> Unit,
+    onSystemStatus: () -> Unit,
+) {
     Box(
         Modifier.fillMaxWidth().height(76.dp).background(Color.White)
             .border(width = 0.dp, color = Color.Transparent)
@@ -82,7 +96,7 @@ private fun ClosingHeader(state: ClosingState, onBack: () -> Unit, onGenerate: (
             Modifier.align(Alignment.CenterStart).size(48.dp).clickable(onClick = onBack)
                 .semantics { contentDescription = "Back" },
             contentAlignment = Alignment.Center,
-        ) { ClosingText("‹", 34, Gray700, lineHeight = 34) }
+        ) { ClosingIcon(ClosingGlyph.Back, 24, Gray700) }
         ClosingText(
             "Day Closing",
             20,
@@ -91,21 +105,24 @@ private fun ClosingHeader(state: ClosingState, onBack: () -> Unit, onGenerate: (
             Modifier.align(Alignment.Center),
             lineHeight = 24,
         )
-        if (state.operation == ClosingOperation.Generating) {
-            CircularProgressIndicator(
-                Modifier.align(Alignment.CenterEnd).size(22.dp),
-                color = Brand,
-                strokeWidth = 2.dp,
-            )
-        } else {
-            OutlinedButton(
-                onClick = onGenerate,
-                enabled = state.operation == null && state.selectedDate != null,
-                modifier = Modifier.align(Alignment.CenterEnd).height(40.dp),
-                shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, Brand),
-                contentPadding = PaddingValues(horizontal = 12.dp),
-            ) { ClosingText("Refresh Report", 14, Brand, FontWeight.SemiBold, lineHeight = 18) }
+        Row(
+            Modifier.align(Alignment.CenterEnd),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            if (state.operation == ClosingOperation.Generating) {
+                CircularProgressIndicator(Modifier.size(22.dp), color = Brand, strokeWidth = 2.dp)
+            } else {
+                OutlinedButton(
+                    onClick = onGenerate,
+                    enabled = state.operation == null && state.selectedDate != null,
+                    modifier = Modifier.height(40.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, Brand),
+                    contentPadding = PaddingValues(horizontal = 12.dp),
+                ) { ClosingText("Refresh Report", 14, Brand, FontWeight.SemiBold, lineHeight = 18) }
+            }
+            SystemIndicator(onSystemStatus)
         }
     }
     HorizontalDivider(color = Gray200)
@@ -137,7 +154,7 @@ private fun DateNavigation(selected: String, today: String, onSelect: (String) -
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            ClosingText("▣", 18, Brand, lineHeight = 18)
+            ClosingIcon(ClosingGlyph.Calendar, 18, Brand)
             ClosingText(
                 date.format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.forLanguageTag("en-PH"))),
                 16,
@@ -418,11 +435,25 @@ private fun PrintFooter(state: ClosingState, onPrint: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
-            ClosingText("▣", 22, Color.White, lineHeight = 22)
+            ClosingIcon(ClosingGlyph.Print, 22, Color.White)
             Spacer(Modifier.width(10.dp))
             ClosingText(label, 16, Color.White, FontWeight.Bold, lineHeight = 20)
         }
     }
+}
+
+private val ClosingIcons = FontFamily(Font(R.font.ionicons))
+
+/** Source uses Ionicons here; literal box characters were placeholders. */
+@Composable
+private fun ClosingIcon(code: Int, size: Int, color: Color) {
+    Text(code.toChar().toString(), fontFamily = ClosingIcons, fontSize = size.sp, color = color)
+}
+
+private object ClosingGlyph {
+    const val Back = 0xf127        // arrow-back
+    const val Calendar = 0xf1d6    // calendar-outline
+    const val Print = 0xf4f1       // print-outline
 }
 
 @Composable

@@ -608,7 +608,12 @@ fun PosBrowseRoot(
                     }
                 "DayClosingScreen" ->
                     if (modules != null)
-                        DayClosingScreen(storeId, modules.closing, onBack = { back() })
+                        DayClosingScreen(
+                            storeId,
+                            modules.closing,
+                            onBack = { back() },
+                            onSystemStatus = { action(BrowseAction.SystemStatus) },
+                        )
             }
     }
     preview?.let { sale ->
