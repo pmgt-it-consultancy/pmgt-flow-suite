@@ -53,6 +53,130 @@ class SyncWorkflowTest {
         override fun close() { sync.stop(); scope.cancel(); server.shutdown(); db.close() }
     }
 
+    @Test
+    fun inboundRowsProjectToTheRnSchemaBeforeStrictLocalValidation() = runBlocking {
+        Harness(database()).use { h ->
+            h.handler = {
+                response(
+                    page(
+                        """{
+                            "orderItems":{"created":[{"id":"item","storeId":"store","orderId":"order","productId":"product"}],"updated":[],"deleted":[]},
+                            "orderItemModifiers":{"created":[{"id":"modifier","storeId":"store","orderItemId":"item"}],"updated":[],"deleted":[]}
+                        }"""
+                    )
+                )
+            }
+
+            h.sync.start("store")
+            eventually {
+                h.sync.state.value.lastPulledAt != null ||
+                    h.sync.state.value.status == SyncStatus.Error
+            }
+
+            assertEquals(SyncStatus.Idle, h.sync.state.value.status)
+            assertEquals("order", h.db.get("order_items", "item")!!.string("order_id"))
+            assertEquals(
+                "item",
+                h.db.get("order_item_modifiers", "modifier")!!.string("order_item_id"),
+            )
+        }
+    }
+
+    @Test
+    fun inboundProjectionRetainsStrictKnownColumnTypes() = runBlocking {
+        Harness(database()).use { h ->
+            h.handler = {
+                response(
+                    page(
+                        """{"orderItems":{"created":[{"id":"item","storeId":"store","quantity":"invalid"}],"updated":[],"deleted":[]}}"""
+                    )
+                )
+            }
+
+            h.sync.start("store")
+            eventually { h.sync.state.value.status == SyncStatus.Error }
+
+            assertNull(h.db.get("order_items", "item"))
+        }
+    }
+
+    @Test
+    fun inboundProjectionRejectsRequiredNullAndPreservesOptionalNull() = runBlocking {
+        Harness(database()).use { h ->
+            h.handler = {
+                response(
+                    page(
+                        """{"orderItems":{"created":[{"id":"required-null","quantity":null}],"updated":[],"deleted":[]}}"""
+                    )
+                )
+            }
+
+            h.sync.start("store")
+            eventually {
+                h.sync.state.value.lastPulledAt != null ||
+                    h.sync.state.value.status == SyncStatus.Error
+            }
+
+            assertEquals(SyncStatus.Error, h.sync.state.value.status)
+            assertNull(h.db.get("order_items", "required-null"))
+        }
+
+        Harness(database()).use { h ->
+            h.handler = {
+                response(
+                    page(
+                        """{"orderItems":{"created":[{"id":"optional-null","notes":null}],"updated":[],"deleted":[]}}"""
+                    )
+                )
+            }
+
+            h.sync.start("store")
+            eventually { h.sync.state.value.lastPulledAt != null }
+
+            assertEquals(JsonNull, h.db.get("order_items", "optional-null")!!["notes"])
+        }
+    }
+
+    @Test
+    fun rolePermissionArrayUsesTheRnRequiredStringFallback() = runBlocking {
+        Harness(database()).use { h ->
+            h.handler = {
+                response(
+                    page(
+                        """{"roles":{"created":[{"id":"role","name":"Manager","permissions":["orders.view"],"scopeLevel":"branch","isSystem":false}],"updated":[],"deleted":[]}}"""
+                    )
+                )
+            }
+
+            h.sync.start("store")
+            eventually {
+                h.sync.state.value.lastPulledAt != null ||
+                    h.sync.state.value.status == SyncStatus.Error
+            }
+
+            assertEquals(SyncStatus.Idle, h.sync.state.value.status)
+            assertEquals("", h.db.get("roles", "role")!!.string("permissions"))
+        }
+    }
+
+    @Test
+    fun inboundProjectionDoesNotDiscardUnknownBusinessTables() = runBlocking {
+        Harness(database()).use { h ->
+            h.handler = {
+                response(
+                    page(
+                        """{"unknownBusiness":{"created":[{"id":"row"}],"updated":[],"deleted":[]}}"""
+                    )
+                )
+            }
+
+            h.sync.start("store")
+            eventually { h.sync.state.value.status == SyncStatus.Error }
+
+            assertNull(h.sync.state.value.lastPulledAt)
+        }
+    }
+
     @Test fun pagedPullUsesStableRangeAndOnlyAcknowledgesWhatWasSent() = runBlocking {
         Harness(database()).use { h ->
             h.db.insertLocal("orders", row("local"))

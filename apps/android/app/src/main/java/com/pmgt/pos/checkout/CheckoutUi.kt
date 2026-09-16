@@ -56,6 +56,10 @@ internal fun CheckoutButton(
     glyph: Glyph? = null,
     busy: Boolean = false,
     disabledAlpha: Float = .5f,
+    fontWeight: FontWeight = FontWeight.SemiBold,
+    glyphSize: Int = 24,
+    glyphInk: Color = ink,
+    borderWidth: Float = 1.5f,
 ) {
     Row(
         modifier
@@ -63,7 +67,8 @@ internal fun CheckoutButton(
             .clip(RoundedCornerShape(radius.dp))
             .background(color)
             .then(
-                if (border != null) Modifier.border(1.5.dp, border, RoundedCornerShape(radius.dp))
+                if (border != null)
+                    Modifier.border(borderWidth.dp, border, RoundedCornerShape(radius.dp))
                 else Modifier
             )
             .catalogPress(enabled, click)
@@ -75,10 +80,10 @@ internal fun CheckoutButton(
         if (busy) CircularProgressIndicator(Modifier.size(24.dp), color = ink, strokeWidth = 2.dp)
         else {
             glyph?.let {
-                Ion(it, 24, ink)
+                Ion(it, glyphSize, glyphInk)
                 Spacer(Modifier.width(8.dp))
             }
-            Label(text, fontSize, ink, FontWeight.SemiBold)
+            Label(text, fontSize, ink, fontWeight)
         }
     }
 }

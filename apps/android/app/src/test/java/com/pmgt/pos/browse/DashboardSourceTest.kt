@@ -10,6 +10,49 @@ import org.junit.Test
 
 class DashboardSourceTest {
     @Test
+    fun malformedDashboardCountsAreRejectedWithoutTruncation() = runBlocking {
+        MockWebServer().use { server ->
+            for (encoded in listOf("1.5", "\"1\"", "2147483648")) {
+                server.enqueue(
+                    MockResponse()
+                        .setBody(
+                            """{"status":"success","value":{"totalOrdersToday":$encoded,"todayRevenue":0.0}}"""
+                        )
+                )
+            }
+            server.start()
+            val source = DashboardSource(ConvexHttp(server.url("/").toString()))
+
+            repeat(3) {
+                val result = withTimeoutOrNull(500) { source.observe("store").first() }
+                assertNull(result)
+            }
+        }
+    }
+
+    @Test
+    fun integralConvexDoubleCountIsAcceptedWithoutRounding() = runBlocking {
+        MockWebServer().use { server ->
+            server.enqueue(
+                MockResponse()
+                    .setBody(
+                        """{"status":"success","value":{"totalOrdersToday":0.0,"todayRevenue":0.0}}"""
+                    )
+            )
+            server.start()
+
+            val result =
+                withTimeoutOrNull(5_000) {
+                    DashboardSource(ConvexHttp(server.url("/").toString()))
+                        .observe("store")
+                        .first()
+                }
+
+            assertEquals(DashboardSummary(0, 0.0), result)
+        }
+    }
+
+    @Test
     fun summaryComesOnlyFromServerAndRefreshesAfterSync() = runBlocking {
         MockWebServer().use { server ->
             server.enqueue(

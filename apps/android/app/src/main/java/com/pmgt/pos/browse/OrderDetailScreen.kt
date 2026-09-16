@@ -20,6 +20,7 @@ internal fun OrderDetailScreen(
     order: OrderDetail?,
     onBack: () -> Unit,
     onAction: (BrowseAction) -> Unit,
+    reprinting: Boolean = false,
 ) {
     if (order == null) {
         Loading(Modifier.background(BrowseColors.Background))
@@ -87,6 +88,9 @@ internal fun OrderDetailScreen(
                     "Reprint",
                     { onAction(BrowseAction.Reprint(summary.id)) },
                     Modifier.weight(1f),
+                    // Source disables this while a reprint is in flight; a second tap would
+                    // write a second audit row and print the receipt twice.
+                    enabled = !reprinting,
                     glyph = Glyph.Print,
                 )
                 ActionButton(

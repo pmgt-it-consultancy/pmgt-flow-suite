@@ -233,8 +233,11 @@ class SyncManager(
             val page = http.pull(initial, cursor)
             checkActive(active)
             cursor.accept(page)
-            val mapped = page.changes.mapKeys { snake(it.key) }.mapValues { (_, bucket) ->
-                bucket.copy(created = bucket.created.map { translateRow(it, ::snake) }, updated = bucket.updated.map { translateRow(it, ::snake) })
+            val mapped = page.changes.mapKeys { snake(it.key) }.mapValues { (table, bucket) ->
+                bucket.copy(
+                    created = bucket.created.map { projectInboundRow(table, translateRow(it, ::snake)) },
+                    updated = bucket.updated.map { projectInboundRow(table, translateRow(it, ::snake)) },
+                )
             }
             lastTable = mapped.filterValues { it.size > 0 }.maxByOrNull { it.value.size }?.key
             mapped.forEach { (table, bucket) -> if (bucket.size > 0) tables[table] = (tables[table] ?: 0) + bucket.size }

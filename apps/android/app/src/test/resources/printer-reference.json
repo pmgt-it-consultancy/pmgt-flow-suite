@@ -1,0 +1,2198 @@
+{
+  "provenance": "Synthetic calls emitted by unchanged RN escposFormatter.ts/usePrinterStore.ts; bytes encoded by installed PrinterCommand.java using RNBluetoothEscposPrinterModule printText ordering. Test Print replaces only the captured missing cutPaper invocation with the approved native feed30 plus cut1 repair. The cash drawer pulse uses the unchanged bluetoothPrinter.ts openCashDrawer defaults encoded by PrinterCommand.POS_Set_Cashbox. No Kotlin-generated expectations.",
+  "timezone": "Asia/Manila",
+  "nativePackageVersion": "0.1.2",
+  "formatterSha256": "99ce8ea2eb379b384a7c01cc4cc79ab7101807209e7bb810d5cdc9b3a6ea9edd",
+  "printerStoreSha256": "536e09f9c8de01e6aac1e44d07a9a13bb7084bb260abaf8c497df8bf57ba0322",
+  "commandSha256": "937545aa9dda29419ab04e9ccbdd9372d3c5bb3503fa7dc827fa7ae53af6eaf9",
+  "printerCommandSha256": "35c9bb7406ad728f3829a8066fdc643eb219079ebdd28f8602e8a71d8f663a64",
+  "bluetoothServiceSha256": "120d21e9ff9bb98f0a7be04ff9f8b877f8581628ed236c0acbe652fff8159cb0",
+  "nativeModuleSha256": "99b4a8d8cfdb6ccf6187704de2fcf17e8a946906409db187f2134d6d8678b6ee",
+  "cases": [
+    {
+      "name": "receipt-minimal-32-utf8-rounding",
+      "kind": "receipt",
+      "width": 32,
+      "minimal": true,
+      "input": {
+        "storeName": "Synthetic Eatery",
+        "orderNumber": "D-101",
+        "orderType": "dine_in",
+        "cashierName": "Cashier One",
+        "items": [
+          {
+            "name": "Crème 🍜",
+            "quantity": 2,
+            "price": 0.5025,
+            "total": 1.005
+          },
+          {
+            "name": "Rice",
+            "quantity": 1,
+            "price": 1234.5,
+            "total": 1234.5
+          }
+        ],
+        "subtotal": 100,
+        "discounts": [],
+        "vatableSales": 89.29,
+        "vatAmount": 10.71,
+        "vatExemptSales": 0,
+        "total": 100,
+        "paymentMethod": "cash",
+        "transactionDate": "2026-09-16T08:04:15.000Z"
+      },
+      "calls": [
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "Product Name Quantity Price\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0050726f64756374204e616d65205175616e746974792050726963650a"
+        },
+        {
+          "operation": "printText",
+          "text": "Crème 🍜 2 P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004372c3a86d6520f09f8d9c2032205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Rice 1 P 1,234.50\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00526963652031205020312c3233342e35300a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0,
+            "cut": true
+          },
+          "hex": "1d21001b74001b4d000a0a0a1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61001d21001b74001b4d0050726f64756374204e616d65205175616e746974792050726963650a1d21001b74001b4d004372c3a86d6520f09f8d9c2032205020312e30300a1d21001b74001b4d00526963652031205020312c3233342e35300a1d21001b74001b4d000a0a0a1b4a1e1d564201"
+    },
+    {
+      "name": "receipt-minimal-48-feed",
+      "kind": "receipt",
+      "width": 48,
+      "minimal": true,
+      "input": {
+        "storeName": "Synthetic Eatery",
+        "orderNumber": "D-101",
+        "orderType": "dine_in",
+        "cashierName": "Cashier One",
+        "items": [
+          {
+            "name": "Tea",
+            "quantity": 1,
+            "price": 2.675,
+            "total": 2.675
+          }
+        ],
+        "subtotal": 100,
+        "discounts": [],
+        "vatableSales": 89.29,
+        "vatAmount": 10.71,
+        "vatExemptSales": 0,
+        "total": 100,
+        "paymentMethod": "cash",
+        "transactionDate": "2026-09-16T08:04:15.000Z"
+      },
+      "calls": [
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "Product Name Quantity Price\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0050726f64756374204e616d65205175616e746974792050726963650a"
+        },
+        {
+          "operation": "printText",
+          "text": "Tea 1 P 2.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005465612031205020322e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n\n\n\n\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0,
+            "cut": true
+          },
+          "hex": "1d21001b74001b4d000a0a0a0a0a0a1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61001d21001b74001b4d0050726f64756374204e616d65205175616e746974792050726963650a1d21001b74001b4d005465612031205020322e36370a1d21001b74001b4d000a0a0a0a0a0a1b4a1e1d564201"
+    },
+    {
+      "name": "receipt-full-32-all-optionals-split-payments",
+      "kind": "receipt",
+      "width": 32,
+      "minimal": false,
+      "input": {
+        "storeName": "Synthetic Café 🍽️",
+        "orderNumber": "T-777",
+        "orderType": "delivery",
+        "cashierName": "Cashier One",
+        "items": [
+          {
+            "name": "Very long 🍜 product name for UTF16 truncation",
+            "quantity": 2,
+            "price": 1234.5,
+            "total": 2469,
+            "serviceType": "takeout",
+            "modifiers": [
+              {
+                "optionName": "Extra",
+                "priceAdjustment": 2.675
+              },
+              {
+                "optionName": "No charge",
+                "priceAdjustment": 0
+              },
+              {
+                "optionName": "Credit",
+                "priceAdjustment": -1.005
+              }
+            ]
+          },
+          {
+            "name": "Soup",
+            "quantity": 1,
+            "price": 1.005,
+            "total": 1.005
+          }
+        ],
+        "subtotal": 2470.005,
+        "discounts": [
+          {
+            "type": "sc",
+            "customerName": "Senior Fixture",
+            "customerId": "SC-1",
+            "itemName": "Long discount item 🍰",
+            "amount": 1.005
+          },
+          {
+            "type": "pwd",
+            "customerName": "PWD Fixture",
+            "customerId": "PWD-1",
+            "itemName": "Soup",
+            "amount": 2.675
+          },
+          {
+            "type": "custom",
+            "customerName": "Promo",
+            "customerId": "PROMO",
+            "itemName": "Everything",
+            "amount": 1000
+          }
+        ],
+        "vatableSales": 2205.36,
+        "vatAmount": 264.64,
+        "vatExemptSales": 1.005,
+        "total": 1466.325,
+        "paymentMethod": "cash",
+        "transactionDate": "2026-09-16T08:04:15.000Z",
+        "storeAddress": "123 Fixture Road",
+        "storeTin": "000-000-000-000",
+        "storeContactNumber": "+63 900 000 0000",
+        "storeTelephone": "02 0000 0000",
+        "storeEmail": "fixture@example.invalid",
+        "storeWebsite": "example.invalid",
+        "storeSocials": [
+          {
+            "platform": "Social",
+            "url": "@synthetic"
+          },
+          {
+            "platform": "Web",
+            "url": "/fixtures"
+          }
+        ],
+        "storeFooter": "Synthetic footer",
+        "tableMarker": "RED",
+        "orderCategory": "takeout",
+        "tableName": "Table 7",
+        "pax": 3,
+        "customerName": "Fixture Customer",
+        "customerId": "SYNTH-ID",
+        "customerAddress": "456 Test Avenue",
+        "customerTin": "111-111-111-111",
+        "orderDefaultServiceType": "dine_in",
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": 1000,
+            "cashReceived": 1500,
+            "changeGiven": 33.675
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": 466.325,
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": "REF-SYNTH-1"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Synthetic Café 🍽️\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0053796e74686574696320436166c3a920f09f8dbdefb88f0a"
+        },
+        {
+          "operation": "printText",
+          "text": "123 Fixture Road\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00313233204669787475726520526f61640a"
+        },
+        {
+          "operation": "printText",
+          "text": "TIN: 000-000-000-000\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0054494e3a203030302d3030302d3030302d3030300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Tel: +63 900 000 0000\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0054656c3a202b3633203930302030303020303030300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Phone: 02 0000 0000\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0050686f6e653a203032203030303020303030300a"
+        },
+        {
+          "operation": "printText",
+          "text": "fixture@example.invalid\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0066697874757265406578616d706c652e696e76616c69640a"
+        },
+        {
+          "operation": "printText",
+          "text": "example.invalid\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d006578616d706c652e696e76616c69640a"
+        },
+        {
+          "operation": "printText",
+          "text": "Social: @synthetic\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00536f6369616c3a204073796e7468657469630a"
+        },
+        {
+          "operation": "printText",
+          "text": "Web: /fixtures\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005765623a202f66697874757265730a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "Receipt #: T-777 | RED\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005265636569707420233a20542d373737207c205245440a"
+        },
+        {
+          "operation": "printText",
+          "text": "Date: 09/16/2026, 4:04:15 PM\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00446174653a2030392f31362f323032362c20343a30343a313520504d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Type: Takeout\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00547970653a2054616b656f75740a"
+        },
+        {
+          "operation": "printText",
+          "text": "Table: Table 7\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005461626c653a205461626c6520370a"
+        },
+        {
+          "operation": "printText",
+          "text": "Pax: 3\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005061783a20330a"
+        },
+        {
+          "operation": "printText",
+          "text": "Cashier: Cashier One\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00436173686965723a2043617368696572204f6e650a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "Customer: Fixture Customer\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00437573746f6d65723a204669787475726520437573746f6d65720a"
+        },
+        {
+          "operation": "printText",
+          "text": "ID No.: SYNTH-ID\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004944204e6f2e3a2053594e54482d49440a"
+        },
+        {
+          "operation": "printText",
+          "text": "Address: 456 Test Avenue\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00416464726573733a203435362054657374204176656e75650a"
+        },
+        {
+          "operation": "printText",
+          "text": "TIN: 111-111-111-111\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0054494e3a203131312d3131312d3131312d3131310a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "ORDER ITEMS\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d004f52444552204954454d530a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "Very long 🍜 product name for UTF16 truncation\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056657279206c6f6e6720f09f8d9c2070726f64756374206e616d6520666f72205554463136207472756e636174696f6e0a"
+        },
+        {
+          "operation": "printText",
+          "text": "  Takeout\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00202054616b656f75740a"
+        },
+        {
+          "operation": "printText",
+          "text": "  + Extra (P 2.67)\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020202b20457874726120285020322e3637290a"
+        },
+        {
+          "operation": "printText",
+          "text": "  + No charge\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020202b204e6f206368617267650a"
+        },
+        {
+          "operation": "printText",
+          "text": "  + Credit\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020202b204372656469740a"
+        },
+        {
+          "operation": "printText",
+          "text": "  2x P 1,234.50       P 2,469.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020203278205020312c3233342e3530202020202020205020322c3436392e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Soup\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00536f75700a"
+        },
+        {
+          "operation": "printText",
+          "text": "  Dine-In\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00202044696e652d496e0a"
+        },
+        {
+          "operation": "printText",
+          "text": "  1x P 1.00               P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020203178205020312e30302020202020202020202020202020205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Subtotal              P 2,470.01\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00537562746f74616c20202020202020202020202020205020322c3437302e30310a"
+        },
+        {
+          "operation": "printText",
+          "text": "Vatable Sales         P 2,205.36\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056617461626c652053616c65732020202020202020205020322c3230352e33360a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT 12%                 P 264.64\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056415420313225202020202020202020202020202020202050203236342e36340a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT-Exempt                P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005641542d4578656d7074202020202020202020202020202020205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "DISCOUNTS\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00444953434f554e54530a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "SC: Senior Fixture\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0053433a2053656e696f7220466978747572650a"
+        },
+        {
+          "operation": "printText",
+          "text": "ID: SC-1\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0049443a2053432d310a"
+        },
+        {
+          "operation": "printText",
+          "text": "Long discount item 🍰    -P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004c6f6e6720646973636f756e74206974656d20f09f8db0202020202d5020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "PWD: PWD Fixture\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005057443a2050574420466978747572650a"
+        },
+        {
+          "operation": "printText",
+          "text": "ID: PWD-1\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0049443a205057442d310a"
+        },
+        {
+          "operation": "printText",
+          "text": "Soup                     -P 2.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00536f75702020202020202020202020202020202020202020202d5020322e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "Discount: Promo\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00446973636f756e743a2050726f6d6f0a"
+        },
+        {
+          "operation": "printText",
+          "text": "ID: PROMO\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0049443a2050524f4d4f0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Everything           -P 1,000.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0045766572797468696e6720202020202020202020202d5020312c3030302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "Total Discount       -P 1,003.68\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00546f74616c20446973636f756e74202020202020202d5020312c3030332e36380a"
+        },
+        {
+          "operation": "printText",
+          "text": "TOTAL                 P 1,466.33\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00544f54414c20202020202020202020202020202020205020312c3436362e33330a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Cash                  P 1,000.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00436173682020202020202020202020202020202020205020312c3030302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "GCash                   P 466.32\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0047436173682020202020202020202020202020202020202050203436362e33320a"
+        },
+        {
+          "operation": "printText",
+          "text": "Ref: REF-SYNTH-1\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005265663a205245462d53594e54482d310a"
+        },
+        {
+          "operation": "printText",
+          "text": "Amount Tendered       P 1,500.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00416d6f756e742054656e6465726564202020202020205020312c3530302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Change                   P 33.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004368616e676520202020202020202020202020202020202020502033332e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Synthetic footer\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0053796e74686574696320666f6f7465720a"
+        },
+        {
+          "operation": "printText",
+          "text": "This does not serve as an official receipt\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005468697320646f6573206e6f7420736572766520617320616e206f6666696369616c20726563656970740a"
+        },
+        {
+          "operation": "printText",
+          "text": "Powered by PMGT Flow Suite\n\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0,
+            "cut": true
+          },
+          "hex": "1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61011d21011b74001b4d0053796e74686574696320436166c3a920f09f8dbdefb88f0a1d21001b74001b4d00313233204669787475726520526f61640a1d21001b74001b4d0054494e3a203030302d3030302d3030302d3030300a1d21001b74001b4d0054656c3a202b3633203930302030303020303030300a1d21001b74001b4d0050686f6e653a203032203030303020303030300a1d21001b74001b4d0066697874757265406578616d706c652e696e76616c69640a1d21001b74001b4d006578616d706c652e696e76616c69640a1d21001b74001b4d00536f6369616c3a204073796e7468657469630a1d21001b74001b4d005765623a202f66697874757265730a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61001d21001b74001b4d005265636569707420233a20542d373737207c205245440a1d21001b74001b4d00446174653a2030392f31362f323032362c20343a30343a313520504d0a1d21001b74001b4d00547970653a2054616b656f75740a1d21001b74001b4d005461626c653a205461626c6520370a1d21001b74001b4d005061783a20330a1d21001b74001b4d00436173686965723a2043617368696572204f6e650a1d21001b74001b4d000a1d21001b74001b4d00437573746f6d65723a204669787475726520437573746f6d65720a1d21001b74001b4d004944204e6f2e3a2053594e54482d49440a1d21001b74001b4d00416464726573733a203435362054657374204176656e75650a1d21001b74001b4d0054494e3a203131312d3131312d3131312d3131310a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61011d21011b74001b4d004f52444552204954454d530a1b61001d21001b74001b4d0056657279206c6f6e6720f09f8d9c2070726f64756374206e616d6520666f72205554463136207472756e636174696f6e0a1d21001b74001b4d00202054616b656f75740a1d21001b74001b4d0020202b20457874726120285020322e3637290a1d21001b74001b4d0020202b204e6f206368617267650a1d21001b74001b4d0020202b204372656469740a1d21001b74001b4d0020203278205020312c3233342e3530202020202020205020322c3436392e30300a1d21001b74001b4d00536f75700a1d21001b74001b4d00202044696e652d496e0a1d21001b74001b4d0020203178205020312e30302020202020202020202020202020205020312e30300a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d00537562746f74616c20202020202020202020202020205020322c3437302e30310a1d21001b74001b4d0056617461626c652053616c65732020202020202020205020322c3230352e33360a1d21001b74001b4d0056415420313225202020202020202020202020202020202050203236342e36340a1d21001b74001b4d005641542d4578656d7074202020202020202020202020202020205020312e30300a1d21001b74001b4d000a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61011d21011b74001b4d00444953434f554e54530a1b61001d21001b74001b4d0053433a2053656e696f7220466978747572650a1d21001b74001b4d0049443a2053432d310a1d21001b74001b4d004c6f6e6720646973636f756e74206974656d20f09f8db0202020202d5020312e30300a1d21001b74001b4d000a1d21001b74001b4d005057443a2050574420466978747572650a1d21001b74001b4d0049443a205057442d310a1d21001b74001b4d00536f75702020202020202020202020202020202020202020202d5020322e36370a1d21001b74001b4d000a1d21001b74001b4d00446973636f756e743a2050726f6d6f0a1d21001b74001b4d0049443a2050524f4d4f0a1d21001b74001b4d0045766572797468696e6720202020202020202020202d5020312c3030302e30300a1d21001b74001b4d000a1d21001b74001b4d00546f74616c20446973636f756e74202020202020202d5020312c3030332e36380a1d21011b74001b4d00544f54414c20202020202020202020202020202020205020312c3436362e33330a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d00436173682020202020202020202020202020202020205020312c3030302e30300a1d21001b74001b4d0047436173682020202020202020202020202020202020202050203436362e33320a1d21001b74001b4d005265663a205245462d53594e54482d310a1d21001b74001b4d00416d6f756e742054656e6465726564202020202020205020312c3530302e30300a1d21001b74001b4d004368616e676520202020202020202020202020202020202020502033332e36370a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61011d21001b74001b4d0053796e74686574696320666f6f7465720a1d21001b74001b4d005468697320646f6573206e6f7420736572766520617320616e206f6666696369616c20726563656970740a1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a1b4a1e1d564201"
+    },
+    {
+      "name": "receipt-full-48-sparse-legacy-cash-address-gate",
+      "kind": "receipt",
+      "width": 48,
+      "minimal": false,
+      "input": {
+        "storeName": "Synthetic Eatery",
+        "orderNumber": "D-202",
+        "orderType": "take_out",
+        "cashierName": "Cashier One",
+        "items": [
+          {
+            "name": "Wide receipt meal",
+            "quantity": 1,
+            "price": 1.005,
+            "total": 1.005
+          }
+        ],
+        "subtotal": 1.005,
+        "discounts": [],
+        "vatableSales": 0.895,
+        "vatAmount": 0.11,
+        "vatExemptSales": 0,
+        "total": 1.005,
+        "paymentMethod": "cash",
+        "transactionDate": "2026-09-16T08:04:15.000Z",
+        "customerAddress": "Address alone must stay hidden"
+      },
+      "calls": [
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Synthetic Eatery\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0053796e746865746963204561746572790a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "Date: 09/16/2026, 4:04:15 PM\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00446174653a2030392f31362f323032362c20343a30343a313520504d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Type: Take-Out\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00547970653a2054616b652d4f75740a"
+        },
+        {
+          "operation": "printText",
+          "text": "Cashier: Cashier One\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00436173686965723a2043617368696572204f6e650a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "ORDER ITEMS\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d004f52444552204954454d530a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "Wide receipt meal\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00576964652072656365697074206d65616c0a"
+        },
+        {
+          "operation": "printText",
+          "text": "  Takeout\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00202054616b656f75740a"
+        },
+        {
+          "operation": "printText",
+          "text": "  1x P 1.00                               P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020203178205020312e3030202020202020202020202020202020202020202020202020202020202020205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Subtotal                                  P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00537562746f74616c202020202020202020202020202020202020202020202020202020202020202020205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Vatable Sales                             P 0.90\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056617461626c652053616c657320202020202020202020202020202020202020202020202020202020205020302e39300a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT 12%                                   P 0.11\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005641542031322520202020202020202020202020202020202020202020202020202020202020202020205020302e31310a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT-Exempt                                P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005641542d4578656d707420202020202020202020202020202020202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "TOTAL                                     P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00544f54414c202020202020202020202020202020202020202020202020202020202020202020202020205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Payment Method                              Cash\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005061796d656e74204d6574686f64202020202020202020202020202020202020202020202020202020202020436173680a"
+        },
+        {
+          "operation": "printText",
+          "text": "Amount Tendered                           P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00416d6f756e742054656e64657265642020202020202020202020202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Change                                    P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004368616e67652020202020202020202020202020202020202020202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Thank you for your patronage!\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005468616e6b20796f7520666f7220796f757220706174726f6e616765210a"
+        },
+        {
+          "operation": "printText",
+          "text": "This does not serve as an official receipt\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005468697320646f6573206e6f7420736572766520617320616e206f6666696369616c20726563656970740a"
+        },
+        {
+          "operation": "printText",
+          "text": "Powered by PMGT Flow Suite\n\n\n\n\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0,
+            "cut": true
+          },
+          "hex": "1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a0a0a0a1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61011d21011b74001b4d0053796e746865746963204561746572790a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61001d21001b74001b4d00446174653a2030392f31362f323032362c20343a30343a313520504d0a1d21001b74001b4d00547970653a2054616b652d4f75740a1d21001b74001b4d00436173686965723a2043617368696572204f6e650a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61011d21011b74001b4d004f52444552204954454d530a1b61001d21001b74001b4d00576964652072656365697074206d65616c0a1d21001b74001b4d00202054616b656f75740a1d21001b74001b4d0020203178205020312e3030202020202020202020202020202020202020202020202020202020202020205020312e30300a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d00537562746f74616c202020202020202020202020202020202020202020202020202020202020202020205020312e30300a1d21001b74001b4d0056617461626c652053616c657320202020202020202020202020202020202020202020202020202020205020302e39300a1d21001b74001b4d005641542031322520202020202020202020202020202020202020202020202020202020202020202020205020302e31310a1d21001b74001b4d005641542d4578656d707420202020202020202020202020202020202020202020202020202020202020205020302e30300a1d21011b74001b4d00544f54414c202020202020202020202020202020202020202020202020202020202020202020202020205020312e30300a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d005061796d656e74204d6574686f64202020202020202020202020202020202020202020202020202020202020436173680a1d21001b74001b4d00416d6f756e742054656e64657265642020202020202020202020202020202020202020202020202020205020302e30300a1d21001b74001b4d004368616e67652020202020202020202020202020202020202020202020202020202020202020202020205020302e30300a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61011d21001b74001b4d005468616e6b20796f7520666f7220796f757220706174726f6e616765210a1d21001b74001b4d005468697320646f6573206e6f7420736572766520617320616e206f6666696369616c20726563656970740a1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a0a0a0a1b4a1e1d564201"
+    },
+    {
+      "name": "receipt-full-32-legacy-noncash-number-and-negative-slice",
+      "kind": "receipt",
+      "width": 32,
+      "minimal": false,
+      "input": {
+        "storeName": "Synthetic Eatery",
+        "orderNumber": "D-101",
+        "orderType": "delivery",
+        "cashierName": "Cashier One",
+        "items": [
+          {
+            "name": "Tiny",
+            "quantity": 123456789,
+            "price": 999999999999.99,
+            "total": 999999999999.99
+          }
+        ],
+        "subtotal": 999999999999.99,
+        "discounts": [],
+        "vatableSales": 892857142857.13,
+        "vatAmount": 107142857142.86,
+        "vatExemptSales": 0,
+        "total": 999999999999.99,
+        "paymentMethod": "card_ewallet",
+        "transactionDate": "2026-09-16T08:04:15.000Z",
+        "receiptNumber": "R-303",
+        "cardPaymentType": "Synthetic Card",
+        "cardReferenceNumber": "REFERENCE-THAT-IS-LONGER-THAN-THE-ROW"
+      },
+      "calls": [
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Synthetic Eatery\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0053796e746865746963204561746572790a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "Receipt #: R-303\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005265636569707420233a20522d3330330a"
+        },
+        {
+          "operation": "printText",
+          "text": "Date: 09/16/2026, 4:04:15 PM\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00446174653a2030392f31362f323032362c20343a30343a313520504d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Type: Delivery\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00547970653a2044656c69766572790a"
+        },
+        {
+          "operation": "printText",
+          "text": "Cashier: Cashier One\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00436173686965723a2043617368696572204f6e650a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "ORDER ITEMS\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d004f52444552204954454d530a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "Tiny\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0054696e790a"
+        },
+        {
+          "operation": "printText",
+          "text": "  Takeout\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00202054616b656f75740a"
+        },
+        {
+          "operation": "printText",
+          "text": "  123456789 P 999,999,999,999.99\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020203132333435363738392050203939392c3939392c3939392c3939392e39390a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Subtotal    P 999,999,999,999.99\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00537562746f74616c2020202050203939392c3939392c3939392c3939392e39390a"
+        },
+        {
+          "operation": "printText",
+          "text": "Vatable Sal P 892,857,142,857.13\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056617461626c652053616c2050203839322c3835372c3134322c3835372e31330a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT 12%     P 107,142,857,142.86\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056415420313225202020202050203130372c3134322c3835372c3134322e38360a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT-Exempt                P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005641542d4578656d7074202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "TOTAL       P 999,999,999,999.99\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00544f54414c2020202020202050203939392c3939392c3939392c3939392e39390a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Payment Method    Synthetic Card\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005061796d656e74204d6574686f642020202053796e74686574696320436172640a"
+        },
+        {
+          "operation": "printText",
+          "text": " REFERENCE-THAT-IS-LONGER-THAN-THE-ROW\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00205245464552454e43452d544841542d49532d4c4f4e4745522d5448414e2d5448452d524f570a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Thank you for your patronage!\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005468616e6b20796f7520666f7220796f757220706174726f6e616765210a"
+        },
+        {
+          "operation": "printText",
+          "text": "This does not serve as an official receipt\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005468697320646f6573206e6f7420736572766520617320616e206f6666696369616c20726563656970740a"
+        },
+        {
+          "operation": "printText",
+          "text": "Powered by PMGT Flow Suite\n\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0,
+            "cut": true
+          },
+          "hex": "1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61011d21011b74001b4d0053796e746865746963204561746572790a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61001d21001b74001b4d005265636569707420233a20522d3330330a1d21001b74001b4d00446174653a2030392f31362f323032362c20343a30343a313520504d0a1d21001b74001b4d00547970653a2044656c69766572790a1d21001b74001b4d00436173686965723a2043617368696572204f6e650a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61011d21011b74001b4d004f52444552204954454d530a1b61001d21001b74001b4d0054696e790a1d21001b74001b4d00202054616b656f75740a1d21001b74001b4d0020203132333435363738392050203939392c3939392c3939392c3939392e39390a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d00537562746f74616c2020202050203939392c3939392c3939392c3939392e39390a1d21001b74001b4d0056617461626c652053616c2050203839322c3835372c3134322c3835372e31330a1d21001b74001b4d0056415420313225202020202050203130372c3134322c3835372c3134322e38360a1d21001b74001b4d005641542d4578656d7074202020202020202020202020202020205020302e30300a1d21011b74001b4d00544f54414c2020202020202050203939392c3939392c3939392c3939392e39390a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d005061796d656e74204d6574686f642020202053796e74686574696320436172640a1d21001b74001b4d00205245464552454e43452d544841542d49532d4c4f4e4745522d5448414e2d5448452d524f570a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1b61011d21001b74001b4d005468616e6b20796f7520666f7220796f757220706174726f6e616765210a1d21001b74001b4d005468697320646f6573206e6f7420736572766520617320616e206f6666696369616c20726563656970740a1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a1b4a1e1d564201"
+    },
+    {
+      "name": "kitchen-mixed-32-category-default-mismatch",
+      "kind": "kitchen",
+      "width": 32,
+      "input": {
+        "orderNumber": "K-404",
+        "orderType": "delivery",
+        "orderCategory": "dine_in",
+        "tableMarker": "BLUE",
+        "customerName": "Kitchen Fixture",
+        "timestamp": "2026-09-15T20:05:06.000Z",
+        "items": [
+          {
+            "name": "Explicit dine-in",
+            "quantity": 1,
+            "serviceType": "dine_in",
+            "notes": "No salt",
+            "modifiers": [
+              {
+                "optionName": "Large",
+                "priceAdjustment": 25
+              }
+            ]
+          },
+          {
+            "name": "Fallback delivery is takeout 🍜",
+            "quantity": 2,
+            "notes": "Pack well"
+          },
+          {
+            "name": "Explicit takeout",
+            "quantity": 3,
+            "serviceType": "takeout"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "#K-404\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 1,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21111b74001b4d00234b2d3430340a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "==================\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "BLUE\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 1,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21111b74001b4d00424c55450a"
+        },
+        {
+          "operation": "printText",
+          "text": "==================\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "DINE-IN\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0044494e452d494e0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Customer: Kitchen Fixture\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00437573746f6d65723a204b69746368656e20466978747572650a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "09/16/2026, 4:05:06 AM\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0030392f31362f323032362c20343a30353a303620414d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "---- DINE IN ----\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d002d2d2d2d2044494e4520494e202d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "  1x Explicit dine-in\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0020203178204578706c696369742064696e652d696e0a"
+        },
+        {
+          "operation": "printText",
+          "text": "     > Large\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020202020203e204c617267650a"
+        },
+        {
+          "operation": "printText",
+          "text": "     * No salt\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020202020202a204e6f2073616c740a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "---- TAKEOUT ----\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d002d2d2d2d2054414b454f5554202d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "  2x Fallback delivery is takeout 🍜\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00202032782046616c6c6261636b2064656c69766572792069732074616b656f757420f09f8d9c0a"
+        },
+        {
+          "operation": "printText",
+          "text": "     * Pack well\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020202020202a205061636b2077656c6c0a"
+        },
+        {
+          "operation": "printText",
+          "text": "  3x Explicit takeout\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0020203378204578706c696369742074616b656f75740a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0,
+            "cut": true
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61011d21111b74001b4d00234b2d3430340a1d21001b74001b4d000a1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a1d21111b74001b4d00424c55450a1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a1d21011b74001b4d0044494e452d494e0a1d21001b74001b4d00437573746f6d65723a204b69746368656e20466978747572650a1d21001b74001b4d000a1b61001d21001b74001b4d0030392f31362f323032362c20343a30353a303620414d0a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d002d2d2d2d2044494e4520494e202d2d2d2d0a1d21011b74001b4d0020203178204578706c696369742064696e652d696e0a1d21001b74001b4d0020202020203e204c617267650a1d21001b74001b4d0020202020202a204e6f2073616c740a1d21001b74001b4d000a1d21011b74001b4d002d2d2d2d2054414b454f5554202d2d2d2d0a1d21011b74001b4d00202032782046616c6c6261636b2064656c69766572792069732074616b656f757420f09f8d9c0a1d21001b74001b4d0020202020202a205061636b2077656c6c0a1d21011b74001b4d0020203378204578706c696369742074616b656f75740a1d21001b74001b4d000a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a1b4a1e1d564201"
+    },
+    {
+      "name": "kitchen-uniform-48-order-default",
+      "kind": "kitchen",
+      "width": 48,
+      "input": {
+        "orderNumber": "K-505",
+        "orderType": "dine_in",
+        "orderCategory": "takeout",
+        "orderDefaultServiceType": "takeout",
+        "timestamp": "2026-09-15T16:00:00.000Z",
+        "items": [
+          {
+            "name": "First",
+            "quantity": 2,
+            "modifiers": [
+              {
+                "optionName": "Hot",
+                "priceAdjustment": 0
+              }
+            ]
+          },
+          {
+            "name": "Second",
+            "quantity": 1,
+            "notes": "Uniform order keeps input order"
+          }
+        ]
+      },
+      "calls": [
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "#K-505\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 1,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21111b74001b4d00234b2d3530350a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "TAKEOUT\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0054414b454f55540a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "09/16/2026, 12:00:00 AM\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0030392f31362f323032362c2031323a30303a303020414d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "  2x First\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00202032782046697273740a"
+        },
+        {
+          "operation": "printText",
+          "text": "     > Hot\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020202020203e20486f740a"
+        },
+        {
+          "operation": "printText",
+          "text": "  1x Second\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0020203178205365636f6e640a"
+        },
+        {
+          "operation": "printText",
+          "text": "     * Uniform order keeps input order\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0020202020202a20556e69666f726d206f72646572206b6565707320696e707574206f726465720a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n\n\n\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0,
+            "cut": true
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a0a0a0a1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61011d21111b74001b4d00234b2d3530350a1d21001b74001b4d000a1d21011b74001b4d0054414b454f55540a1d21001b74001b4d000a1b61001d21001b74001b4d0030392f31362f323032362c2031323a30303a303020414d0a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d00202032782046697273740a1d21001b74001b4d0020202020203e20486f740a1d21011b74001b4d0020203178205365636f6e640a1d21001b74001b4d0020202020202a20556e69666f726d206f72646572206b6565707320696e707574206f726465720a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a0a0a0a0a1b4a1e1d564201"
+    },
+    {
+      "name": "test-print-approved-feed-and-cut-repair",
+      "kind": "test_print_repair",
+      "input": {
+        "printerName": "Synthetic Test Printer",
+        "displayDateTime": "9/16/2026, 4:04:15 PM"
+      },
+      "sourceMissingOperation": "cutPaper",
+      "approvedRepair": "PrinterCommand.POS_Set_PrtAndFeedPaper(30) then POS_Set_Cut(1)",
+      "calls": [
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "=== TEST PRINT ===\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1
+          },
+          "hex": "1d21011b74001b4d003d3d3d2054455354205052494e54203d3d3d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Synthetic Test Printer\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0
+          },
+          "hex": "1d21001b74001b4d0053796e7468657469632054657374205072696e7465720a"
+        },
+        {
+          "operation": "printText",
+          "text": "9/16/2026, 4:04:15 PM\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0
+          },
+          "hex": "1d21001b74001b4d00392f31362f323032362c20343a30343a313520504d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Printer is working correctly\n\n\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0
+          },
+          "hex": "1d21001b74001b4d005072696e74657220697320776f726b696e6720636f72726563746c790a0a0a0a"
+        },
+        {
+          "operation": "feedAndCut",
+          "hex": "1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61011d21011b74001b4d003d3d3d2054455354205052494e54203d3d3d0a1d21001b74001b4d0053796e7468657469632054657374205072696e7465720a1d21001b74001b4d00392f31362f323032362c20343a30343a313520504d0a1d21001b74001b4d005072696e74657220697320776f726b696e6720636f72726563746c790a0a0a0a1b4a1e1d564201"
+    },
+    {
+      "name": "cash-drawer-source-default-pulse",
+      "kind": "cash_drawer",
+      "input": {
+        "pin": 0,
+        "onTime": 25,
+        "offTime": 250
+      },
+      "nativeOperation": "PrinterCommand.POS_Set_Cashbox",
+      "calls": [
+        {
+          "operation": "openDrawer",
+          "pin": 0,
+          "onTime": 25,
+          "offTime": 250,
+          "hex": "1b700019fa"
+        }
+      ],
+      "concatenatedHex": "1b700019fa"
+    }
+  ]
+}

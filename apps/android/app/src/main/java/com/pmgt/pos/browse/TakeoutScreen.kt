@@ -27,6 +27,7 @@ internal fun TakeoutScreen(
     storeId: String,
     onBack: () -> Unit,
     onAction: (BrowseAction) -> Unit,
+    correctedOrderId: String? = null,
 ) {
     var dayValue by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
     val day = LocalDate.parse(dayValue)
@@ -42,6 +43,7 @@ internal fun TakeoutScreen(
         remember(repository, storeId, dayValue) { repository.takeout(storeId, DayRange.of(day)) }
     val lane = key(flow) { flow.collectAsStateWithLifecycle(initialValue = null).value }
     var selectedOrder by rememberSaveable { mutableStateOf<String?>(null) }
+    LaunchedEffect(correctedOrderId) { if (selectedOrder == correctedOrderId) selectedOrder = null }
     var discard by remember { mutableStateOf<OrderSummary?>(null) }
     var refreshing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()

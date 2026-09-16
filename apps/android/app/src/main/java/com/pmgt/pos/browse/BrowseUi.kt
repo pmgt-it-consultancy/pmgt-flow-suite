@@ -57,6 +57,7 @@ internal enum class Glyph(val code: Int) {
     Edit(0xf293),
     Add(0xf103),
     Check(0xf21f),
+    Checkmark(0xf21d),
     Document(0xf2b4),
     Done(0xf225),
     Cart(0xf203),

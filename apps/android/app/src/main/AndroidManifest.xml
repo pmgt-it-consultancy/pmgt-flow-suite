@@ -1,7 +1,37 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.RUN_USER_INITIATED_JOBS" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <application android:name=".PosApplication" android:label="PMGT Flow Kotlin" android:allowBackup="false" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.updater.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/updater_file_paths" />
+        </provider>
+        <service
+            android:name=".updater.platform.AndroidUpdateTransferService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+        <receiver
+            android:name=".updater.platform.UpdateDownloadReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
         <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

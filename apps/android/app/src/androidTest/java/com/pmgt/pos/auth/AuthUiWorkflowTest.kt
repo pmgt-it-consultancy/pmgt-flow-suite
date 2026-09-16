@@ -292,15 +292,24 @@ class AuthUiWorkflowTest {
         )
     }
 
+    /**
+     * The manager modal and the error alert are separate dialog windows. `waitForIdle` settles
+     * composition but not the platform's window focus transfer, so a Back sent in that gap is
+     * delivered to the window that is going away. Poll for the modal to actually close instead of
+     * assuming one frame is enough; the caller's assertion still requires it to be gone.
+     */
     private fun dismissManagerWithBack() {
-        device.pressBack()
-        compose.waitForIdle()
-        if (
-            compose
-                .onAllNodesWithText("A manager can unlock this screen with their PIN.")
-                .fetchSemanticsNodes()
-                .isNotEmpty()
-        ) device.pressBack()
-        compose.waitForIdle()
+        repeat(3) {
+            if (!managerModalVisible()) return
+            device.pressBack()
+            compose.waitForIdle()
+            runCatching { compose.waitUntil(2_000) { !managerModalVisible() } }
+        }
     }
+
+    private fun managerModalVisible() =
+        compose
+            .onAllNodesWithText("A manager can unlock this screen with their PIN.")
+            .fetchSemanticsNodes()
+            .isNotEmpty()
 }

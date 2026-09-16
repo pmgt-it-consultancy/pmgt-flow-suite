@@ -268,6 +268,8 @@ fun OrderEditorScreen(
                                         cart.lines,
                                         state.category,
                                         state.marker,
+                                        cart.customerName,
+                                        session.route.takeout,
                                     )
                                 )
                             }

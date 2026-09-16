@@ -33,6 +33,7 @@ internal data class CheckoutJournal(
     val executedAt: Map<Int, Long> = emptyMap(),
     val completedAt: Long? = null,
     val version: Int = 2,
+    val correction: CorrectionPayload? = null,
 )
 
 private val journalJson = Json { encodeDefaults = true }
@@ -47,7 +48,10 @@ private fun journalKey(orderId: String, id: String) =
 internal fun loadJournal(db: PosDatabase, orderId: String, id: String): CheckoutJournal? =
     db.localValue(journalKey(orderId, id))?.let {
         try {
-            check(Json.parseToJsonElement(it).jsonObject["version"]?.jsonPrimitive?.intOrNull == 2)
+            check(
+                Json.parseToJsonElement(it).jsonObject["version"]?.jsonPrimitive?.intOrNull in
+                    setOf(2, 3)
+            )
             journalJson.decodeFromString<CheckoutJournal>(it).also { journal ->
                 check(journal.orderId == orderId && journal.id == id)
             }
@@ -64,7 +68,11 @@ internal fun activeJournal(db: PosDatabase, orderId: String) =
                     "Saved checkout recovery data is unavailable"
                 }
                 .also { journal ->
-                    check(!journal.done && db.localValue(settledKey(orderId)).isNullOrEmpty()) {
+                    check(
+                        !journal.done &&
+                            (db.localValue(settledKey(orderId)).isNullOrEmpty() ||
+                                validCorrectionPair(db, journal))
+                    ) {
                         "Saved checkout pointer is inconsistent; existing work is retained"
                     }
                 }
@@ -81,7 +89,10 @@ internal fun settledJournal(db: PosDatabase, orderId: String) =
                     check(
                         journal.done &&
                             journal.kind == "payment" &&
-                            db.localValue(activeKey(orderId)).isNullOrEmpty()
+                            (db.localValue(activeKey(orderId)).isNullOrEmpty() ||
+                                loadJournal(db, orderId, db.localValue(activeKey(orderId))!!)?.let {
+                                    validCorrectionPair(db, it)
+                                } == true)
                     ) {
                         "Saved payment pointer is inconsistent; existing work is retained"
                     }
@@ -104,6 +115,11 @@ internal fun validateJournal(
     orderId: String,
     id: String,
 ) {
+    if (journal.version == 3) {
+        validateCorrectionJournal(db, journal, orderId, id)
+        return
+    }
+    check(journal.correction == null) { "Unexpected correction payload in checkout data" }
     fun valid(condition: Boolean) {
         check(condition) {
             "Saved checkout recovery data does not match this order; existing work is retained"

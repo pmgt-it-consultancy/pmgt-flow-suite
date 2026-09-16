@@ -135,7 +135,11 @@ class LocalOrderRepository(
             triggerPush()
         }
 
-    private fun nextNumber(type: String): String {
+    /** Called on IO; the attachment and counter commit together, before correction model writes. */
+    internal fun reserveCorrectionNumber(type: String, attach: (String) -> Unit): String =
+        nextNumber(type, attach)
+
+    private fun nextNumber(type: String, attach: (String) -> Unit = {}): String {
         val code =
             deviceCode().ifEmpty {
                 deviceId().replace(Regex("[^a-zA-Z0-9]"), "").take(4).uppercase().ifEmpty { "X" }
@@ -162,9 +166,9 @@ class LocalOrderRepository(
                         fields("id" to uid(), "key" to key, "value" to value),
                     )
                 else db.updateLocal("app_config", row.string("id")!!, fields("value" to value))
-                value
+                "${if (type == "dine_in") "D" else "T"}-$code${value.padStart(3, '0')}".also(attach)
             }
-        return "${if (type == "dine_in") "D" else "T"}-$code${next.padStart(3, '0')}"
+        return next
     }
 
     private fun parent(id: String, number: String, input: NewOrder) =
@@ -256,7 +260,11 @@ class LocalOrderRepository(
         withContext(io) {
             // RN takes its read snapshot before its later writer. Do not fold this into the item
             // batch.
-            val graph = db.transaction { db.requireOrderWritable(orderId); readOrderGraph(db, orderId) }
+            val graph =
+                db.transaction {
+                    db.requireOrderWritable(orderId)
+                    readOrderGraph(db, orderId)
+                }
             val calculations = graph.items.map { item -> graph.calculation(item) }
             val global =
                 graph.discounts
@@ -493,9 +501,10 @@ class LocalOrderRepository(
         }
 
     private fun required(table: String, id: String): Row {
-        val row = requireNotNull(db.get(table, id)?.takeUnless { it.string("_status") == "deleted" }) {
-            "Local record is unavailable"
-        }
+        val row =
+            requireNotNull(db.get(table, id)?.takeUnless { it.string("_status") == "deleted" }) {
+                "Local record is unavailable"
+            }
         if (table == "orders") db.requireOrderWritable(id)
         if (table == "order_items") db.requireOrderWritable(row.string("order_id")!!)
         return row

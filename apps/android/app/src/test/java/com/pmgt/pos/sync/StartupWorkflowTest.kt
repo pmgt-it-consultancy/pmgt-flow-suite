@@ -29,6 +29,174 @@ class StartupWorkflowTest {
     private fun success(value: String) = MockResponse().setBody("""{"status":"success","value":$value}""")
     private suspend fun eventually(predicate: () -> Boolean) = withTimeout(5_000) { while (!predicate()) delay(10) }
 
+    private fun registrationFailure(entered: CountDownLatch) =
+        MockResponse().setResponseCode(503).also { entered.countDown() }
+
+    @Test fun exactOrderEvidenceStopsBeforeUnrelatedTablesFinish() = runBlocking {
+        val db = database(); seed(db)
+        val before = db.integrity()
+        MockWebServer().use { server ->
+            val paths = CopyOnWriteArrayList<String>()
+            val registered = CountDownLatch(1)
+            var pulls = 0
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    paths += request.path!!
+                    return when (request.path) {
+                        "/sync/pull" -> if (++pulls == 1) MockResponse().setBody(
+                            """{"changes":{"orders":{"created":[{"id":"local","server_id":"server","storeId":"store"}],"updated":[],"deleted":[]}},"cursors":{"orders":{"cursor":"more","isDone":false},"orderItems":{"cursor":null,"isDone":false}},"complete":false,"timestamp":100}"""
+                        ) else MockResponse().setBody(emptyPage)
+                        "/sync/registerDevice" -> registrationFailure(registered)
+                        "/api/query" -> error("Exact pulled order evidence must not fall back to orders:get")
+                        else -> MockResponse().setResponseCode(404)
+                    }
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+                assertTrue(registered.await(5, TimeUnit.SECONDS))
+                assertEquals(1, paths.count { it == "/sync/pull" })
+                assertEquals(before, db.integrity())
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    @Test fun completedOrdersCursorStopsGlobalPullAndQueriesOnlyUnresolvedOrders() = runBlocking {
+        val db = database(); seed(db)
+        MockWebServer().use { server ->
+            val paths = CopyOnWriteArrayList<String>()
+            val registered = CountDownLatch(1)
+            var pulls = 0
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    paths += request.path!!
+                    return when (request.path) {
+                        "/sync/pull" -> if (++pulls == 1) MockResponse().setBody(
+                            """{"changes":{"orders":{"created":[{"id":"local","server_id":"server","storeId":"other-store"}],"updated":[],"deleted":[]}},"cursors":{"orders":{"cursor":null,"isDone":true},"orderItems":{"cursor":"more","isDone":false}},"complete":false,"timestamp":100}"""
+                        ) else MockResponse().setBody(emptyPage)
+                        "/api/query" -> success("""{"_id":"server","storeId":"store"}""")
+                        "/sync/registerDevice" -> registrationFailure(registered)
+                        else -> MockResponse().setResponseCode(404)
+                    }
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+                assertTrue(registered.await(5, TimeUnit.SECONDS))
+                assertEquals(1, paths.count { it == "/sync/pull" })
+                assertEquals(1, paths.count { it == "/api/query" })
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    @Test fun missingOrdersCursorNeverClaimsThatOrderEvidenceIsExhausted() = runBlocking {
+        val db = database(); seed(db)
+        MockWebServer().use { server ->
+            val paths = CopyOnWriteArrayList<String>()
+            val registered = CountDownLatch(1)
+            var pulls = 0
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    paths += request.path!!
+                    return when (request.path) {
+                        "/sync/pull" -> if (++pulls == 1) MockResponse().setBody(
+                            """{"changes":{},"cursors":{"categories":{"cursor":"next","isDone":false}},"complete":false,"timestamp":100}"""
+                        ) else MockResponse().setBody(
+                            """{"changes":{"orders":{"created":[{"id":"local","server_id":"server","storeId":"store"}],"updated":[],"deleted":[]}},"cursors":{"orders":{"cursor":null,"isDone":true}},"complete":true,"timestamp":100}"""
+                        )
+                        "/sync/registerDevice" -> registrationFailure(registered)
+                        "/api/query" -> error("A missing orders cursor must continue the pull, not use fallback early")
+                        else -> MockResponse().setResponseCode(404)
+                    }
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+                assertTrue(registered.await(5, TimeUnit.SECONDS))
+                assertEquals(2, paths.count { it == "/sync/pull" })
+                assertFalse(paths.contains("/api/query"))
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    @Test fun incompleteOrdersCursorContinuesUntilExactOrderEvidenceArrives() = runBlocking {
+        val db = database(); seed(db)
+        MockWebServer().use { server ->
+            val paths = CopyOnWriteArrayList<String>()
+            val registered = CountDownLatch(1)
+            var pulls = 0
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    paths += request.path!!
+                    return when (request.path) {
+                        "/sync/pull" -> if (++pulls == 1) MockResponse().setBody(
+                            """{"changes":{},"cursors":{"orders":{"cursor":"next","isDone":false}},"complete":false,"timestamp":100}"""
+                        ) else MockResponse().setBody(
+                            """{"changes":{"orders":{"created":[{"id":"local","server_id":"server","storeId":"store"}],"updated":[],"deleted":[]}},"cursors":{"orders":{"cursor":null,"isDone":true}},"complete":true,"timestamp":100}"""
+                        )
+                        "/sync/registerDevice" -> registrationFailure(registered)
+                        "/api/query" -> error("An incomplete orders cursor must continue the pull, not use fallback early")
+                        else -> MockResponse().setResponseCode(404)
+                    }
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+                assertTrue(registered.await(5, TimeUnit.SECONDS))
+                assertEquals(2, paths.count { it == "/sync/pull" })
+                assertFalse(paths.contains("/api/query"))
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
+    @Test fun ancillaryReferencesKeepAuthenticatedFirstPullButDoNotRequireGlobalCompletion() = runBlocking {
+        val db = database(); seed(db, table = "audit_logs", id = "audit", server = "audit-server")
+        MockWebServer().use { server ->
+            val paths = CopyOnWriteArrayList<String>()
+            val registered = CountDownLatch(1)
+            var pulls = 0
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    paths += request.path!!
+                    return when (request.path) {
+                        "/sync/pull" -> if (++pulls == 1) MockResponse().setBody(
+                            """{"changes":{},"cursors":{"orders":{"cursor":"more","isDone":false}},"complete":false,"timestamp":100}"""
+                        ) else MockResponse().setBody(emptyPage)
+                        "/sync/registerDevice" -> registrationFailure(registered)
+                        "/api/query" -> error("Ancillary references are preserved, not a new orders:get gate")
+                        else -> MockResponse().setResponseCode(404)
+                    }
+                }
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val startup = TabletStartup({ AdoptedStorage(db, "test-device") }, ConvexHttp(server.url("/").toString()), scope, Dispatchers.IO, MutableStateFlow(true))
+            try {
+                assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+                assertTrue(registered.await(5, TimeUnit.SECONDS))
+                assertEquals(1, paths.count { it == "/sync/pull" })
+                assertFalse(paths.contains("/api/query"))
+            } finally { startup.stop(); scope.cancel() }
+        }
+        db.close()
+    }
+
     @Test fun missingLiveOrderBlocksButOfflineVerificationStaysPendingWithoutStartingSync() = runBlocking {
         for (offline in listOf(true, false)) {
             val db = database()

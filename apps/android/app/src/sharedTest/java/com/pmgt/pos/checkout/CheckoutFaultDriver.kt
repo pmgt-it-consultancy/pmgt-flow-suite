@@ -9,6 +9,8 @@ class CheckoutFaultDriver(private val delegate: SqlDriver) : SqlDriver by delega
     var afterModelWrite: (() -> Unit)? = null
     var failNextJournal = false
     var failJournalAfter: Int? = null
+    var failLocalKey: String? = null
+    var successfulLocalWrites = 0
 
     override fun execute(
         identifier: Int?,
@@ -46,6 +48,16 @@ class CheckoutFaultDriver(private val delegate: SqlDriver) : SqlDriver by delega
                                 }
                             }
                         )
+                        if (
+                            sql.startsWith("INSERT OR REPLACE INTO local_storage") &&
+                                key == failLocalKey &&
+                                failLocalKey != null
+                        ) {
+                            if (successfulLocalWrites-- == 0) {
+                                failLocalKey = null
+                                error("Synthetic local pointer write failure")
+                            }
+                        }
                         if (
                             sql.startsWith("INSERT OR REPLACE INTO local_storage") &&
                                 key?.startsWith("kotlin.checkout.journal:") == true

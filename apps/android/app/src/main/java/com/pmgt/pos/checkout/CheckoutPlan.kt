@@ -32,7 +32,7 @@ internal data class CheckoutBaseline(
 private val hydrationFields =
     setOf("_status", "_changed", "server_id", "updated_at", "created_by", "paid_by")
 
-private fun financialRow(table: String, row: Row): Row =
+internal fun financialRow(table: String, row: Row): Row =
     JsonObject(
         row.filterKeys { it !in hydrationFields && !(table == "orders" && it == "order_number") }
             .toSortedMap()
@@ -82,7 +82,7 @@ internal fun baselineFingerprint(b: CheckoutBaseline): String {
     }
 }
 
-private fun normalizedInsert(table: String, id: String, values: Row): Row =
+internal fun normalizedInsert(table: String, id: String, values: Row): Row =
     financialRow(
         table,
         JsonObject(

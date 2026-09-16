@@ -142,4 +142,7 @@ data class KitchenRequest(
     val lines: List<OrderLine>,
     val orderCategory: String?,
     val tableMarker: String?,
+    val customerName: String?,
+    /** Selects the source's dine-in versus takeout ticket header and item service defaults. */
+    val takeout: Boolean,
 )

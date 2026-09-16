@@ -323,6 +323,8 @@ class OrderEditorSession(
                             captured,
                             null,
                             current.tableName,
+                            current.cart?.customerName,
+                            takeout = false,
                         )
                     mutable.update {
                         it.copy(
@@ -346,6 +348,8 @@ class OrderEditorSession(
                     captured,
                     if (route.takeout) current.category else cart.orderCategory,
                     if (route.takeout) current.marker else current.tableName,
+                    cart.customerName,
+                    route.takeout,
                 )
             }
         }

@@ -18,11 +18,17 @@ android {
         targetSdk = 36
         versionCode = 32802
         versionName = "3.28.2-kotlin"
+        buildConfigField("String", "UPDATE_VERSION", "\"3.28.2\"")
+        buildConfigField("String", "UPDATE_VARIANT", "\"production\"")
         buildConfigField("String", "CONVEX_URL", "\"${convexUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        debug { applicationIdSuffix = ".kotlin.dev"; versionNameSuffix = "-dev" }
+        debug {
+            applicationIdSuffix = ".kotlin.dev"
+            versionNameSuffix = "-dev"
+            buildConfigField("String", "UPDATE_VARIANT", "\"development\"")
+        }
         release { isMinifyEnabled = false }
     }
     buildFeatures { compose = true; buildConfig = true }

@@ -121,16 +121,19 @@ class TabletStartup(
     }
 
     /**
-     * A full v1 pull is read-only here. Exact observed IDs resolve order references. Missing
-     * live order IDs require the authoritative existing orders:get lookup (with store validation).
-     * An absent deleted order is legitimate. Ancillary retired/push-only references are retained;
-     * they are not made into a new mandatory adoption gate. Unsent rows have no server reference.
+     * The initial v1 pull is read-only here. Exact observed IDs resolve order references. Paging
+     * can stop once those pairs resolve or the orders table is explicitly exhausted; unrelated
+     * tables do not extend adoption verification. Missing live order IDs require the authoritative
+     * existing orders:get lookup (with store validation). An absent deleted order is legitimate.
+     * Ancillary retired/push-only references are retained; they are not made into a new mandatory
+     * adoption gate. Unsent rows have no server reference.
      */
     private suspend fun verifyReferences(references: List<ServerReference>, storeId: String): ServerReferenceVerification {
         if (references.isEmpty()) return ServerReferenceVerification.Verified
         if (!online.value) return ServerReferenceVerification.Unavailable
         val unresolvedOrders = references.filter { it.table == "orders" }.toMutableList()
         val cursor = PullCursor()
+        var ordersExhausted: Boolean
         do {
             currentCoroutineContext().ensureActive()
             val page = http.pull(null, cursor)
@@ -142,8 +145,9 @@ class TabletStartup(
                         unresolvedOrders.removeAll { it.serverId == serverId && row["id"]?.jsonPrimitive?.content == it.localId }
                 }
             }
+            ordersExhausted = page.cursors["orders"]?.isDone == true
             yield()
-        } while (!page.complete)
+        } while (unresolvedOrders.isNotEmpty() && !ordersExhausted && !page.complete)
         for ((serverId, sameServer) in unresolvedOrders.groupBy { it.serverId }) {
             val result = http.query("orders:get", buildJsonObject { put("orderId", serverId) })
             if (result == JsonNull) {

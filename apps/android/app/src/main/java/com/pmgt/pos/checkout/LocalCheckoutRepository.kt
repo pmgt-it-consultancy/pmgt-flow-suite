@@ -37,17 +37,29 @@ class LocalCheckoutRepository(
                 db.transaction {
                     val active = db.checkoutPointers()
                     val settled = db.checkoutPointers(settled = true)
-                    (active.map { Triple(it.key, it.value, false) } +
-                            settled.map { Triple(it.key, it.value, true) })
-                        .mapNotNull { (orderId, id, isSettled) ->
+                    (active.map { Triple(it.key, it.value, "active") } +
+                            settled.map { Triple(it.key, it.value, "settled") } +
+                            db.correctionPointers().map { Triple(it.key, it.value, "corrected") })
+                        .mapNotNull { (orderId, id, role) ->
                             try {
                                 val journal = requireNotNull(loadJournal(db, orderId, id))
                                 validateJournal(db, journal, orderId, id)
+                                val isSettled = role != "active"
                                 check(
                                     journal.done == isSettled &&
-                                        (!isSettled || journal.kind == "payment")
+                                        (role != "settled" || journal.kind == "payment") &&
+                                        (role != "corrected" || journal.version == 3)
                                 )
-                                check(if (isSettled) orderId !in active else orderId !in settled)
+                                check(
+                                    if (role == "settled")
+                                        orderId !in active ||
+                                            loadJournal(db, orderId, active.getValue(orderId))
+                                                ?.let { validCorrectionPair(db, it) } == true
+                                    else if (role == "corrected") orderId !in active
+                                    else
+                                        (orderId !in settled || validCorrectionPair(db, journal)) &&
+                                            db.localValue(correctedKey(orderId)).isNullOrEmpty()
+                                )
                                 if (journal.owner.storeId != storeId || journal.done) null
                                 else
                                     PendingFinancialAction(
@@ -331,6 +343,7 @@ class LocalCheckoutRepository(
     ): CheckoutJournal {
         check(initial.owner == owner) { "Saved checkout belongs to another cashier session" }
         validateJournal(db, initial, initial.orderId, initial.id)
+        check(initial.version == 2) { "Resume the saved correction from order history" }
         var journal = initial
         if (journal.done) return journal
         while (true) {

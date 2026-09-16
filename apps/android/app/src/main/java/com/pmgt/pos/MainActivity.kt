@@ -20,13 +20,34 @@ import com.pmgt.pos.catalog.LocalCatalogRepository
 import com.pmgt.pos.checkout.*
 import com.pmgt.pos.db.AndroidDatabase
 import com.pmgt.pos.db.DeviceIdentity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import com.pmgt.pos.closing.ClosingController
+import com.pmgt.pos.closing.HttpClosingRepository
 import com.pmgt.pos.orders.EditorSessions
+import com.pmgt.pos.printer.platform.AndroidPrinterBluetoothPlatform
+import com.pmgt.pos.printer.platform.AndroidPrinterDeviceManager
+import com.pmgt.pos.printer.platform.BluetoothEnableResult
+import com.pmgt.pos.printer.platform.ClassicBluetoothPrinterTransport
+import com.pmgt.pos.printer.platform.PrinterConnectionEffects
+import com.pmgt.pos.printer.settings.AndroidPrinterSettingsDeviceAccess
+import com.pmgt.pos.printer.settings.AndroidPrinterSettingsPersistence
+import com.pmgt.pos.printer.settings.ClassicBluetoothPrinterSettingsTransport
+import com.pmgt.pos.printer.settings.PrinterSettingsController
+import com.pmgt.pos.settings.ConvexSettingsServer
+import com.pmgt.pos.settings.SettingsController
+import com.pmgt.pos.updater.ConvexUpdateBackend
+import com.pmgt.pos.updater.UpdateCoordinator
+import com.pmgt.pos.updater.platform.AndroidUpdateInstaller
+import com.pmgt.pos.updater.platform.AndroidUpdateNotifier
+import com.pmgt.pos.updater.platform.AndroidUpdateTransferPlatform
 import com.pmgt.pos.orders.LocalOrderRepository
 import com.pmgt.pos.sync.*
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -36,6 +57,7 @@ class PosApplication : Application() {
     val auth by lazy { AuthRepository(http, AndroidSessionStorage(this)) }
     val lock by lazy { LockState(AndroidLockStorage(this), http) }
     private val network by lazy { AndroidNetwork(this, applicationScope) }
+    val online by lazy { network.online.stateIn(applicationScope, SharingStarted.Eagerly, false) }
     val startup by lazy {
         TabletStartup(
             {
@@ -78,10 +100,61 @@ class MainActivity : ComponentActivity() {
             val sessionEpoch by services.auth.sessionEpoch.collectAsStateWithLifecycle()
             val checkouts = remember(sessionEpoch) { CheckoutSessions(scope) }
             DisposableEffect(checkouts) { onDispose { checkouts.clear() } }
+            val corrections = remember(sessionEpoch) { CorrectionSessions(scope) }
+            DisposableEffect(corrections) { onDispose { corrections.clear() } }
             LaunchedEffect(authState.user?.id, authState.user?.storeId, sessionEpoch) {
                 editors.clear()
             }
             val logout = remember { RootLogout(services.auth, scope) }
+            var enablePrompt by remember { mutableStateOf<CompletableDeferred<Boolean>?>(null) }
+            var permissionPrompt by remember { mutableStateOf<CompletableDeferred<Boolean>?>(null) }
+            val enableLauncher =
+                rememberLauncherForActivityResult(
+                    ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    enablePrompt?.complete(
+                        AndroidPrinterBluetoothPlatform.enableResult(result.resultCode) ==
+                            BluetoothEnableResult.Accepted
+                    )
+                    enablePrompt = null
+                }
+            val permissionLauncher =
+                rememberLauncherForActivityResult(
+                    ActivityResultContracts.RequestMultiplePermissions()
+                ) { grants ->
+                    permissionPrompt?.complete(grants.values.all { it })
+                    permissionPrompt = null
+                }
+            val bluetoothPlatform =
+                remember { AndroidPrinterBluetoothPlatform(applicationContext) }
+            val printers =
+                remember {
+                    PrinterSettingsController(
+                        AndroidPrinterSettingsPersistence(applicationContext),
+                        ClassicBluetoothPrinterSettingsTransport(
+                            ClassicBluetoothPrinterTransport(bluetoothPlatform, Dispatchers.IO),
+                            AndroidPrinterSettingsDeviceAccess(
+                                AndroidPrinterDeviceManager(applicationContext),
+                                requestEnable = {
+                                    val prompt = CompletableDeferred<Boolean>()
+                                    enablePrompt = prompt
+                                    enableLauncher.launch(
+                                        AndroidPrinterBluetoothPlatform.requestEnableIntent()
+                                    )
+                                    if (prompt.await()) BluetoothEnableResult.Accepted
+                                    else BluetoothEnableResult.RefusedOrError
+                                },
+                                requestPermissions = {
+                                    val missing = bluetoothPlatform.requiredPermissionNames()
+                                    val prompt = CompletableDeferred<Boolean>()
+                                    permissionPrompt = prompt
+                                    permissionLauncher.launch(missing)
+                                    prompt.await()
+                                },
+                            ),
+                        ),
+                    )
+                }
             PosAuthShell(services.auth, services.lock, services.http, startup = services.startup) {
                 user ->
                 val database = services.startup.database
@@ -106,6 +179,100 @@ class MainActivity : ComponentActivity() {
                         val deviceCode =
                             sync?.deviceCode?.collectAsStateWithLifecycle()?.value.orEmpty()
                         val lockState by services.lock.state.collectAsStateWithLifecycle()
+                        val entry =
+                            remember(database, sync) {
+                                LocalOrderRepository(
+                                    database,
+                                    Dispatchers.IO,
+                                    {
+                                        DeviceIdentity.readOrCreate(
+                                            applicationContext,
+                                            adopting = true,
+                                        )
+                                    },
+                                    { sync?.deviceCode?.value.orEmpty() },
+                                    { sync?.triggerPush() },
+                                )
+                            }
+                        val checkoutRepository =
+                            remember(database, sync, sessionEpoch, user.id, user.storeId) {
+                                LocalCheckoutRepository(
+                                    database,
+                                    Dispatchers.IO,
+                                    {
+                                        services.auth.state.value.user
+                                            ?.takeIf {
+                                                services.auth.sessionEpoch.value == sessionEpoch &&
+                                                    it.id == user.id &&
+                                                    it.storeId == user.storeId
+                                            }
+                                            ?.let {
+                                                CheckoutOwner(it.id, requireNotNull(it.storeId))
+                                            }
+                                    },
+                                    { sync?.triggerPush() },
+                                )
+                            }
+                        val sessionIsCurrent = {
+                            services.auth.sessionEpoch.value == sessionEpoch &&
+                                services.auth.state.value.user?.id == user.id &&
+                                services.auth.state.value.user?.storeId == user.storeId
+                        }
+                        val activeSync = sync
+                        // Settings, closing and updates are session scoped; the printer stack is
+                        // device scoped, exactly as the source keeps its global printer store.
+                        val modules =
+                            if (activeSync == null) null
+                            else
+                                remember(activeSync, sessionEpoch, user.id, user.storeId) {
+                                    PosModules(
+                                        settings =
+                                            SettingsController(
+                                                services.auth,
+                                                services.lock,
+                                                activeSync,
+                                                checkoutRepository,
+                                                printers,
+                                                ConvexSettingsServer(services.http),
+                                                adoptedDeviceId =
+                                                    DeviceIdentity.readOrCreate(
+                                                        applicationContext,
+                                                        adopting = true,
+                                                    ),
+                                                displayVersion = BuildConfig.UPDATE_VERSION,
+                                                scope = scope,
+                                            ),
+                                        printers = printers,
+                                        closing =
+                                            ClosingController(
+                                                HttpClosingRepository(services.http),
+                                                checkoutRepository,
+                                                syncForDelivery = activeSync::syncForDelivery,
+                                                printCalls = printers::printReceiptCalls,
+                                                charsPerLine = printers::receiptCharsPerLine,
+                                                online = services.online,
+                                                scope = scope,
+                                                sessionIsCurrent = sessionIsCurrent,
+                                            ),
+                                        updates =
+                                            UpdateCoordinator(
+                                                ConvexUpdateBackend(services.http),
+                                                AndroidUpdateTransferPlatform(
+                                                    applicationContext,
+                                                    scope,
+                                                ),
+                                                AndroidUpdateInstaller(applicationContext),
+                                                AndroidUpdateNotifier(applicationContext),
+                                                currentVersion = BuildConfig.UPDATE_VERSION,
+                                                variant = BuildConfig.UPDATE_VARIANT,
+                                                scope = scope,
+                                            ),
+                                        currentVersion = BuildConfig.UPDATE_VERSION,
+                                    )
+                                }
+                        // Source initializes the printer store once the operational stack mounts.
+                        LaunchedEffect(printers) { printers.initialize() }
+                        PrinterConnectionEffects(printers, scope)
                         PosBrowseRoot(
                             user,
                             repository,
@@ -129,27 +296,17 @@ class MainActivity : ComponentActivity() {
                                 remember(database) {
                                     LocalCatalogRepository(database, Dispatchers.IO)
                                 },
-                            entryRepository =
-                                remember(database, sync) {
-                                    LocalOrderRepository(
-                                        database,
-                                        Dispatchers.IO,
-                                        {
-                                            DeviceIdentity.readOrCreate(
-                                                applicationContext,
-                                                adopting = true,
-                                            )
-                                        },
-                                        { sync?.deviceCode?.value.orEmpty() },
-                                        { sync?.triggerPush() },
-                                    )
-                                },
+                            entryRepository = entry,
                             editorSessions = editors,
-                            checkoutRepository =
+                            checkoutRepository = checkoutRepository,
+                            modules = modules,
+                            checkoutHttp = services.http,
+                            correctionRepository =
                                 remember(database, sync, sessionEpoch, user.id, user.storeId) {
-                                    LocalCheckoutRepository(
+                                    LocalCorrectionRepository(
                                         database,
                                         Dispatchers.IO,
+                                        entry,
                                         {
                                             services.auth.state.value.user
                                                 ?.takeIf {
@@ -165,13 +322,13 @@ class MainActivity : ComponentActivity() {
                                         { sync?.triggerPush() },
                                     )
                                 },
-                            checkoutHttp = services.http,
+                            reprintAudit =
+                                remember(database) {
+                                    HttpReprintAudit(database, Dispatchers.IO, services.http)
+                                },
+                            correctionSessions = corrections,
                             checkoutSessions = checkouts,
-                            checkoutIsCurrent = {
-                                services.auth.sessionEpoch.value == sessionEpoch &&
-                                    services.auth.state.value.user?.id == user.id &&
-                                    services.auth.state.value.user?.storeId == user.storeId
-                            },
+                            checkoutIsCurrent = sessionIsCurrent,
                         )
                     }
             }

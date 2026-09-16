@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -59,12 +60,14 @@ internal fun HomeScreen(
                 Modifier.size(42.dp).background(BrowseColors.Brand, RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center,
             ) {
-                Label(name.take(1).uppercase(), 17, Color.White, FontWeight.Bold)
+                HomeLabel(name.take(1).uppercase(), 17, Color.White, FontWeight.SemiBold)
             }
             Column(Modifier.weight(1f).padding(start = 4.dp)) {
-                Label(name, 17, Color(0xFF0F172A), FontWeight.Bold)
+                HomeLabel(name, 17, Color(0xFF0F172A), FontWeight.SemiBold, letterSpacing = -.2f)
                 if (!user.name.contains('('))
-                    user.role?.name?.let { Label(it, 13, Color(0xFF94A3B8)) }
+                    user.role?.name?.let {
+                        HomeLabel(it, 13, Color(0xFF94A3B8), modifier = Modifier.padding(top = 1.dp))
+                    }
             }
             val syncTint =
                 when (syncStatus) {
@@ -86,11 +89,11 @@ internal fun HomeScreen(
                 color = syncTint,
                 shape = RoundedCornerShape(12.dp),
             ) {
-                Label(
+                HomeLabel(
                     syncLabel,
                     12,
                     syncInk,
-                    FontWeight.SemiBold,
+                    FontWeight.Medium,
                     Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                 )
             }
@@ -109,6 +112,7 @@ internal fun HomeScreen(
         ) {
             Row(
                 Modifier.fillMaxWidth()
+                    .shadow(3.dp, RoundedCornerShape(20.dp))
                     .background(Color.White, RoundedCornerShape(20.dp))
                     .border(1.dp, Color(0xFFDCE7EF), RoundedCornerShape(20.dp))
                     .padding(16.dp),
@@ -125,6 +129,7 @@ internal fun HomeScreen(
                         "CURRENT TIME",
                         color = Color.White.copy(alpha = .72f),
                         fontSize = 12.sp,
+                        lineHeight = 21.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.2.sp,
                     )
@@ -137,11 +142,13 @@ internal fun HomeScreen(
                         letterSpacing = (-1.8).sp,
                         maxLines = 1,
                     )
-                    Label(
+                    HomeLabel(
                         dateText(clock, "EEEE, MMMM d", Locale.getDefault()),
                         15,
                         Color.White.copy(alpha = .72f),
-                        FontWeight.SemiBold,
+                        FontWeight.Medium,
+                        lineHeight = 20,
+                        letterSpacing = .2f,
                     )
                 }
                 if (summary == null)
@@ -186,35 +193,58 @@ internal fun HomeScreen(
                             Modifier.weight(1.2f)
                                 .heightIn(min = 132.dp)
                                 .background(Color(0xFFF8FBFD), RoundedCornerShape(18.dp))
+                                .border(
+                                    1.dp,
+                                    Color(0xFFE2E8F0),
+                                    RoundedCornerShape(18.dp),
+                                )
                                 .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Row(
                                 Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Column {
-                                    Label("REVENUE", 12, Color(0xFF64748B), FontWeight.Bold)
-                                    Label("Net sales today", 13, Color(0xFF64748B))
+                                Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                    HomeLabel(
+                                        "REVENUE",
+                                        12,
+                                        Color(0xFF64748B),
+                                        FontWeight.SemiBold,
+                                        letterSpacing = 1.1f,
+                                    )
+                                    HomeLabel(
+                                        "Net sales today",
+                                        13,
+                                        Color(0xFF64748B),
+                                        FontWeight.Normal,
+                                    )
                                 }
                                 HomeIcon(Glyph.Cash, 20, 42, 14, Color(0xFF0F172A), Color.White)
                             }
-                            Label(
-                                money(summary.todayRevenue),
-                                34,
-                                Color(0xFF0F172A),
-                                FontWeight.ExtraBold,
-                            )
-                            Label(
-                                "Avg ticket: " +
-                                    if (summary.totalOrdersToday > 0 && summary.todayRevenue != 0.0)
-                                        money(summary.todayRevenue / summary.totalOrdersToday)
-                                    else "--",
-                                13,
-                                Color(0xFF516274),
-                                FontWeight.SemiBold,
-                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                HomeLabel(
+                                    money(summary.todayRevenue),
+                                    34,
+                                    Color(0xFF0F172A),
+                                    FontWeight.Bold,
+                                    lineHeight = 38,
+                                    letterSpacing = -1.1f,
+                                )
+                                HomeLabel(
+                                    "Avg ticket: " +
+                                        if (
+                                            summary.totalOrdersToday > 0 &&
+                                                summary.todayRevenue != 0.0
+                                        )
+                                            money(summary.todayRevenue / summary.totalOrdersToday)
+                                        else "--",
+                                    13,
+                                    Color(0xFF516274),
+                                    FontWeight.Medium,
+                                )
+                            }
                         }
                     }
             }
@@ -245,10 +275,18 @@ internal fun HomeScreen(
                 Column(
                     Modifier.weight(1f)
                         .fillMaxHeight()
+                        .shadow(2.dp, RoundedCornerShape(20.dp))
                         .background(Color.White, RoundedCornerShape(20.dp))
                         .border(1.dp, Color(0xFFDCE7EF), RoundedCornerShape(20.dp))
                 ) {
-                    Column(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 16.dp)) {
+                    Column(
+                        Modifier.fillMaxWidth()
+                            .background(
+                                Color(0xFFF8FBFD),
+                                RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                            )
+                            .padding(start = 18.dp, end = 18.dp, top = 18.dp, bottom = 14.dp)
+                    ) {
                         Row(
                             Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -263,10 +301,31 @@ internal fun HomeScreen(
                                 BrowseColors.Brand,
                             )
                             Column(Modifier.weight(1f)) {
-                                Label("Active Orders", 22, Color(0xFF0F172A), FontWeight.ExtraBold)
-                                Label("Open dine-in and takeout orders.", 13, Color(0xFF64748B))
+                                HomeLabel(
+                                    "Active Orders",
+                                    22,
+                                    Color(0xFF0F172A),
+                                    FontWeight.Bold,
+                                    letterSpacing = -.5f,
+                                )
+                                HomeLabel(
+                                    "Open dine-in and takeout orders.",
+                                    13,
+                                    Color(0xFF64748B),
+                                    FontWeight.Normal,
+                                )
                             }
-                            StatusBadge("$total total")
+                            Box(
+                                Modifier.background(Color(0xFFEEF5FA), RoundedCornerShape(999.dp))
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                HomeLabel(
+                                    "$total total",
+                                    13,
+                                    Color(0xFF476174),
+                                    FontWeight.SemiBold,
+                                )
+                            }
                         }
                         Row(
                             Modifier.padding(top = 14.dp),
@@ -277,19 +336,23 @@ internal fun HomeScreen(
                                     "Takeout" to takeout,
                                     "Open Orders" to total,
                                 )
-                                .forEach { (label, value) ->
+                                .forEachIndexed { index, (label, value) ->
                                     Column {
-                                        Label(
+                                        HomeLabel(
                                             label.uppercase(),
                                             11,
                                             Color(0xFF94A3B8),
-                                            FontWeight.Bold,
+                                            FontWeight.SemiBold,
                                         )
-                                        Label(
+                                        HomeLabel(
                                             value.toString(),
                                             16,
-                                            Color(0xFF334155),
-                                            FontWeight.ExtraBold,
+                                            when (index) {
+                                                0 -> Color(0xFF1D4ED8)
+                                                1 -> Color(0xFFC2410C)
+                                                else -> Color(0xFF334155)
+                                            },
+                                            FontWeight.Bold,
                                         )
                                     }
                                 }
@@ -344,11 +407,11 @@ private fun HeaderButton(label: String, onClick: () -> Unit, destructive: Boolea
             Modifier.widthIn(min = 74.dp).padding(horizontal = 12.dp, vertical = 10.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Label(
+            HomeLabel(
                 label,
                 12,
                 if (destructive) Color(0xFFDC2626) else Color(0xFF334155),
-                FontWeight.Bold,
+                FontWeight.SemiBold,
             )
         }
     }
@@ -366,7 +429,7 @@ private fun ScoreCard(
 ) {
     Column(
         modifier.heightIn(min = 132.dp).background(tint, RoundedCornerShape(18.dp)).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(
             Modifier.fillMaxWidth(),
@@ -374,10 +437,25 @@ private fun ScoreCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             HomeIcon(glyph, 20, 42, 14, Color.White.copy(alpha = .78f), ink)
-            Label(label.uppercase(), 12, Color(0xFF64748B), FontWeight.Bold)
+            HomeLabel(
+                label.uppercase(),
+                12,
+                Color(0xFF64748B),
+                FontWeight.SemiBold,
+                letterSpacing = 1.1f,
+            )
         }
-        Label(value, 34, ink, FontWeight.ExtraBold)
-        Label(detail, 13, Color(0xFF516274), FontWeight.SemiBold)
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            HomeLabel(
+                value,
+                34,
+                ink,
+                FontWeight.Bold,
+                lineHeight = 38,
+                letterSpacing = -1f,
+            )
+            HomeLabel(detail, 13, Color(0xFF516274), FontWeight.Medium)
+        }
     }
 }
 
@@ -394,7 +472,10 @@ private fun HomePanel(
     val ink = if (filled) Color.White else Color(0xFF9A3412)
     Surface(
         onClick,
-        modifier.fillMaxWidth(),
+        modifier.fillMaxWidth().shadow(
+            if (filled) 4.dp else 2.dp,
+            RoundedCornerShape(20.dp),
+        ),
         shape = RoundedCornerShape(20.dp),
         color = if (filled) BrowseColors.Brand else Color(0xFFFFF7ED),
         border = if (filled) null else BorderStroke(1.5.dp, Color(0xFFFDBA74)),
@@ -409,26 +490,52 @@ private fun HomePanel(
                     if (filled) Color.White.copy(alpha = .16f) else Color(0xFFFFE2CC),
                     ink,
                 )
-                StatusBadge(
-                    badge,
-                    ink,
-                    if (filled) Color.White.copy(alpha = .16f) else Color(0xFFFFE7D6),
-                )
+                Box(
+                    Modifier.background(
+                            if (filled) Color.White.copy(alpha = .16f)
+                            else Color(0xFFFFE7D6),
+                            RoundedCornerShape(999.dp),
+                        )
+                        .padding(horizontal = 14.dp, vertical = 7.dp)
+                ) {
+                    HomeLabel(badge, 14, ink, FontWeight.Bold)
+                }
             }
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Label(title, 28, ink, FontWeight.ExtraBold)
-                Label(subtitle, 15, ink.copy(alpha = .8f), FontWeight.SemiBold)
+            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    HomeLabel(
+                        title,
+                        28,
+                        ink,
+                        FontWeight.Bold,
+                        lineHeight = 32,
+                        letterSpacing = -.6f,
+                    )
+                    HomeLabel(
+                        subtitle,
+                        15,
+                        if (filled) Color.White.copy(alpha = .74f) else Color(0xFFC2410C),
+                        FontWeight.Medium,
+                        lineHeight = 20,
+                        maxLines = 2,
+                    )
+                }
                 Row(
                     Modifier.fillMaxWidth()
-                        .padding(top = 8.dp)
                         .background(
                             if (filled) Color.White.copy(alpha = .1f) else Color(0xFFFFF1E7),
                             RoundedCornerShape(14.dp),
                         )
-                        .padding(12.dp),
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Label(footer, 13, ink, FontWeight.Bold, Modifier.weight(1f))
+                    HomeLabel(
+                        footer,
+                        13,
+                        if (filled) Color.White.copy(alpha = .82f) else ink,
+                        FontWeight.SemiBold,
+                        Modifier.weight(1f),
+                    )
                     Ion(Glyph.Forward, 18, ink)
                 }
             }
@@ -458,65 +565,138 @@ private fun ActiveRow(order: OrderSummary) {
     val dining = order.orderType == "dine_in"
     val accent = if (dining) BrowseColors.Brand else Color(0xFFEA580C)
     val age = remember(order) { ago(order.createdAt) }
-    Row(
-        Modifier.fillMaxWidth()
-            .border(
-                1.dp,
-                if (dining) Color(0xFFBFDBFE) else Color(0xFFFED7AA),
-                RoundedCornerShape(16.dp),
-            )
-            .height(IntrinsicSize.Min)
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = Color.White,
+        border = BorderStroke(
+            1.dp,
+            if (dining) Color(0xFFBFDBFE) else Color(0xFFFED7AA),
+        ),
     ) {
-        Box(Modifier.width(6.dp).fillMaxHeight().background(accent))
         Row(
-            Modifier.weight(1f).padding(14.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            Modifier.height(IntrinsicSize.Min),
         ) {
-            Box(
-                Modifier.size(46.dp)
-                    .background(accent.copy(alpha = .1f), RoundedCornerShape(14.dp)),
-                contentAlignment = Alignment.Center,
+            Box(Modifier.width(6.dp).fillMaxHeight().background(accent))
+            Row(
+                Modifier.weight(1f)
+                    .padding(start = 14.dp, end = 16.dp, top = 14.dp, bottom = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Ion(if (dining) Glyph.Dining else Glyph.Bag, 20, accent)
-            }
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                Box(
+                    Modifier.size(46.dp)
+                        .background(
+                            if (dining) Color(0xFFE8F3FE) else Color(0xFFFFF1E7),
+                            RoundedCornerShape(14.dp),
+                        ),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Label(order.orderNumber, 17, weight = FontWeight.ExtraBold)
-                    StatusBadge(
-                        if (dining) "Dine-In" else "Takeout",
-                        accent,
-                        accent.copy(alpha = .15f),
-                    )
-                    Spacer(Modifier.weight(1f))
-                    Label(money(order.netSales), 17, weight = FontWeight.ExtraBold)
+                    Ion(if (dining) Glyph.Dining else Glyph.Bag, 20, accent)
                 }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                        Label(
-                            (if (dining) order.tableName else order.customerName)?.takeIf {
-                                it.isNotEmpty()
-                            } ?: if (dining) "Dining floor" else "Takeout queue",
-                            13,
-                            Color(0xFF475569),
-                            FontWeight.Bold,
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        HomeLabel(
+                            order.orderNumber,
+                            17,
+                            weight = FontWeight.Bold,
+                            letterSpacing = -.3f,
                         )
-                        Label(
-                            "${quantity(order.itemCount)} ${if (order.itemCount == 1.0) "item" else "items"}   $age",
-                            12,
-                            Color(0xFF64748B),
+                        Box(
+                            Modifier.background(
+                                    if (dining) Color(0xFFDBEAFE) else Color(0xFFFFEDD5),
+                                    RoundedCornerShape(999.dp),
+                                )
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
+                        ) {
+                            HomeLabel(
+                                if (dining) "Dine-In" else "Takeout",
+                                11,
+                                if (dining) Color(0xFF1D4ED8) else Color(0xFFC2410C),
+                                FontWeight.SemiBold,
+                            )
+                        }
+                        Spacer(Modifier.weight(1f))
+                        HomeLabel(
+                            money(order.netSales),
+                            17,
+                            weight = FontWeight.Bold,
+                            letterSpacing = -.3f,
                         )
                     }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Label("STATUS", 10, Color(0xFF94A3B8), FontWeight.Bold)
-                        Label("Open", 13, Color(0xFF334155), FontWeight.ExtraBold)
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            HomeLabel(
+                                (if (dining) order.tableName else order.customerName)?.takeIf {
+                                    it.isNotEmpty()
+                                } ?: if (dining) "Dining floor" else "Takeout queue",
+                                13,
+                                Color(0xFF475569),
+                                FontWeight.SemiBold,
+                            )
+                            Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                                OrderMetricPill(
+                                    Glyph.Cube,
+                                    "${quantity(order.itemCount)} ${if (order.itemCount == 1.0) "item" else "items"}",
+                                )
+                                OrderMetricPill(Glyph.Time, age)
+                            }
+                        }
+                        Column(
+                            Modifier.background(
+                                    Color(0xFFF8FBFD),
+                                    RoundedCornerShape(12.dp),
+                                )
+                                .padding(horizontal = 10.dp, vertical = 8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            HomeLabel("STATUS", 10, Color(0xFF94A3B8), FontWeight.SemiBold)
+                            Spacer(Modifier.height(2.dp))
+                            HomeLabel("Open", 13, Color(0xFF334155), FontWeight.Bold)
+                        }
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun OrderMetricPill(glyph: Glyph, text: String) {
+    Row(
+        Modifier.background(Color(0xFFF8FBFD), RoundedCornerShape(999.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Ion(glyph, 12, Color(0xFF64748B))
+        HomeLabel(text, 12, Color(0xFF64748B), FontWeight.Medium)
+    }
+}
+
+@Composable
+private fun HomeLabel(
+    text: String,
+    size: Int = 14,
+    color: Color = BrowseColors.Ink,
+    weight: FontWeight = FontWeight.Normal,
+    modifier: Modifier = Modifier,
+    lineHeight: Int = 21,
+    letterSpacing: Float = 0f,
+    maxLines: Int = 1,
+) {
+    Text(
+        text,
+        modifier,
+        color = color,
+        fontSize = size.sp,
+        lineHeight = lineHeight.sp,
+        fontWeight = weight,
+        letterSpacing = letterSpacing.sp,
+        maxLines = maxLines,
+    )
 }

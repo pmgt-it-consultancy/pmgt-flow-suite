@@ -200,6 +200,7 @@ internal fun ManagerApprovalDialog(
     title: String,
     close: () -> Unit,
     approve: () -> Unit,
+    description: String = "Manager PIN required to proceed",
 ) {
     val state by session.state.collectAsStateWithLifecycle()
     val pinFocus = remember { FocusRequester() }
@@ -211,12 +212,7 @@ internal fun ManagerApprovalDialog(
         }
     }
     CheckoutModal(title, close, center = true) {
-        Label(
-            "Manager PIN required to proceed",
-            16,
-            BrowseColors.Muted,
-            modifier = Modifier.padding(bottom = 16.dp),
-        )
+        Label(description, 16, BrowseColors.Muted, modifier = Modifier.padding(bottom = 16.dp))
         Label(
             "Select Manager",
             16,

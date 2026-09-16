@@ -192,6 +192,8 @@ class BrowseUiWorkflowTest {
                             }
                             .onCompletion { historyObservers.decrementAndGet() }
                 }
+            // Compose's test frame clock must not perform a frame on the repository's IO thread.
+            val delivered = MainDeliveryBrowseRepository(repository)
             val actions = mutableListOf<BrowseAction>()
             val summary = DashboardSource(http).observe("store")
             compose.setContent {
@@ -199,7 +201,7 @@ class BrowseUiWorkflowTest {
                     val lockUi by lock.state.collectAsState()
                     PosBrowseRoot(
                         user,
-                        repository,
+                        delivered,
                         summary,
                         "Idle",
                         lockUi.pinUserId == user.id && lockUi.userHasPin,

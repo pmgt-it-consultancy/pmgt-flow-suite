@@ -37,7 +37,7 @@ class DashboardSource(private val http: ConvexHttp) {
                             .jsonObject
                     emit(
                         DashboardSummary(
-                            result.getValue("totalOrdersToday").jsonPrimitive.int,
+                            result.getValue("totalOrdersToday").jsonPrimitive.integralCount(),
                             result.getValue("todayRevenue").jsonPrimitive.double,
                         )
                     )
@@ -48,4 +48,17 @@ class DashboardSource(private val http: ConvexHttp) {
                 }
             }
             .distinctUntilChanged()
+}
+
+private fun JsonPrimitive.integralCount(): Int {
+    val number = doubleOrNull
+    require(
+        !isString &&
+            number != null &&
+            number.isFinite() &&
+            number >= Int.MIN_VALUE &&
+            number <= Int.MAX_VALUE &&
+            number % 1.0 == 0.0
+    ) { "Dashboard count must be an integral JSON number" }
+    return number.toInt()
 }

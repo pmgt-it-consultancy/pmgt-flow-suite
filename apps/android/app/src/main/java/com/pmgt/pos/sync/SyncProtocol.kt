@@ -106,6 +106,23 @@ internal fun camel(name: String) = name.replace(Regex("_([a-z])")) { it.groupVal
 internal fun translateRow(row: JsonObject, name: (String) -> String) = JsonObject(
     row.filterKeys { !it.startsWith('_') }.mapKeys { if (it.key == "id") "id" else name(it.key) }
 )
+private val inboundColumns = LegacyTables.tables.mapValues { (_, columns) ->
+    columns.mapTo(mutableSetOf("id")) { it.name }
+}
+/** Watermelon's sanitizedRaw projects pulled records through tableSchema.columnArray. */
+internal fun projectInboundRow(table: String, row: JsonObject): JsonObject {
+    val columns = inboundColumns.getValue(table)
+    val projected = row.filterKeys(columns::contains)
+    for (column in LegacyTables.tables.getValue(table)) {
+        require(column.optional || projected[column.name] != JsonNull) {
+            "Required inbound column is null"
+        }
+    }
+    // RN's required string sanitizer stores "" for the live roles.permissions array.
+    return if (table == "roles" && projected["permissions"] is JsonArray)
+        JsonObject(projected + ("permissions" to JsonPrimitive("")))
+    else JsonObject(projected)
+}
 internal fun wireChanges(changes: JsonObject): JsonObject = JsonObject(changes.map { (table, value) ->
     val bucket = syncJson.decodeFromJsonElement<ChangeBucket>(value)
     camel(table) to syncJson.encodeToJsonElement(bucket.copy(

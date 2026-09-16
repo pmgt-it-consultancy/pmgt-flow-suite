@@ -233,6 +233,14 @@ class PosDatabase(private val driver: SqlDriver) : AutoCloseable {
         }, 2) { bindString(0, if (settled) "kotlin.checkout.settled:" else "kotlin.checkout.active:"); bindString(1, if (settled) "kotlin.checkout.settled;" else "kotlin.checkout.active;") }.value
 
     @Synchronized
+    internal fun correctionPointers(): Map<String, String> = driver.executeQuery(null,
+        "SELECT key,value FROM local_storage WHERE key >= ? AND key < ? AND value != ''", { cursor ->
+            val rows = linkedMapOf<String, String>()
+            while (cursor.next().value) rows[cursor.getString(0)!!.removePrefix("kotlin.checkout.corrected:")] = cursor.getString(1)!!
+            QueryResult.Value(rows)
+        }, 2) { bindString(0, "kotlin.checkout.corrected:"); bindString(1, "kotlin.checkout.corrected;") }.value
+
+    @Synchronized
     fun setLocalValue(key: String, value: String): Unit = transaction {
         if (localValue(key) != value) {
             driver.execute(null, "INSERT OR REPLACE INTO local_storage(key,value) VALUES (?,?)", 2) {
