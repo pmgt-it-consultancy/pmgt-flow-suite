@@ -93,8 +93,10 @@ data class TakeoutLane(
 
 data class DashboardSummary(val totalOrdersToday: Int, val todayRevenue: Double)
 
+@kotlinx.serialization.Serializable
 data class ItemModifier(val groupName: String, val optionName: String, val priceAdjustment: Double)
 
+@kotlinx.serialization.Serializable
 data class OrderLine(
     val id: String,
     val productId: String,

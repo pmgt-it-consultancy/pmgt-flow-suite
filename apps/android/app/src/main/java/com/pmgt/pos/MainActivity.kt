@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.pmgt.pos.auth.*
 import com.pmgt.pos.browse.*
 import com.pmgt.pos.catalog.LocalCatalogRepository
+import com.pmgt.pos.checkout.*
 import com.pmgt.pos.db.AndroidDatabase
 import com.pmgt.pos.db.DeviceIdentity
 import com.pmgt.pos.orders.EditorSessions
@@ -74,14 +75,19 @@ class MainActivity : ComponentActivity() {
             val scope = rememberCoroutineScope()
             val editors = remember { EditorSessions(scope) }
             val authState by services.auth.state.collectAsStateWithLifecycle()
-            LaunchedEffect(authState.user?.id, authState.user?.storeId) { editors.clear() }
+            val sessionEpoch by services.auth.sessionEpoch.collectAsStateWithLifecycle()
+            val checkouts = remember(sessionEpoch) { CheckoutSessions(scope) }
+            DisposableEffect(checkouts) { onDispose { checkouts.clear() } }
+            LaunchedEffect(authState.user?.id, authState.user?.storeId, sessionEpoch) {
+                editors.clear()
+            }
             val logout = remember { RootLogout(services.auth, scope) }
             PosAuthShell(services.auth, services.lock, services.http, startup = services.startup) {
                 user ->
                 val database = services.startup.database
                 val sync by services.startup.sync.collectAsStateWithLifecycle()
                 if (database != null && user.storeId != null)
-                    holder.SaveableStateProvider("${user.id}:${user.storeId}") {
+                    holder.SaveableStateProvider("${user.id}:${user.storeId}:$sessionEpoch") {
                         val repository =
                             remember(database) { LocalBrowseRepository(database, Dispatchers.IO) }
                         val dashboard =
@@ -108,7 +114,9 @@ class MainActivity : ComponentActivity() {
                             hasPin = lockState.pinUserId == user.id && lockState.userHasPin,
                             onLock = { scope.launch { services.lock.lock(user) } },
                             onLogout = {
-                                logout { holder.removeState("${user.id}:${user.storeId}") }
+                                logout {
+                                    holder.removeState("${user.id}:${user.storeId}:$sessionEpoch")
+                                }
                             },
                             refreshHistory = {
                                 sync?.syncForDelivery()
@@ -137,6 +145,33 @@ class MainActivity : ComponentActivity() {
                                     )
                                 },
                             editorSessions = editors,
+                            checkoutRepository =
+                                remember(database, sync, sessionEpoch, user.id, user.storeId) {
+                                    LocalCheckoutRepository(
+                                        database,
+                                        Dispatchers.IO,
+                                        {
+                                            services.auth.state.value.user
+                                                ?.takeIf {
+                                                    services.auth.sessionEpoch.value ==
+                                                        sessionEpoch &&
+                                                        it.id == user.id &&
+                                                        it.storeId == user.storeId
+                                                }
+                                                ?.let {
+                                                    CheckoutOwner(it.id, requireNotNull(it.storeId))
+                                                }
+                                        },
+                                        { sync?.triggerPush() },
+                                    )
+                                },
+                            checkoutHttp = services.http,
+                            checkoutSessions = checkouts,
+                            checkoutIsCurrent = {
+                                services.auth.sessionEpoch.value == sessionEpoch &&
+                                    services.auth.state.value.user?.id == user.id &&
+                                    services.auth.state.value.user?.storeId == user.storeId
+                            },
                         )
                     }
             }

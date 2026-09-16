@@ -247,6 +247,16 @@ class OrderEditorUiWorkflowTest {
             db.select("orders").size == 1 &&
                 db.select("order_items").singleOrNull()?.boolean("is_sent_to_kitchen") == true
         }
+        // The sent-item batch intentionally precedes recalc. This existing printer seam is
+        // reached only after session.send/createAndSend has awaited that later recalc phase.
+        compose.waitUntil(5000) {
+            compose
+                .onAllNodesWithText(
+                    "Kitchen printing is not available in this build yet. The order is saved locally."
+                )
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
         assertEquals(3.0, db.select("orders").single().number("item_count"), 0.0)
         assertEquals(336.0, db.select("orders").single().number("net_sales"), 0.0)
         compose.onNodeWithText("Sent", substring = false).assertDoesNotExist()

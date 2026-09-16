@@ -63,6 +63,10 @@ internal enum class Glyph(val code: Int) {
     FilledCart(0xf202),
     Remove(0xf520),
     BagAdd(0xf159),
+    Checkbox(0xf21a),
+    Square(0xf593),
+    PriceTag(0xf4eb),
+    CheckFilled(0xf21e),
 }
 
 @Composable

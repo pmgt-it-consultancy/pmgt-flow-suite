@@ -7,10 +7,14 @@ import androidx.compose.runtime.saveable.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pmgt.pos.auth.SignedInUser
 import com.pmgt.pos.catalog.CatalogRepository
+import com.pmgt.pos.checkout.*
 import com.pmgt.pos.orders.*
 import com.pmgt.pos.sync.SyncStatus
+import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.serialization.json.Json
 
 /** No global header: each route renders its original RN header. */
 @Composable
@@ -31,11 +35,17 @@ fun PosBrowseRoot(
     catalogRepository: CatalogRepository? = null,
     onCheckout: ((CheckoutRoute) -> Unit)? = null,
     editorSessions: EditorSessions? = null,
+    checkoutRepository: CheckoutRepository? = null,
+    checkoutHttp: ConvexHttp? = null,
+    checkoutSessions: CheckoutSessions? = null,
+    checkoutIsCurrent: () -> Boolean = { true },
+    onCheckoutCompleted: ((CompletedCheckout, () -> Unit) -> Unit)? = null,
 ) {
     val storeId = user.storeId ?: return
     var route by rememberSaveable { mutableStateOf("HomeScreen") }
     var detailId by rememberSaveable { mutableStateOf<String?>(null) }
-    val holder = rememberSaveableStateHolder()
+    var navigationEpoch by rememberSaveable { mutableIntStateOf(0) }
+    val holder = key(navigationEpoch) { rememberSaveableStateHolder() }
     var unavailable by remember { mutableStateOf(false) }
     var actionError by remember { mutableStateOf<String?>(null) }
     var editorTableId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -46,6 +56,74 @@ fun PosBrowseRoot(
     val scope = rememberCoroutineScope()
     val sessions = editorSessions ?: remember { EditorSessions(scope) }
     val editorOwner = "${user.id}:$storeId"
+    val checkoutOwner = CheckoutOwner(user.id, storeId)
+    val checkouts = checkoutSessions ?: remember { CheckoutSessions(scope) }
+    var checkoutJson by rememberSaveable { mutableStateOf<String?>(null) }
+    var checkoutReturn by rememberSaveable { mutableStateOf("HomeScreen") }
+    var receiptUnavailable by remember { mutableStateOf(false) }
+    val financialActions =
+        remember(checkoutRepository, storeId) {
+            checkoutRepository?.pendingActions(storeId) ?: flowOf(emptyList())
+        }
+    val pendingActions by financialActions.collectAsStateWithLifecycle(initialValue = emptyList())
+    var recoveryCandidate by remember { mutableStateOf<CheckoutRoute?>(null) }
+    var recoveryDecisions by remember { mutableIntStateOf(0) }
+    LaunchedEffect(pendingActions, route, detailId, recoveryDecisions, checkoutRepository) {
+        recoveryCandidate = null
+        if (
+            route == "HomeScreen" &&
+                detailId == null &&
+                checkoutIsCurrent() &&
+                checkoutRepository != null
+        ) {
+            for (pending in
+                pendingActions
+                    .filter { it.kind == "payment" && it.state == FinancialActionState.Recoverable }
+                    .sortedBy { it.orderId }) {
+                val id = pending.orderId ?: continue
+                if (id in checkouts.deferredRecovery) continue
+                val saved =
+                    try {
+                        checkoutRepository.recoverablePayment(checkoutOwner, id)
+                    } catch (cancelled: CancellationException) {
+                        throw cancelled
+                    } catch (_: Exception) {
+                        null
+                    }
+                if (saved != null && checkoutIsCurrent()) {
+                    recoveryCandidate = saved
+                    break
+                }
+            }
+        }
+    }
+    fun openCheckout(next: CheckoutRoute) {
+        if (onCheckout != null) onCheckout(next)
+        else if (checkoutRepository == null || checkoutHttp == null) unavailable = true
+        else {
+            checkoutReturn = route
+            checkoutJson = Json.encodeToString(next)
+            route = "CheckoutScreen"
+        }
+    }
+    fun exitCheckout() {
+        checkoutJson?.let {
+            checkouts.remove("$editorOwner:${Json.decodeFromString<CheckoutRoute>(it).orderId}")
+        }
+        receiptUnavailable = false
+        checkoutJson = null
+        sessions.remove(editorOwner, editorKey)
+        navigationEpoch++
+        editorTableId = null
+        editorName = ""
+        editorOrderId = null
+        editorKey = ""
+        editorReturn = "HomeScreen"
+        checkoutReturn = "HomeScreen"
+        detailId = null
+        // RN reset uses index 0: Home is active, with Tables/Takeout as its next route.
+        route = "HomeScreen"
+    }
     var creating by remember { mutableStateOf(false) }
     fun openEditor(next: EditorRoute) {
         editorReturn = route
@@ -125,8 +203,7 @@ fun PosBrowseRoot(
                         }
                     }
                 is BrowseAction.Checkout ->
-                    if (onCheckout == null) unavailable = true
-                    else onCheckout(CheckoutRoute(event.orderId, event.orderType))
+                    openCheckout(CheckoutRoute(event.orderId, event.orderType))
                 else -> if (onAction == null) unavailable = true else onAction(event)
             }
         else if (onAction == null) unavailable = true else onAction(event)
@@ -185,6 +262,50 @@ fun PosBrowseRoot(
                         { action(BrowseAction.SystemStatus) },
                         refreshHistory,
                     )
+                "CheckoutScreen" ->
+                    if (
+                        checkoutRepository != null && checkoutHttp != null && checkoutJson != null
+                    ) {
+                        val checkoutRoute =
+                            remember(checkoutJson) {
+                                Json.decodeFromString<CheckoutRoute>(checkoutJson!!)
+                            }
+                        val checkoutKey = "$editorOwner:${checkoutRoute.orderId}"
+                        val checkoutSession =
+                            remember(checkoutKey, checkoutRepository) {
+                                checkouts.get(checkoutKey) { ownedScope ->
+                                    CheckoutSession(
+                                        checkoutOwner,
+                                        checkoutRoute,
+                                        checkoutRepository,
+                                        checkoutHttp,
+                                        user.name,
+                                        ownedScope,
+                                        checkoutIsCurrent,
+                                    )
+                                }
+                            }
+                        CheckoutScreen(
+                            checkoutOwner,
+                            checkoutRoute,
+                            checkoutRepository,
+                            checkoutHttp,
+                            user.name,
+                            checkoutIsCurrent,
+                            onBack = {
+                                checkouts.remove(checkoutKey)
+                                checkoutJson = null
+                                route = checkoutReturn
+                            },
+                            onCompleted = { complete ->
+                                if (onCheckoutCompleted != null)
+                                    onCheckoutCompleted(complete, ::exitCheckout)
+                                else receiptUnavailable = true
+                            },
+                            memory = checkoutSession,
+                            onStatus = { action(BrowseAction.SystemStatus) },
+                        )
+                    }
                 "OrderScreen",
                 "TakeoutOrderScreen" ->
                     if (entryRepository != null && catalogRepository != null) {
@@ -214,9 +335,7 @@ fun PosBrowseRoot(
                                 route = editorReturn
                             },
                             onStatus = { action(BrowseAction.SystemStatus) },
-                            onCheckout = {
-                                if (onCheckout == null) unavailable = true else onCheckout(it)
-                            },
+                            onCheckout = { openCheckout(it) },
                         )
                     }
             }
@@ -228,6 +347,53 @@ fun PosBrowseRoot(
             text = { Text("This action is not available in this build yet.") },
             confirmButton = { TextButton({ unavailable = false }) { Text("OK") } },
         )
+    if (receiptUnavailable)
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Unavailable") },
+            text = { Text("Receipt printing is not available in this build yet.") },
+            confirmButton = { TextButton(::exitCheckout) { Text("Skip") } },
+        )
+    recoveryCandidate?.let { saved ->
+        fun later() {
+            checkouts.deferredRecovery += saved.orderId
+            recoveryCandidate = null
+            recoveryDecisions++
+        }
+        AlertDialog(
+            onDismissRequest = ::later,
+            title = { Text("Saved checkout") },
+            text = {
+                Text(
+                    "A locally paid checkout needs its remaining local steps completed. Saved payment records will be reused."
+                )
+            },
+            dismissButton = { TextButton(::later) { Text("Later") } },
+            confirmButton = {
+                TextButton({
+                    scope.launch {
+                        if (!checkoutIsCurrent()) return@launch
+                        val current =
+                            try {
+                                checkoutRepository?.recoverablePayment(checkoutOwner, saved.orderId)
+                            } catch (cancelled: CancellationException) {
+                                throw cancelled
+                            } catch (_: Exception) {
+                                null
+                            }
+                        if (!checkoutIsCurrent()) return@launch
+                        later()
+                        if (current != null) openCheckout(current)
+                        else
+                            actionError =
+                                "Saved checkout has changed. Existing work is retained for review."
+                    }
+                }) {
+                    Text("Resume saved checkout")
+                }
+            },
+        )
+    }
     actionError?.let { message ->
         AlertDialog(
             onDismissRequest = { actionError = null },

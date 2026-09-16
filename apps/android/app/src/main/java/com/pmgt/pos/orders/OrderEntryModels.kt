@@ -36,6 +36,7 @@ data class CancelCommit(val orderId: String, val voidId: String, val tableId: St
 
 data class TransferTable(val id: String, val name: String, val capacity: Double)
 
+@kotlinx.serialization.Serializable
 data class CartDiscount(
     val id: String,
     val itemId: String?,
@@ -45,6 +46,7 @@ data class CartDiscount(
     val vatExemptAmount: Double,
 )
 
+@kotlinx.serialization.Serializable
 data class OrderCart(
     val id: String,
     val storeId: String,
@@ -122,6 +124,7 @@ interface OrderEntryRepository {
 }
 
 /** Later payment/printing owners receive real persisted identities and captured print lines. */
+@kotlinx.serialization.Serializable
 data class CheckoutRoute(
     val orderId: String,
     val orderType: String,

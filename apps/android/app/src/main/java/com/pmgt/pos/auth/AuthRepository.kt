@@ -49,9 +49,15 @@ class AuthRepository(
 ) {
     private val mutableState = MutableStateFlow(AuthState())
     val state: StateFlow<AuthState> = mutableState.asStateFlow()
+    private val mutableSessionEpoch = MutableStateFlow(0L)
+    val sessionEpoch: StateFlow<Long> = mutableSessionEpoch.asStateFlow()
     private val mutex = Mutex()
     private var tokens: SessionTokens? = null
-    private var generation = 0L
+    private var generation: Long
+        get() = mutableSessionEpoch.value
+        set(value) {
+            mutableSessionEpoch.value = value
+        }
 
     init {
         http.freshToken = { freshAccessToken() }

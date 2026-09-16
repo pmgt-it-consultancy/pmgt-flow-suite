@@ -256,7 +256,7 @@ class LocalOrderRepository(
         withContext(io) {
             // RN takes its read snapshot before its later writer. Do not fold this into the item
             // batch.
-            val graph = db.transaction { readOrderGraph(db, orderId) }
+            val graph = db.transaction { db.requireOrderWritable(orderId); readOrderGraph(db, orderId) }
             val calculations = graph.items.map { item -> graph.calculation(item) }
             val global =
                 graph.discounts
@@ -292,6 +292,7 @@ class LocalOrderRepository(
                     discount.string("id")!! to
                         fields("discount_amount" to 0.0, "vat_exempt_amount" to 0.0)
             synchronized(db) {
+                db.requireOrderWritable(orderId)
                 for ((id, fields) in updates) db.updateLocal("order_discounts", id, fields)
                 db.updateLocal(
                     "orders",
@@ -406,6 +407,7 @@ class LocalOrderRepository(
     override suspend fun send(orderId: String) =
         withContext(io) {
             synchronized(db) {
+                db.requireOrderWritable(orderId)
                 db.select(
                         "order_items",
                         "order_id = ? AND is_voided = 0 AND is_sent_to_kitchen = 0 AND _status != 'deleted'",
@@ -483,14 +485,21 @@ class LocalOrderRepository(
 
     private suspend fun patch(table: String, id: String, values: Row) =
         withContext(io) {
-            db.updateLocal(table, id, values)
+            db.transaction {
+                required(table, id)
+                db.updateLocal(table, id, values)
+            }
             triggerPush()
         }
 
-    private fun required(table: String, id: String) =
-        requireNotNull(db.get(table, id)?.takeUnless { it.string("_status") == "deleted" }) {
+    private fun required(table: String, id: String): Row {
+        val row = requireNotNull(db.get(table, id)?.takeUnless { it.string("_status") == "deleted" }) {
             "Local record is unavailable"
         }
+        if (table == "orders") db.requireOrderWritable(id)
+        if (table == "order_items") db.requireOrderWritable(row.string("order_id")!!)
+        return row
+    }
 
     private fun insertItem(orderId: String, item: ItemInput, sent: Boolean): String {
         val product = required("products", item.productId)

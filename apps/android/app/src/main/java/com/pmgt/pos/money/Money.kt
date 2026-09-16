@@ -13,6 +13,7 @@ data class ItemTotals(
     val netAmount: Double,
 )
 
+@kotlinx.serialization.Serializable
 data class OrderTotals(
     val grossSales: Double = 0.0,
     val vatableSales: Double = 0.0,

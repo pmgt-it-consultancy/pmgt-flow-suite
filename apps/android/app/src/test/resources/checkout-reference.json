@@ -1,0 +1,3447 @@
+{
+  "provenance": "Synthetic unchanged RN AST output; no real-store/customer/payment data",
+  "sourceSha256": "3b7922c9fc177cc68b949716c0e43d3d3358c1236e644d75c56d06cc5ae5c003",
+  "cases": [
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "20",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "150",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "4034000000000000"
+            },
+            "changeGiven": {
+              "bits": "4034000000000000"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "4059000000000000"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          }
+        ],
+        "totalPayments": {
+          "bits": "4065400000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4051800000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "20",
+          ""
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "150",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "cash",
+          "cashReceived": "20",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "4059000000000000"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "4034000000000000"
+            },
+            "changeGiven": {
+              "bits": "4034000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4065400000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4051800000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "",
+          "20"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "80",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "cash",
+          "cashReceived": "80",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "30",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "d",
+          "paymentMethod": "cash",
+          "cashReceived": "1",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4051800000000000"
+            },
+            "cashReceived": {
+              "bits": "4054000000000000"
+            },
+            "changeGiven": {
+              "bits": "4024000000000000"
+            }
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "4054000000000000"
+            },
+            "changeGiven": {
+              "bits": "4054000000000000"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "403e000000000000"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3ff0000000000000"
+            },
+            "changeGiven": {
+              "bits": "3ff0000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4067e00000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4056c00000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "80",
+          "80",
+          "",
+          "1"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "80",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "80",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "1",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "4054000000000000"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "4034000000000000"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3ff0000000000000"
+            },
+            "changeGiven": {
+              "bits": "3ff0000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4064200000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "404e800000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "",
+          "",
+          "1"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "150",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "4059000000000000"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          }
+        ],
+        "totalPayments": {
+          "bits": "4062c00000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4049000000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          ""
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "99.996",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4058ffbe76c8b439"
+            },
+            "cashReceived": {
+              "bits": "4058ffbe76c8b439"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4058ffbe76c8b439"
+        },
+        "remaining": {
+          "bits": "3f70624dd2f1c000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": true,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "99.994",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4058ff9db22d0e56"
+            },
+            "cashReceived": {
+              "bits": "4058ff9db22d0e56"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4058ff9db22d0e56"
+        },
+        "remaining": {
+          "bits": "3f789374bc6a8000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 0,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "1",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3ff0000000000000"
+            },
+            "changeGiven": {
+              "bits": "3ff0000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3ff0000000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3ff0000000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "1"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "200",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4059000000000000"
+            },
+            "cashReceived": {
+              "bits": "4069000000000000"
+            },
+            "changeGiven": {
+              "bits": "4059000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4069000000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4059000000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "200"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "100",
+          "cardPaymentType": "Other",
+          "cardReferenceNumber": " RAW ",
+          "customPaymentType": "Voucher"
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "4059000000000000"
+            },
+            "cardPaymentType": "Voucher",
+            "cardReferenceNumber": " RAW "
+          }
+        ],
+        "totalPayments": {
+          "bits": "4059000000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          ""
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "0000000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "0000000000000000"
+        },
+        "remaining": {
+          "bits": "4059000000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "NaN",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "0000000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "0000000000000000"
+        },
+        "remaining": {
+          "bits": "4059000000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": " 12.5suffix",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4029000000000000"
+            },
+            "cashReceived": {
+              "bits": "4029000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4029000000000000"
+        },
+        "remaining": {
+          "bits": "4055e00000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "1e",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3ff0000000000000"
+            },
+            "cashReceived": {
+              "bits": "3ff0000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3ff0000000000000"
+        },
+        "remaining": {
+          "bits": "4058c00000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": ".5x",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fe0000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fe0000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe0000000000000"
+        },
+        "remaining": {
+          "bits": "4058e00000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "+1e2suffix",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4059000000000000"
+            },
+            "cashReceived": {
+              "bits": "4059000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4059000000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0x10",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "0000000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "0000000000000000"
+        },
+        "remaining": {
+          "bits": "4059000000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "-0",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "0000000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "0000000000000000"
+        },
+        "remaining": {
+          "bits": "4059000000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "Infinity",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4059000000000000"
+            },
+            "cashReceived": {
+              "bits": "7ff0000000000000"
+            },
+            "changeGiven": {
+              "bits": "7ff0000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "7ff0000000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "7ff0000000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "Infinity"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "-3",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "c008000000000000"
+            },
+            "cashReceived": {
+              "bits": "c008000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "c008000000000000"
+        },
+        "remaining": {
+          "bits": "4059c00000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "1,000",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3ff0000000000000"
+            },
+            "cashReceived": {
+              "bits": "3ff0000000000000"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3ff0000000000000"
+        },
+        "remaining": {
+          "bits": "4058c00000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "100"
+        ]
+      }
+    },
+    {
+      "netSales": 0.1,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.1",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fb999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fb999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fd999999999999a"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3fd3333333333334"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "0.10",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 0.1,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe0000000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3fd999999999999a"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "0.20",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 0.1,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.3",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fd3333333333333"
+            },
+            "changeGiven": {
+              "bits": "3fd3333333333333"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe3333333333334"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3fe0000000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "0.30",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 0.1,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "1.005",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3ff0147ae147ae14"
+            },
+            "changeGiven": {
+              "bits": "3ff0147ae147ae14"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3ff4e147ae147ae1"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3ff347ae147ae147"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "1",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 0.1,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "150",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "4062c00000000000"
+            },
+            "changeGiven": {
+              "bits": "4062c00000000000"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4062c99999999999"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4062c66666666666"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "150",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 0.3,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.1",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fb999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fb9999999999998"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fb999999999999c"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fd999999999999a"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3fb999999999999e"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "0.10",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 0.3,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc9999999999999"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3c80000000000000"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe0000000000000"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3fc999999999999b"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "0.20",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 0.3,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.3",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc9999999999999"
+            },
+            "cashReceived": {
+              "bits": "3fd3333333333333"
+            },
+            "changeGiven": {
+              "bits": "3fb999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe3333333333334"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3fd3333333333334"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "0.30",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 0.3,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "1.005",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc9999999999999"
+            },
+            "cashReceived": {
+              "bits": "3ff0147ae147ae14"
+            },
+            "changeGiven": {
+              "bits": "3fe9c28f5c28f5c2"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3ff4e147ae147ae1"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3ff0147ae147ae14"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "1",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 0.3,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "150",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc9999999999999"
+            },
+            "cashReceived": {
+              "bits": "4062c00000000000"
+            },
+            "changeGiven": {
+              "bits": "4062b9999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4062c99999999999"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4062c00000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "150",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 1.005,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.1",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fb999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fd999999999999a"
+        },
+        "remaining": {
+          "bits": "3fe35c28f5c28f5b"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "0.70",
+          "0.60",
+          "0.80"
+        ]
+      }
+    },
+    {
+      "netSales": 1.005,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe0000000000000"
+        },
+        "remaining": {
+          "bits": "3fe028f5c28f5c28"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "0.70",
+          "0.50",
+          "0.70"
+        ]
+      }
+    },
+    {
+      "netSales": 1.005,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.3",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fd3333333333333"
+            },
+            "cashReceived": {
+              "bits": "3fd3333333333333"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe3333333333334"
+        },
+        "remaining": {
+          "bits": "3fd9eb851eb851e8"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "0.70",
+          "0.40",
+          "0.60"
+        ]
+      }
+    },
+    {
+      "netSales": 1.005,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "1.005",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fecf5c28f5c28f5"
+            },
+            "cashReceived": {
+              "bits": "3ff0147ae147ae14"
+            },
+            "changeGiven": {
+              "bits": "3fb9999999999998"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3ff4e147ae147ae1"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "3fd3333333333332"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "1",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 1.005,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "150",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fecf5c28f5c28f5"
+            },
+            "cashReceived": {
+              "bits": "4062c00000000000"
+            },
+            "changeGiven": {
+              "bits": "4062a30a3d70a3d7"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4062c99999999999"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4062a970a3d70a3d"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "150",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 2.675,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.1",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fb999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fd999999999999a"
+        },
+        "remaining": {
+          "bits": "4002333333333333"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "2.38",
+          "2.27",
+          "2.48"
+        ]
+      }
+    },
+    {
+      "netSales": 2.675,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe0000000000000"
+        },
+        "remaining": {
+          "bits": "4001666666666666"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "2.38",
+          "2.17",
+          "2.38"
+        ]
+      }
+    },
+    {
+      "netSales": 2.675,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.3",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fd3333333333333"
+            },
+            "cashReceived": {
+              "bits": "3fd3333333333333"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe3333333333334"
+        },
+        "remaining": {
+          "bits": "4000999999999999"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "2.37",
+          "2.07",
+          "2.27"
+        ]
+      }
+    },
+    {
+      "netSales": 2.675,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "1.005",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3ff0147ae147ae14"
+            },
+            "cashReceived": {
+              "bits": "3ff0147ae147ae14"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3ff4e147ae147ae1"
+        },
+        "remaining": {
+          "bits": "3ff5eb851eb851eb"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "2.38",
+          "1.37",
+          "1.57"
+        ]
+      }
+    },
+    {
+      "netSales": 2.675,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "150",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4004999999999999"
+            },
+            "cashReceived": {
+              "bits": "4062c00000000000"
+            },
+            "changeGiven": {
+              "bits": "40626d999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4062c99999999999"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4062740000000000"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "150",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 99.95,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.1",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fb999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fd999999999999a"
+        },
+        "remaining": {
+          "bits": "4058e33333333333"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "99.65",
+          "99.55",
+          "99.75"
+        ]
+      }
+    },
+    {
+      "netSales": 99.95,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe0000000000000"
+        },
+        "remaining": {
+          "bits": "4058dccccccccccd"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "99.65",
+          "99.45",
+          "99.65"
+        ]
+      }
+    },
+    {
+      "netSales": 99.95,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.3",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fd3333333333333"
+            },
+            "cashReceived": {
+              "bits": "3fd3333333333333"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe3333333333334"
+        },
+        "remaining": {
+          "bits": "4058d66666666667"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "99.65",
+          "99.35",
+          "99.55"
+        ]
+      }
+    },
+    {
+      "netSales": 99.95,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "1.005",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3ff0147ae147ae14"
+            },
+            "cashReceived": {
+              "bits": "3ff0147ae147ae14"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3ff4e147ae147ae1"
+        },
+        "remaining": {
+          "bits": "4058a947ae147ae1"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "99.65",
+          "98.64",
+          "98.84"
+        ]
+      }
+    },
+    {
+      "netSales": 99.95,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "150",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4058f66666666667"
+            },
+            "cashReceived": {
+              "bits": "4062c00000000000"
+            },
+            "changeGiven": {
+              "bits": "4049133333333332"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4062c99999999999"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "40492cccccccccca"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "150",
+          "",
+          "0.20"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.1",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fb999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fd999999999999a"
+        },
+        "remaining": {
+          "bits": "4058e66666666666"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "99.70",
+          "99.60",
+          "99.80"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe0000000000000"
+        },
+        "remaining": {
+          "bits": "4058e00000000000"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "99.70",
+          "99.50",
+          "99.70"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "0.3",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fd3333333333333"
+            },
+            "cashReceived": {
+              "bits": "3fd3333333333333"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3fe3333333333334"
+        },
+        "remaining": {
+          "bits": "4058d9999999999a"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "99.70",
+          "99.40",
+          "99.60"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "1.005",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3ff0147ae147ae14"
+            },
+            "cashReceived": {
+              "bits": "3ff0147ae147ae14"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "3fc999999999999a"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "3ff4e147ae147ae1"
+        },
+        "remaining": {
+          "bits": "4058ac7ae147ae14"
+        },
+        "totalChange": {
+          "bits": "0000000000000000"
+        },
+        "enabled": false,
+        "fullyCovered": false,
+        "exact": [
+          "99.70",
+          "98.69",
+          "98.89"
+        ]
+      }
+    },
+    {
+      "netSales": 100,
+      "lines": [
+        {
+          "id": "a",
+          "paymentMethod": "cash",
+          "cashReceived": "150",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        },
+        {
+          "id": "b",
+          "paymentMethod": "card_ewallet",
+          "cashReceived": "",
+          "amount": "0.1",
+          "cardPaymentType": "GCash",
+          "cardReferenceNumber": " ref ",
+          "customPaymentType": ""
+        },
+        {
+          "id": "c",
+          "paymentMethod": "cash",
+          "cashReceived": "0.2",
+          "amount": "",
+          "cardPaymentType": "",
+          "cardReferenceNumber": "",
+          "customPaymentType": ""
+        }
+      ],
+      "expected": {
+        "payments": [
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "4058f9999999999a"
+            },
+            "cashReceived": {
+              "bits": "4062c00000000000"
+            },
+            "changeGiven": {
+              "bits": "40490ccccccccccc"
+            }
+          },
+          {
+            "paymentMethod": "card_ewallet",
+            "amount": {
+              "bits": "3fb999999999999a"
+            },
+            "cardPaymentType": "GCash",
+            "cardReferenceNumber": " ref "
+          },
+          {
+            "paymentMethod": "cash",
+            "amount": {
+              "bits": "0000000000000000"
+            },
+            "cashReceived": {
+              "bits": "3fc999999999999a"
+            },
+            "changeGiven": {
+              "bits": "3fc999999999999a"
+            }
+          }
+        ],
+        "totalPayments": {
+          "bits": "4062c99999999999"
+        },
+        "remaining": {
+          "bits": "0000000000000000"
+        },
+        "totalChange": {
+          "bits": "4049266666666664"
+        },
+        "enabled": true,
+        "fullyCovered": true,
+        "exact": [
+          "150",
+          "",
+          "0.20"
+        ]
+      }
+    }
+  ]
+}
