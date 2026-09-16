@@ -259,6 +259,15 @@ class OrderEditorSession(
 
     /** Flushes visible cart edits before the bill reads its immutable local order snapshot. */
     suspend fun prepareBill() {
+        val current = state.value
+        if (route.takeout && current.orderId != null) {
+            repository.customer(
+                current.orderId,
+                name = current.customer.trim().takeIf(String::isNotEmpty),
+                category = current.category,
+                marker = current.marker.takeIf(String::isNotEmpty),
+            )
+        }
         edits.flush()
         finishPendingAdd()
     }
