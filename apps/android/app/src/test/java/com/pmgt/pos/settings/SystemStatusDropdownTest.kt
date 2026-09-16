@@ -1,5 +1,6 @@
 package com.pmgt.pos.settings
 
+import androidx.compose.ui.graphics.Color
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -25,5 +26,12 @@ class SystemStatusDropdownTest {
     fun `five minutes or older is collapsed and flagged stale`() {
         assertEquals("5+ min ago" to true, formatLastSync(now - 300_000, now))
         assertEquals("5+ min ago" to true, formatLastSync(now - 86_400_000, now))
+    }
+
+    @Test
+    fun `header indicator colour follows the overall status like the source button`() {
+        assertEquals(Color(0xFF22C55E), SettingsOverallStatus.OK.indicatorColor)
+        assertEquals(Color(0xFFF59E0B), SettingsOverallStatus.DEGRADED.indicatorColor)
+        assertEquals(Color(0xFFEF4444), SettingsOverallStatus.CRITICAL.indicatorColor)
     }
 }

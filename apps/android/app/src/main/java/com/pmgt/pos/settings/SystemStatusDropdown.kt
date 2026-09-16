@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +29,18 @@ internal fun formatLastSync(timestamp: Long?, now: Long): Pair<String, Boolean> 
         else -> "5+ min ago" to true
     }
 }
+
+/** Source `StatusIndicatorButton` `STATUS_COLORS`. */
+internal val SettingsOverallStatus.indicatorColor: Color
+    get() =
+        when (this) {
+            SettingsOverallStatus.OK -> Color(0xFF22C55E)
+            SettingsOverallStatus.DEGRADED -> Color(0xFFF59E0B)
+            SettingsOverallStatus.CRITICAL -> Color(0xFFEF4444)
+        }
+
+/** The live overall status read by every header indicator; degraded until a root provides it. */
+internal val LocalSystemOverallStatus = compositionLocalOf { SystemStatusProjection.empty.overall }
 
 private val SettingsConnectionStatus.dotColor: Color
     get() =

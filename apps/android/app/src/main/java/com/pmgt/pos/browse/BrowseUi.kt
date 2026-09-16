@@ -12,6 +12,8 @@ import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.unit.*
 import com.pmgt.pos.R
+import com.pmgt.pos.settings.LocalSystemOverallStatus
+import com.pmgt.pos.settings.indicatorColor
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -203,15 +205,14 @@ internal fun PageHeader(
 
 @Composable
 internal fun SystemIndicator(onStatus: () -> Unit) {
-    // Printer/network aggregation is owned by the settings/status integration. Amber denotes
-    // incomplete status.
+    val overall = LocalSystemOverallStatus.current
     Box(
         Modifier.size(30.dp).clickable(onClick = onStatus).semantics {
             contentDescription = "System status"
         },
         contentAlignment = Alignment.Center,
     ) {
-        Box(Modifier.size(14.dp).background(BrowseColors.Amber, RoundedCornerShape(7.dp)))
+        Box(Modifier.size(14.dp).background(overall.indicatorColor, RoundedCornerShape(7.dp)))
     }
 }
 

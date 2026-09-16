@@ -20,9 +20,11 @@ import androidx.compose.ui.window.DialogProperties
 import com.pmgt.pos.closing.DayClosingScreen
 import com.pmgt.pos.printer.settings.PrinterSettingsScreen
 import com.pmgt.pos.settings.AutoLockUpdateResult
+import com.pmgt.pos.settings.LocalSystemOverallStatus
 import com.pmgt.pos.settings.SettingsRefreshResult
 import com.pmgt.pos.settings.SettingsScreen
 import com.pmgt.pos.settings.SystemStatusDropdown
+import com.pmgt.pos.settings.SystemStatusProjection
 import com.pmgt.pos.sync.SyncStatus
 import com.pmgt.pos.updater.ForceUpdateModal
 import com.pmgt.pos.updater.OptionalUpdateDialog
@@ -32,9 +34,11 @@ import com.pmgt.pos.updater.shouldShowForcedPrompt
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 
 private const val REFRESH_PERMISSION_MESSAGE =
@@ -387,238 +391,247 @@ fun PosBrowseRoot(
     LaunchedEffect(route, detailId) {
         onRoute(if (detailId != null) "OrderDetailScreen" else route)
     }
-    holder.SaveableStateProvider(if (detailId != null) "detail:$detailId" else route) {
-        if (detailId != null) {
-            val flow =
-                remember(repository, storeId, detailId) { repository.detail(storeId, detailId!!) }
-            val detail by flow.collectAsStateWithLifecycle(initialValue = null)
-            OrderDetailScreen(detail, { back() }, action, reprinting)
-        } else
-            when (route) {
-                "HomeScreen" -> {
-                    val flow = remember(repository, storeId) { repository.activeOrders(storeId) }
-                    val orders by flow.collectAsStateWithLifecycle(initialValue = null)
-                    val summary by dashboard.collectAsStateWithLifecycle(initialValue = null)
-                    HomeScreen(
-                        user,
-                        orders,
-                        summary,
-                        syncLabel,
-                        hasPin,
-                        { route = "TablesScreen" },
-                        { route = "TakeoutListScreen" },
-                        { route = "OrderHistoryScreen" },
-                        onLock,
-                        onLogout,
-                        action,
-                        syncStatus,
-                        onRetrySync,
-                    )
-                }
-                "TablesScreen" -> {
-                    val flow = remember(repository, storeId) { repository.tables(storeId) }
-                    val tables by flow.collectAsStateWithLifecycle(initialValue = null)
-                    TablesScreen(storeId, user.name, tables, { back() }, action)
-                }
-                "TakeoutListScreen" ->
-                    TakeoutScreen(repository, storeId, { back() }, action, correctedOrderId)
-                "OrderHistoryScreen" ->
-                    HistoryScreen(
-                        repository,
-                        storeId,
-                        { back() },
-                        { detailId = it },
-                        { action(BrowseAction.SystemStatus) },
-                        refreshHistory,
-                    )
-                "CheckoutScreen" ->
-                    if (
-                        checkoutRepository != null && checkoutHttp != null && checkoutJson != null
-                    ) {
-                        val checkoutRoute =
-                            remember(checkoutJson) {
-                                Json.decodeFromString<CheckoutRoute>(checkoutJson!!)
-                            }
-                        val checkoutKey = "$editorOwner:${checkoutRoute.orderId}"
-                        val checkoutSession =
-                            remember(checkoutKey, checkoutRepository) {
-                                checkouts.get(checkoutKey) { ownedScope ->
-                                    CheckoutSession(
-                                        checkoutOwner,
-                                        checkoutRoute,
-                                        checkoutRepository,
-                                        checkoutHttp,
-                                        user.name,
-                                        ownedScope,
-                                        checkoutIsCurrent,
-                                    )
+    // Only the overall status, so sync progress ticks don't recompose every route.
+    val overallStatus by
+        remember(modules) {
+                modules?.settings?.state?.map { it.systemStatus.overall }?.distinctUntilChanged()
+                    ?: flowOf(SystemStatusProjection.empty.overall)
+            }
+            .collectAsStateWithLifecycle(SystemStatusProjection.empty.overall)
+    CompositionLocalProvider(LocalSystemOverallStatus provides overallStatus) {
+        holder.SaveableStateProvider(if (detailId != null) "detail:$detailId" else route) {
+            if (detailId != null) {
+                val flow =
+                    remember(repository, storeId, detailId) { repository.detail(storeId, detailId!!) }
+                val detail by flow.collectAsStateWithLifecycle(initialValue = null)
+                OrderDetailScreen(detail, { back() }, action, reprinting)
+            } else
+                when (route) {
+                    "HomeScreen" -> {
+                        val flow = remember(repository, storeId) { repository.activeOrders(storeId) }
+                        val orders by flow.collectAsStateWithLifecycle(initialValue = null)
+                        val summary by dashboard.collectAsStateWithLifecycle(initialValue = null)
+                        HomeScreen(
+                            user,
+                            orders,
+                            summary,
+                            syncLabel,
+                            hasPin,
+                            { route = "TablesScreen" },
+                            { route = "TakeoutListScreen" },
+                            { route = "OrderHistoryScreen" },
+                            onLock,
+                            onLogout,
+                            action,
+                            syncStatus,
+                            onRetrySync,
+                        )
+                    }
+                    "TablesScreen" -> {
+                        val flow = remember(repository, storeId) { repository.tables(storeId) }
+                        val tables by flow.collectAsStateWithLifecycle(initialValue = null)
+                        TablesScreen(storeId, user.name, tables, { back() }, action)
+                    }
+                    "TakeoutListScreen" ->
+                        TakeoutScreen(repository, storeId, { back() }, action, correctedOrderId)
+                    "OrderHistoryScreen" ->
+                        HistoryScreen(
+                            repository,
+                            storeId,
+                            { back() },
+                            { detailId = it },
+                            { action(BrowseAction.SystemStatus) },
+                            refreshHistory,
+                        )
+                    "CheckoutScreen" ->
+                        if (
+                            checkoutRepository != null && checkoutHttp != null && checkoutJson != null
+                        ) {
+                            val checkoutRoute =
+                                remember(checkoutJson) {
+                                    Json.decodeFromString<CheckoutRoute>(checkoutJson!!)
                                 }
-                            }
-                        CheckoutScreen(
-                            checkoutOwner,
-                            checkoutRoute,
-                            checkoutRepository,
-                            checkoutHttp,
-                            user.name,
-                            checkoutIsCurrent,
-                            onBack = {
-                                checkouts.remove(checkoutKey)
-                                checkoutJson = null
-                                route = checkoutReturn
-                            },
-                            onCompleted = { complete ->
-                                if (onCheckoutCompleted != null)
-                                    onCheckoutCompleted(complete, ::exitCheckout)
-                                else if (modules == null) receiptUnavailable = true
-                                else {
-                                    receiptResult = PreviewPrintResult.NONE
-                                    kitchenResult = PreviewPrintResult.NONE
-                                    receiptPrinting = false
-                                    kitchenPrinting = false
-                                    preview =
-                                        ReceiptPreviewRequest(
-                                            complete.toReceipt(),
-                                            complete.toKitchenTicket(
-                                                java.time.LocalDateTime.now()
-                                            ),
-                                            ::exitCheckout,
+                            val checkoutKey = "$editorOwner:${checkoutRoute.orderId}"
+                            val checkoutSession =
+                                remember(checkoutKey, checkoutRepository) {
+                                    checkouts.get(checkoutKey) { ownedScope ->
+                                        CheckoutSession(
+                                            checkoutOwner,
+                                            checkoutRoute,
+                                            checkoutRepository,
+                                            checkoutHttp,
+                                            user.name,
+                                            ownedScope,
+                                            checkoutIsCurrent,
                                         )
-                                    scope.launch {
-                                        // Source opens the drawer after the commit whenever the
-                                        // toggle is on, regardless of tender, and never blocks
-                                        // checkout when the drawer fails.
-                                        if (modules.printers.state.value.cashDrawerEnabled) {
-                                            try {
-                                                modules.printers.openCashDrawer()
-                                            } catch (cancelled: CancellationException) {
-                                                throw cancelled
-                                            } catch (_: Exception) {
-                                                // Deliberately swallowed, as in the source.
+                                    }
+                                }
+                            CheckoutScreen(
+                                checkoutOwner,
+                                checkoutRoute,
+                                checkoutRepository,
+                                checkoutHttp,
+                                user.name,
+                                checkoutIsCurrent,
+                                onBack = {
+                                    checkouts.remove(checkoutKey)
+                                    checkoutJson = null
+                                    route = checkoutReturn
+                                },
+                                onCompleted = { complete ->
+                                    if (onCheckoutCompleted != null)
+                                        onCheckoutCompleted(complete, ::exitCheckout)
+                                    else if (modules == null) receiptUnavailable = true
+                                    else {
+                                        receiptResult = PreviewPrintResult.NONE
+                                        kitchenResult = PreviewPrintResult.NONE
+                                        receiptPrinting = false
+                                        kitchenPrinting = false
+                                        preview =
+                                            ReceiptPreviewRequest(
+                                                complete.toReceipt(),
+                                                complete.toKitchenTicket(
+                                                    java.time.LocalDateTime.now()
+                                                ),
+                                                ::exitCheckout,
+                                            )
+                                        scope.launch {
+                                            // Source opens the drawer after the commit whenever the
+                                            // toggle is on, regardless of tender, and never blocks
+                                            // checkout when the drawer fails.
+                                            if (modules.printers.state.value.cashDrawerEnabled) {
+                                                try {
+                                                    modules.printers.openCashDrawer()
+                                                } catch (cancelled: CancellationException) {
+                                                    throw cancelled
+                                                } catch (_: Exception) {
+                                                    // Deliberately swallowed, as in the source.
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            },
-                            memory = checkoutSession,
-                            onStatus = { action(BrowseAction.SystemStatus) },
-                        )
-                    }
-                "OrderScreen",
-                "TakeoutOrderScreen" ->
-                    if (entryRepository != null && catalogRepository != null) {
-                        val session =
-                            remember(editorKey, editorOwner) {
-                                sessions.get(
-                                    editorOwner,
-                                    editorKey,
-                                    EditorRoute(
-                                        storeId,
-                                        editorTableId,
-                                        editorName,
-                                        editorOrderId,
-                                        route == "TakeoutOrderScreen",
-                                    ),
-                                    entryRepository,
-                                )
-                            }
-                        val editorState by session.state.collectAsStateWithLifecycle()
-                        LaunchedEffect(editorState.orderId) { editorOrderId = editorState.orderId }
-                        OrderEditorScreen(
-                            session,
-                            entryRepository,
-                            catalogRepository,
-                            onBack = {
-                                sessions.remove(editorOwner, editorKey)
-                                route = editorReturn
-                            },
-                            onStatus = { action(BrowseAction.SystemStatus) },
-                            onCheckout = { openCheckout(it) },
-                            printKitchen = { request ->
-                                // Source resolves a disabled, unconfigured or unreachable kitchen
-                                // printer silently; the caller still reports items as sent.
-                                if (modules == null)
-                                    error(
-                                        "Kitchen printing is not available in this build yet. The order is saved locally."
-                                    )
-                                modules.printers.printKitchenTicket(
-                                    request.toTicket(java.time.LocalDateTime.now())
-                                )
-                            },
-                        )
-                    }
-                "SettingsScreen" ->
-                    if (modules != null) {
-                        val settingsState by
-                            modules.settings.state.collectAsStateWithLifecycle()
-                        LaunchedEffect(modules.settings) { modules.settings.load() }
-                        SettingsScreen(
-                            settingsState,
-                            onBack = { back() },
-                            onPrinters = {
-                                nestedReturn = "SettingsScreen"
-                                route = "PrinterSettingsScreen"
-                            },
-                            // Source gates on permission, ignores taps while syncing, then
-                            // confirms before any resync runs.
-                            onRefreshRequested = {
-                                when {
-                                    !settingsState.canManageSettings ->
-                                        refreshNotice =
-                                            "Permission Required" to REFRESH_PERMISSION_MESSAGE
-                                    settingsState.isSyncing -> Unit
-                                    else -> confirmRefresh = true
-                                }
-                            },
-                            onUpdates = { openUpdates() },
-                            onAutoLockRequested = {
-                                if (!modules.settings.openAutoLock())
-                                    actionError = "Only a manager can change the auto-lock timeout."
-                            },
-                            onAutoLockSelected = { minutes ->
-                                scope.launch {
-                                    val result = modules.settings.updateAutoLock(minutes)
-                                    (result as? AutoLockUpdateResult.Failed)?.let {
-                                        actionError = it.message
-                                    }
-                                }
-                            },
-                            onAutoLockDismissed = modules.settings::closeAutoLock,
-                            onSystemStatus = { action(BrowseAction.SystemStatus) },
-                        )
-                    }
-                "PrinterSettingsScreen" ->
-                    if (modules != null)
-                        PrinterSettingsScreen(
-                            modules.printers,
-                            onBack = { back() },
-                            onSystemStatus = { action(BrowseAction.SystemStatus) },
-                        )
-                SOFTWARE_UPDATE_ROUTE ->
-                    if (modules != null) {
-                        val updateState by modules.updates.state.collectAsStateWithLifecycle()
-                        LaunchedEffect(modules.updates) {
-                            modules.updates.restore()
-                            modules.updates.check()
+                                },
+                                memory = checkoutSession,
+                                onStatus = { action(BrowseAction.SystemStatus) },
+                            )
                         }
-                        SoftwareUpdateScreen(
-                            updateState,
-                            modules.currentVersion,
-                            onBack = { back() },
-                            onCheck = { scope.launch { modules.updates.check() } },
-                            onDownload = { scope.launch { modules.updates.startDownload() } },
-                            onInstall = { scope.launch { modules.updates.install() } },
-                            onSystemStatus = { action(BrowseAction.SystemStatus) },
-                        )
-                    }
-                "DayClosingScreen" ->
-                    if (modules != null)
-                        DayClosingScreen(
-                            storeId,
-                            modules.closing,
-                            onBack = { back() },
-                            onSystemStatus = { action(BrowseAction.SystemStatus) },
-                        )
-            }
+                    "OrderScreen",
+                    "TakeoutOrderScreen" ->
+                        if (entryRepository != null && catalogRepository != null) {
+                            val session =
+                                remember(editorKey, editorOwner) {
+                                    sessions.get(
+                                        editorOwner,
+                                        editorKey,
+                                        EditorRoute(
+                                            storeId,
+                                            editorTableId,
+                                            editorName,
+                                            editorOrderId,
+                                            route == "TakeoutOrderScreen",
+                                        ),
+                                        entryRepository,
+                                    )
+                                }
+                            val editorState by session.state.collectAsStateWithLifecycle()
+                            LaunchedEffect(editorState.orderId) { editorOrderId = editorState.orderId }
+                            OrderEditorScreen(
+                                session,
+                                entryRepository,
+                                catalogRepository,
+                                onBack = {
+                                    sessions.remove(editorOwner, editorKey)
+                                    route = editorReturn
+                                },
+                                onStatus = { action(BrowseAction.SystemStatus) },
+                                onCheckout = { openCheckout(it) },
+                                printKitchen = { request ->
+                                    // Source resolves a disabled, unconfigured or unreachable kitchen
+                                    // printer silently; the caller still reports items as sent.
+                                    if (modules == null)
+                                        error(
+                                            "Kitchen printing is not available in this build yet. The order is saved locally."
+                                        )
+                                    modules.printers.printKitchenTicket(
+                                        request.toTicket(java.time.LocalDateTime.now())
+                                    )
+                                },
+                            )
+                        }
+                    "SettingsScreen" ->
+                        if (modules != null) {
+                            val settingsState by
+                                modules.settings.state.collectAsStateWithLifecycle()
+                            LaunchedEffect(modules.settings) { modules.settings.load() }
+                            SettingsScreen(
+                                settingsState,
+                                onBack = { back() },
+                                onPrinters = {
+                                    nestedReturn = "SettingsScreen"
+                                    route = "PrinterSettingsScreen"
+                                },
+                                // Source gates on permission, ignores taps while syncing, then
+                                // confirms before any resync runs.
+                                onRefreshRequested = {
+                                    when {
+                                        !settingsState.canManageSettings ->
+                                            refreshNotice =
+                                                "Permission Required" to REFRESH_PERMISSION_MESSAGE
+                                        settingsState.isSyncing -> Unit
+                                        else -> confirmRefresh = true
+                                    }
+                                },
+                                onUpdates = { openUpdates() },
+                                onAutoLockRequested = {
+                                    if (!modules.settings.openAutoLock())
+                                        actionError = "Only a manager can change the auto-lock timeout."
+                                },
+                                onAutoLockSelected = { minutes ->
+                                    scope.launch {
+                                        val result = modules.settings.updateAutoLock(minutes)
+                                        (result as? AutoLockUpdateResult.Failed)?.let {
+                                            actionError = it.message
+                                        }
+                                    }
+                                },
+                                onAutoLockDismissed = modules.settings::closeAutoLock,
+                                onSystemStatus = { action(BrowseAction.SystemStatus) },
+                            )
+                        }
+                    "PrinterSettingsScreen" ->
+                        if (modules != null)
+                            PrinterSettingsScreen(
+                                modules.printers,
+                                onBack = { back() },
+                                onSystemStatus = { action(BrowseAction.SystemStatus) },
+                            )
+                    SOFTWARE_UPDATE_ROUTE ->
+                        if (modules != null) {
+                            val updateState by modules.updates.state.collectAsStateWithLifecycle()
+                            LaunchedEffect(modules.updates) {
+                                modules.updates.restore()
+                                modules.updates.check()
+                            }
+                            SoftwareUpdateScreen(
+                                updateState,
+                                modules.currentVersion,
+                                onBack = { back() },
+                                onCheck = { scope.launch { modules.updates.check() } },
+                                onDownload = { scope.launch { modules.updates.startDownload() } },
+                                onInstall = { scope.launch { modules.updates.install() } },
+                                onSystemStatus = { action(BrowseAction.SystemStatus) },
+                            )
+                        }
+                    "DayClosingScreen" ->
+                        if (modules != null)
+                            DayClosingScreen(
+                                storeId,
+                                modules.closing,
+                                onBack = { back() },
+                                onSystemStatus = { action(BrowseAction.SystemStatus) },
+                            )
+                }
+        }
     }
     if (statusVisible && modules != null) {
         val settingsState by modules.settings.state.collectAsStateWithLifecycle()

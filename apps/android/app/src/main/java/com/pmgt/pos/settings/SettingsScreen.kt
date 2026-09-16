@@ -120,12 +120,6 @@ private fun SettingsHeader(
             SettingsIcon(SettingsGlyph.Back, 24, Muted)
         }
         Text(title, Modifier.weight(1f), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Ink)
-        val statusColor =
-            when (overall) {
-                SettingsOverallStatus.OK -> Green
-                SettingsOverallStatus.DEGRADED -> Amber
-                SettingsOverallStatus.CRITICAL -> Red
-            }
         Box(
             Modifier.size(44.dp).clickable(onClick = onSystemStatus).semantics {
                 contentDescription = "System status"
@@ -133,7 +127,7 @@ private fun SettingsHeader(
             },
             contentAlignment = Alignment.Center,
         ) {
-            Box(Modifier.size(14.dp).background(statusColor, CircleShape))
+            Box(Modifier.size(14.dp).background(overall.indicatorColor, CircleShape))
         }
     }
     HorizontalDivider(color = Border)
@@ -284,6 +278,4 @@ private val Background = Color(0xFFF3F4F6)
 private val Ink = Color(0xFF111827)
 private val Muted = Color(0xFF6B7280)
 private val Border = Color(0xFFE5E7EB)
-private val Green = Color(0xFF22C55E)
-private val Amber = Color(0xFFF59E0B)
 private val Red = Color(0xFFEF4444)
