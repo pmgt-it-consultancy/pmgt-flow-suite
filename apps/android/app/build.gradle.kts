@@ -8,28 +8,75 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 val local = Properties().apply { rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) } }
-val convexUrl = providers.gradleProperty("CONVEX_URL").orNull ?: local.getProperty("CONVEX_URL", "")
+
+/** Gradle property first so CI can inject secrets, then local.properties for a workstation. */
+fun secret(name: String): String? =
+    providers.gradleProperty(name).orNull ?: local.getProperty(name)?.takeIf { it.isNotBlank() }
+
+// Each variant talks to its own backend. CONVEX_URL remains the development fallback so an
+// existing local.properties keeps working untouched.
+val convexDev = secret("CONVEX_URL_DEVELOPMENT") ?: secret("CONVEX_URL") ?: ""
+val convexStaging = secret("CONVEX_URL_STAGING") ?: convexDev
+val convexProduction = secret("CONVEX_URL_PRODUCTION") ?: ""
+
+fun com.android.build.api.dsl.VariantDimension.convex(url: String) =
+    buildConfigField("String", "CONVEX_URL", "\"${url.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
 android {
     namespace = "com.pmgt.pos"
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.pmgtitconsultancy.pmgtflow"
+        // Its own identity: this ships beside the React Native app rather than replacing it, so it
+        // must never share that application id.
+        applicationId = "com.pmgt.pos"
         minSdk = 26
         targetSdk = 36
-        versionCode = 32802
-        versionName = "3.28.2-kotlin"
-        buildConfigField("String", "UPDATE_VERSION", "\"3.28.2\"")
-        buildConfigField("String", "UPDATE_VARIANT", "\"production\"")
-        buildConfigField("String", "CONVEX_URL", "\"${convexUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
+        // Own version line, starting at 1.0.0. versionCode is MMmmpp so 1.0.0 -> 10000.
+        versionCode = 10000
+        versionName = "1.0.0"
+        buildConfigField("String", "UPDATE_VERSION", "\"1.0.0\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    // Present only when a keystore is supplied (CI, or a workstation that has one). Without it
+    // staging falls back to the debug key and release stays unsigned, which is what a local
+    // verification build wants.
+    val keystoreFile = secret("KEYSTORE_FILE")?.let { file(it) }?.takeIf { it.exists() }
+    signingConfigs {
+        if (keystoreFile != null) {
+            create("upload") {
+                storeFile = keystoreFile
+                storePassword = secret("KEYSTORE_PASSWORD")
+                keyAlias = secret("KEY_ALIAS")
+                keyPassword = secret("KEY_PASSWORD")
+            }
+        }
+    }
+    val uploadSigning = signingConfigs.findByName("upload")
+
     buildTypes {
         debug {
-            applicationIdSuffix = ".kotlin.dev"
+            applicationIdSuffix = ".debug"
             versionNameSuffix = "-dev"
             buildConfigField("String", "UPDATE_VARIANT", "\"development\"")
+            convex(convexDev)
         }
-        release { isMinifyEnabled = false }
+        // Installs beside production on the same tablet, so staging can be exercised on real
+        // hardware without disturbing a live till.
+        create("staging") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".stg"
+            versionNameSuffix = "-staging"
+            isDebuggable = false
+            matchingFallbacks += listOf("debug")
+            buildConfigField("String", "UPDATE_VARIANT", "\"staging\"")
+            convex(convexStaging)
+            signingConfig = uploadSigning ?: signingConfigs.getByName("debug")
+        }
+        release {
+            isMinifyEnabled = false
+            buildConfigField("String", "UPDATE_VARIANT", "\"production\"")
+            convex(convexProduction)
+            uploadSigning?.let { signingConfig = it }
+        }
     }
     buildFeatures { compose = true; buildConfig = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }

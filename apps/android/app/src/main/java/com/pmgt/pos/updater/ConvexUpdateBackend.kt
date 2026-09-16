@@ -17,6 +17,8 @@ class ConvexUpdateBackend(private val http: ConvexHttp) : UpdateBackend {
                     buildJsonObject {
                         put("currentVersion", currentVersion)
                         put("variant", variant)
+                        // Never accept the React Native app's APK; it is a different package.
+                        put("product", "kotlin")
                     },
                 )
                 .jsonObject

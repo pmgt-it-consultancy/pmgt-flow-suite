@@ -18,6 +18,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.TextStyle
@@ -209,6 +213,7 @@ private fun LoginScreen(
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+    var revealPassword by rememberSaveable { mutableStateOf(false) }
     var alert by remember { mutableStateOf<UiAlert?>(null) }
     var attempt by remember { mutableLongStateOf(0) }
     fun submit() {
@@ -255,6 +260,8 @@ private fun LoginScreen(
                 ImeAction.Done,
                 true,
                 ::submit,
+                revealed = revealPassword,
+                toggleReveal = { revealPassword = !revealPassword },
             )
             Spacer(Modifier.height(24.dp))
             PrimaryButton("Login", busy, Modifier.fillMaxWidth(), click = ::submit)
@@ -265,7 +272,9 @@ private fun LoginScreen(
                     modifier = Modifier.padding(top = 12.dp),
                 )
             Text(
-                "PMGT Flow Suite POS v1.0",
+                // The running build, so a till can be identified at a glance. Debug and staging
+                // carry their suffix; a production build reads as a plain version.
+                "${stringResource(R.string.app_name)} v${BuildConfig.VERSION_NAME}",
                 color = Ink,
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,
@@ -283,6 +292,8 @@ private fun LoginScreen(
     }
 }
 
+private val AuthIcons = FontFamily(Font(R.font.ionicons))
+
 @Composable
 private fun AuthInput(
     value: String,
@@ -293,6 +304,8 @@ private fun AuthInput(
     ime: ImeAction,
     password: Boolean = false,
     submit: () -> Unit = {},
+    revealed: Boolean = false,
+    toggleReveal: (() -> Unit)? = null,
 ) {
     val shape = RoundedCornerShape(5.dp)
     BasicTextField(
@@ -302,7 +315,8 @@ private fun AuthInput(
         singleLine = true,
         textStyle = TextStyle(color = Ink, fontSize = 16.sp, letterSpacing = 0.sp),
         visualTransformation =
-            if (password) PasswordVisualTransformation() else VisualTransformation.None,
+            if (password && !revealed) PasswordVisualTransformation()
+            else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(keyboardType = type, imeAction = ime),
         keyboardActions = KeyboardActions(onDone = { submit() }),
         cursorBrush = SolidColor(Brand),
@@ -316,10 +330,36 @@ private fun AuthInput(
                 // target.
                 .padding(horizontal = 22.dp, vertical = 13.dp),
         decorationBox = { innerField ->
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
-                if (value.isEmpty())
-                    Text(hint, color = Color(0xFF9CA3AF), fontSize = 16.sp, letterSpacing = 0.sp)
-                innerField()
+            Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+                    if (value.isEmpty())
+                        Text(
+                            hint,
+                            color = Color(0xFF9CA3AF),
+                            fontSize = 16.sp,
+                            letterSpacing = 0.sp,
+                        )
+                    innerField()
+                }
+                if (toggleReveal != null) {
+                    Box(
+                        Modifier.size(44.dp)
+                            .clickable(enabled = !busy, onClick = toggleReveal)
+                            .semantics {
+                                contentDescription =
+                                    if (revealed) "Hide password" else "Show password"
+                                role = Role.Button
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            (if (revealed) 0xf2e8 else 0xf2ea).toChar().toString(),
+                            fontFamily = AuthIcons,
+                            fontSize = 22.sp,
+                            color = Color(0xFF6B7280),
+                        )
+                    }
+                }
             }
         },
     )

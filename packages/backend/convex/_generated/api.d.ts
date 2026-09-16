@@ -31,6 +31,7 @@ import type * as lib_replicationEvents from "../lib/replicationEvents.js";
 import type * as lib_stagingLab from "../lib/stagingLab.js";
 import type * as lib_sync from "../lib/sync.js";
 import type * as lib_taxCalculations from "../lib/taxCalculations.js";
+import type * as lib_totalsReconciliation from "../lib/totalsReconciliation.js";
 import type * as migrations_2026_04_clientIdBackfill from "../migrations/2026_04_clientIdBackfill.js";
 import type * as migrations_2026_04_orderDenormalization from "../migrations/2026_04_orderDenormalization.js";
 import type * as modifierAssignments from "../modifierAssignments.js";
@@ -91,6 +92,7 @@ declare const fullApi: ApiFromModules<{
   "lib/stagingLab": typeof lib_stagingLab;
   "lib/sync": typeof lib_sync;
   "lib/taxCalculations": typeof lib_taxCalculations;
+  "lib/totalsReconciliation": typeof lib_totalsReconciliation;
   "migrations/2026_04_clientIdBackfill": typeof migrations_2026_04_clientIdBackfill;
   "migrations/2026_04_orderDenormalization": typeof migrations_2026_04_orderDenormalization;
   modifierAssignments: typeof modifierAssignments;
