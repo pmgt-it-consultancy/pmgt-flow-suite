@@ -100,12 +100,14 @@ export const seedCatalog = internalMutation({
           clientId: groupKey,
         }));
       if (!existingGroup) counts.groups++;
-      for (const [j, option] of [
+      const options = [
         { name: "Regular", price: 0 },
         { name: "Large", price: 20 },
         { name: "Less sauce", price: 0 },
         { name: "Extra sauce", price: 10 },
-      ].entries()) {
+      ];
+      for (let j = 0; j < options.length; j++) {
+        const option = options[j];
         const clientId = key(storeId, "option", i * 4 + j);
         if (
           await ctx.db
@@ -320,7 +322,8 @@ export const seedOrders = internalMutation({
         clientId: orderKey,
         updatedAt: now,
       });
-      for (const [j, line] of lines.entries()) {
+      for (let j = 0; j < lines.length; j++) {
+        const line = lines[j];
         const itemId = await ctx.db.insert("orderItems", {
           storeId,
           orderId,
