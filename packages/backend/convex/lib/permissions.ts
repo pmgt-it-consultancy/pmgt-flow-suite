@@ -43,6 +43,9 @@ export const PERMISSIONS = {
   "stores.manage": "Edit store settings",
   "stores.create_branch": "Create new branches",
 
+  // Devices
+  "devices.manage": "Move tablets between stores",
+
   // System
   "system.settings": "Manage system-wide settings",
   "system.roles": "Manage roles and permissions",

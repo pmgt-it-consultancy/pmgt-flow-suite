@@ -649,6 +649,11 @@ export default defineSchema({
     // Backs resolveOrderNumber's O(1) hot path: increment in place on each new
     // pushed order instead of scanning all orders for the store.
     orderNumberCounters: v.optional(v.record(v.string(), v.number())),
+    // Device Retirement. The row is retained rather than deleted: it is the evidence that this
+    // tablet was once an Active Tablet of this store, and historical orders cite its device code.
+    // A lookup for an *active* binding must exclude rows carrying retiredAt.
+    retiredAt: v.optional(v.number()),
+    retiredBy: v.optional(v.id("users")),
   })
     .index("by_storeId_deviceCode", ["storeId", "deviceCode"])
     .index("by_deviceId", ["deviceId"]),

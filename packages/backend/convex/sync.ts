@@ -49,14 +49,27 @@ export const registerDeviceCore = internalMutation({
   args: { deviceId: v.string(), storeId: v.id("stores") },
   returns: v.object({ deviceCode: v.string() }),
   handler: async (ctx, args) => {
-    const existing = await ctx.db
-      .query("syncDevices")
-      .withIndex("by_deviceId", (q) => q.eq("deviceId", args.deviceId))
-      .first();
+    // Retired rows are retained as evidence, so an *active* binding is the one without retiredAt.
+    const existing = (
+      await ctx.db
+        .query("syncDevices")
+        .withIndex("by_deviceId", (q) => q.eq("deviceId", args.deviceId))
+        .collect()
+    ).find((binding) => binding.retiredAt === undefined);
 
     if (existing && existing.storeId === args.storeId) {
       await ctx.db.patch(existing._id, { lastSeenAt: Date.now() });
       return { deviceCode: existing.deviceCode };
+    }
+
+    // A tablet belongs to one store. Recording a second binding alongside the first makes the
+    // device code and the order-number counters ambiguous on by_deviceId, which is how duplicate
+    // order numbers become possible. Moving a tablet is a deliberate, audited operation instead.
+    if (existing) {
+      throw new Error(
+        `Device ${args.deviceId} is already bound to store ${existing.storeId}. ` +
+          `Retire it from that store before registering it elsewhere.`,
+      );
     }
 
     const store = await ctx.db.get(args.storeId);
