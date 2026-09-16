@@ -41,7 +41,21 @@ cd packages/backend && pnpm vitest run
 - Test both web and native auth flows
 - Verify `getAuthenticatedUser(ctx)` returns expected values
 
+## Android Checks (if apps/android changed)
+```bash
+cd apps/android
+./gradlew :app:testDebugUnitTest    # host suite must be 0 failures
+./gradlew :app:lintDebug            # must be 0 errors
+```
+- Fix lint by hardening the code (e.g. real `SecurityException` handling), not by suppressing.
+- Put `@RequiresApi` on methods, not classes.
+- Do NOT run `connectedDebugAndroidTest` casually — it uninstalls the app and wipes its data.
+- The instrumented suite is not reliably green; do not report it as passing (#42).
+- If you ported behaviour, diff it against the `apps/native` source before claiming parity.
+
 ## Pre-Commit Summary
 ```bash
 pnpm typecheck && pnpm check
+# plus, if apps/android changed:
+cd apps/android && ./gradlew :app:testDebugUnitTest :app:lintDebug
 ```

@@ -1,5 +1,11 @@
 # Android Tablet: Landscape & Fullscreen Setup
 
+> **Describes the React Native app (`apps/native`), which is being transitioned away from.**
+> The active Android POS is native Kotlin at `apps/android` — see memory: kotlin-pos-migration.
+> In the Kotlin app, `sensorLandscape` alone is NOT enough: Android 16 ignores `screenOrientation`
+> on large screens unless the manifest also sets
+> `PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY`. Both are set there.
+
 The native app targets **Android tablets only** (no iOS).
 
 ## Configuration

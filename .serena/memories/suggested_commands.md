@@ -28,6 +28,21 @@ cd packages/backend && pnpm vitest          # Watch mode
 cd packages/backend && pnpm vitest run      # Single run
 ```
 
+### Android (Kotlin) — Gradle, NOT pnpm/turbo
+```bash
+cd apps/android
+./gradlew :app:testDebugUnitTest    # host unit tests — the fast gate
+./gradlew :app:lintDebug            # must stay at 0 errors
+./gradlew :app:installDebug         # build + install on connected tablet
+./gradlew :app:assembleStaging      # staging variant
+./gradlew :app:assembleRelease      # release variant (needs signing config)
+
+# WARNING: this UNINSTALLS the app under test, wiping its data
+./gradlew :app:connectedDebugAndroidTest
+```
+The Android instrumented suite is NOT reliably green (tracked in #42). Host tests + lint are the
+gate to trust.
+
 ### Code Quality
 ```bash
 pnpm typecheck          # TypeScript checking across all packages
@@ -56,6 +71,15 @@ cd packages/backend && pnpm add package-name
 ### apps/native/.env.local
 - `EXPO_PUBLIC_CONVEX_URL`
 
+### apps/android/local.properties (gitignored; Gradle properties also work)
+- `sdk.dir`
+- `CONVEX_URL` (or `CONVEX_URL_DEVELOPMENT`), `CONVEX_URL_STAGING`, `CONVEX_URL_PRODUCTION`
+- `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` — release signing only
+
+NOTE: there is no separate staging Convex deployment. `packages/backend/.env.local` has both a
+`# Production` and a `# Staging` block and both point at the dev deployment, so the Android
+`staging` variant falls back to the dev URL unless `CONVEX_URL_STAGING` is set.
+
 ## Deployment
 ```bash
 # Vercel (from apps/web)
@@ -65,4 +89,11 @@ cd ../../packages/backend && npx convex deploy --cmd 'cd ../../apps/web && turbo
 ## Pre-Commit
 ```bash
 pnpm typecheck && pnpm check
+# plus, if apps/android changed:
+cd apps/android && ./gradlew :app:testDebugUnitTest :app:lintDebug
 ```
+
+## Convex CLI asymmetry (dangerous)
+- `npx convex deploy` defaults to **PRODUCTION** and does not accept `--prod`. Never run it bare.
+- `npx convex run` / `import` / `data` default to whatever `.env.local` points at (dev).
+- Pass `--prod` explicitly and deliberately for production reads.
