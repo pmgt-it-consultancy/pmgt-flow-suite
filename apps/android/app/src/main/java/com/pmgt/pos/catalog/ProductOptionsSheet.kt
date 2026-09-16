@@ -67,7 +67,11 @@ fun ProductOptionsSheet(
     val memory = stateOwner ?: remember(product.id) { ProductOptionsMemory(product) }
     var simpleQuantity by memory.simpleQuantity
     var simpleNotes by memory.simpleNotes
-    key(product.id, custom) {
+    // Only the product identifies the sheet. `custom` flips true -> false when a counter product's
+    // groups resolve to empty, and keying the Dialog on it would tear the window down and build a
+    // new one, so the sheet visibly dismissed and reopened with a different title. `session` is
+    // keyed on `custom` below, which is what actually has to reset.
+    key(product.id) {
         var session by remember(memory, custom) { memory.selection(custom) }
         val shownGroups = if (custom) groups.orEmpty() else emptyList()
         LaunchedEffect(shownGroups) { session = session.refreshed(shownGroups) }
