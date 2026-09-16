@@ -263,9 +263,9 @@ class OrderEditorSession(
         if (route.takeout && current.orderId != null) {
             repository.customer(
                 current.orderId,
-                name = current.customer.trim().takeIf(String::isNotEmpty),
+                name = current.customer.trim(),
                 category = current.category,
-                marker = current.marker.takeIf(String::isNotEmpty),
+                marker = current.marker,
             )
         }
         edits.flush()

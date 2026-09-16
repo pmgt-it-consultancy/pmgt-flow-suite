@@ -309,6 +309,7 @@ class OrderEditorUiWorkflowTest {
         val billPrints = AtomicInteger()
         val billedQuantity = AtomicReference<Double>()
         val billedMarker = AtomicReference<String>()
+        val billedCustomer = AtomicReference<String?>("not printed")
         compose.setContent {
             val scope = rememberCoroutineScope()
             val session = remember {
@@ -325,6 +326,7 @@ class OrderEditorUiWorkflowTest {
                     val bill = repo.cart("s", it).filterNotNull().first()
                     billedQuantity.set(bill.lines.single().quantity)
                     billedMarker.set(bill.tableMarker)
+                    billedCustomer.set(bill.customerName)
                     billPrints.incrementAndGet()
                 },
             )
@@ -364,6 +366,7 @@ class OrderEditorUiWorkflowTest {
         compose.waitUntil(5000) { billPrints.get() == 1 }
         assertEquals(2.0, billedQuantity.get(), 0.0)
         assertEquals("16", billedMarker.get())
+        assertNull(billedCustomer.get())
         assertNull(checkout.get())
         assertEquals("draft", db.get("orders", id)!!.string("status"))
         compose.onNodeWithText("Current Bill").assertExists()
