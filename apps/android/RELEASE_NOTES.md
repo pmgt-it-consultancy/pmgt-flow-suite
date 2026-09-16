@@ -20,6 +20,8 @@
 ### Tablet and interface fixes
 
 - Keeps the POS in landscape on Android 16 tablets.
+- Requires a second back press within two seconds before leaving the till, preventing accidental exits.
+- Keeps Refresh Report available during a Day Closing load so a new request can replace stale report generation.
 - Fixes product-sheet reloads, modifier input preservation, status indicators, home-card sizing, printer reconnects, PIN entry, manager unlock, logout recovery, and kiosk behavior.
 
 ## Rollout requirement
