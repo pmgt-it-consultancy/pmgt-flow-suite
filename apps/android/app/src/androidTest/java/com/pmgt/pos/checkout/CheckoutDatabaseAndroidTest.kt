@@ -9,6 +9,27 @@ import org.junit.Test
 
 class CheckoutDatabaseAndroidTest {
     @Test
+    fun directDiscountRetriesRespectPointerOwnershipAndCompletedHistory() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        for (remove in listOf(false, true)) {
+            for (pointer in CheckoutDirectRetryContract.brokenPointers) {
+                val fault = CheckoutFaultDriver(AndroidSqliteDriver(LegacySqlSchema, context, null))
+                PosDatabase(fault).use {
+                    CheckoutDirectRetryContract.rejectsUnownedExecution(it, fault, remove, pointer)
+                }
+            }
+            val fault = CheckoutFaultDriver(AndroidSqliteDriver(LegacySqlSchema, context, null))
+            PosDatabase(fault).use {
+                CheckoutDirectRetryContract.completedHistoryDoesNotConsumeLaterOwnership(
+                    it,
+                    fault,
+                    remove,
+                )
+            }
+        }
+    }
+
+    @Test
     fun v2JournalExecutionTimesAndDeletionPurgeSurviveAndroidDatabaseReopen() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
         for (discount in listOf(false, true)) {

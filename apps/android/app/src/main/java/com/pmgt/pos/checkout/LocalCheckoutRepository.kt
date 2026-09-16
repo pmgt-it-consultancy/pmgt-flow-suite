@@ -336,6 +336,12 @@ class LocalCheckoutRepository(
         while (true) {
             context.ensureActive()
             checkOwner(owner, journal.orderId)
+            check(
+                db.localValue(activeKey(journal.orderId)) == journal.id &&
+                    db.localValue(settledKey(journal.orderId)).isNullOrEmpty()
+            ) {
+                "Saved checkout no longer owns the active action; existing work is retained"
+            }
             check(fingerprint(db, journal.orderId) == journal.fingerprint) {
                 "Order changed after checkout started. Saved payment work is retained for review."
             }
