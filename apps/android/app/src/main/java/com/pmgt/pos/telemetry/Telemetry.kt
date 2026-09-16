@@ -54,7 +54,13 @@ object Telemetry {
         // Logged before the filter below: an unreachable network is dropped from Crashlytics on
         // purpose, which otherwise leaves a timeout-shaped failure with no trace anywhere at all.
         Log.w(tag, "$operation failed: ${error.javaClass.simpleName}: ${error.message}", error)
-        if (error is IOException && error !is ConvexException) return
+        if (error is IOException && error !is ConvexException) {
+            // Crashlytics keeps only the latest few non-fatals, so connectivity noise is dropped
+            // there. It still counts as an event, which is how a timeout stays distinguishable
+            // from an authentication or server failure without crowding out real faults.
+            event("transport_unreachable", "operation" to operation, "kind" to error.javaClass.simpleName)
+            return
+        }
         sink?.nonFatal(operation, error, context.toMap())
     }
 

@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { httpAction, internalAction, internalMutation, internalQuery } from "./_generated/server";
+import { activeDeviceBinding } from "./lib/deviceBinding";
 import { publishOrderAggregateEvent } from "./lib/replicationEvents";
 import { deviceCodeFromIndex, newClientId } from "./lib/sync";
 import {
@@ -49,13 +50,7 @@ export const registerDeviceCore = internalMutation({
   args: { deviceId: v.string(), storeId: v.id("stores") },
   returns: v.object({ deviceCode: v.string() }),
   handler: async (ctx, args) => {
-    // Retired rows are retained as evidence, so an *active* binding is the one without retiredAt.
-    const existing = (
-      await ctx.db
-        .query("syncDevices")
-        .withIndex("by_deviceId", (q) => q.eq("deviceId", args.deviceId))
-        .collect()
-    ).find((binding) => binding.retiredAt === undefined);
+    const existing = await activeDeviceBinding(ctx, args.deviceId);
 
     if (existing && existing.storeId === args.storeId) {
       await ctx.db.patch(existing._id, { lastSeenAt: Date.now() });
@@ -68,7 +63,7 @@ export const registerDeviceCore = internalMutation({
     if (existing) {
       throw new Error(
         `Device ${args.deviceId} is already bound to store ${existing.storeId}. ` +
-          `Retire it from that store before registering it elsewhere.`,
+          `Retire it from that store before commissioning it elsewhere.`,
       );
     }
 
@@ -840,10 +835,7 @@ async function resolveOrderNumber(
   // 2. Otherwise, generate the next number using a counter on the device doc.
   //    First call per (device, prefix) bootstraps the counter with one indexed
   //    .first() read; subsequent calls are O(1) read + 1 patch.
-  const device = await ctx.db
-    .query("syncDevices")
-    .withIndex("by_deviceId", (q: any) => q.eq("deviceId", args.deviceId))
-    .first();
+  const device = await activeDeviceBinding(ctx, args.deviceId);
   const deviceCode = await resolveDeviceCode(ctx, args.storeId, args.deviceId);
   const prefix = `${args.orderType === "dine_in" ? "D" : "T"}-${deviceCode}`;
 
@@ -917,10 +909,7 @@ async function resolveDeviceCode(
   storeId: Id<"stores">,
   deviceId: string,
 ): Promise<string> {
-  const device = await ctx.db
-    .query("syncDevices")
-    .withIndex("by_deviceId", (q: any) => q.eq("deviceId", deviceId))
-    .first();
+  const device = await activeDeviceBinding(ctx, deviceId);
 
   if (device?.storeId === storeId && device.deviceCode) return device.deviceCode;
   return (

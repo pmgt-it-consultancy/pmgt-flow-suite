@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import { type MutationCtx, mutation } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
+import { activeDeviceBinding } from "./lib/deviceBinding";
 import { requirePermission } from "./lib/permissions";
 import { deviceCodeFromIndex } from "./lib/sync";
 
@@ -19,14 +20,6 @@ async function authorize(ctx: MutationCtx, storeId: Id<"stores">) {
     throw new Error("That store is outside your scope");
   }
   return user;
-}
-
-async function activeBinding(ctx: MutationCtx, deviceId: string) {
-  const bindings = await ctx.db
-    .query("syncDevices")
-    .withIndex("by_deviceId", (q) => q.eq("deviceId", deviceId))
-    .collect();
-  return bindings.find((binding) => binding.retiredAt === undefined) ?? null;
 }
 
 async function audit(
@@ -54,7 +47,7 @@ export const retire = mutation({
   returns: v.object({ retiredAt: v.number() }),
   handler: async (ctx, args) => {
     const user = await authorize(ctx, args.storeId);
-    const binding = await activeBinding(ctx, args.deviceId);
+    const binding = await activeDeviceBinding(ctx, args.deviceId);
 
     if (!binding) {
       // Idempotent: a tablet already retired from this store retires again without a second entry.
@@ -66,7 +59,7 @@ export const retire = mutation({
         (row) => row.storeId === args.storeId && row.retiredAt !== undefined,
       );
       if (here?.retiredAt !== undefined) return { retiredAt: here.retiredAt };
-      throw new Error(`Device ${args.deviceId} is not registered to this store`);
+      throw new Error(`Device ${args.deviceId} is not commissioned to this store`);
     }
     if (binding.storeId !== args.storeId) {
       throw new Error(`Device ${args.deviceId} belongs to another store`);
@@ -113,7 +106,7 @@ export const commission = mutation({
   returns: v.object({ deviceCode: v.string() }),
   handler: async (ctx, args) => {
     const user = await authorize(ctx, args.storeId);
-    const binding = await activeBinding(ctx, args.deviceId);
+    const binding = await activeDeviceBinding(ctx, args.deviceId);
 
     if (binding) {
       // Idempotent against the store it already serves; never claimed by two stores at once.

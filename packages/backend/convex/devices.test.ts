@@ -168,6 +168,41 @@ describe("Device Commissioning", () => {
     expect(await auditCount(t, "device.commissioned")).toBe(1);
   });
 
+  /**
+   * Device Retirement keeps the old row, so a moved tablet has two rows on by_deviceId. Any lookup
+   * still using .unique() throws and any using .first() picks the retired one, which would strand
+   * the tablet at its new store: unable to report sync state, and issuing the old store's numbers.
+   */
+  it("lets a moved tablet report sync state and use its new device code", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId: storeA, asUser: managerA } = await setup(t);
+    await t.mutation(internal.sync.registerDeviceCore, { deviceId: "tablet-1", storeId: storeA });
+    await reportPending(t, storeA, "tablet-1", 0);
+    await managerA.mutation(api.devices.retire, { deviceId: "tablet-1", storeId: storeA });
+
+    const { storeId: storeB, asUser: managerB } = await setup(t);
+    const { deviceCode } = await managerB.mutation(api.devices.commission, {
+      deviceId: "tablet-1",
+      storeId: storeB,
+    });
+
+    // Day closing has to be able to read the tablet at its new store.
+    await expect(
+      managerB.mutation(api.closing.confirmReadyForDayClosing, {
+        storeId: storeB,
+        deviceId: "tablet-1",
+        generation: "g2",
+        pendingCount: 0,
+        clientNow: Date.now(),
+      }),
+    ).resolves.toBeDefined();
+
+    // And the active binding is the new one, not the retired row.
+    const active = (await bindings(t, "tablet-1")).find((row: any) => row.retiredAt === undefined);
+    expect(active.storeId).toBe(storeB);
+    expect(active.deviceCode).toBe(deviceCode);
+  });
+
   it("commissions a tablet that has no prior binding, and is idempotent", async () => {
     const t = convexTest(schema, modules);
     const { storeId, asUser } = await setup(t);

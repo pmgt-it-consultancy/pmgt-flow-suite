@@ -33,10 +33,10 @@ class TabletStartup(
     private val online: StateFlow<Boolean>,
     /** Backoff between automatic attempts; the last entry is the cap. */
     private val retryDelays: List<Long> = listOf(5_000, 10_000, 20_000, 40_000, 60_000),
-    private val now: () -> Long = System::currentTimeMillis,
 ) {
     private val monitor = Any()
     private val adoptionMutex = Mutex()
+    private val retryMutex = Mutex()
     @Volatile private var generation = 0L
     private var storage: AdoptedStorage? = null
     private var binding: Job? = null
@@ -90,6 +90,8 @@ class TabletStartup(
             val ready = synchronized(monitor) {
                 requireSession(epoch, userId, storeId)
                 if (result is AdoptionState.Blocked) Telemetry.nonFatal("startup.adoption_blocked", AdoptionBlocked(result.message))
+                if (result is AdoptionState.ForeignStore)
+                    Telemetry.event("adoption_foreign_store", "store_id" to storeId, "local_store_id" to result.localStoreId)
                 current.value = TabletStartupState(userId, storeId, result)
                 if (result is AdoptionState.Ready) {
                     SyncManager(adopted.database, http, adopted.deviceId, scope, io, online,
@@ -155,7 +157,7 @@ class TabletStartup(
             }
             val wait = retryDelays[minOf(attempt, retryDelays.lastIndex)]
             attempt++
-            val due = now() + wait
+            val due = System.currentTimeMillis() + wait
             synchronized(monitor) {
                 if (current.value.awaitingVerification()) current.value = current.value.copy(nextRetryAt = due)
             }
@@ -164,11 +166,15 @@ class TabletStartup(
         }
     }
 
-    /** Re-runs adoption only for a live session that is still waiting on verification. */
-    private suspend fun reattempt() {
-        val stale = synchronized(monitor) { current.value.takeIf { it.awaitingVerification() } } ?: return
-        val userId = stale.userId ?: return
-        val storeId = stale.storeId ?: return
+    /**
+     * Re-runs adoption only for a live session that is still waiting on verification. Serialised:
+     * two triggers firing together would otherwise queue a second attempt that lands after the
+     * first succeeded and tears down the SyncManager it just started.
+     */
+    private suspend fun reattempt() = retryMutex.withLock {
+        val stale = synchronized(monitor) { current.value.takeIf { it.awaitingVerification() } } ?: return@withLock
+        val userId = stale.userId ?: return@withLock
+        val storeId = stale.storeId ?: return@withLock
         Telemetry.event("adoption_retry", "store_id" to storeId)
         try {
             adopt(userId, storeId)

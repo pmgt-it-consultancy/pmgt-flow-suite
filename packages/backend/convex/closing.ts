@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
+import { activeDeviceBinding } from "./lib/deviceBinding";
 import { requirePermission } from "./lib/permissions";
 import { appendReplicationEvent } from "./lib/replicationEvents";
 import {
@@ -127,10 +128,7 @@ async function upsertDeviceState(
     clientNow: number;
   },
 ) {
-  const device = await ctx.db
-    .query("syncDevices")
-    .withIndex("by_deviceId", (q: any) => q.eq("deviceId", args.deviceId))
-    .unique();
+  const device = await activeDeviceBinding(ctx, args.deviceId);
   if (!device || device.storeId !== args.storeId) throw new Error("Device is not registered");
   const now = Date.now();
   const clockDriftMs = Math.abs(now - args.clientNow);

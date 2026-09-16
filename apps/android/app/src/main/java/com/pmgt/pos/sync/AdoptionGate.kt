@@ -1,5 +1,6 @@
 package com.pmgt.pos.sync
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,22 +24,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pmgt.pos.db.AdoptionState
+import com.pmgt.pos.telemetry.Telemetry
 
 private val Brand = Color(0xFF0D87E1)
 private val Ink = Color(0xFF111827)
 private val Body = Color(0xFF374151)
 private val Muted = Color(0xFF6B7280)
 private val Hairline = Color(0xFFE5E7EB)
+// Matches the auth screens' page wash rather than the palette's neutral fill.
 private val Slip = Color(0xFFF9FAFB)
 private val Danger = Color(0xFFDC2626)
 private val DangerWash = Color(0xFFFEF2F2)
 private val DangerEdge = Color(0xFFFECACA)
+// Darker than the palette's #22C55E fill: this is text on white and needs the contrast.
 private val Good = Color(0xFF15803D)
 
 private fun secondsUntil(at: Long?): Long =
     at?.let { ((it - System.currentTimeMillis() + 999) / 1_000).coerceAtLeast(0) } ?: 0
 
-private class Copy(
+private class GateCopy(
     val heading: String,
     val accent: Color,
     val explanation: String,
@@ -48,9 +52,9 @@ private class Copy(
     val support: String?,
 )
 
-private fun copyFor(state: AdoptionState, busy: Boolean): Copy = when (state) {
+private fun copyFor(state: AdoptionState, busy: Boolean): GateCopy = when (state) {
     is AdoptionState.ForeignStore ->
-        Copy(
+        GateCopy(
             heading = "Different store",
             accent = Danger,
             explanation =
@@ -70,7 +74,7 @@ private fun copyFor(state: AdoptionState, busy: Boolean): Copy = when (state) {
             support = "${state.localStoreId} → ${state.expectedStoreId}",
         )
     is AdoptionState.Blocked ->
-        Copy(
+        GateCopy(
             heading = "Setup blocked",
             accent = Danger,
             explanation = state.message,
@@ -80,7 +84,7 @@ private fun copyFor(state: AdoptionState, busy: Boolean): Copy = when (state) {
             support = null,
         )
     is AdoptionState.Ready ->
-        Copy(
+        GateCopy(
             heading = "Ready",
             accent = Good,
             explanation = "Tablet data verified. Opening the till.",
@@ -90,7 +94,7 @@ private fun copyFor(state: AdoptionState, busy: Boolean): Copy = when (state) {
             support = null,
         )
     is AdoptionState.PendingVerification ->
-        Copy(
+        GateCopy(
             heading = if (busy) "Checking this tablet" else "Not verified yet",
             accent = Ink,
             explanation =
@@ -111,6 +115,7 @@ fun AdoptionGate(
     nextRetryAt: Long? = null,
     retry: () -> Unit,
 ) {
+    LaunchedEffect(Unit) { Telemetry.screen("AdoptionGate") }
     val copy = copyFor(state, busy)
     val refused = state is AdoptionState.ForeignStore
     // A silent retry loop reads the same as a stall, so say that one is coming and when.
@@ -165,6 +170,7 @@ private fun Actions(refused: Boolean, busy: Boolean, signOut: (() -> Unit)?, ret
                 onClick = it,
                 modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag("adoption-sign-out"),
                 shape = RoundedCornerShape(10.dp),
+                border = BorderStroke(1.dp, DangerEdge),
                 colors =
                     ButtonDefaults.buttonColors(
                         containerColor = DangerWash,
@@ -205,7 +211,7 @@ private fun Actions(refused: Boolean, busy: Boolean, signOut: (() -> Unit)?, ret
 
 /** A till reconciling two ledgers should read like a till slip; the figures are the point. */
 @Composable
-private fun RowScope.Slip(copy: Copy, busy: Boolean) {
+private fun RowScope.Slip(copy: GateCopy, busy: Boolean) {
     Column(
         Modifier.weight(1f)
             .fillMaxHeight()
