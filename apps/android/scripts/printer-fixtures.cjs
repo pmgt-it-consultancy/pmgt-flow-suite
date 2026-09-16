@@ -19,9 +19,11 @@ const storePath = path.join(
   root,
   "apps/native/src/features/settings/stores/usePrinterStore.ts",
 );
+// Resolve the installed package rather than assuming a node_modules layout: pnpm hoists it to the
+// workspace root (.npmrc sets node-linker=hoisted), so apps/native/node_modules may not hold it.
 const nativeRoot = path.join(
-  root,
-  "apps/native/node_modules/@vardrz/react-native-bluetooth-escpos-printer/android/src/main/java",
+  path.dirname(require.resolve("@vardrz/react-native-bluetooth-escpos-printer/package.json")),
+  "android/src/main/java",
 );
 const commandPath = path.join(nativeRoot, "cn/jystudio/bluetooth/escpos/command/sdk/Command.java");
 const printerCommandPath = path.join(

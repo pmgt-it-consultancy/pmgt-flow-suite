@@ -12,7 +12,9 @@ const ts = require("typescript");
 
 const root = path.resolve(__dirname, "../../..");
 const formatterPath = path.join(root, "apps/native/src/features/day-closing/utils/zReportFormatter.ts");
-const nativeRoot = path.join(root, "apps/native/node_modules/@vardrz/react-native-bluetooth-escpos-printer/android/src/main/java");
+// Resolve the installed package rather than assuming a node_modules layout: pnpm hoists it to the
+// workspace root (.npmrc sets node-linker=hoisted), so apps/native/node_modules may not hold it.
+const nativeRoot = path.join(path.dirname(require.resolve("@vardrz/react-native-bluetooth-escpos-printer/package.json")), "android/src/main/java");
 const commandPath = path.join(nativeRoot, "cn/jystudio/bluetooth/escpos/command/sdk/Command.java");
 const printerCommandPath = path.join(nativeRoot, "cn/jystudio/bluetooth/escpos/command/sdk/PrinterCommand.java");
 const formatterSource = fs.readFileSync(formatterPath, "utf8");

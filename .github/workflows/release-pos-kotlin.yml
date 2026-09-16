@@ -48,6 +48,19 @@ jobs:
         working-directory: apps/android
         run: ./gradlew :app:lintDebug
 
+      # The fixture scripts transpile the unchanged RN sources with typescript and read the installed
+      # native printer package, so the workspace dependencies have to be installed first.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Printer and money fixtures match the unchanged RN oracle
         run: |
           node apps/android/scripts/printer-fixtures.cjs --check
