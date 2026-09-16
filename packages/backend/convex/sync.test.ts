@@ -1012,6 +1012,78 @@ describe("sync push", () => {
     expect(order?.grossSales).toBe(500);
   });
 
+  it("allows another store device to discard a shared draft without rewriting its totals", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupSyncTestData(t);
+    const now = Date.now();
+
+    await t.run(async (ctx: any) =>
+      ctx.db.insert("orders", {
+        storeId,
+        orderNumber: "T-A002",
+        orderType: "takeout",
+        takeoutStatus: "pending",
+        status: "draft",
+        grossSales: 500,
+        vatableSales: 446.43,
+        vatAmount: 53.57,
+        vatExemptSales: 0,
+        nonVatSales: 0,
+        discountAmount: 0,
+        netSales: 500,
+        createdBy: userId,
+        createdAt: now,
+        updatedAt: now,
+        clientId: "shared-draft-client-id",
+        originDeviceId: "tablet-a",
+      }),
+    );
+
+    const response = await t.mutation(internal.sync.syncPushCore, {
+      storeId,
+      userId,
+      deviceId: "tablet-b",
+      payload: {
+        lastPulledAt: now,
+        clientMutationId: "shared-draft-discard-b",
+        changes: {
+          orders: {
+            created: [],
+            updated: [
+              {
+                id: "shared-draft-client-id",
+                orderType: "takeout",
+                takeoutStatus: "pending",
+                status: "voided",
+                grossSales: 9999,
+                vatableSales: 9999,
+                vatAmount: 9999,
+                vatExemptSales: 0,
+                nonVatSales: 0,
+                discountAmount: 0,
+                netSales: 9999,
+                createdAt: now,
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    expect(response).toEqual({ success: true });
+    const order = await t.run(async (ctx: any) =>
+      ctx.db
+        .query("orders")
+        .withIndex("by_clientId", (q: any) => q.eq("clientId", "shared-draft-client-id"))
+        .first(),
+    );
+
+    expect(order?.status).toBe("voided");
+    expect(order?.netSales).toBe(500);
+    expect(order?.grossSales).toBe(500);
+    expect(order?.originDeviceId).toBe("tablet-a");
+  });
+
   it("preserves pushed manager actors instead of collapsing to the sync user", async () => {
     const t = convexTest(schema, modules);
     const { storeId, userId } = await setupSyncTestData(t);

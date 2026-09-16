@@ -952,6 +952,11 @@ async function applyPushedRow({
         incomingStatus === "paid" &&
         existing.orderType === "takeout" &&
         row.takeoutStatus !== undefined;
+      const isCrossDeviceDraftDiscard =
+        existing?.status === "draft" &&
+        incomingStatus === "voided" &&
+        !!existing.originDeviceId &&
+        existing.originDeviceId !== deviceId;
       const isVoidedReplay = existing?.status === "voided" && incomingStatus === "voided";
       if (
         existing &&
@@ -971,9 +976,14 @@ async function applyPushedRow({
         !isPaidToVoided &&
         !isPaidReplay &&
         !isPaidWorkflowUpdate &&
+        !isCrossDeviceDraftDiscard &&
         !isVoidedReplay
       ) {
         throw new Error(`Order is owned by another device (${existing.originDeviceId})`);
+      }
+      if (existing && isCrossDeviceDraftDiscard) {
+        await ctx.db.patch(existing._id, { status: "voided", updatedAt: Date.now() });
+        return { orderId: existing._id, eventKind: "upsert" };
       }
       if (existing && isPaidWorkflowUpdate && !isPaidToVoided && !isPaidReplay) {
         await ctx.db.patch(existing._id, {
