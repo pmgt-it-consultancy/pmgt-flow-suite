@@ -2,10 +2,13 @@ package com.pmgt.pos
 
 import android.app.Application
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
@@ -104,6 +107,19 @@ class MainActivity : ComponentActivity() {
             isAppearanceLightStatusBars = false
             hide(WindowInsetsCompat.Type.navigationBars())
             systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+        // Registered before any Compose BackHandler, so it only sees presses no screen consumed:
+        // the ones that would otherwise send the till to the background.
+        val backToExit = BackToExit(SystemClock::elapsedRealtime)
+        onBackPressedDispatcher.addCallback(this) {
+            if (!backToExit.press()) {
+                Toast.makeText(this@MainActivity, "Press back again to exit", Toast.LENGTH_SHORT)
+                    .show()
+                return@addCallback
+            }
+            isEnabled = false
+            onBackPressedDispatcher.onBackPressed()
+            isEnabled = true
         }
         setContent {
             val holder = rememberSaveableStateHolder()
