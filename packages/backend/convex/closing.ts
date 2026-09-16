@@ -1,11 +1,91 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./lib/auth";
+import { activeDeviceBinding } from "./lib/deviceBinding";
+import { requirePermission } from "./lib/permissions";
 import { appendReplicationEvent } from "./lib/replicationEvents";
+import {
+  pendingTotalsReconciliations,
+  scheduleTotalsReconciliation,
+  unresolvedTotalsDivergences,
+} from "./lib/totalsReconciliation";
 
 const STREAM = "operational_orders";
 const CLOCK_DRIFT_WARNING_MS = 2 * 60 * 1000;
 const CLOCK_DRIFT_BLOCK_MS = 10 * 60 * 1000;
+
+export const getPendingTotalsReconciliations = query({
+  args: { storeId: v.id("stores"), reportDate: v.string() },
+  returns: v.array(
+    v.object({
+      jobId: v.id("totalsReconciliationJobs"),
+      orderId: v.id("orders"),
+      mutationId: v.string(),
+      status: v.union(v.literal("pending"), v.literal("failed")),
+      blockedReason: v.optional(v.string()),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    const user = await getAuthenticatedUser(ctx);
+    if (!user || user.storeId !== args.storeId) throw new Error("Authentication required");
+    const jobs = await pendingTotalsReconciliations(ctx, args.storeId, args.reportDate).collect();
+    return Promise.all(
+      jobs.map(async (job) => {
+        const scheduled = job.scheduledFunctionId
+          ? await ctx.db.system.get(job.scheduledFunctionId)
+          : null;
+        const status =
+          !job.blockedReason &&
+          (scheduled?.state.kind === "pending" || scheduled?.state.kind === "inProgress")
+            ? ("pending" as const)
+            : ("failed" as const);
+        return {
+          jobId: job._id,
+          orderId: job.orderId,
+          mutationId: job.mutationId,
+          status,
+          blockedReason: job.blockedReason,
+        };
+      }),
+    );
+  },
+});
+
+export const retryTotalsReconciliation = mutation({
+  args: { jobId: v.id("totalsReconciliationJobs") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const user = await getAuthenticatedUser(ctx);
+    const job = await ctx.db.get(args.jobId);
+    if (!user || !job || user.storeId !== job.storeId) throw new Error("Authentication required");
+    await requirePermission(ctx, user._id, "reports.print_eod");
+    if (job.status === "pending") await scheduleTotalsReconciliation(ctx, job._id);
+    return null;
+  },
+});
+
+export const getTotalsDivergences = query({
+  args: { storeId: v.id("stores"), reportDate: v.string() },
+  returns: v.array(
+    v.object({
+      orderId: v.id("orders"),
+      deviceTotals: v.record(v.string(), v.number()),
+      reconciledTotals: v.record(v.string(), v.number()),
+      fields: v.array(v.string()),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    const user = await getAuthenticatedUser(ctx);
+    if (!user || user.storeId !== args.storeId) throw new Error("Authentication required");
+    const records = await unresolvedTotalsDivergences(ctx, args.storeId, args.reportDate);
+    return records.map(({ orderId, deviceTotals, reconciledTotals, fields }) => ({
+      orderId,
+      deviceTotals,
+      reconciledTotals,
+      fields,
+    }));
+  },
+});
 
 async function readiness(ctx: { db: any }, storeId: any) {
   const devices = await ctx.db
@@ -48,10 +128,7 @@ async function upsertDeviceState(
     clientNow: number;
   },
 ) {
-  const device = await ctx.db
-    .query("syncDevices")
-    .withIndex("by_deviceId", (q: any) => q.eq("deviceId", args.deviceId))
-    .unique();
+  const device = await activeDeviceBinding(ctx, args.deviceId);
   if (!device || device.storeId !== args.storeId) throw new Error("Device is not registered");
   const now = Date.now();
   const clockDriftMs = Math.abs(now - args.clientNow);
@@ -126,6 +203,9 @@ export const retireDevice = mutation({
   handler: async (ctx, args) => {
     const user = await getAuthenticatedUser(ctx);
     if (!user || user.storeId !== args.storeId) throw new Error("Authentication required");
+    // This writes pendingCount 0 and status retired, which is exactly the evidence Device
+    // Retirement gates on, so it needs the same authority rather than any signed-in user's.
+    await requirePermission(ctx, user._id, "devices.manage");
     const existing = await ctx.db
       .query("deviceSyncStates")
       .withIndex("by_store_device_stream", (q) =>
@@ -167,6 +247,15 @@ export const logDayClosing = mutation({
     const user = await getAuthenticatedUser(ctx);
     if (!user) {
       throw new Error("Authentication required");
+    }
+    if (await pendingTotalsReconciliations(ctx, args.storeId, args.reportDate).first()) {
+      throw new Error(
+        "Totals Reconciliation pending; complete or retry the check before final day closing",
+      );
+    }
+    const divergences = await unresolvedTotalsDivergences(ctx, args.storeId, args.reportDate);
+    if (divergences.length > 0) {
+      throw new Error("Unresolved Totals Divergences require attention before final day closing");
     }
     const closingFlag = await ctx.db
       .query("appConfig")

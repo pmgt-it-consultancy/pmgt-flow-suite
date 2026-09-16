@@ -578,6 +578,53 @@ export default defineSchema({
     .index("by_operation", ["operationId"])
     .index("by_store_device", ["storeId", "deviceId"]),
 
+  // Pending checks survive worker failure and prevent their Business Day from closing.
+  totalsReconciliationJobs: defineTable({
+    storeId: v.id("stores"),
+    orderId: v.id("orders"),
+    reportDate: v.string(),
+    deviceId: v.string(),
+    mutationId: v.string(),
+    status: v.union(v.literal("pending"), v.literal("complete")),
+    generation: v.number(),
+    orderCreatedAt: v.number(),
+    scopeKey: v.string(),
+    blockedReason: v.optional(v.string()),
+    checkedPaidTotalsKey: v.optional(v.string()),
+    checkedPaidSnapshotId: v.optional(v.id("totalsReconciliationSnapshots")),
+    checkedPaidMutationId: v.optional(v.string()),
+    scheduledFunctionId: v.optional(v.id("_scheduled_functions")),
+  })
+    .index("by_orderId_and_generation", ["orderId", "generation"])
+    .index("by_orderId_and_scopeKey", ["orderId", "scopeKey"])
+    .index("by_storeId_and_reportDate_and_status", ["storeId", "reportDate", "status"]),
+
+  // Worker-only payload: keep the sale-path job metadata independent of aggregate size.
+  totalsReconciliationSnapshots: defineTable({
+    orderId: v.id("orders"),
+    aggregateKey: v.string(),
+    voidedItemIds: v.array(v.id("orderItems")),
+    mutationId: v.string(),
+  }),
+
+  // Immutable evidence of device/server money disagreement, resolved only by a matching recheck.
+  totalsDivergences: defineTable({
+    storeId: v.id("stores"),
+    orderId: v.id("orders"),
+    reportDate: v.string(),
+    deviceId: v.string(),
+    mutationId: v.string(),
+    status: v.union(v.literal("unresolved"), v.literal("resolved")),
+    deviceTotals: v.record(v.string(), v.number()),
+    reconciledTotals: v.record(v.string(), v.number()),
+    fields: v.array(v.string()),
+    createdAt: v.number(),
+    resolvedAt: v.optional(v.number()),
+    resolvedByMutationId: v.optional(v.string()),
+  })
+    .index("by_orderId_and_status", ["orderId", "status"])
+    .index("by_storeId_and_reportDate_and_status", ["storeId", "reportDate", "status"]),
+
   // Idempotency cache for /sync/push retries.
   // Cleaned daily by syncMaintenance.cleanupSyncedMutations cron (TTL 7 days).
   syncedMutations: defineTable({
@@ -602,6 +649,11 @@ export default defineSchema({
     // Backs resolveOrderNumber's O(1) hot path: increment in place on each new
     // pushed order instead of scanning all orders for the store.
     orderNumberCounters: v.optional(v.record(v.string(), v.number())),
+    // Device Retirement. The row is retained rather than deleted: it is the evidence that this
+    // tablet was once an Active Tablet of this store, and historical orders cite its device code.
+    // A lookup for an *active* binding must exclude rows carrying retiredAt.
+    retiredAt: v.optional(v.number()),
+    retiredBy: v.optional(v.id("users")),
   })
     .index("by_storeId_deviceCode", ["storeId", "deviceCode"])
     .index("by_deviceId", ["deviceId"]),

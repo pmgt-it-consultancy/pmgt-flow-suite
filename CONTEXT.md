@@ -82,6 +82,10 @@ _Avoid_: Recently online tablet, current tablet
 The audited removal of a tablet from store-level reconciliation after its Pending Local Work is cleared or a manager explicitly acknowledges unrecoverable device loss.
 _Avoid_: Delete device, forget tablet
 
+**Device Commissioning**:
+The audited admission of a tablet into a store as an Active Tablet, allocating it a device code and order-number counters belonging to that store; a tablet already commissioned elsewhere must complete Device Retirement first.
+_Avoid_: Register device, provision tablet, pair tablet
+
 **Settle Order**:
 The single business operation that commits payment, freezes order totals, changes the order state, and releases its table; receipt printing is not part of settlement.
 _Avoid_: Process payment, print receipt

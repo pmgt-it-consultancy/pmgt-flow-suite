@@ -14,8 +14,15 @@ function compareSemver(a: string, b: string): number {
   return 0;
 }
 
+/**
+ * Releases are namespaced by product. The React Native app publishes `v<version>-<variant>`; the
+ * Kotlin POS publishes `kotlin-v<version>-<variant>` and carries a different application id, so
+ * neither may be offered the other's APK. Omitting `product` keeps the original behaviour.
+ */
+const KOTLIN_TAG_PREFIX = "kotlin-";
+
 export const checkForUpdate = action({
-  args: { currentVersion: v.string(), variant: v.string() },
+  args: { currentVersion: v.string(), variant: v.string(), product: v.optional(v.string()) },
   returns: v.union(
     v.object({
       updateAvailable: v.literal(true),
@@ -66,17 +73,23 @@ export const checkForUpdate = action({
     const releases = await response.json();
     // Find the latest release matching the app's variant (staging or production)
     const variantSuffix = args.variant === "production" ? "-production" : "-staging";
+    const isKotlin = args.product === "kotlin";
+    const stripTag = (tag: string) =>
+      tag
+        .replace(new RegExp(`^${KOTLIN_TAG_PREFIX}`), "")
+        .replace(/^v/, "")
+        .replace(/-(staging|production)$/, "");
     const matchingReleases = releases
       .filter(
         (r: { tag_name: string; assets: { name: string }[] }) =>
           r.tag_name.endsWith(variantSuffix) &&
+          // Each product only ever sees its own tags.
+          r.tag_name.startsWith(KOTLIN_TAG_PREFIX) === isKotlin &&
           r.assets?.some((a: { name: string }) => a.name.endsWith(".apk")),
       )
-      .sort((a: { tag_name: string }, b: { tag_name: string }) => {
-        const va = a.tag_name.replace(/^v/, "").replace(/-(staging|production)$/, "");
-        const vb = b.tag_name.replace(/^v/, "").replace(/-(staging|production)$/, "");
-        return compareSemver(vb, va); // descending
-      });
+      .sort((a: { tag_name: string }, b: { tag_name: string }) =>
+        compareSemver(stripTag(b.tag_name), stripTag(a.tag_name)),
+      );
     const release = matchingReleases[0] ?? null;
 
     if (release) {

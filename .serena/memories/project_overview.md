@@ -6,7 +6,7 @@ pmgt-flow-suite is a fullstack POS (Point of Sale) system for restaurant operati
 ## Tech Stack
 - **Monorepo Management**: Turborepo
 - **Package Manager**: pnpm (workspaces)
-- **Language**: TypeScript (100%)
+- **Languages**: TypeScript (web, backend, legacy native) + Kotlin (apps/android)
 
 ### Web App (apps/web)
 - Next.js 16 with App Router
@@ -15,7 +15,15 @@ pmgt-flow-suite is a fullstack POS (Point of Sale) system for restaurant operati
 - React Hook Form + Zod (legacy pages), TanStack Form (migrated admin pages)
 - Zustand for client-side state
 
-### Native App (apps/native)
+### Android App (apps/android) — ACTIVE
+- Native Kotlin + Jetpack Compose (1:1 port of apps/native)
+- SQLDelight over the legacy WatermelonDB file (exact DDL in `LegacyDdl.kt`)
+- OkHttp transport to Convex; Classic Bluetooth RFCOMM/SPP ESC/POS printing
+- Built with Gradle, outside the pnpm/Turborepo graph
+- Ships as its own application `com.pmgt.pos`, alongside the RN app
+- See memory: kotlin-pos-migration
+
+### Native App (apps/native) — PORTING REFERENCE, being transitioned away from
 - React Native 0.81 + Expo 54
 - Tamagui (UI/styling) with `@tamagui/config/v5` + `v5-reanimated`
 - React Navigation (bottom tabs + stack)
@@ -32,7 +40,8 @@ pmgt-flow-suite is a fullstack POS (Point of Sale) system for restaurant operati
 pmgt-flow-suite/
 ├── apps/
 │   ├── web/              # Next.js admin panel
-│   └── native/           # React Native POS app (Expo)
+│   ├── android/          # Native Kotlin/Compose POS (ACTIVE; Gradle, not pnpm)
+│   └── native/           # React Native POS app (Expo) — porting reference
 ├── packages/
 │   ├── backend/          # Convex backend (schema, queries, mutations, actions, tests)
 │   └── shared/           # Shared utilities

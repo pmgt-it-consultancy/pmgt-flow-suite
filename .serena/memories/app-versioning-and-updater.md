@@ -1,5 +1,12 @@
 # App Versioning & In-App Updater
 
+> **Describes the React Native app's updater.** The Kotlin app (`apps/android`) now has its own
+> version line (`versionName = "1.0.0"`, `versionCode = 10000`) and its own release workflow,
+> `.github/workflows/release-pos-kotlin.yml`, publishing tag `kotlin-v<version>-<variant>`.
+> `checkForUpdate` takes a `product` argument and filters on the `kotlin-` tag prefix so the two
+> apps can never be offered each other's APK. The RN release workflow has been retired.
+> See memory: kotlin-pos-migration.
+
 ## Summary
 Implemented a complete in-app update system for the Android sideloaded POS app with semantic versioning, background APK downloads, and GitHub Releases integration.
 

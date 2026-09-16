@@ -3,8 +3,17 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { httpAction, internalAction, internalMutation, internalQuery } from "./_generated/server";
+import { activeDeviceBinding } from "./lib/deviceBinding";
 import { publishOrderAggregateEvent } from "./lib/replicationEvents";
 import { deviceCodeFromIndex, newClientId } from "./lib/sync";
+import {
+  financialAggregateSnapshotKey,
+  paidTotalsSnapshotKey,
+  queueTotalsReconciliation,
+  readOrderFinancialAggregate,
+  reconcilePushedOrder,
+  reconciliationScope,
+} from "./lib/totalsReconciliation";
 
 /**
  * /sync/registerDevice, /sync/pull, /sync/push
@@ -41,14 +50,21 @@ export const registerDeviceCore = internalMutation({
   args: { deviceId: v.string(), storeId: v.id("stores") },
   returns: v.object({ deviceCode: v.string() }),
   handler: async (ctx, args) => {
-    const existing = await ctx.db
-      .query("syncDevices")
-      .withIndex("by_deviceId", (q) => q.eq("deviceId", args.deviceId))
-      .first();
+    const existing = await activeDeviceBinding(ctx, args.deviceId);
 
     if (existing && existing.storeId === args.storeId) {
       await ctx.db.patch(existing._id, { lastSeenAt: Date.now() });
       return { deviceCode: existing.deviceCode };
+    }
+
+    // A tablet belongs to one store. Recording a second binding alongside the first makes the
+    // device code and the order-number counters ambiguous on by_deviceId, which is how duplicate
+    // order numbers become possible. Moving a tablet is a deliberate, audited operation instead.
+    if (existing) {
+      throw new Error(
+        `Device ${args.deviceId} is already bound to store ${existing.storeId}. ` +
+          `Retire it from that store before commissioning it elsewhere.`,
+      );
     }
 
     const store = await ctx.db.get(args.storeId);
@@ -569,7 +585,8 @@ export const syncPushCore = internalMutation({
       if (!tableChanges) continue;
       for (const syncId of tableChanges.deleted ?? []) {
         try {
-          await applyPushedDelete({ ctx, table, syncId });
+          const orderId = await applyPushedDelete({ ctx, table, syncId });
+          if (orderId && !touchedOrders.has(orderId)) touchedOrders.set(orderId, "upsert");
         } catch (e) {
           rejected.push({
             table,
@@ -607,6 +624,11 @@ export const syncPushCore = internalMutation({
     }
 
     for (const [orderId, eventKind] of Array.from(touchedOrders.entries())) {
+      // Check the committed accepted aggregate independently of this sale transaction.
+      await queueTotalsReconciliation(ctx, orderId, {
+        deviceId: args.deviceId,
+        mutationId: payload.clientMutationId,
+      });
       await publishOrderAggregateEvent(ctx, {
         orderId,
         eventKind,
@@ -622,6 +644,72 @@ export const syncPushCore = internalMutation({
       createdAt: Date.now(),
     });
     return response;
+  },
+});
+
+export const reconcileOrderTotals = internalMutation({
+  args: { jobId: v.id("totalsReconciliationJobs") },
+  returns: v.null(),
+  handler: async (ctx, { jobId }) => {
+    const job = await ctx.db.get(jobId);
+    if (!job || job.status === "complete") return null;
+    const latest = await ctx.db
+      .query("totalsReconciliationJobs")
+      .withIndex("by_orderId_and_generation", (q) => q.eq("orderId", job.orderId))
+      .order("desc")
+      .first();
+    const order = await ctx.db.get(job.orderId);
+    const store = await ctx.db.get(job.storeId);
+    const blockedReason =
+      latest?._id !== jobId
+        ? "snapshot_superseded"
+        : !order || !store
+          ? "snapshot_unavailable"
+          : reconciliationScope(store, order).scopeKey !== job.scopeKey
+            ? "scope_changed"
+            : undefined;
+    if (blockedReason) {
+      await ctx.db.patch(jobId, { blockedReason });
+      return null;
+    }
+    if (order?.status === "voided") {
+      const retained = job.checkedPaidSnapshotId
+        ? await ctx.db.get(job.checkedPaidSnapshotId)
+        : null;
+      const aggregate = retained ? await readOrderFinancialAggregate(ctx, order._id) : null;
+      const previouslyVoided = new Set(retained?.voidedItemIds ?? []);
+      const matches =
+        aggregate &&
+        financialAggregateSnapshotKey(order, aggregate) === retained?.aggregateKey &&
+        aggregate.itemInputs.every(({ item }) => !previouslyVoided.has(item._id) || item.isVoided);
+      await ctx.db.patch(
+        jobId,
+        matches
+          ? { status: "complete", blockedReason: undefined }
+          : { blockedReason: "void_snapshot_unavailable" },
+      );
+      return null;
+    }
+    // Both reading the latest provenance and completing the job are atomic with the check.
+    // A failed worker rolls back here, leaving the durable pending job for recovery.
+    const snapshot = await reconcilePushedOrder(ctx, job.orderId, {
+      deviceId: job.deviceId,
+      mutationId: job.mutationId,
+    });
+    let checkedPaidSnapshotId = job.checkedPaidSnapshotId;
+    if (order?.status === "paid") {
+      const data = { orderId: job.orderId, ...snapshot, mutationId: job.mutationId };
+      if (checkedPaidSnapshotId) await ctx.db.patch(checkedPaidSnapshotId, data);
+      else checkedPaidSnapshotId = await ctx.db.insert("totalsReconciliationSnapshots", data);
+    }
+    await ctx.db.patch(jobId, {
+      status: "complete",
+      blockedReason: undefined,
+      checkedPaidTotalsKey: order?.status === "paid" ? paidTotalsSnapshotKey(order) : undefined,
+      checkedPaidSnapshotId: order?.status === "paid" ? checkedPaidSnapshotId : undefined,
+      checkedPaidMutationId: order?.status === "paid" ? job.mutationId : undefined,
+    });
+    return null;
   },
 });
 
@@ -669,12 +757,17 @@ async function findSyncedDoc(ctx: any, table: string, syncId: string): Promise<a
   return byConvexId;
 }
 
-async function applyPushedDelete({ ctx, table, syncId }: DeleteArgs): Promise<void> {
+async function applyPushedDelete({
+  ctx,
+  table,
+  syncId,
+}: DeleteArgs): Promise<Id<"orders"> | undefined> {
   if (table !== "orderDiscounts") return;
 
   const existing = await findSyncedDoc(ctx, table, syncId);
   if (!existing) return;
   await ctx.db.delete(existing._id);
+  return existing.orderId as Id<"orders">;
 }
 
 async function resolveActorId(
@@ -742,10 +835,7 @@ async function resolveOrderNumber(
   // 2. Otherwise, generate the next number using a counter on the device doc.
   //    First call per (device, prefix) bootstraps the counter with one indexed
   //    .first() read; subsequent calls are O(1) read + 1 patch.
-  const device = await ctx.db
-    .query("syncDevices")
-    .withIndex("by_deviceId", (q: any) => q.eq("deviceId", args.deviceId))
-    .first();
+  const device = await activeDeviceBinding(ctx, args.deviceId);
   const deviceCode = await resolveDeviceCode(ctx, args.storeId, args.deviceId);
   const prefix = `${args.orderType === "dine_in" ? "D" : "T"}-${deviceCode}`;
 
@@ -819,10 +909,7 @@ async function resolveDeviceCode(
   storeId: Id<"stores">,
   deviceId: string,
 ): Promise<string> {
-  const device = await ctx.db
-    .query("syncDevices")
-    .withIndex("by_deviceId", (q: any) => q.eq("deviceId", deviceId))
-    .first();
+  const device = await activeDeviceBinding(ctx, deviceId);
 
   if (device?.storeId === storeId && device.deviceCode) return device.deviceCode;
   return (

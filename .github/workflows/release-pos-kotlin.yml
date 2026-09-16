@@ -1,0 +1,146 @@
+name: Release POS Kotlin
+
+# The Kotlin POS ships as its own application (com.pmgt.pos) beside the React Native app, so it
+# builds, versions and releases independently of release-pos.yml.
+
+on:
+  push:
+    branches:
+      - staging
+      - main
+    paths:
+      - ".github/workflows/release-pos-kotlin.yml"
+      - "apps/android/**"
+      - "packages/backend/**"
+  pull_request:
+    paths:
+      - ".github/workflows/release-pos-kotlin.yml"
+      - "apps/android/**"
+
+concurrency:
+  group: release-pos-kotlin-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Unit tests
+        working-directory: apps/android
+        run: ./gradlew :app:testDebugUnitTest
+
+      - name: Lint
+        working-directory: apps/android
+        run: ./gradlew :app:lintDebug
+
+      # The fixture scripts transpile the unchanged RN sources with typescript and read the installed
+      # native printer package, so the workspace dependencies have to be installed first.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Printer and money fixtures match the unchanged RN oracle
+        run: |
+          node apps/android/scripts/printer-fixtures.cjs --check
+          node apps/android/scripts/correction-fixtures.cjs --check
+          node apps/android/scripts/z-report-fixtures.cjs --check
+
+      - name: Upload test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kotlin-test-report
+          path: apps/android/app/build/reports/tests/
+
+  release:
+    name: Release ${{ github.ref_name == 'main' && 'production' || 'staging' }} APK
+    needs: verify
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set build variant
+        id: variant
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "name=production" >> $GITHUB_OUTPUT
+            echo "task=assembleRelease" >> $GITHUB_OUTPUT
+            echo "dir=release" >> $GITHUB_OUTPUT
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          else
+            echo "name=staging" >> $GITHUB_OUTPUT
+            echo "task=assembleStaging" >> $GITHUB_OUTPUT
+            echo "dir=staging" >> $GITHUB_OUTPUT
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Read version from the Gradle build
+        id: version
+        run: |
+          version=$(grep -m1 'versionName = ' apps/android/app/build.gradle.kts | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Decode keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ${{ runner.temp }}/release.keystore
+
+      - name: Build APK
+        working-directory: apps/android
+        env:
+          ORG_GRADLE_PROJECT_CONVEX_URL_STAGING: ${{ secrets.CONVEX_URL_STAGING }}
+          ORG_GRADLE_PROJECT_CONVEX_URL_PRODUCTION: ${{ secrets.CONVEX_URL_PRODUCTION }}
+          ORG_GRADLE_PROJECT_KEYSTORE_FILE: ${{ runner.temp }}/release.keystore
+          ORG_GRADLE_PROJECT_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew :app:${{ steps.variant.outputs.task }}
+
+      - name: Name the artifact
+        id: apk
+        run: |
+          src=$(find apps/android/app/build/outputs/apk/${{ steps.variant.outputs.dir }} -name '*.apk' | head -1)
+          dest="pmgt-pos-kotlin-${{ steps.variant.outputs.name }}-${{ steps.version.outputs.version }}.apk"
+          cp "$src" "$dest"
+          echo "path=$dest" >> $GITHUB_OUTPUT
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          # Its own tag namespace. The in-app updater must select these and never the React Native
+          # app's -production / -staging releases, which carry a different application id.
+          tag_name: kotlin-v${{ steps.version.outputs.version }}-${{ steps.variant.outputs.name }}
+          name: POS Kotlin ${{ steps.version.outputs.version }} (${{ steps.variant.outputs.name }})
+          prerelease: ${{ steps.variant.outputs.prerelease }}
+          body_path: apps/android/RELEASE_NOTES.md
+          files: ${{ steps.apk.outputs.path }}

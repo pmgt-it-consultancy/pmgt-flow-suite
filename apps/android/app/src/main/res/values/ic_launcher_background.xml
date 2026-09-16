@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand blue, the same value the app uses for its primary surfaces. -->
+    <color name="ic_launcher_background">#0D87E1</color>
+</resources>

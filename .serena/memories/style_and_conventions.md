@@ -42,6 +42,26 @@ const { user, store } = await getAuthenticatedUser(ctx);
 ```
 Auth helpers in `packages/backend/convex/lib/auth.ts`.
 
+## Android App (Kotlin/Compose) — apps/android
+
+**It is a 1:1 port of apps/native.** Read the RN source before changing behaviour. Several source
+quirks are preserved deliberately (kitchen button gated on the receipt printer; raw
+`cardPaymentType` on the receipt header; store socials never printed). See memory:
+kotlin-pos-migration.
+
+- Package root `com.pmgt.pos`; packages mirror the RN feature folders.
+- Colors are hex `Color(0xFF...)` matching the RN palette; icons are the Ionicons font.
+- Every Compose `Dialog` must call `HideSystemBarsInDialog()` — a dialog window does not inherit
+  the activity's immersive flags.
+- Never key a `Dialog` on a value that can change while it is open; the key change destroys and
+  rebuilds the window (visible dismiss/reopen).
+- Rethrow `CancellationException` **before** any generic `catch`, or disposal surfaces as a bogus
+  user-facing error.
+- Landscape is mandatory: `sensorLandscape` plus
+  `PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY` (Android 16 ignores the former alone).
+- Never substitute SQLDelight's logical `Schema.create` — use the generated `LegacyDdl.kt`.
+- Biome does NOT touch Kotlin; `ktfmt`/Gradle formatting applies. `lint-staged` only covers JS/TS/JSON.
+
 ## Native App Styling (Tamagui)
 - Layouts: `XStack` (flex-row), `YStack` (flex-column) from `tamagui`
 - RN primitives: `TouchableOpacity`, `TextInput`, `FlatList`, `ScrollView`, `Modal` from `react-native`

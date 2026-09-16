@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "666807588110",
+    "project_id": "pmgt-flow-suite",
+    "storage_bucket": "pmgt-flow-suite.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666807588110:android:4a935a5ecd9f8f030c735f",
+        "android_client_info": {
+          "package_name": "com.pmgt.pos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuqK3g69VPFWjvOC5QjX65Qpflxr4SYHI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666807588110:android:6ff583ab286d16ec0c735f",
+        "android_client_info": {
+          "package_name": "com.pmgt.pos.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuqK3g69VPFWjvOC5QjX65Qpflxr4SYHI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666807588110:android:9a70e3e90f91c95d0c735f",
+        "android_client_info": {
+          "package_name": "com.pmgt.pos.stg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuqK3g69VPFWjvOC5QjX65Qpflxr4SYHI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

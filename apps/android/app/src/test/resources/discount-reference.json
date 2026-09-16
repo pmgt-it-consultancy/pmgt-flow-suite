@@ -1,0 +1,367 @@
+{
+  "provenance": "Synthetic actual RN service first insert, recalc deliberately excluded; no real data",
+  "serviceSha256": "491cfe08db8b9373347525b10434d150b36fa8a14737e832debd37ed6da103ab",
+  "taxSha256": "8226097c06112f4b4277d31934d5ae738bbe51d81a6bea9f35ad54c3bd3513ea",
+  "cases": [
+    {
+      "price": 112,
+      "vatRate": 0,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "403c0f5c28f5c28f",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 112,
+      "vatRate": 0,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "403c0f5c28f5c28f",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 112,
+      "vatRate": 0.12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "40390ccccccccccd",
+      "vatExemptAmount": "405f5147ae147ae1"
+    },
+    {
+      "price": 112,
+      "vatRate": 0.12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "403c0f5c28f5c28f",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 112,
+      "vatRate": 12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "40390ccccccccccd",
+      "vatExemptAmount": "405f5147ae147ae1"
+    },
+    {
+      "price": 112,
+      "vatRate": 12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "403c0f5c28f5c28f",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 0.05,
+      "vatRate": 0,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4016ae147ae147ae",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 0.05,
+      "vatRate": 0,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4016ae147ae147ae",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 0.05,
+      "vatRate": 0.12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "40143d70a3d70a3d",
+      "vatExemptAmount": "40394f5c28f5c28f"
+    },
+    {
+      "price": 0.05,
+      "vatRate": 0.12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4016ae147ae147ae",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 0.05,
+      "vatRate": 12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "40143d70a3d70a3d",
+      "vatExemptAmount": "40394f5c28f5c28f"
+    },
+    {
+      "price": 0.05,
+      "vatRate": 12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4016ae147ae147ae",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 1.005,
+      "vatRate": 0,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "401770a3d70a3d71",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 1.005,
+      "vatRate": 0,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "401770a3d70a3d71",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 1.005,
+      "vatRate": 0.12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4014eb851eb851ec",
+      "vatExemptAmount": "403a2b851eb851ec"
+    },
+    {
+      "price": 1.005,
+      "vatRate": 0.12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "401770a3d70a3d71",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 1.005,
+      "vatRate": 12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4014eb851eb851ec",
+      "vatExemptAmount": "403a2b851eb851ec"
+    },
+    {
+      "price": 1.005,
+      "vatRate": 12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "401770a3d70a3d71",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 2.675,
+      "vatRate": 0,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4018cccccccccccd",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 2.675,
+      "vatRate": 0,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4018cccccccccccd",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 2.675,
+      "vatRate": 0.12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "40161eb851eb851f",
+      "vatExemptAmount": "403ba8f5c28f5c29"
+    },
+    {
+      "price": 2.675,
+      "vatRate": 0.12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4018cccccccccccd",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 2.675,
+      "vatRate": 12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "40161eb851eb851f",
+      "vatExemptAmount": "403ba8f5c28f5c29"
+    },
+    {
+      "price": 2.675,
+      "vatRate": 12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4018cccccccccccd",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 99.95,
+      "vatRate": 0,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4039a66666666666",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 99.95,
+      "vatRate": 0,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4039a66666666666",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 99.95,
+      "vatRate": 0.12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4036e66666666666",
+      "vatExemptAmount": "405ca0a3d70a3d71"
+    },
+    {
+      "price": 99.95,
+      "vatRate": 0.12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4039a66666666666",
+      "vatExemptAmount": "0000000000000000"
+    },
+    {
+      "price": 99.95,
+      "vatRate": 12,
+      "isVatable": true,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4036e66666666666",
+      "vatExemptAmount": "405ca0a3d70a3d71"
+    },
+    {
+      "price": 99.95,
+      "vatRate": 12,
+      "isVatable": false,
+      "modifiers": [
+        0.1,
+        0.2,
+        28
+      ],
+      "discountAmount": "4039a66666666666",
+      "vatExemptAmount": "0000000000000000"
+    }
+  ]
+}

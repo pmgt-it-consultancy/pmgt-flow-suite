@@ -43,6 +43,9 @@ export const PERMISSIONS = {
   "stores.manage": "Edit store settings",
   "stores.create_branch": "Create new branches",
 
+  // Devices
+  "devices.manage": "Move tablets between stores",
+
   // System
   "system.settings": "Manage system-wide settings",
   "system.roles": "Manage roles and permissions",
@@ -77,6 +80,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, Permission[]> = {
     "users.manage",
     "stores.view",
     "stores.manage",
+    "devices.manage",
   ],
   Manager: [
     "orders.create",
@@ -96,6 +100,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, Permission[]> = {
     "reports.print_eod",
     "users.view",
     "stores.view",
+    "devices.manage",
   ],
   Staff: [
     "orders.create",

@@ -1,0 +1,1594 @@
+{
+  "provenance": "Synthetic calls emitted by unchanged RN zReportFormatter.ts and bytes encoded by installed PrinterCommand.java; no Kotlin-generated expectations.",
+  "timezone": "Asia/Manila",
+  "locale": "en-PH",
+  "fixedPrintedAt": "2026-09-16T08:04:05.000Z",
+  "nativePackageVersion": "0.1.2",
+  "formatterSha256": "d4d62290347d112fe8932e8185eb19168a7926fa779a0093e7ef9c8d24222e93",
+  "commandSha256": "937545aa9dda29419ab04e9ccbdd9372d3c5bb3503fa7dc827fa7ae53af6eaf9",
+  "printerCommandSha256": "35c9bb7406ad728f3829a8066fdc643eb219079ebdd28f8602e8a71d8f663a64",
+  "cases": [
+    {
+      "name": "z-report-full-day-32-empty-breakdowns-rounding",
+      "width": 32,
+      "input": {
+        "storeName": "Synthetic Eatery",
+        "storeAddress": "123 Fixture Road",
+        "storeTin": "000-000-000-000",
+        "report": {
+          "reportDate": "2026-09-16",
+          "grossSales": 1234.5,
+          "netSales": 1200.825,
+          "vatableSales": 1071.45,
+          "vatAmount": 128.575,
+          "vatExemptSales": 0,
+          "nonVatSales": 0,
+          "seniorDiscounts": 1.005,
+          "pwdDiscounts": 2.675,
+          "promoDiscounts": 30,
+          "manualDiscounts": 0,
+          "totalDiscounts": 33.675,
+          "voidCount": 2,
+          "voidAmount": 40.5,
+          "cashTotal": 700.5,
+          "cardEwalletTotal": 500.325,
+          "transactionCount": 12,
+          "averageTicket": 100.06875,
+          "generatedByName": "Manager One"
+        },
+        "productSales": [],
+        "paymentTransactions": [],
+        "printedAt": "2026-09-16T16:04:05"
+      },
+      "calls": [
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Synthetic Eatery\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0053796e746865746963204561746572790a"
+        },
+        {
+          "operation": "printText",
+          "text": "123 Fixture Road\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00313233204669787475726520526f61640a"
+        },
+        {
+          "operation": "printText",
+          "text": "TIN: 000-000-000-000\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0054494e3a203030302d3030302d3030302d3030300a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "Z-REPORT / END OF DAY\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 1,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21111b74001b4d005a2d5245504f5254202f20454e44204f46204441590a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "2026-09-16\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00323032362d30392d31360a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "================================\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Gross Sales           P 1,234.50\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0047726f73732053616c657320202020202020202020205020312c3233342e35300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Less Discounts          -P 33.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004c65737320446973636f756e7473202020202020202020202d502033332e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "NET SALES             P 1,200.83\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d004e45542053414c4553202020202020202020202020205020312c3230302e38330a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "Transactions                  12\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005472616e73616374696f6e7320202020202020202020202020202020202031320a"
+        },
+        {
+          "operation": "printText",
+          "text": "Average Ticket          P 100.07\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0041766572616765205469636b65742020202020202020202050203130302e30370a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "PAYMENT BREAKDOWN\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d005041594d454e5420425245414b444f574e0a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Cash                    P 700.50\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0043617368202020202020202020202020202020202020202050203730302e35300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Card/E-Wallet           P 500.32\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00436172642f452d57616c6c6574202020202020202020202050203530302e33320a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "TOTAL COLLECTED       P 1,200.83\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00544f54414c20434f4c4c4543544544202020202020205020312c3230302e38330a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "DISCOUNT BREAKDOWN\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00444953434f554e5420425245414b444f574e0a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Senior                    P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0053656e696f7220202020202020202020202020202020202020205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "PWD                       P 2.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0050574420202020202020202020202020202020202020202020205020322e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "Promo                    P 30.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0050726f6d6f2020202020202020202020202020202020202020502033302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Manual                    P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004d616e75616c20202020202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Total Discounts          P 33.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00546f74616c20446973636f756e747320202020202020202020502033332e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "VOIDS\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00564f4944530a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Void Count                     2\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00566f696420436f756e74202020202020202020202020202020202020202020320a"
+        },
+        {
+          "operation": "printText",
+          "text": "Void Amount              P 40.50\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00566f696420416d6f756e742020202020202020202020202020502034302e35300a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT SUMMARY\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d005641542053554d4d4152590a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "--------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "VATable Sales         P 1,071.45\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056415461626c652053616c65732020202020202020205020312c3037312e34350a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT Amount 12%          P 128.57\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056415420416d6f756e74203132252020202020202020202050203132382e35370a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT-Exempt                P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005641542d4578656d7074202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Non-VAT                   P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004e6f6e2d564154202020202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "================================\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Generated by: Manager One\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0047656e6572617465642062793a204d616e61676572204f6e650a"
+        },
+        {
+          "operation": "printText",
+          "text": "Printed: 09/16/2026, 04:04:05 PM\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005072696e7465643a2030392f31362f323032362c2030343a30343a303520504d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "** system-generated **\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002a2a2073797374656d2d67656e657261746564202a2a0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Powered by PMGT Flow Suite\n\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0,
+            "cut": true
+          },
+          "hex": "1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61011d21011b74001b4d0053796e746865746963204561746572790a1d21001b74001b4d00313233204669787475726520526f61640a1d21001b74001b4d0054494e3a203030302d3030302d3030302d3030300a1d21001b74001b4d000a1d21111b74001b4d005a2d5245504f5254202f20454e44204f46204441590a1d21001b74001b4d000a1d21011b74001b4d00323032362d30392d31360a1b61001d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a1d21011b74001b4d0047726f73732053616c657320202020202020202020205020312c3233342e35300a1d21001b74001b4d004c65737320446973636f756e7473202020202020202020202d502033332e36370a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d004e45542053414c4553202020202020202020202020205020312c3230302e38330a1d21001b74001b4d000a1d21001b74001b4d005472616e73616374696f6e7320202020202020202020202020202020202031320a1d21001b74001b4d0041766572616765205469636b65742020202020202020202050203130302e30370a1d21001b74001b4d000a1b61011d21011b74001b4d005041594d454e5420425245414b444f574e0a1b61001d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d0043617368202020202020202020202020202020202020202050203730302e35300a1d21001b74001b4d00436172642f452d57616c6c6574202020202020202020202050203530302e33320a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d00544f54414c20434f4c4c4543544544202020202020205020312c3230302e38330a1d21001b74001b4d000a1b61011d21011b74001b4d00444953434f554e5420425245414b444f574e0a1b61001d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d0053656e696f7220202020202020202020202020202020202020205020312e30300a1d21001b74001b4d0050574420202020202020202020202020202020202020202020205020322e36370a1d21001b74001b4d0050726f6d6f2020202020202020202020202020202020202020502033302e30300a1d21001b74001b4d004d616e75616c20202020202020202020202020202020202020205020302e30300a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d00546f74616c20446973636f756e747320202020202020202020502033332e36370a1d21001b74001b4d000a1b61011d21011b74001b4d00564f4944530a1b61001d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d00566f696420436f756e74202020202020202020202020202020202020202020320a1d21001b74001b4d00566f696420416d6f756e742020202020202020202020202020502034302e35300a1d21001b74001b4d000a1b61011d21011b74001b4d005641542053554d4d4152590a1b61001d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d0056415461626c652053616c65732020202020202020205020312c3037312e34350a1d21001b74001b4d0056415420416d6f756e74203132252020202020202020202050203132382e35370a1d21001b74001b4d005641542d4578656d7074202020202020202020202020202020205020302e30300a1d21001b74001b4d004e6f6e2d564154202020202020202020202020202020202020205020302e30300a1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a1b61011d21001b74001b4d0047656e6572617465642062793a204d616e61676572204f6e650a1d21001b74001b4d005072696e7465643a2030392f31362f323032362c2030343a30343a303520504d0a1d21001b74001b4d002a2a2073797374656d2d67656e657261746564202a2a0a1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a1b4a1e1d564201"
+    },
+    {
+      "name": "z-report-cross-midnight-48-rich-utf16",
+      "width": 48,
+      "input": {
+        "storeName": "Synthetic Café 🍜",
+        "report": {
+          "reportDate": "2026-09-15",
+          "grossSales": 999999999999.99,
+          "netSales": 1466.325,
+          "vatableSales": 1071.45,
+          "vatAmount": 128.575,
+          "vatExemptSales": 0,
+          "nonVatSales": 0,
+          "seniorDiscounts": 1.005,
+          "pwdDiscounts": 2.675,
+          "promoDiscounts": 30,
+          "manualDiscounts": 0,
+          "totalDiscounts": 33.675,
+          "voidCount": 2,
+          "voidAmount": 40.5,
+          "cashTotal": 700.5,
+          "cardEwalletTotal": 500.325,
+          "transactionCount": 12,
+          "averageTicket": 100.06875,
+          "generatedByName": "Manager One",
+          "startTime": "18:00",
+          "endTime": "03:00"
+        },
+        "productSales": [
+          {
+            "productName": "Very long 🍜 product name for UTF16 truncation",
+            "quantitySold": 2,
+            "grossAmount": 2.675,
+            "categoryName": "Meals"
+          },
+          {
+            "productName": "Soup",
+            "quantitySold": 4,
+            "grossAmount": 1.005,
+            "categoryName": "Meals"
+          },
+          {
+            "productName": "Tea",
+            "quantitySold": 1,
+            "grossAmount": 1234.5,
+            "categoryName": "Drinks"
+          }
+        ],
+        "paymentTransactions": [
+          {
+            "paymentType": "GCash",
+            "transactions": [
+              {
+                "orderNumber": "D-101",
+                "referenceNumber": "REFERENCE-THAT-IS-LONGER-THAN-THE-ROW",
+                "amount": 2.675
+              },
+              {
+                "orderNumber": "D-102",
+                "referenceNumber": "REF-2",
+                "amount": 1.005
+              }
+            ],
+            "subtotal": 3.68
+          }
+        ],
+        "printedAt": "2026-09-16T16:04:05"
+      },
+      "calls": [
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Synthetic Café 🍜\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0053796e74686574696320436166c3a920f09f8d9c0a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "Z-REPORT / END OF DAY\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 1,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21111b74001b4d005a2d5245504f5254202f20454e44204f46204441590a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "2026-09-15\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00323032362d30392d31350a"
+        },
+        {
+          "operation": "printText",
+          "text": "6:00 PM - 3:00 AM (next day)\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00363a303020504d202d20333a303020414d20286e65787420646179290a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "================================================\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Gross Sales                 P 999,999,999,999.99\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d0047726f73732053616c6573202020202020202020202020202020202050203939392c3939392c3939392c3939392e39390a"
+        },
+        {
+          "operation": "printText",
+          "text": "Less Discounts                          -P 33.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004c65737320446973636f756e747320202020202020202020202020202020202020202020202020202d502033332e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "NET SALES                             P 1,466.33\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d004e45542053414c455320202020202020202020202020202020202020202020202020202020205020312c3436362e33330a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "Transactions                                  12\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005472616e73616374696f6e732020202020202020202020202020202020202020202020202020202020202020202031320a"
+        },
+        {
+          "operation": "printText",
+          "text": "Average Ticket                          P 100.07\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0041766572616765205469636b6574202020202020202020202020202020202020202020202020202050203130302e30370a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "PAYMENT BREAKDOWN\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d005041594d454e5420425245414b444f574e0a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Cash                                    P 700.50\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004361736820202020202020202020202020202020202020202020202020202020202020202020202050203730302e35300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Card/E-Wallet                           P 500.32\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00436172642f452d57616c6c657420202020202020202020202020202020202020202020202020202050203530302e33320a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "TOTAL COLLECTED                       P 1,200.83\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00544f54414c20434f4c4c454354454420202020202020202020202020202020202020202020205020312c3230302e38330a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "DISCOUNT BREAKDOWN\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00444953434f554e5420425245414b444f574e0a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Senior                                    P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0053656e696f722020202020202020202020202020202020202020202020202020202020202020202020205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "PWD                                       P 2.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005057442020202020202020202020202020202020202020202020202020202020202020202020202020205020322e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "Promo                                    P 30.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0050726f6d6f202020202020202020202020202020202020202020202020202020202020202020202020502033302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Manual                                    P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004d616e75616c2020202020202020202020202020202020202020202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Total Discounts                          P 33.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00546f74616c20446973636f756e74732020202020202020202020202020202020202020202020202020502033332e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "VOIDS\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00564f4944530a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Void Count                                     2\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00566f696420436f756e7420202020202020202020202020202020202020202020202020202020202020202020202020320a"
+        },
+        {
+          "operation": "printText",
+          "text": "Void Amount                              P 40.50\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00566f696420416d6f756e74202020202020202020202020202020202020202020202020202020202020502034302e35300a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT SUMMARY\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d005641542053554d4d4152590a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "VATable Sales                         P 1,071.45\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056415461626c652053616c6573202020202020202020202020202020202020202020202020205020312c3037312e34350a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT Amount 12%                          P 128.57\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056415420416d6f756e7420313225202020202020202020202020202020202020202020202020202050203132382e35370a"
+        },
+        {
+          "operation": "printText",
+          "text": "VAT-Exempt                                P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005641542d4578656d707420202020202020202020202020202020202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Non-VAT                                   P 0.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004e6f6e2d56415420202020202020202020202020202020202020202020202020202020202020202020205020302e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "================================================\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "ITEMS SOLD\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d004954454d5320534f4c440a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Item                              Qty        Amt\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d004974656d2020202020202020202020202020202020202020202020202020202020205174792020202020202020416d740a"
+        },
+        {
+          "operation": "printText",
+          "text": "-- Drinks --------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d002d2d204472696e6b73202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Tea                                 1 P 1,234.50\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0054656120202020202020202020202020202020202020202020202020202020202020202031205020312c3233342e35300a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Subtotal                            1 P 1,234.50\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00537562746f74616c2020202020202020202020202020202020202020202020202020202031205020312c3233342e35300a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "-- Meals ---------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d002d2d204d65616c73202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Soup                                4     P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d00536f757020202020202020202020202020202020202020202020202020202020202020203420202020205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "Very long 🍜 product name for U     2     P 2.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0056657279206c6f6e6720f09f8d9c2070726f64756374206e616d6520666f72205520202020203220202020205020322e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Subtotal                            6     P 3.68\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00537562746f74616c202020202020202020202020202020202020202020202020202020203620202020205020332e36380a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Total                               7 P 1,238.18\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00546f74616c2020202020202020202020202020202020202020202020202020202020202037205020312c3233382e31380a"
+        },
+        {
+          "operation": "printText",
+          "text": "================================================\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "PAYMENT TRANSACTIONS\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d005041594d454e54205452414e53414354494f4e530a"
+        },
+        {
+          "operation": "align",
+          "align": 0,
+          "hex": "1b6100"
+        },
+        {
+          "operation": "printText",
+          "text": "-- GCash ---------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d002d2d204743617368202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "#D-101  REFERENCE-THAT-IS-LONGER-THAN-THE P 2.67\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0023442d31303120205245464552454e43452d544841542d49532d4c4f4e4745522d5448414e2d544845205020322e36370a"
+        },
+        {
+          "operation": "printText",
+          "text": "#D-102  REF-2                             P 1.00\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0023442d31303220205245462d3220202020202020202020202020202020202020202020202020202020205020312e30300a"
+        },
+        {
+          "operation": "printText",
+          "text": "------------------------------------------------\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Subtotal                                  P 3.68\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 1,
+            "fonttype": 0
+          },
+          "hex": "1d21011b74001b4d00537562746f74616c202020202020202020202020202020202020202020202020202020202020202020205020332e36380a"
+        },
+        {
+          "operation": "printText",
+          "text": "\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d000a"
+        },
+        {
+          "operation": "printText",
+          "text": "================================================\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a"
+        },
+        {
+          "operation": "align",
+          "align": 1,
+          "hex": "1b6101"
+        },
+        {
+          "operation": "printText",
+          "text": "Generated by: Manager One\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d0047656e6572617465642062793a204d616e61676572204f6e650a"
+        },
+        {
+          "operation": "printText",
+          "text": "Printed: 09/16/2026, 04:04:05 PM\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d005072696e7465643a2030392f31362f323032362c2030343a30343a303520504d0a"
+        },
+        {
+          "operation": "printText",
+          "text": "** system-generated **\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0
+          },
+          "hex": "1d21001b74001b4d002a2a2073797374656d2d67656e657261746564202a2a0a"
+        },
+        {
+          "operation": "printText",
+          "text": "Powered by PMGT Flow Suite\n\n\n\n\n\n",
+          "options": {
+            "encoding": "UTF-8",
+            "widthtimes": 0,
+            "heigthtimes": 0,
+            "fonttype": 0,
+            "cut": true
+          },
+          "hex": "1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a0a0a0a1b4a1e1d564201"
+        }
+      ],
+      "concatenatedHex": "1b61011d21011b74001b4d0053796e74686574696320436166c3a920f09f8d9c0a1d21001b74001b4d000a1d21111b74001b4d005a2d5245504f5254202f20454e44204f46204441590a1d21001b74001b4d000a1d21011b74001b4d00323032362d30392d31350a1d21001b74001b4d00363a303020504d202d20333a303020414d20286e65787420646179290a1b61001d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a1d21011b74001b4d0047726f73732053616c6573202020202020202020202020202020202050203939392c3939392c3939392c3939392e39390a1d21001b74001b4d004c65737320446973636f756e747320202020202020202020202020202020202020202020202020202d502033332e36370a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d004e45542053414c455320202020202020202020202020202020202020202020202020202020205020312c3436362e33330a1d21001b74001b4d000a1d21001b74001b4d005472616e73616374696f6e732020202020202020202020202020202020202020202020202020202020202020202031320a1d21001b74001b4d0041766572616765205469636b6574202020202020202020202020202020202020202020202020202050203130302e30370a1d21001b74001b4d000a1b61011d21011b74001b4d005041594d454e5420425245414b444f574e0a1b61001d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d004361736820202020202020202020202020202020202020202020202020202020202020202020202050203730302e35300a1d21001b74001b4d00436172642f452d57616c6c657420202020202020202020202020202020202020202020202020202050203530302e33320a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d00544f54414c20434f4c4c454354454420202020202020202020202020202020202020202020205020312c3230302e38330a1d21001b74001b4d000a1b61011d21011b74001b4d00444953434f554e5420425245414b444f574e0a1b61001d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d0053656e696f722020202020202020202020202020202020202020202020202020202020202020202020205020312e30300a1d21001b74001b4d005057442020202020202020202020202020202020202020202020202020202020202020202020202020205020322e36370a1d21001b74001b4d0050726f6d6f202020202020202020202020202020202020202020202020202020202020202020202020502033302e30300a1d21001b74001b4d004d616e75616c2020202020202020202020202020202020202020202020202020202020202020202020205020302e30300a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d00546f74616c20446973636f756e74732020202020202020202020202020202020202020202020202020502033332e36370a1d21001b74001b4d000a1b61011d21011b74001b4d00564f4944530a1b61001d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d00566f696420436f756e7420202020202020202020202020202020202020202020202020202020202020202020202020320a1d21001b74001b4d00566f696420416d6f756e74202020202020202020202020202020202020202020202020202020202020502034302e35300a1d21001b74001b4d000a1b61011d21011b74001b4d005641542053554d4d4152590a1b61001d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d0056415461626c652053616c6573202020202020202020202020202020202020202020202020205020312c3037312e34350a1d21001b74001b4d0056415420416d6f756e7420313225202020202020202020202020202020202020202020202020202050203132382e35370a1d21001b74001b4d005641542d4578656d707420202020202020202020202020202020202020202020202020202020202020205020302e30300a1d21001b74001b4d004e6f6e2d56415420202020202020202020202020202020202020202020202020202020202020202020205020302e30300a1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a1d21001b74001b4d000a1b61011d21011b74001b4d004954454d5320534f4c440a1b61001d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d004974656d2020202020202020202020202020202020202020202020202020202020205174792020202020202020416d740a1d21011b74001b4d002d2d204472696e6b73202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d0054656120202020202020202020202020202020202020202020202020202020202020202031205020312c3233342e35300a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d00537562746f74616c2020202020202020202020202020202020202020202020202020202031205020312c3233342e35300a1d21001b74001b4d000a1d21011b74001b4d002d2d204d65616c73202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d00536f757020202020202020202020202020202020202020202020202020202020202020203420202020205020312e30300a1d21001b74001b4d0056657279206c6f6e6720f09f8d9c2070726f64756374206e616d6520666f72205520202020203220202020205020322e36370a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d00537562746f74616c202020202020202020202020202020202020202020202020202020203620202020205020332e36380a1d21001b74001b4d000a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d00546f74616c2020202020202020202020202020202020202020202020202020202020202037205020312c3233382e31380a1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a1d21001b74001b4d000a1b61011d21011b74001b4d005041594d454e54205452414e53414354494f4e530a1b61001d21011b74001b4d002d2d204743617368202d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21001b74001b4d0023442d31303120205245464552454e43452d544841542d49532d4c4f4e4745522d5448414e2d544845205020322e36370a1d21001b74001b4d0023442d31303220205245462d3220202020202020202020202020202020202020202020202020202020205020312e30300a1d21001b74001b4d002d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0a1d21011b74001b4d00537562746f74616c202020202020202020202020202020202020202020202020202020202020202020205020332e36380a1d21001b74001b4d000a1d21001b74001b4d003d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a1b61011d21001b74001b4d0047656e6572617465642062793a204d616e61676572204f6e650a1d21001b74001b4d005072696e7465643a2030392f31362f323032362c2030343a30343a303520504d0a1d21001b74001b4d002a2a2073797374656d2d67656e657261746564202a2a0a1d21001b74001b4d00506f776572656420627920504d475420466c6f772053756974650a0a0a0a0a0a1b4a1e1d564201"
+    }
+  ]
+}

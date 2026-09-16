@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A fullstack POS (Point of Sale) system for restaurant operations, built as a monorepo with web (Next.js 16) and mobile (React Native/Expo) frontends sharing a Convex backend. Features order management, product catalog with modifiers, table management, takeout workflows, discount/void processing, receipt printing, audit logging, and sales reporting.
+A fullstack POS (Point of Sale) system for restaurant operations, built as a monorepo sharing a Convex backend. Features order management, product catalog with modifiers, table management, takeout workflows, discount/void processing, receipt printing, audit logging, and sales reporting.
+
+**The Android POS is now native Kotlin.** `apps/android` is a Kotlin/Jetpack Compose 1:1 port of the React Native app and is where Android work happens. It ships as its **own application** (`com.pmgt.pos`, "PMGT Flow POS") and installs *alongside* the RN app rather than replacing it. `apps/native` stays in the tree as the porting reference and as the app still running on tills until cutover — treat it as the source of truth for behaviour, not as a place to add features. Its release workflow has been retired.
 
 ## Commands
 
@@ -36,6 +38,14 @@ cd apps/native && pnpm ios
 cd apps/native && pnpm android
 cd apps/native && pnpm start
 
+# Android (Kotlin) — Gradle, NOT pnpm/turbo. Run from apps/android.
+cd apps/android && ./gradlew :app:testDebugUnitTest   # host unit tests (the fast gate)
+cd apps/android && ./gradlew :app:lintDebug           # must stay at 0 errors
+cd apps/android && ./gradlew :app:installDebug        # build + install on the connected tablet
+cd apps/android && ./gradlew :app:assembleStaging     # staging variant
+cd apps/android && ./gradlew :app:assembleRelease     # release variant (needs signing config)
+cd apps/android && ./gradlew :app:connectedDebugAndroidTest  # WARNING: uninstalls the app under test, wiping its data
+
 # Convex CLI flag asymmetry (subtle):
 #   `npx convex deploy` defaults to PROD (does NOT accept --prod flag)
 #   `npx convex run <fn>` defaults to whatever local .env points to (DEV)
@@ -53,6 +63,7 @@ These skills MUST be invoked via the `Skill` tool before writing or reviewing co
 |--------------------|--------|
 | `apps/web` (Next.js/React) | `vercel-react-best-practices`, `vercel-composition-patterns` |
 | `apps/native` (React Native/Expo) | `vercel-react-native-skills`, `vercel-react-best-practices`, `vercel-composition-patterns` |
+| `apps/android` (Kotlin/Compose) | `frontend-design` for UI; no JS/React skills apply. Always read the RN source you are porting first. |
 | Any new UI, visual design, layout, or styling (web or native) | `frontend-design` |
 | New features, components, or behavior changes | `brainstorming` before implementation |
 | Multi-step tasks with a spec | `writing-plans`, then `executing-plans` |
@@ -93,7 +104,8 @@ Serena provides LSP-backed semantic tools. Prefer them over raw `Read` + `Grep` 
 
 ### Monorepo Structure
 - **apps/web** — Next.js 16 App Router, Tailwind CSS v4, Radix UI components, React Hook Form + Zod
-- **apps/native** — React Native 0.81 + Expo 54, Tamagui (UI/styling), React Navigation (bottom tabs + stack), Zustand for local state, Bluetooth ESC/POS receipt printing
+- **apps/android** — Native Kotlin POS: Jetpack Compose, SQLDelight over the legacy WatermelonDB file, OkHttp transport to Convex, Classic Bluetooth ESC/POS printing. Built with Gradle, outside the pnpm/Turborepo graph.
+- **apps/native** — React Native 0.81 + Expo 54, Tamagui (UI/styling), React Navigation (bottom tabs + stack), Zustand for local state, Bluetooth ESC/POS receipt printing. **Porting reference; being transitioned away from.**
 - **packages/backend** — Convex backend (schema, queries, mutations, actions, tests)
 - **packages/shared** — Shared utilities
 
@@ -196,6 +208,68 @@ Feature-based organization under `src/features/`:
 - `settings/` — Printer settings (Bluetooth ESC/POS)
 - `shared/` — Shared components, hooks, UI primitives
 
+### Android App (apps/android)
+
+Kotlin/Jetpack Compose, package root `com.pmgt.pos`. Packages mirror the RN feature folders:
+`browse/`, `catalog/`, `orders/`, `checkout/`, `printer/`, `settings/`, `closing/`, `updater/`,
+`sync/`, `db/`, `auth/`, `transport/`, `money/`.
+
+**This is a 1:1 port.** Behaviour is defined by `apps/native`, not by what looks correct. Several
+source quirks are preserved deliberately — do not "fix" them without a ticket:
+- The receipt preview's kitchen button is gated on the *receipt* printer's connection and bypasses
+  `kitchenPrintingEnabled`.
+- The receipt header keeps the raw `cardPaymentType`; the Other-to-custom substitution belongs to
+  the payment record, not the receipt.
+- Store socials are never printed — the RN source hardcodes `socials: undefined`.
+
+**Build variants** (`app/build.gradle.kts`). Each talks to its own backend; secrets come from
+Gradle properties or `apps/android/local.properties`, never from checked-in files:
+
+| Variant | Suffix | Convex URL property |
+|---|---|---|
+| `debug` | `.debug` | `CONVEX_URL_DEVELOPMENT` → `CONVEX_URL` |
+| `staging` | `.stg` | `CONVEX_URL_STAGING` → falls back to dev |
+| `release` | — | `CONVEX_URL_PRODUCTION` |
+
+**Local persistence.** SQLDelight drives the *legacy WatermelonDB file* at the app data root
+(`AndroidDatabase.legacyPath` strips `/databases`), using the exact generated DDL in `LegacyDdl.kt`.
+Never substitute SQLDelight's logical `Schema.create`.
+
+**Sync.** `TabletStartup` gates on an adoption check, then owns one `SyncManager` per adopted
+database. Known issue: the initial full pull only advances the watermark
+(`__watermelon_last_pulled_at`) at the very end, so an interrupted first sync restarts from scratch
+(~5 min per 22k rows).
+
+**Android platform constraints learned the hard way:**
+- Android 16 ignores `screenOrientation` on large screens unless the manifest also sets
+  `PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY`. Both are set; landscape is mandatory.
+- A Compose `Dialog` gets its own window and does **not** inherit the activity's immersive flags —
+  every dialog must call `HideSystemBarsInDialog()` or the navigation bar reappears.
+- Do not key a `Dialog` on a value that changes while it is open; changing the key destroys and
+  rebuilds the window, so the sheet visibly dismisses and reopens.
+- Bluetooth: a first connect races the OS bonding dialog. Retry once after 800 ms, but only if the
+  device really is in the paired list.
+- Instrumented tests compose on whichever thread resumes `TestMonotonicFrameClock`. Repositories
+  that emit from `Dispatchers.IO` must deliver on Main in tests, or composition crashes off-main.
+
+**Releases.** `.github/workflows/release-pos-kotlin.yml` publishes tag
+`kotlin-v<version>-<variant>`. `checkForUpdate` filters on the `kotlin-` prefix via its `product`
+argument so the two apps can never be offered each other's APK.
+
+**Telemetry.** Firebase Crashlytics and Analytics live in project `pmgt-flow-suite`, with one
+Firebase app per application id (`com.pmgt.pos`, `.stg`, `.debug`). `app/google-services.json` is
+committed and covers all three; a new variant or suffix needs `firebase apps:create ANDROID` and a
+re-downloaded config first, or the Google Services task fails the build.
+- Report through `telemetry/Telemetry` (process-wide, installed in `PosApplication`) and assert it in
+  host tests with the `RecordingTelemetry` JUnit rule.
+- A non-fatal names its `operation` (`sync.push`, `printer.connect`). Plain network `IOException`s
+  are dropped on purpose: Crashlytics keeps only the last few non-fatals per session.
+- Events and keys carry usage labels only — tender type, order type, printer role, store and device
+  ids. Peso amounts, order numbers, people's names and Bluetooth addresses stay on the tablet.
+- Screen views come from `onRoute` and the auth-shell screens; the manifest turns off automatic
+  screen reporting, which only ever sees the one activity. "Update installed" is Analytics'
+  automatic `app_update` event.
+
 ### Native App Styling (Tamagui)
 
 The native app uses Tamagui with `@tamagui/config/v5` plus `@tamagui/config/v5-reanimated`. Config lives in `apps/native/tamagui.config.ts`.
@@ -288,6 +362,15 @@ Required in `apps/web/.env.local`:
 
 Required in `apps/native/.env.local`:
 - `EXPO_PUBLIC_CONVEX_URL`
+
+Required in `apps/android/local.properties` (gitignored; Gradle properties also work):
+- `sdk.dir`
+- `CONVEX_URL` (or `CONVEX_URL_DEVELOPMENT`), `CONVEX_URL_STAGING`, `CONVEX_URL_PRODUCTION`
+- `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` — release signing only
+
+**There is no separate staging Convex deployment.** `packages/backend/.env.local` has both a
+`# Production` and a `# Staging` block and both currently point at the dev deployment, so the
+Android `staging` variant falls back to the dev URL unless `CONVEX_URL_STAGING` is set.
 
 ## UI Design Principles (POS)
 
