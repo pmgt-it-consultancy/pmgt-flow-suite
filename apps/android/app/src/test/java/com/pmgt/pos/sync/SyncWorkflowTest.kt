@@ -2,6 +2,7 @@ package com.pmgt.pos.sync
 
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.pmgt.pos.db.*
+import com.pmgt.pos.telemetry.RecordingTelemetry
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.*
 import kotlinx.serialization.encodeToString
 import okhttp3.mockwebserver.*
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 import java.nio.file.Files
 import java.util.concurrent.CopyOnWriteArrayList
@@ -18,6 +20,8 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 class SyncWorkflowTest {
+    @get:Rule val telemetry = RecordingTelemetry()
+
     private fun database(path: String = JdbcSqliteDriver.IN_MEMORY): PosDatabase {
         val driver = JdbcSqliteDriver(path)
         javaClass.getResource("/legacy-v3.sql")!!.readText().split(';')
@@ -39,11 +43,12 @@ class SyncWorkflowTest {
         val online = MutableStateFlow(true)
         val requests = CopyOnWriteArrayList<RecordedRequest>()
         var handler: (RecordedRequest) -> MockResponse = { MockResponse().setBody("""{"changes":{},"cursors":{},"complete":true,"timestamp":100}""") }
+        var register: () -> MockResponse = { MockResponse().setBody("""{"deviceCode":"07"}""") }
         init {
             server.dispatcher = object : Dispatcher() {
                 override fun dispatch(request: RecordedRequest): MockResponse {
                     requests += request
-                    return if (request.path == "/sync/registerDevice") MockResponse().setBody("""{"deviceCode":"07"}""") else handler(request)
+                    return if (request.path == "/sync/registerDevice") register() else handler(request)
                 }
             }
             server.start()
@@ -479,6 +484,40 @@ class SyncWorkflowTest {
             assertEquals(pending, h.db.get("orders", "foreign"))
             assertEquals(0, h.requests.count { it.path == "/sync/push" })
             assertTrue(startup.state.value.adoption is AdoptionState.Blocked)
+            startup.stop()
+        }
+    }
+
+    @Test fun failedSyncIsReportedWithThePhaseItFailedIn() = runBlocking {
+        Harness(database()).use { h ->
+            h.db.insertLocal("orders", row("local"))
+            h.handler = { if (it.path == "/sync/push") MockResponse().setResponseCode(503) else response(page()) }
+            h.sync.start("store")
+            eventually { h.requests.count { it.path == "/sync/push" } >= 2 }
+            // A persistent fault is one report per failure streak, not one per backoff retry.
+            assertEquals(listOf("sync.push"), telemetry.operations())
+        }
+    }
+
+    @Test fun failedRegistrationIsNamedAsRegistration() = runBlocking {
+        Harness(database()).use { h ->
+            h.register = { MockResponse().setResponseCode(503) }
+            h.sync.start("store")
+            eventually { h.sync.state.value.status == SyncStatus.Error }
+            assertEquals(listOf("sync.register"), telemetry.operations())
+        }
+    }
+
+    @Test fun quarantinedSyncIsReportedOnce() = runBlocking {
+        Harness(database()).use { h ->
+            h.handler = { if (it.path == "/sync/push") response("""{"success":true}""") else response(page()) }
+            val startup = TabletStartup({ AdoptedStorage(h.db, "test-device") }, h.http, h.scope, Dispatchers.IO, h.online)
+            assertTrue(startup.adopt("user", "store") is AdoptionState.Ready)
+            val manager = startup.sync.value!!
+            eventually { manager.state.value.lastPulledAt != null }
+            h.db.insertLocal("orders", JsonObject(row("foreign") + ("store_id" to JsonPrimitive("other-store"))))
+            manager.syncForDelivery()
+            assertEquals(listOf("sync.adoption_blocked"), telemetry.operations())
             startup.stop()
         }
     }

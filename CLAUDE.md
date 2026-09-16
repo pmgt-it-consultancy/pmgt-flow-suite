@@ -256,6 +256,20 @@ database. Known issue: the initial full pull only advances the watermark
 `kotlin-v<version>-<variant>`. `checkForUpdate` filters on the `kotlin-` prefix via its `product`
 argument so the two apps can never be offered each other's APK.
 
+**Telemetry.** Firebase Crashlytics and Analytics live in project `pmgt-flow-suite`, with one
+Firebase app per application id (`com.pmgt.pos`, `.stg`, `.debug`). `app/google-services.json` is
+committed and covers all three; a new variant or suffix needs `firebase apps:create ANDROID` and a
+re-downloaded config first, or the Google Services task fails the build.
+- Report through `telemetry/Telemetry` (process-wide, installed in `PosApplication`) and assert it in
+  host tests with the `RecordingTelemetry` JUnit rule.
+- A non-fatal names its `operation` (`sync.push`, `printer.connect`). Plain network `IOException`s
+  are dropped on purpose: Crashlytics keeps only the last few non-fatals per session.
+- Events and keys carry usage labels only — tender type, order type, printer role, store and device
+  ids. Peso amounts, order numbers, people's names and Bluetooth addresses stay on the tablet.
+- Screen views come from `onRoute` and the auth-shell screens; the manifest turns off automatic
+  screen reporting, which only ever sees the one activity. "Update installed" is Analytics'
+  automatic `app_update` event.
+
 ### Native App Styling (Tamagui)
 
 The native app uses Tamagui with `@tamagui/config/v5` plus `@tamagui/config/v5-reanimated`. Config lives in `apps/native/tamagui.config.ts`.

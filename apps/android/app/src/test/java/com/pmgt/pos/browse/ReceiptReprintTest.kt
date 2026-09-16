@@ -3,16 +3,31 @@ package com.pmgt.pos.browse
 import com.pmgt.pos.printer.OrderType
 import com.pmgt.pos.printer.PaymentMethod
 import com.pmgt.pos.printer.ServiceType
+import com.pmgt.pos.telemetry.RecordingTelemetry
 import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
 
 class ReceiptReprintTest {
+    @get:Rule val telemetry = RecordingTelemetry()
+
     private val zone = ZoneId.of("Asia/Manila")
+
+    @Test
+    fun `only a reprint that reaches the printer is logged`() = runTest {
+        val audit = FakeAudit(serverId = "srv-1")
+
+        reprintReceipt(detail(), audit) { error("printer offline") }
+        assertTrue(telemetry.events.isEmpty())
+        reprintReceipt(detail(), audit) {}
+
+        assertEquals(listOf("receipt_reprinted"), telemetry.eventNames())
+    }
 
     @Test
     fun `the audit is written before the receipt reaches the printer`() = runTest {

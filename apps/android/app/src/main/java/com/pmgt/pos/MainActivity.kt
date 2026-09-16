@@ -44,6 +44,9 @@ import com.pmgt.pos.updater.platform.AndroidUpdateNotifier
 import com.pmgt.pos.updater.platform.AndroidUpdateTransferPlatform
 import com.pmgt.pos.orders.LocalOrderRepository
 import com.pmgt.pos.sync.*
+import com.pmgt.pos.telemetry.FirebaseTelemetry
+import com.pmgt.pos.telemetry.Telemetry
+import com.pmgt.pos.telemetry.reportTabletContext
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -74,7 +77,11 @@ class PosApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Telemetry.install(FirebaseTelemetry(this))
+        Telemetry.key("build_variant", BuildConfig.UPDATE_VARIANT)
+        Telemetry.key("app_version", BuildConfig.UPDATE_VERSION)
         startup.bind(auth.state)
+        applicationScope.launch { startup.state.collect { reportTabletContext(it, startup.deviceId) } }
     }
 }
 
@@ -297,9 +304,17 @@ class MainActivity : ComponentActivity() {
                                 sync?.syncForDelivery()
                                 Unit
                             },
-                            onRoute = { services.lock.setCurrentRoute(it) },
+                            onRoute = {
+                                services.lock.setCurrentRoute(it)
+                                Telemetry.screen(it)
+                            },
                             syncStatus = syncState?.status ?: SyncStatus.Idle,
-                            onRetrySync = { scope.launch { sync?.syncNow() } },
+                            onRetrySync = {
+                                sync?.let { manager ->
+                                    Telemetry.event("sync_now")
+                                    scope.launch { manager.syncNow() }
+                                }
+                            },
                             catalogRepository =
                                 remember(database) {
                                     LocalCatalogRepository(database, Dispatchers.IO)

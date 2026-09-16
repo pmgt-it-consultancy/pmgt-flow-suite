@@ -1,6 +1,7 @@
 package com.pmgt.pos.checkout
 
 import com.pmgt.pos.orders.*
+import com.pmgt.pos.telemetry.Telemetry
 import com.pmgt.pos.transport.ConvexHttp
 import java.util.UUID
 import kotlinx.coroutines.*
@@ -45,7 +46,7 @@ class CheckoutSession(
     fun open() {
         if (opened) return
         opened = true
-        runAction {
+        runAction("checkout.open") {
             val completed = repository.resume(owner, route.orderId)
             mutable.value = mutable.value.copy(completed = completed)
             if (completed == null) {
@@ -53,8 +54,9 @@ class CheckoutSession(
                     repository.refreshTotals(owner, route.orderId)
                 } catch (e: CancellationException) {
                     throw e
-                } catch (_: Exception) {
+                } catch (failure: Exception) {
                     /* Source warm recalc has no alert. */
+                    Telemetry.nonFatal("checkout.refresh_totals", failure)
                 }
             }
         }
@@ -159,9 +161,10 @@ class CheckoutSession(
             mutable.value = state.value.copy(approvalVisible = false)
             val input = requireNotNull(approvalInput)
             val remove = removeId
-            runAction {
+            runAction(if (remove == null) "checkout.discount" else "checkout.remove_discount") {
                 if (remove == null) {
                     repository.apply(owner, route.orderId, actionId, input, permit)
+                    Telemetry.event("discount_applied", "discount_type" to input.type)
                     mutable.value =
                         state.value.copy(
                             alert =
@@ -189,22 +192,35 @@ class CheckoutSession(
             return
         }
         val lines = state.value.lines.toList()
-        runAction {
-            mutable.value =
-                state.value.copy(completed = repository.settle(owner, route, lines, cashierName))
+        runAction("checkout.settle") {
+            val completed = repository.settle(owner, route, lines, cashierName)
+            logSettled(completed)
+            mutable.value = state.value.copy(completed = completed)
         }
     }
 
-    fun retry() = runAction {
+    fun retry() = runAction("checkout.resume") {
         val completed = repository.resume(owner, route.orderId)
+        // Only a resumed payment returns a completion, and the settle that left it was never logged.
+        completed?.let(::logSettled)
         mutable.value = state.value.copy(completed = completed, needsResume = false)
     }
+
+    /** Usage only: which tenders and service mode, never amounts. */
+    private fun logSettled(completed: CompletedCheckout) =
+        Telemetry.event(
+            "order_settled",
+            "payment_method" to completed.lines.map { it.paymentMethod }.distinct().sorted().joinToString("+"),
+            "order_type" to completed.route.orderType,
+            // Counter orders choose dine-in or takeout; a table order is dine-in by its type.
+            "order_category" to (completed.route.orderCategory ?: completed.route.orderType),
+        )
 
     fun dismissAlert() {
         mutable.value = state.value.copy(alert = null)
     }
 
-    private fun runAction(action: suspend () -> Unit) {
+    private fun runAction(operation: String, action: suspend () -> Unit) {
         if (state.value.busy || !isCurrent()) return
         mutable.value = state.value.copy(busy = true)
         scope.launch {
@@ -213,6 +229,7 @@ class CheckoutSession(
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (error: Exception) {
+                if (error !is PaymentInvalid) Telemetry.nonFatal(operation, error)
                 val pending =
                     repository.pendingActions(owner.storeId).first().any {
                         it.orderId == route.orderId || it.state == FinancialActionState.Unreadable

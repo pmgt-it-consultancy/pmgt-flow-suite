@@ -3,6 +3,7 @@ package com.pmgt.pos.orders
 import com.pmgt.pos.browse.ItemModifier
 import com.pmgt.pos.browse.OrderLine
 import com.pmgt.pos.catalog.ProductChoice
+import com.pmgt.pos.telemetry.Telemetry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
@@ -190,6 +191,7 @@ class OrderEditorSession(
             else {
                 edits.flush()
                 repository.remove(id, reason)
+                Telemetry.event("item_voided")
             }
             edits.discard(id)
         }
@@ -262,6 +264,8 @@ class OrderEditorSession(
         }
         pendingCancellation?.let {
             repository.finishCancellation(it)
+            // Its discard failed after committing, so this is where that cancellation completes.
+            Telemetry.event("order_voided", "source" to "cancel")
             pendingCancellation = null
             cancellationStarted = false
             edits.discard()
@@ -288,6 +292,7 @@ class OrderEditorSession(
                 }
                 pendingCancellation = null
                 cancellationStarted = false
+                Telemetry.event("order_voided", "source" to "cancel")
             }
             edits.discard()
         }

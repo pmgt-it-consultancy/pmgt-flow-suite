@@ -4,6 +4,7 @@ import com.pmgt.pos.checkout.CheckoutRepository
 import com.pmgt.pos.checkout.PendingFinancialAction
 import com.pmgt.pos.printer.PrinterCall
 import com.pmgt.pos.sync.SyncOutcome
+import com.pmgt.pos.telemetry.Telemetry
 import java.time.LocalDateTime
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -230,6 +231,7 @@ class ClosingController(
                     )
                 )
                 checkCurrent(operationKey)
+                Telemetry.event("z_report_printed")
                 update {
                     it.copy(
                         report = after,

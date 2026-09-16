@@ -34,6 +34,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pmgt.pos.BuildConfig
 import com.pmgt.pos.R
+import com.pmgt.pos.telemetry.Telemetry
 import com.pmgt.pos.db.AdoptionState
 import com.pmgt.pos.sync.AdoptionGate
 import com.pmgt.pos.sync.TabletStartup
@@ -211,6 +212,7 @@ private fun LoginScreen(
     configured: Boolean,
     signIn: (String, String, (String) -> Unit) -> Unit,
 ) {
+    LaunchedEffect(Unit) { Telemetry.screen("LoginScreen") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var revealPassword by rememberSaveable { mutableStateOf(false) }
@@ -401,6 +403,7 @@ private fun LockScreen(
     consumeError: () -> Unit,
     unlock: (String, String, String?) -> Unit,
 ) {
+    LaunchedEffect(Unit) { Telemetry.screen("LockScreen") }
     val locked by lock.state.collectAsStateWithLifecycle()
     var pin by rememberSaveable { mutableStateOf("") }
     var time by remember { mutableLongStateOf(System.currentTimeMillis()) }

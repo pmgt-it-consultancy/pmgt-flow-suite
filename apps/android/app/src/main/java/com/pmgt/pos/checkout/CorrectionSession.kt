@@ -1,6 +1,7 @@
 package com.pmgt.pos.checkout
 
 import com.pmgt.pos.browse.money
+import com.pmgt.pos.telemetry.Telemetry
 import com.pmgt.pos.transport.ConvexHttp
 import java.util.UUID
 import kotlinx.coroutines.*
@@ -39,7 +40,7 @@ class CorrectionSession(
     fun open(kind: String) {
         if (state.value.busy || state.value.approvalVisible || !isCurrent()) return
         lastKind = kind
-        runAction {
+        runAction("correction.open") {
             val saved = repository.saved(owner, orderId)
             if (saved != null) {
                 lastKind = saved.input.kind
@@ -73,7 +74,7 @@ class CorrectionSession(
 
     fun resumeSaved() {
         val saved = state.value.saved ?: return
-        runAction {
+        runAction("correction.resume") {
             complete(repository.resume(owner, orderId, saved.actionId))
             mutable.value = state.value.copy(saved = null)
         }
@@ -115,11 +116,14 @@ class CorrectionSession(
                 return@launch
             val input = approvedInput ?: return@launch
             mutable.value = state.value.copy(approvalVisible = false)
-            runAction { complete(repository.correct(owner, orderId, actionId, input, permit)) }
+            runAction("correction.${input.kind}") {
+                complete(repository.correct(owner, orderId, actionId, input, permit))
+            }
         }
     }
 
     private fun complete(result: CompletedCorrection) {
+        if (lastKind == "void") Telemetry.event("order_voided", "source" to "correction")
         val alert =
             if (lastKind == "void") CheckoutAlert("Success", "Order has been voided")
             else
@@ -137,7 +141,7 @@ class CorrectionSession(
         mutable.value = state.value.copy(alert = null)
     }
 
-    private fun runAction(block: suspend () -> Unit) {
+    private fun runAction(operation: String, block: suspend () -> Unit) {
         if (state.value.busy || !isCurrent()) return
         mutable.value = state.value.copy(busy = true)
         scope.launch {
@@ -146,6 +150,7 @@ class CorrectionSession(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
+                Telemetry.nonFatal(operation, e)
                 mutable.value =
                     state.value.copy(
                         alert = CheckoutAlert("Error", e.message ?: "Failed to process correction")

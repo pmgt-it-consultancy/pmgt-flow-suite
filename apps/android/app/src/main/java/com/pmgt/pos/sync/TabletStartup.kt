@@ -2,6 +2,7 @@ package com.pmgt.pos.sync
 
 import com.pmgt.pos.auth.AuthState
 import com.pmgt.pos.db.*
+import com.pmgt.pos.telemetry.Telemetry
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -37,6 +38,9 @@ class TabletStartup(
     val sync: StateFlow<SyncManager?> = manager.asStateFlow()
     val database: PosDatabase?
         get() = synchronized(monitor) { if (current.value.adoption is AdoptionState.Ready) storage?.database else null }
+    /** The tablet's identity once storage has opened; it names the device, so it outlives sign-out. */
+    val deviceId: String?
+        get() = synchronized(monitor) { storage?.deviceId }
 
     fun bind(auth: StateFlow<AuthState>) = synchronized(monitor) {
         check(binding == null) { "Startup is already observing authentication" }
@@ -72,6 +76,7 @@ class TabletStartup(
             currentCoroutineContext().ensureActive()
             val ready = synchronized(monitor) {
                 requireSession(epoch, userId, storeId)
+                if (result is AdoptionState.Blocked) Telemetry.nonFatal("startup.adoption_blocked", AdoptionBlocked(result.message))
                 current.value = TabletStartupState(userId, storeId, result)
                 if (result is AdoptionState.Ready) {
                     SyncManager(adopted.database, http, adopted.deviceId, scope, io, online,
@@ -96,11 +101,19 @@ class TabletStartup(
             throw cancelled
         } catch (blocked: AdoptionBlocked) {
             val result = AdoptionState.Blocked(blocked.message ?: "Local adoption is blocked. Tablet data is preserved.")
-            synchronized(monitor) { requireSession(epoch, userId, storeId); current.value = TabletStartupState(userId, storeId, result) }
+            synchronized(monitor) {
+                requireSession(epoch, userId, storeId)
+                Telemetry.nonFatal("startup.adoption_blocked", blocked)
+                current.value = TabletStartupState(userId, storeId, result)
+            }
             result
-        } catch (_: Exception) {
+        } catch (failure: Exception) {
             val result = AdoptionState.PendingVerification()
-            synchronized(monitor) { requireSession(epoch, userId, storeId); current.value = TabletStartupState(userId, storeId, result) }
+            synchronized(monitor) {
+                requireSession(epoch, userId, storeId)
+                Telemetry.nonFatal("startup.adoption", failure)
+                current.value = TabletStartupState(userId, storeId, result)
+            }
             result
         }
     }

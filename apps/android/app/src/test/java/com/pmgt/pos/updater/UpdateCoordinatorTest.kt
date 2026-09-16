@@ -1,5 +1,7 @@
 package com.pmgt.pos.updater
 
+import com.pmgt.pos.telemetry.RecordingTelemetry
+import com.pmgt.pos.transport.ConvexException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -9,9 +11,49 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
 
 class UpdateCoordinatorTest {
+    @get:Rule val telemetry = RecordingTelemetry()
+
+    @Test
+    fun `failed check download and install are reported by stage but authorization is not`() = runTest {
+        val transfer = FakeTransfer()
+        val backend = FakeBackend().apply { checkFailure = ConvexException(500, "Server request failed (500)") }
+        val installer = FakeInstaller(InstallAttempt.AuthorizationRequired)
+        val coordinator = coordinator(transfer, installer, backend)
+
+        coordinator.check()
+        backend.checkFailure = null
+        coordinator.check()
+        coordinator.startDownload()
+        runCurrent()
+        transfer.emit(UpdateTransferEvent.Failed(coordinator.state.value.activeGeneration!!, "Storage full"))
+        runCurrent()
+        assertEquals(DownloadStatus.FAILED, coordinator.state.value.downloadStatus)
+        transfer.restored = UpdateTransferEvent.Completed(9, "/updater/update.apk", 50)
+        coordinator.restore()
+        coordinator.install()
+        installer.result = InstallAttempt.IncompatibleSignature
+        coordinator.install()
+
+        assertEquals(listOf("update.check", "update.download", "update.install"), telemetry.operations())
+    }
+
+    @Test
+    fun `a download failure restored on reopening Software Update is not reported again`() = runTest {
+        val transfer = FakeTransfer()
+        transfer.restored = UpdateTransferEvent.Failed(3, "Update download was interrupted")
+        val coordinator = coordinator(transfer)
+
+        coordinator.restore()
+        coordinator.restore()
+
+        assertEquals(DownloadStatus.FAILED, coordinator.state.value.downloadStatus)
+        assertEquals(emptyList<String>(), telemetry.operations())
+    }
+
     @Test
     fun `approved forced prompt leaves Software Update usable without granting a bypass`() {
         val forced = updateInfo(isForced = true)
@@ -75,9 +117,10 @@ class UpdateCoordinatorTest {
     private fun kotlinx.coroutines.test.TestScope.coordinator(
         transfer: FakeTransfer,
         installer: FakeInstaller = FakeInstaller(InstallAttempt.InstallerLaunched),
+        backend: FakeBackend = FakeBackend(),
     ) =
         UpdateCoordinator(
-            backend = FakeBackend(),
+            backend = backend,
             transfer = transfer,
             installer = installer,
             notifier = FakeNotifier(),
@@ -88,8 +131,12 @@ class UpdateCoordinatorTest {
         )
 
     private class FakeBackend : UpdateBackend {
-        override suspend fun check(currentVersion: String, variant: String) =
-            UpdateCheckResult.Available(updateInfo())
+        var checkFailure: Exception? = null
+
+        override suspend fun check(currentVersion: String, variant: String): UpdateCheckResult {
+            checkFailure?.let { throw it }
+            return UpdateCheckResult.Available(updateInfo())
+        }
 
         override suspend fun resolveDownloadUrl(assetUrl: String) = "https://example.invalid/update.apk"
     }

@@ -1,5 +1,6 @@
 package com.pmgt.pos.updater
 
+import com.pmgt.pos.telemetry.Telemetry
 import java.util.concurrent.atomic.AtomicLong
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +42,7 @@ class UpdateCoordinator(
                 downloadStatus = DownloadStatus.DOWNLOADING,
             )
         }
-        accept(event)
+        accept(event, live = false)
     }
 
     suspend fun check() {
@@ -79,6 +80,7 @@ class UpdateCoordinator(
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (failure: Exception) {
+            Telemetry.nonFatal("update.check", failure)
             mutableState.update {
                 it.copy(isChecking = false, error = failure.message ?: "Update check failed")
             }
@@ -112,6 +114,7 @@ class UpdateCoordinator(
                 throw cancelled
             } catch (failure: Exception) {
                 if (state.value.activeGeneration == generation) {
+                    Telemetry.nonFatal("update.download", failure)
                     mutableState.update {
                         it.copy(
                             downloadStatus = DownloadStatus.FAILED,
@@ -129,6 +132,10 @@ class UpdateCoordinator(
     suspend fun install() {
         val downloaded = state.value.downloaded ?: return
         val attempt = installer.install(downloaded)
+        when (attempt) {
+            InstallAttempt.AuthorizationRequired, InstallAttempt.InstallerLaunched -> Unit
+            else -> Telemetry.nonFatal("update.install", UpdateFailed(attempt.toString()))
+        }
         mutableState.update {
             when (attempt) {
                 InstallAttempt.AuthorizationRequired ->
@@ -165,7 +172,8 @@ class UpdateCoordinator(
         notifyQuietly { notifier.dismissProgress() }
     }
 
-    private suspend fun accept(event: UpdateTransferEvent) {
+    /** A restored event replays saved transfer state, so a failure it carries was already reported. */
+    private suspend fun accept(event: UpdateTransferEvent, live: Boolean = true) {
         if (state.value.activeGeneration != event.generation) return
         val version = state.value.updateInfo?.latestVersion.orEmpty()
         when (event) {
@@ -199,6 +207,7 @@ class UpdateCoordinator(
                 notifyQuietly { notifier.show(UpdateNotificationKind.READY, version) }
             }
             is UpdateTransferEvent.Failed -> {
+                if (live) Telemetry.nonFatal("update.download", UpdateFailed(event.message))
                 mutableState.update {
                     it.copy(
                         downloadStatus = DownloadStatus.FAILED,
@@ -224,3 +233,6 @@ class UpdateCoordinator(
     }
 
 }
+
+/** A failed update stage that reached the coordinator as a result rather than an exception. */
+private class UpdateFailed(message: String) : Exception(message)

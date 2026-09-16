@@ -4,14 +4,45 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.pmgt.pos.browse.BrowseDatabaseContract.row
 import com.pmgt.pos.catalog.*
 import com.pmgt.pos.db.*
+import com.pmgt.pos.telemetry.RecordingTelemetry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.*
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class OrderEditorSessionTest {
+    @get:Rule val telemetry = RecordingTelemetry()
+
+    @Test
+    fun removingASentItemAndCancellingTheOrderAreLoggedButDraftEditsAreNot() = runTest {
+        database().use { db ->
+            val repo = LocalOrderRepository(db, UnconfinedTestDispatcher(testScheduler), { "d" })
+            val session =
+                OrderEditorSession(EditorRoute("s", "t", "Table 1"), repo, backgroundScope) {}
+            session.add(choice)
+            session.add(choice)
+            session.remove(session.state.value.lines.first().item.id)
+            assertTrue(telemetry.events.isEmpty())
+
+            session.send(1.0)
+            session.loaded(repo.cart("s", session.state.value.orderId!!).first())
+            session.remove(db.select("order_items").single().string("id")!!, "Wrong item")
+            session.discard()
+
+            assertEquals(
+                listOf(
+                    RecordingTelemetry.Event("item_voided", emptyMap()),
+                    RecordingTelemetry.Event("order_voided", mapOf("source" to "cancel")),
+                ),
+                telemetry.events,
+            )
+            assertEquals("voided", db.select("orders").single().string("status"))
+        }
+    }
+
     private fun database() =
         PosDatabase(
                 JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also { LegacySqlSchema.create(it) }

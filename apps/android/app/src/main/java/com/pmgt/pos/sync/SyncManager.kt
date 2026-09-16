@@ -1,6 +1,7 @@
 package com.pmgt.pos.sync
 
 import com.pmgt.pos.db.PosDatabase
+import com.pmgt.pos.telemetry.Telemetry
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -127,7 +128,7 @@ class SyncManager(
             return if (delivery(active) is SyncOutcome.Delivered) ResyncResult.Ready
                 else ResyncResult.Unavailable(ResyncResult.Reason.Failed)
         } catch (blocked: com.pmgt.pos.db.AdoptionBlocked) {
-            quarantine(active, blocked.message!!)
+            quarantine(active, blocked)
             return ResyncResult.Unavailable(ResyncResult.Reason.Failed)
         } finally {
             synchronized(monitor) { active.resyncing = false }
@@ -142,7 +143,7 @@ class SyncManager(
         val count = try {
             database(active) { pendingWork(db, active.storeId, deviceId).current.rowCount() }
         } catch (blocked: com.pmgt.pos.db.AdoptionBlocked) {
-            quarantine(active, blocked.message!!)
+            quarantine(active, blocked)
             return SyncOutcome.Failed(blocked.message!!)
         }
         return if (count > 0) SyncOutcome.Pending(count) else SyncOutcome.Delivered(current.value.lastPulledAt ?: now())
@@ -182,11 +183,20 @@ class SyncManager(
                 } catch (cancelled: CancellationException) {
                     throw cancelled
                 } catch (blocked: com.pmgt.pos.db.AdoptionBlocked) {
-                    quarantine(active, blocked.message!!)
+                    quarantine(active, blocked)
                     return
-                } catch (_: Exception) {
+                } catch (failure: Exception) {
                     synchronized(monitor) {
                         checkActive(active)
+                        // Once per failure streak: a persistent fault retried every backoff would
+                        // crowd every other non-fatal out of Crashlytics' small per-session buffer.
+                        if (active.attempt == 0) {
+                            val stage = current.value.progress?.phase?.name?.lowercase()
+                            Telemetry.nonFatal(
+                                "sync." + if (stage != null && !active.registered) "register" else stage ?: "start",
+                                failure,
+                            )
+                        }
                         current.value = current.value.copy(status = SyncStatus.Error, lastError = "Synchronization failed. Pending changes are preserved.", progress = null)
                         val wait = listOf(2_000L, 5_000L, 15_000L, 60_000L)[active.attempt.coerceAtMost(3)]
                         active.attempt = (active.attempt + 1).coerceAtMost(3)
@@ -311,9 +321,11 @@ class SyncManager(
         if (!online.value) throw CancellationException("Sync session offline")
     }
 
-    private fun quarantine(active: Session, message: String) {
+    private fun quarantine(active: Session, blocked: com.pmgt.pos.db.AdoptionBlocked) {
+        val message = blocked.message!!
         synchronized(monitor) {
             if (session !== active) return
+            if (active.blocked == null) Telemetry.nonFatal("sync.adoption_blocked", blocked)
             active.blocked = message
             active.pending = false
             current.value = current.value.copy(status = SyncStatus.Error, lastError = message, progress = null)

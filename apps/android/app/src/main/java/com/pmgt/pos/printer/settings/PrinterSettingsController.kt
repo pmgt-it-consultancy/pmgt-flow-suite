@@ -6,6 +6,7 @@ import com.pmgt.pos.printer.PrinterCall
 import com.pmgt.pos.printer.ReceiptDocument
 import com.pmgt.pos.printer.ReceiptFormatter
 import com.pmgt.pos.printer.TestPrintFormatter
+import com.pmgt.pos.telemetry.Telemetry
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 import kotlinx.coroutines.CancellationException
@@ -70,6 +71,9 @@ class PrinterSettingsController(
                 if (connected) pending.remove(id)
             }
             if (pending.isEmpty()) break
+        }
+        pending.keys.forEach {
+            reported("connect", it, PrinterOperationFailed("Failed to connect to printer at startup"))
         }
         mutableState.update {
             it.copy(connectionStatus = status, isInitialized = true)
@@ -189,6 +193,9 @@ class PrinterSettingsController(
             }
         }
         if (connected && !published) retireUnpublishedConnection(device.address, connectionToken)
+        if (!connected && published) {
+            reported("connect", device.address, PrinterOperationFailed("Failed to connect to new printer"))
+        }
         return if (connected && published) PrinterAddResult.Connected
         else PrinterAddResult.SavedConnectionFailed
     }
@@ -271,6 +278,7 @@ class PrinterSettingsController(
             }
         }
         if (connected && !published) retireUnpublishedConnection(id, connectionToken)
+        if (!connected && published) reported("reconnect", id, PrinterOperationFailed("Failed to reconnect printer"))
         return connected && published
     }
 
@@ -312,6 +320,7 @@ class PrinterSettingsController(
             if (attempt < MAX_RECONNECT_ATTEMPTS - 1) pause(BACKOFF_MILLIS[attempt])
         }
         publishStatus(id, PrinterConnectionStatus.FAILED, resetAttempts = false)
+        reported("reconnect", id, PrinterOperationFailed("Failed to reconnect printer"))
     }
 
     /** Native ACL connect for a tracked printer. */
@@ -391,7 +400,7 @@ class PrinterSettingsController(
             mutableState.value.receiptPrinter
                 ?: throw PrinterOperationFailed("No receipt printer configured")
         if (!connectPrinter(printer.id)) {
-            throw PrinterOperationFailed("Failed to connect to receipt printer")
+            throw reported("connect", printer.id, PrinterOperationFailed("Failed to connect to receipt printer"))
         }
         val calls =
             ReceiptFormatter.format(
@@ -400,7 +409,7 @@ class PrinterSettingsController(
                 mutableState.value.minimalReceiptEnabled,
             )
         if (!transport.writeDocument(printer.id, calls)) {
-            throw PrinterOperationFailed("Failed to send receipt")
+            throw reported("write", printer.id, PrinterOperationFailed("Failed to send receipt"))
         }
     }
 
@@ -411,11 +420,16 @@ class PrinterSettingsController(
     suspend fun printKitchenTicket(document: KitchenTicketDocument) {
         if (!mutableState.value.kitchenPrintingEnabled) return
         val printer = mutableState.value.kitchenPrinter ?: return
-        if (!connectPrinter(printer.id)) return
-        transport.writeDocument(
-            printer.id,
-            KitchenTicketFormatter.format(document, printer.paperWidth.charsPerLine),
-        )
+        if (!connectPrinter(printer.id)) {
+            reported("connect", printer.id, PrinterOperationFailed("Failed to connect to kitchen printer"))
+            return
+        }
+        val accepted =
+            transport.writeDocument(
+                printer.id,
+                KitchenTicketFormatter.format(document, printer.paperWidth.charsPerLine),
+            )
+        if (!accepted) reported("write", printer.id, PrinterOperationFailed("Failed to send kitchen ticket"))
     }
 
     /**
@@ -427,12 +441,14 @@ class PrinterSettingsController(
             mutableState.value.previewKitchenPrinter
                 ?: throw PrinterOperationFailed("No kitchen printer configured")
         if (!connectPrinter(printer.id)) {
-            throw PrinterOperationFailed("Failed to connect to printer")
+            throw reported("connect", printer.id, PrinterOperationFailed("Failed to connect to printer"))
         }
-        transport.writeDocument(
-            printer.id,
-            KitchenTicketFormatter.format(document, printer.paperWidth.charsPerLine),
-        )
+        val accepted =
+            transport.writeDocument(
+                printer.id,
+                KitchenTicketFormatter.format(document, printer.paperWidth.charsPerLine),
+            )
+        if (!accepted) reported("write", printer.id, PrinterOperationFailed("Failed to send kitchen ticket"))
     }
 
     /** Already-formatted document (Z report) for the selected receipt printer. */
@@ -441,10 +457,10 @@ class PrinterSettingsController(
             mutableState.value.receiptPrinter
                 ?: throw PrinterOperationFailed("No receipt printer configured")
         if (!connectPrinter(printer.id)) {
-            throw PrinterOperationFailed("Failed to connect to receipt printer")
+            throw reported("connect", printer.id, PrinterOperationFailed("Failed to connect to receipt printer"))
         }
         if (!transport.writeDocument(printer.id, calls)) {
-            throw PrinterOperationFailed("Failed to send document")
+            throw reported("write", printer.id, PrinterOperationFailed("Failed to send document"))
         }
     }
 
@@ -463,18 +479,24 @@ class PrinterSettingsController(
             mutableState.value.receiptPrinter
                 ?: throw PrinterOperationFailed("No receipt printer configured")
         if (!connectPrinter(printer.id)) {
-            throw PrinterOperationFailed("Failed to connect to receipt printer")
+            throw reported("connect", printer.id, PrinterOperationFailed("Failed to connect to receipt printer"))
         }
-        transport.openCashDrawer(printer.id)
+        try {
+            transport.openCashDrawer(printer.id)
+        } catch (failure: PrinterOperationFailed) {
+            throw reported("drawer", printer.id, failure)
+        }
     }
 
     suspend fun testPrint(id: String, displayDateTime: String) {
         if (mutableState.value.connectionStatus[id] != PrinterConnectionStatus.CONNECTED) {
-            if (!connectPrinter(id)) throw PrinterOperationFailed("Failed to connect to printer")
+            if (!connectPrinter(id)) {
+                throw reported("connect", id, PrinterOperationFailed("Failed to connect to printer"))
+            }
         }
         val name = mutableState.value.printers.firstOrNull { it.id == id }?.name ?: "Unknown Printer"
         val accepted = transport.writeDocument(id, TestPrintFormatter.format(name, displayDateTime))
-        if (!accepted) throw PrinterOperationFailed("Failed to send test print")
+        if (!accepted) throw reported("write", id, PrinterOperationFailed("Failed to send test print"))
     }
 
     private suspend fun connectPrinter(id: String): Boolean {
@@ -500,6 +522,16 @@ class PrinterSettingsController(
         }
         if (connected && !published) retireUnpublishedConnection(id, connectionToken)
         return connected && published
+    }
+
+    /**
+     * A print, drawer or reconnect that failed after the transport's own bonding retry. Only the
+     * printer's role is attached; its Bluetooth address never leaves the tablet.
+     */
+    private fun reported(operation: String, id: String, failure: PrinterOperationFailed): PrinterOperationFailed {
+        val role = mutableState.value.printers.firstOrNull { it.id == id }?.role?.name?.lowercase() ?: "unknown"
+        Telemetry.nonFatal("printer.$operation", failure, "printer_role" to role)
+        return failure
     }
 
     private suspend fun persistFlag(update: (PrinterSettings) -> PrinterSettings) {

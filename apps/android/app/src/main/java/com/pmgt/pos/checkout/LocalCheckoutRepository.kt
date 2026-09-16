@@ -168,7 +168,7 @@ class LocalCheckoutRepository(
                         val view = readView(db, route.orderId)
                         val due = view.cart.checkoutTotals().netSales
                         check(lines.isNotEmpty()) { "Please add a payment method" }
-                        PaymentMath.validation(lines, due)?.let { error(it) }
+                        PaymentMath.validation(lines, due)?.let { throw PaymentInvalid(it) }
                         val payments = PaymentMath.build(lines, due)
                         check(
                             payments.all {

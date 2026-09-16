@@ -2,6 +2,9 @@ package com.pmgt.pos.checkout
 
 import kotlinx.serialization.Serializable
 
+/** Tender the cashier must correct; its message is shown to staff and may carry an amount. */
+class PaymentInvalid(message: String) : IllegalStateException(message)
+
 @Serializable
 data class PaymentLine(
     val id: String = "1",

@@ -2,6 +2,7 @@ package com.pmgt.pos.printer.settings
 
 import com.pmgt.pos.printer.PrinterCall
 import com.pmgt.pos.printer.TestPrintFormatter
+import com.pmgt.pos.telemetry.RecordingTelemetry
 import java.util.concurrent.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
@@ -11,9 +12,73 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
 
 class PrinterSettingsControllerTest {
+    @get:Rule val telemetry = RecordingTelemetry()
+
+    @Test
+    fun `a print that cannot reach its printer is reported with the role and never the address`() = runTest {
+        val persistence = FakePersistence(PrinterSettings(printers = listOf(printer("AA:BB"))))
+        val controller = controller(persistence, FakeTransport(defaultConnect = false))
+        controller.initialize()
+        telemetry.nonFatals.clear()
+
+        assertTrue(runCatching { controller.printReceiptCalls(listOf(PrinterCall.OpenDrawer)) }.isFailure)
+
+        assertEquals(listOf("printer.connect"), telemetry.operations())
+        assertEquals(mapOf("printer_role" to "receipt"), telemetry.nonFatals.single().context)
+        assertFalse(telemetry.nonFatals.single().error.message.orEmpty().contains("AA:BB"))
+    }
+
+    @Test
+    fun `printers still unreachable after startup retries and a failed add are each reported once`() = runTest {
+        val persistence =
+            FakePersistence(
+                PrinterSettings(
+                    printers = listOf(printer("R"), printer("K", role = PrinterRole.KITCHEN))
+                )
+            )
+        val controller = controller(persistence, FakeTransport(defaultConnect = false))
+
+        controller.initialize()
+        controller.addPrinter(PrinterDevice("New", "N"), PrinterRole.RECEIPT, PrinterPaperWidth.MM58)
+
+        assertEquals(listOf("printer.connect", "printer.connect", "printer.connect"), telemetry.operations())
+        assertEquals(
+            listOf("receipt", "kitchen", "receipt"),
+            telemetry.nonFatals.map { it.context.getValue("printer_role") },
+        )
+    }
+
+    @Test
+    fun `a document the printer refuses is reported`() = runTest {
+        val persistence = FakePersistence(PrinterSettings(printers = listOf(printer("AA"))))
+        val transport = FakeTransport().apply { writeAccepted = false }
+        val controller = controller(persistence, transport)
+        controller.initialize()
+
+        assertTrue(runCatching { controller.printReceiptCalls(listOf(PrinterCall.OpenDrawer)) }.isFailure)
+
+        assertEquals(listOf("printer.write"), telemetry.operations())
+    }
+
+    @Test
+    fun `a lost printer is reported once auto reconnect gives up`() = runTest {
+        val persistence =
+            FakePersistence(PrinterSettings(printers = listOf(printer("AA", role = PrinterRole.KITCHEN))))
+        val transport = FakeTransport(connectResults = ArrayDeque(listOf(true)))
+        val controller = controller(persistence, transport)
+        controller.initialize()
+        transport.connectResults.addAll(List(5) { false })
+
+        controller.autoReconnect("AA")
+
+        assertEquals(listOf("printer.reconnect"), telemetry.operations())
+        assertEquals(mapOf("printer_role" to "kitchen"), telemetry.nonFatals.single().context)
+    }
+
     @Test
     fun `add persists before connect and a failed connection retains the saved printer`() = runTest {
         val persistence = FakePersistence()
@@ -462,6 +527,7 @@ private class FakeTransport(
     val documents = mutableListOf<Pair<String, List<PrinterCall>>>()
     val disconnects = mutableListOf<String>()
     var connects = 0
+    var writeAccepted = true
 
     override suspend fun enableBluetooth() { enableCalls++ }
     override suspend fun pairedDevices() = paired
@@ -476,6 +542,6 @@ private class FakeTransport(
     override suspend fun openCashDrawer(address: String) = Unit
     override suspend fun writeDocument(address: String, calls: List<PrinterCall>): Boolean {
         documents += address to calls
-        return true
+        return writeAccepted
     }
 }

@@ -4,14 +4,37 @@ import com.pmgt.pos.checkout.*
 import com.pmgt.pos.orders.*
 import com.pmgt.pos.printer.PrinterCall
 import com.pmgt.pos.sync.SyncOutcome
+import com.pmgt.pos.telemetry.RecordingTelemetry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 
 class ClosingWorkflowTest {
+    @get:Rule val telemetry = RecordingTelemetry()
+
+    @Test
+    fun `a printed Z-Report is logged and a failed print is not`() = runTest {
+        val failing = controller(printer = { throw IllegalStateException("transport") })
+        failing.bind("store")
+        failing.awaitIdle()
+        failing.print()
+        failing.awaitIdle()
+        assertTrue(telemetry.events.isEmpty())
+
+        val controller = controller()
+        controller.bind("store")
+        controller.awaitIdle()
+        controller.print()
+        controller.awaitIdle()
+
+        assertEquals("Z-Report printed successfully.", controller.state.value.notice?.message)
+        assertEquals(listOf("z_report_printed"), telemetry.eventNames())
+    }
+
     @Test
     fun `server business date initializes an after-midnight session and schedule supplies custom defaults`() =
         runTest {

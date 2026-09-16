@@ -12,6 +12,7 @@ import com.pmgt.pos.printer.ReceiptDocument
 import com.pmgt.pos.printer.ReceiptItem
 import com.pmgt.pos.printer.ReceiptPayment
 import com.pmgt.pos.printer.ServiceType
+import com.pmgt.pos.telemetry.Telemetry
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -72,6 +73,7 @@ suspend fun reprintReceipt(
     }
     return try {
         print(detail.toReceipt())
+        Telemetry.event("receipt_reprinted")
         ReprintResult.Printed
     } catch (cancelled: CancellationException) {
         throw cancelled

@@ -4,6 +4,7 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.pmgt.pos.auth.AuthState
 import com.pmgt.pos.auth.SignedInUser
 import com.pmgt.pos.db.*
+import com.pmgt.pos.telemetry.RecordingTelemetry
 import com.pmgt.pos.transport.ConvexHttp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,12 +12,15 @@ import kotlinx.serialization.json.*
 import kotlinx.serialization.encodeToString
 import okhttp3.mockwebserver.*
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 class StartupWorkflowTest {
+    @get:Rule val telemetry = RecordingTelemetry()
+
     private fun database(): PosDatabase {
         val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
         javaClass.getResource("/legacy-v3.sql")!!.readText().split(';').filter { it.isNotBlank() }.forEach { driver.execute(null, it, 0) }
@@ -284,6 +288,28 @@ class StartupWorkflowTest {
             assertTrue(invalid.adopt("user", "store") is AdoptionState.Blocked)
             assertNull(invalid.sync.value)
             startup.stop(); invalid.stop(); scope.cancel()
+        }
+        db.close()
+    }
+
+    @Test fun blockedAdoptionIsReportedButOfflineVerificationIsNot() = runBlocking {
+        val db = database(); seed(db)
+        MockWebServer().use { server ->
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest) = if (request.path == "/api/query") success("""{"_id":"server","storeId":"other-store"}""") else MockResponse().setBody(emptyPage)
+            }
+            server.start()
+            val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+            val http = ConvexHttp(server.url("/").toString())
+            val offline = TabletStartup({ AdoptedStorage(db, "test-device") }, http, scope, Dispatchers.IO, MutableStateFlow(false))
+            assertTrue(offline.adopt("user", "store") is AdoptionState.PendingVerification)
+            assertEquals(emptyList<String>(), telemetry.operations())
+            val missing = TabletStartup({ AdoptedStorage(db, "test-device") }, http, scope, Dispatchers.IO, MutableStateFlow(true))
+            assertTrue(missing.adopt("user", "store") is AdoptionState.Blocked)
+            val unreadable = TabletStartup({ throw AdoptionBlocked("Unsupported local schema version") }, http, scope, Dispatchers.IO, MutableStateFlow(true))
+            assertTrue(unreadable.adopt("user", "store") is AdoptionState.Blocked)
+            assertEquals(listOf("startup.adoption_blocked", "startup.adoption_blocked"), telemetry.operations())
+            offline.stop(); missing.stop(); unreadable.stop(); scope.cancel()
         }
         db.close()
     }
