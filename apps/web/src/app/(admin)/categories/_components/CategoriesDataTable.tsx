@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import type { PaginationStatus } from "convex/react";
 import {
   ArrowDown,
   ArrowUp,
@@ -53,6 +54,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AdminDataControls } from "../../_shared/AdminDataControls";
+import { LoadMoreFooter } from "../../_shared/LoadMoreFooter";
 import { SortableTableRow } from "../../_shared/SortableTableRow";
 
 interface CategoryData {
@@ -66,7 +68,11 @@ interface CategoryData {
 }
 
 interface CategoriesDataTableProps {
-  categories: CategoryData[] | undefined;
+  categories: CategoryData[];
+  pageStatus: PaginationStatus;
+  pageSize: number;
+  onLoadMore: (numItems: number) => void;
+  allCategories: CategoryData[] | undefined;
   filteredCategories: CategoryData[] | undefined;
   selectedStoreId: Id<"stores"> | null;
   searchQuery: string;
@@ -80,13 +86,21 @@ interface CategoriesDataTableProps {
   sortBy: "menu" | "name" | "products";
   onSortByChange: (value: "menu" | "name" | "products") => void;
   onResetFilters: () => void;
-  onReorder: (categoryIds: Id<"categories">[]) => Promise<void>;
+  onMoveSortOrder: (args: {
+    categoryId: Id<"categories">;
+    beforeId?: Id<"categories">;
+    afterId?: Id<"categories">;
+  }) => Promise<void>;
   onEdit: (category: CategoryData) => void;
   onDuplicate: (category: CategoryData) => void;
 }
 
 export function CategoriesDataTable({
   categories,
+  pageStatus,
+  pageSize,
+  onLoadMore,
+  allCategories,
   filteredCategories,
   selectedStoreId,
   searchQuery,
@@ -100,7 +114,7 @@ export function CategoriesDataTable({
   sortBy,
   onSortByChange,
   onResetFilters,
-  onReorder,
+  onMoveSortOrder,
   onEdit,
   onDuplicate,
 }: CategoriesDataTableProps) {
@@ -110,7 +124,9 @@ export function CategoriesDataTable({
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   useEffect(() => {
@@ -137,14 +153,22 @@ export function CategoriesDataTable({
   }, [searchQuery, statusFilter, typeFilter, contentFilter, sortBy]);
 
   const parentNameById = useMemo(() => {
-    return new Map(categories?.map((category) => [category._id, category.name]));
-  }, [categories]);
+    return new Map(allCategories?.map((category) => [category._id, category.name]));
+  }, [allCategories]);
 
-  const handleReorder = async (nextCategories: CategoryData[]) => {
+  const handleReorder = async (
+    categoryId: Id<"categories">,
+    nextCategories: CategoryData[],
+    newIndex: number,
+  ) => {
     setOrderedCategories(nextCategories);
     setIsSavingOrder(true);
     try {
-      await onReorder(nextCategories.map((category) => category._id));
+      await onMoveSortOrder({
+        categoryId,
+        beforeId: nextCategories[newIndex - 1]?._id,
+        afterId: nextCategories[newIndex + 1]?._id,
+      });
       toast.success("Category order updated");
     } catch (error) {
       setOrderedCategories(filteredCategories ?? []);
@@ -162,13 +186,21 @@ export function CategoriesDataTable({
     const newIndex = orderedCategories.findIndex((category) => category._id === over.id);
     if (oldIndex === -1 || newIndex === -1) return;
 
-    void handleReorder(arrayMove(orderedCategories, oldIndex, newIndex));
+    void handleReorder(
+      active.id as Id<"categories">,
+      arrayMove(orderedCategories, oldIndex, newIndex),
+      newIndex,
+    );
   };
 
   const handleMove = (index: number, direction: -1 | 1) => {
     const newIndex = index + direction;
     if (newIndex < 0 || newIndex >= orderedCategories.length) return;
-    void handleReorder(arrayMove(orderedCategories, index, newIndex));
+    void handleReorder(
+      orderedCategories[index]._id,
+      arrayMove(orderedCategories, index, newIndex),
+      newIndex,
+    );
   };
 
   return (
@@ -179,7 +211,7 @@ export function CategoriesDataTable({
         onSearchChange={onSearchChange}
         activeFilterCount={activeFilterCount}
         onReset={onResetFilters}
-        resultLabel={`${filteredCategories?.length ?? 0} of ${categories?.length ?? 0} categories`}
+        resultLabel={`${filteredCategories?.length ?? 0} of ${categories.length} loaded categories`}
       >
         <Select
           value={statusFilter}
@@ -266,7 +298,7 @@ export function CategoriesDataTable({
               <Tag className="h-8 w-8 mb-2" />
               <p>Please select a store to view categories.</p>
             </div>
-          ) : !categories ? (
+          ) : pageStatus === "LoadingFirstPage" ? (
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
             </div>
@@ -413,6 +445,15 @@ export function CategoriesDataTable({
                 </SortableContext>
               </DndContext>
             </div>
+          )}
+          {selectedStoreId && (
+            <LoadMoreFooter
+              status={pageStatus}
+              loadedCount={categories.length}
+              itemLabel="categories"
+              pageSize={pageSize}
+              onLoadMore={onLoadMore}
+            />
           )}
         </CardContent>
       </Card>

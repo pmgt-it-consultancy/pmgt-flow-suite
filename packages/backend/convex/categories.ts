@@ -1,9 +1,47 @@
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import type { Doc } from "./_generated/dataModel";
-import { mutation, query } from "./_generated/server";
+import { mutation, type QueryCtx, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { requirePermission } from "./lib/permissions";
+import { computeMoveSortOrder } from "./lib/sortOrder";
 import { newClientId } from "./lib/sync";
+
+const categorySummaryValidator = v.object({
+  _id: v.id("categories"),
+  storeId: v.id("stores"),
+  name: v.string(),
+  parentId: v.optional(v.id("categories")),
+  sortOrder: v.number(),
+  isActive: v.boolean(),
+  createdAt: v.number(),
+  productCount: v.number(),
+  subcategoryCount: v.number(),
+});
+
+async function enrichCategorySummary(ctx: QueryCtx, category: Doc<"categories">) {
+  const products = await ctx.db
+    .query("products")
+    .withIndex("by_category", (q) => q.eq("categoryId", category._id))
+    .collect();
+
+  const subcategories = await ctx.db
+    .query("categories")
+    .withIndex("by_parent", (q) => q.eq("parentId", category._id))
+    .collect();
+
+  return {
+    _id: category._id,
+    storeId: category.storeId,
+    name: category.name,
+    parentId: category.parentId,
+    sortOrder: category.sortOrder,
+    isActive: category.isActive,
+    createdAt: category.createdAt,
+    productCount: products.length,
+    subcategoryCount: subcategories.length,
+  };
+}
 
 // List categories for a store
 export const list = query({
@@ -12,19 +50,7 @@ export const list = query({
     parentId: v.optional(v.id("categories")),
     includeInactive: v.optional(v.boolean()),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("categories"),
-      storeId: v.id("stores"),
-      name: v.string(),
-      parentId: v.optional(v.id("categories")),
-      sortOrder: v.number(),
-      isActive: v.boolean(),
-      createdAt: v.number(),
-      productCount: v.number(),
-      subcategoryCount: v.number(),
-    }),
-  ),
+  returns: v.array(categorySummaryValidator),
   handler: async (ctx, args) => {
     // Require authenticated user
     await requireAuth(ctx);
@@ -56,34 +82,50 @@ export const list = query({
     // Sort by sortOrder
     categories.sort((a, b) => a.sortOrder - b.sortOrder);
 
-    // Add product count and subcategory count
-    const categoriesWithCounts = await Promise.all(
-      categories.map(async (category) => {
-        const products = await ctx.db
-          .query("products")
-          .withIndex("by_category", (q) => q.eq("categoryId", category._id))
-          .collect();
+    return await Promise.all(categories.map((category) => enrichCategorySummary(ctx, category)));
+  },
+});
 
-        const subcategories = await ctx.db
-          .query("categories")
-          .withIndex("by_parent", (q) => q.eq("parentId", category._id))
-          .collect();
+// List categories for a store (paginated, menu order)
+export const listPaginated = query({
+  args: {
+    storeId: v.id("stores"),
+    parentId: v.optional(v.id("categories")),
+    includeInactive: v.optional(v.boolean()),
+    paginationOpts: paginationOptsValidator,
+  },
+  returns: v.object({
+    page: v.array(categorySummaryValidator),
+    isDone: v.boolean(),
+    continueCursor: v.string(),
+  }),
+  handler: async (ctx, args) => {
+    // Require authenticated user
+    await requireAuth(ctx);
 
-        return {
-          _id: category._id,
-          storeId: category.storeId,
-          name: category.name,
-          parentId: category.parentId,
-          sortOrder: category.sortOrder,
-          isActive: category.isActive,
-          createdAt: category.createdAt,
-          productCount: products.length,
-          subcategoryCount: subcategories.length,
-        };
-      }),
+    const parentId = args.parentId;
+    const includeInactive = args.includeInactive ?? false;
+
+    const paginated = await ctx.db
+      .query("categories")
+      .withIndex("by_store_sortOrder", (q) => q.eq("storeId", args.storeId))
+      .filter((q) => {
+        let expr = q.eq(true, true);
+        if (parentId !== undefined) expr = q.and(expr, q.eq(q.field("parentId"), parentId));
+        if (!includeInactive) expr = q.and(expr, q.eq(q.field("isActive"), true));
+        return expr;
+      })
+      .paginate(args.paginationOpts);
+
+    const page = await Promise.all(
+      paginated.page.map((category: Doc<"categories">) => enrichCategorySummary(ctx, category)),
     );
 
-    return categoriesWithCounts;
+    return {
+      page,
+      isDone: paginated.isDone,
+      continueCursor: paginated.continueCursor,
+    };
   },
 });
 
@@ -196,15 +238,22 @@ export const update = mutation({
       Object.entries(updates).filter(([_, v]) => v !== undefined),
     );
 
-    await ctx.db.patch(categoryId, { ...filteredUpdates, updatedAt: Date.now() });
+    await ctx.db.patch(categoryId, {
+      ...filteredUpdates,
+      updatedAt: Date.now(),
+    });
     return null;
   },
 });
 
-// Reorder categories
-export const reorder = mutation({
+// Move a single category next to its new neighbors, without touching any
+// other row's sortOrder. Neighbors must be rows the caller already has
+// loaded (e.g. adjacent to the dragged row on screen).
+export const moveSortOrder = mutation({
   args: {
-    categoryIds: v.array(v.id("categories")),
+    categoryId: v.id("categories"),
+    beforeId: v.optional(v.id("categories")),
+    afterId: v.optional(v.id("categories")),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
@@ -213,12 +262,14 @@ export const reorder = mutation({
 
     await requirePermission(ctx, user._id, "categories.manage");
 
-    // Update sortOrder for each category
-    const now = Date.now();
-    for (let i = 0; i < args.categoryIds.length; i++) {
-      await ctx.db.patch(args.categoryIds[i], { sortOrder: i, updatedAt: now });
-    }
+    const [before, after] = await Promise.all([
+      args.beforeId ? ctx.db.get(args.beforeId) : null,
+      args.afterId ? ctx.db.get(args.afterId) : null,
+    ]);
 
+    const sortOrder = computeMoveSortOrder(before?.sortOrder ?? null, after?.sortOrder ?? null);
+
+    await ctx.db.patch(args.categoryId, { sortOrder, updatedAt: Date.now() });
     return null;
   },
 });

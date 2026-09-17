@@ -1,10 +1,72 @@
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import type { Doc } from "./_generated/dataModel";
-import { mutation, query } from "./_generated/server";
+import { mutation, type QueryCtx, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { getCategoryChain } from "./lib/categoryHelpers";
 import { requirePermission } from "./lib/permissions";
+import { computeMoveSortOrder } from "./lib/sortOrder";
 import { newClientId } from "./lib/sync";
+
+const productSummaryValidator = v.object({
+  _id: v.id("products"),
+  storeId: v.id("stores"),
+  name: v.string(),
+  categoryId: v.id("categories"),
+  categoryName: v.string(),
+  price: v.number(),
+  isVatable: v.boolean(),
+  isActive: v.boolean(),
+  isOpenPrice: v.optional(v.boolean()),
+  minPrice: v.optional(v.number()),
+  maxPrice: v.optional(v.number()),
+  sortOrder: v.number(),
+  createdAt: v.number(),
+  updatedAt: v.number(),
+  hasModifiers: v.boolean(),
+});
+
+async function enrichProductSummary(ctx: QueryCtx, product: Doc<"products">) {
+  const category = await ctx.db.get(product.categoryId);
+  // Check product-level first
+  const productModAssignment = await ctx.db
+    .query("modifierGroupAssignments")
+    .withIndex("by_product", (q) => q.eq("productId", product._id))
+    .first();
+
+  let hasModifiers = productModAssignment !== null;
+  if (!hasModifiers) {
+    const categoryChain = await getCategoryChain(ctx, product.categoryId);
+    for (const catId of categoryChain) {
+      const catAssignment = await ctx.db
+        .query("modifierGroupAssignments")
+        .withIndex("by_category", (q) => q.eq("categoryId", catId))
+        .first();
+      if (catAssignment) {
+        hasModifiers = true;
+        break;
+      }
+    }
+  }
+
+  return {
+    _id: product._id,
+    storeId: product.storeId,
+    name: product.name,
+    categoryId: product.categoryId,
+    categoryName: category?.name ?? "Unknown",
+    price: product.price,
+    isVatable: product.isVatable,
+    isActive: product.isActive,
+    isOpenPrice: product.isOpenPrice,
+    minPrice: product.minPrice,
+    maxPrice: product.maxPrice,
+    sortOrder: product.sortOrder,
+    createdAt: product.createdAt,
+    updatedAt: product.updatedAt,
+    hasModifiers,
+  };
+}
 
 // List products for a store
 export const list = query({
@@ -13,25 +75,7 @@ export const list = query({
     categoryId: v.optional(v.id("categories")),
     includeInactive: v.optional(v.boolean()),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("products"),
-      storeId: v.id("stores"),
-      name: v.string(),
-      categoryId: v.id("categories"),
-      categoryName: v.string(),
-      price: v.number(),
-      isVatable: v.boolean(),
-      isActive: v.boolean(),
-      isOpenPrice: v.optional(v.boolean()),
-      minPrice: v.optional(v.number()),
-      maxPrice: v.optional(v.number()),
-      sortOrder: v.number(),
-      createdAt: v.number(),
-      updatedAt: v.number(),
-      hasModifiers: v.boolean(),
-    }),
-  ),
+  returns: v.array(productSummaryValidator),
   handler: async (ctx, args) => {
     // Require authenticated user
     await requireAuth(ctx);
@@ -60,52 +104,50 @@ export const list = query({
     // Sort by sortOrder
     products.sort((a, b) => a.sortOrder - b.sortOrder);
 
-    // Add category names
-    const productsWithCategories = await Promise.all(
-      products.map(async (product) => {
-        const category = await ctx.db.get(product.categoryId);
-        // Check product-level first
-        const productModAssignment = await ctx.db
-          .query("modifierGroupAssignments")
-          .withIndex("by_product", (q) => q.eq("productId", product._id))
-          .first();
+    return await Promise.all(products.map((product) => enrichProductSummary(ctx, product)));
+  },
+});
 
-        let hasModifiers = productModAssignment !== null;
-        if (!hasModifiers) {
-          const categoryChain = await getCategoryChain(ctx, product.categoryId);
-          for (const catId of categoryChain) {
-            const catAssignment = await ctx.db
-              .query("modifierGroupAssignments")
-              .withIndex("by_category", (q) => q.eq("categoryId", catId))
-              .first();
-            if (catAssignment) {
-              hasModifiers = true;
-              break;
-            }
-          }
-        }
+// List products for a store (paginated, menu order)
+export const listPaginated = query({
+  args: {
+    storeId: v.id("stores"),
+    categoryId: v.optional(v.id("categories")),
+    includeInactive: v.optional(v.boolean()),
+    paginationOpts: paginationOptsValidator,
+  },
+  returns: v.object({
+    page: v.array(productSummaryValidator),
+    isDone: v.boolean(),
+    continueCursor: v.string(),
+  }),
+  handler: async (ctx, args) => {
+    // Require authenticated user
+    await requireAuth(ctx);
 
-        return {
-          _id: product._id,
-          storeId: product.storeId,
-          name: product.name,
-          categoryId: product.categoryId,
-          categoryName: category?.name ?? "Unknown",
-          price: product.price,
-          isVatable: product.isVatable,
-          isActive: product.isActive,
-          isOpenPrice: product.isOpenPrice,
-          minPrice: product.minPrice,
-          maxPrice: product.maxPrice,
-          sortOrder: product.sortOrder,
-          createdAt: product.createdAt,
-          updatedAt: product.updatedAt,
-          hasModifiers,
-        };
-      }),
+    const categoryId = args.categoryId;
+    const includeInactive = args.includeInactive ?? false;
+
+    const paginated = await ctx.db
+      .query("products")
+      .withIndex("by_store_sortOrder", (q) => q.eq("storeId", args.storeId))
+      .filter((q) => {
+        let expr = q.eq(true, true);
+        if (categoryId) expr = q.and(expr, q.eq(q.field("categoryId"), categoryId));
+        if (!includeInactive) expr = q.and(expr, q.eq(q.field("isActive"), true));
+        return expr;
+      })
+      .paginate(args.paginationOpts);
+
+    const page = await Promise.all(
+      paginated.page.map((product: Doc<"products">) => enrichProductSummary(ctx, product)),
     );
 
-    return productsWithCategories;
+    return {
+      page,
+      isDone: paginated.isDone,
+      continueCursor: paginated.continueCursor,
+    };
   },
 });
 
@@ -329,10 +371,14 @@ export const bulkUpdatePrices = mutation({
   },
 });
 
-// Reorder products within category
-export const reorder = mutation({
+// Move a single product next to its new neighbors, without touching any
+// other row's sortOrder. Neighbors must be rows the caller already has
+// loaded (e.g. adjacent to the dragged row on screen).
+export const moveSortOrder = mutation({
   args: {
-    productIds: v.array(v.id("products")),
+    productId: v.id("products"),
+    beforeId: v.optional(v.id("products")),
+    afterId: v.optional(v.id("products")),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
@@ -341,15 +387,14 @@ export const reorder = mutation({
 
     await requirePermission(ctx, user._id, "products.manage");
 
-    // Update sortOrder for each product
-    const now = Date.now();
-    for (let i = 0; i < args.productIds.length; i++) {
-      await ctx.db.patch(args.productIds[i], {
-        sortOrder: i,
-        updatedAt: now,
-      });
-    }
+    const [before, after] = await Promise.all([
+      args.beforeId ? ctx.db.get(args.beforeId) : null,
+      args.afterId ? ctx.db.get(args.afterId) : null,
+    ]);
 
+    const sortOrder = computeMoveSortOrder(before?.sortOrder ?? null, after?.sortOrder ?? null);
+
+    await ctx.db.patch(args.productId, { sortOrder, updatedAt: Date.now() });
     return null;
   },
 });

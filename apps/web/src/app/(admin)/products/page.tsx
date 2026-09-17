@@ -2,7 +2,7 @@
 
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation, usePaginatedQuery, useQuery } from "convex/react";
 import { Plus } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,49 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { DownloadProductCatalogButton, ProductFormDialog, ProductsDataTable } from "./_components";
 import { type ProductFormValues, productDefaults } from "./_schemas";
+
+const PRODUCTS_PAGE_SIZE = 50;
+
+interface ProductFilters {
+  statusFilter: "all" | "active" | "inactive";
+  categoryFilter: Id<"categories"> | "all";
+  priceFilter: "all" | "fixed" | "open";
+  vatFilter: "all" | "vat" | "non-vat";
+  modifierFilter: "all" | "with" | "without";
+  searchQuery: string;
+}
+
+function matchesProductFilters(
+  product: {
+    isActive: boolean;
+    categoryId: Id<"categories">;
+    isOpenPrice?: boolean;
+    isVatable: boolean;
+    hasModifiers: boolean;
+    name: string;
+    categoryName: string;
+  },
+  filters: ProductFilters,
+): boolean {
+  const { statusFilter, categoryFilter, priceFilter, vatFilter, modifierFilter, searchQuery } =
+    filters;
+  if (statusFilter !== "all" && product.isActive !== (statusFilter === "active")) return false;
+  if (categoryFilter !== "all" && product.categoryId !== categoryFilter) return false;
+  if (priceFilter !== "all" && (product.isOpenPrice ? "open" : "fixed") !== priceFilter) {
+    return false;
+  }
+  if (vatFilter !== "all" && product.isVatable !== (vatFilter === "vat")) return false;
+  if (modifierFilter !== "all" && product.hasModifiers !== (modifierFilter === "with")) {
+    return false;
+  }
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase();
+    const matchesName = product.name.toLowerCase().includes(query);
+    const matchesCategory = product.categoryName.toLowerCase().includes(query);
+    if (!matchesName && !matchesCategory) return false;
+  }
+  return true;
+}
 
 export default function ProductsPage() {
   const { isAuthenticated } = useAuth();
@@ -29,7 +72,7 @@ export default function ProductsPage() {
   const [modifierFilter, setModifierFilter] = useState<"all" | "with" | "without">("all");
   const [sortBy, setSortBy] = useState<"menu" | "name" | "category" | "price" | "updated">("menu");
   const includeInactiveProducts = statusFilter !== "active";
-  const reorderProducts = useMutation(api.products.reorder);
+  const moveProductSortOrder = useMutation(api.products.moveSortOrder);
 
   // Queries
   const store = useQuery(
@@ -40,7 +83,24 @@ export default function ProductsPage() {
     api.categories.list,
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
-  const products = useQuery(
+  const {
+    results: products,
+    status: productsPageStatus,
+    loadMore: loadMoreProducts,
+  } = usePaginatedQuery(
+    api.products.listPaginated,
+    isAuthenticated && selectedStoreId
+      ? {
+          storeId: selectedStoreId,
+          categoryId: categoryFilter === "all" ? undefined : categoryFilter,
+          includeInactive: includeInactiveProducts,
+        }
+      : "skip",
+    { initialNumItems: PRODUCTS_PAGE_SIZE },
+  );
+  // Full, unpaginated catalog — the PDF export must include every matching
+  // product, not just what's currently loaded in the paginated table below.
+  const allProductsForExport = useQuery(
     api.products.list,
     isAuthenticated && selectedStoreId
       ? { storeId: selectedStoreId, includeInactive: includeInactiveProducts }
@@ -51,28 +111,23 @@ export default function ProductsPage() {
     isAuthenticated && selectedStoreId ? { storeId: selectedStoreId } : "skip",
   );
 
-  // Filtered products
-  const filteredProducts = useMemo(() => {
-    const filtered = products?.filter((p) => {
-      if (statusFilter !== "all" && p.isActive !== (statusFilter === "active")) return false;
-      if (categoryFilter !== "all" && p.categoryId !== categoryFilter) return false;
-      if (priceFilter !== "all" && (p.isOpenPrice ? "open" : "fixed") !== priceFilter) {
-        return false;
-      }
-      if (vatFilter !== "all" && p.isVatable !== (vatFilter === "vat")) return false;
-      if (modifierFilter !== "all" && p.hasModifiers !== (modifierFilter === "with")) {
-        return false;
-      }
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const matchesName = p.name.toLowerCase().includes(query);
-        const matchesCategory = p.categoryName.toLowerCase().includes(query);
-        if (!matchesName && !matchesCategory) return false;
-      }
-      return true;
-    });
+  const productFilters: ProductFilters = useMemo(
+    () => ({
+      statusFilter,
+      categoryFilter,
+      priceFilter,
+      vatFilter,
+      modifierFilter,
+      searchQuery,
+    }),
+    [statusFilter, categoryFilter, priceFilter, vatFilter, modifierFilter, searchQuery],
+  );
 
-    return filtered?.toSorted((a, b) => {
+  // Filtered products (drives the on-screen, paginated table)
+  const filteredProducts = useMemo(() => {
+    const filtered = products.filter((p) => matchesProductFilters(p, productFilters));
+
+    return filtered.toSorted((a, b) => {
       switch (sortBy) {
         case "name":
           return a.name.localeCompare(b.name);
@@ -90,19 +145,16 @@ export default function ProductsPage() {
           return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name);
       }
     });
-  }, [
-    products,
-    statusFilter,
-    categoryFilter,
-    priceFilter,
-    vatFilter,
-    modifierFilter,
-    searchQuery,
-    sortBy,
-  ]);
+  }, [products, productFilters, sortBy]);
+
+  // Filtered products for the PDF export — sourced from the full catalog so
+  // the export never silently omits products the table hasn't loaded yet.
+  const filteredProductsForExport = useMemo(() => {
+    return allProductsForExport?.filter((p) => matchesProductFilters(p, productFilters));
+  }, [allProductsForExport, productFilters]);
 
   const catalogPdfData = useMemo(() => {
-    if (!filteredProducts || !store) return null;
+    if (!filteredProductsForExport || !store) return null;
 
     // Build modifier lookup: productId -> groups
     const modifierMap = new Map<
@@ -131,8 +183,14 @@ export default function ProductsPage() {
     }
 
     // Group products by category, showing "ParentCategory > SubCategory" for subcategories
-    const grouped = new Map<string, { sortKey: string; products: typeof filteredProducts }>();
-    for (const product of filteredProducts) {
+    const grouped = new Map<
+      string,
+      {
+        sortKey: string;
+        products: NonNullable<typeof filteredProductsForExport>;
+      }
+    >();
+    for (const product of filteredProductsForExport) {
       const catInfo = categoryLookup.get(product.categoryId);
       let displayName = product.categoryName ?? "Uncategorized";
       let sortKey = displayName;
@@ -191,12 +249,12 @@ export default function ProductsPage() {
     return {
       storeName: store.name,
       categories: pdfCategories,
-      totalProducts: filteredProducts.length,
+      totalProducts: filteredProductsForExport.length,
       totalCategories: pdfCategories.length,
       filterLabel: `${categoryLabel} · ${statusLabel}${searchLabel}`,
     };
   }, [
-    filteredProducts,
+    filteredProductsForExport,
     store,
     categories,
     modifierAssignments,
@@ -286,7 +344,7 @@ export default function ProductsPage() {
           {catalogPdfData && (
             <DownloadProductCatalogButton
               data={catalogPdfData}
-              disabled={!filteredProducts?.length}
+              disabled={!filteredProductsForExport?.length}
             />
           )}
           <Button onClick={handleOpenCreate} disabled={!selectedStoreId}>
@@ -299,6 +357,9 @@ export default function ProductsPage() {
       {/* Products Table with Filters */}
       <ProductsDataTable
         products={products}
+        pageStatus={productsPageStatus}
+        pageSize={PRODUCTS_PAGE_SIZE}
+        onLoadMore={loadMoreProducts}
         filteredProducts={filteredProducts}
         categories={categories}
         selectedStoreId={selectedStoreId}
@@ -325,8 +386,8 @@ export default function ProductsPage() {
           setModifierFilter("all");
           setSortBy("menu");
         }}
-        onReorder={async (productIds) => {
-          await reorderProducts({ productIds });
+        onMoveSortOrder={async (args) => {
+          await moveProductSortOrder(args);
         }}
         onEdit={handleOpenEdit}
         onDuplicate={handleDuplicate}

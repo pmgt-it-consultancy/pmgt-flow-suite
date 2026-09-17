@@ -426,6 +426,142 @@ describe("orders.get", () => {
   });
 });
 
+describe("orders.listPaginated", () => {
+  it("returns newest-first pages with a working cursor", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    for (const orderNumber of ["D-001", "D-002", "D-003"]) {
+      await t.run(async (ctx: any) => {
+        await ctx.db.insert("orders", {
+          storeId,
+          orderNumber,
+          orderType: "dine_in" as const,
+          orderChannel: "walk_in_dine_in" as const,
+          status: "open" as const,
+          grossSales: 0,
+          vatableSales: 0,
+          vatAmount: 0,
+          vatExemptSales: 0,
+          nonVatSales: 0,
+          discountAmount: 0,
+          netSales: 0,
+          createdBy: userId,
+          createdAt: Date.now(),
+        });
+      });
+    }
+
+    const authed = t.withIdentity({ subject: userId });
+
+    const firstPage = await authed.query(api.orders.listPaginated, {
+      storeId,
+      paginationOpts: { numItems: 2, cursor: null },
+    });
+
+    expect(firstPage.page.map((o: any) => o.orderNumber)).toEqual(["D-003", "D-002"]);
+    expect(firstPage.isDone).toBe(false);
+
+    const secondPage = await authed.query(api.orders.listPaginated, {
+      storeId,
+      paginationOpts: { numItems: 2, cursor: firstPage.continueCursor },
+    });
+
+    expect(secondPage.page.map((o: any) => o.orderNumber)).toEqual(["D-001"]);
+    expect(secondPage.isDone).toBe(true);
+  });
+
+  it("scopes pages to the requested status", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const baseOrder = {
+      storeId,
+      orderType: "dine_in" as const,
+      orderChannel: "walk_in_dine_in" as const,
+      grossSales: 0,
+      vatableSales: 0,
+      vatAmount: 0,
+      vatExemptSales: 0,
+      nonVatSales: 0,
+      discountAmount: 0,
+      netSales: 0,
+      createdBy: userId,
+      createdAt: Date.now(),
+    };
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("orders", {
+        ...baseOrder,
+        orderNumber: "D-010",
+        status: "open",
+      });
+      await ctx.db.insert("orders", {
+        ...baseOrder,
+        orderNumber: "D-011",
+        status: "paid",
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+
+    const paidPage = await authed.query(api.orders.listPaginated, {
+      storeId,
+      status: "paid",
+      paginationOpts: { numItems: 10, cursor: null },
+    });
+
+    expect(paidPage.page.map((o: any) => o.orderNumber)).toEqual(["D-011"]);
+    expect(paidPage.isDone).toBe(true);
+  });
+
+  it("orders by the createdAt field, not by Convex insertion order", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await setupTestData(t);
+
+    const baseOrder = {
+      storeId,
+      orderType: "dine_in" as const,
+      orderChannel: "walk_in_dine_in" as const,
+      status: "open" as const,
+      grossSales: 0,
+      vatableSales: 0,
+      vatAmount: 0,
+      vatExemptSales: 0,
+      nonVatSales: 0,
+      discountAmount: 0,
+      netSales: 0,
+      createdBy: userId,
+    };
+
+    await t.run(async (ctx: any) => {
+      // Inserted first, but with the later createdAt timestamp — a
+      // sync-delayed tablet order can be inserted into Convex well after
+      // its on-device createdAt. Convex insertion order (and _creationTime)
+      // must not be mistaken for createdAt order.
+      await ctx.db.insert("orders", {
+        ...baseOrder,
+        orderNumber: "D-020",
+        createdAt: 2000,
+      });
+      await ctx.db.insert("orders", {
+        ...baseOrder,
+        orderNumber: "D-021",
+        createdAt: 1000,
+      });
+    });
+
+    const authed = t.withIdentity({ subject: userId });
+
+    const page = await authed.query(api.orders.listPaginated, {
+      storeId,
+      paginationOpts: { numItems: 10, cursor: null },
+    });
+
+    expect(page.page.map((o: any) => o.orderNumber)).toEqual(["D-020", "D-021"]);
+  });
+});
+
 describe("orders — draft takeout orders", () => {
   it("should create a draft order with auto-generated label", async () => {
     const t = convexTest(schema, modules);
@@ -698,7 +834,9 @@ describe("orders — draft takeout orders", () => {
     });
 
     // Run cleanup
-    const result = await authed.mutation(api.orders.cleanupExpiredDrafts, { storeId });
+    const result = await authed.mutation(api.orders.cleanupExpiredDrafts, {
+      storeId,
+    });
     expect(result.deletedCount).toBe(1);
 
     // Old draft should be gone
@@ -748,7 +886,10 @@ describe("orders — takeout status workflow", () => {
 
     const authed = t.withIdentity({ subject: userId });
     await expect(
-      authed.mutation(api.orders.updateTakeoutStatus, { orderId, newStatus: "completed" }),
+      authed.mutation(api.orders.updateTakeoutStatus, {
+        orderId,
+        newStatus: "completed",
+      }),
     ).rejects.toThrowError("Cannot complete an unpaid takeout order");
   });
 
@@ -778,7 +919,10 @@ describe("orders — takeout status workflow", () => {
     });
 
     const authed = t.withIdentity({ subject: userId });
-    await authed.mutation(api.orders.updateTakeoutStatus, { orderId, newStatus: "completed" });
+    await authed.mutation(api.orders.updateTakeoutStatus, {
+      orderId,
+      newStatus: "completed",
+    });
 
     const order = await t.run(async (ctx: any) => ctx.db.get(orderId));
     expect(order?.takeoutStatus).toBe("completed");

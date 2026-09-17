@@ -2,7 +2,7 @@
 
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useAction, useQuery } from "convex/react";
+import { useAction, usePaginatedQuery, useQuery } from "convex/react";
 import { Eye, Receipt, ShoppingBag, UtensilsCrossed } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +34,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency } from "@/lib/format";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { AdminDataControls } from "../_shared/AdminDataControls";
+import { LoadMoreFooter } from "../_shared/LoadMoreFooter";
 import {
   BulkVoidConfirmDialog,
   BulkVoidFooter,
@@ -47,6 +48,8 @@ type OrderTypeFilter = "all" | "dine_in" | "takeout";
 type DateFilter = "all" | "today" | "7d" | "30d";
 type AmountFilter = "all" | "zero" | "under500" | "500to2000" | "over2000";
 type OrderSort = "newest" | "oldest" | "amount-high" | "amount-low" | "items";
+
+const ORDERS_PAGE_SIZE = 50;
 
 function isSameLocalDay(firstTimestamp: number, secondTimestamp: number) {
   const first = new Date(firstTimestamp);
@@ -82,16 +85,21 @@ export default function OrdersPage() {
   const voidPaidOrderAction = useAction(api.voids.voidPaidOrder);
 
   // Queries
-  const orders = useQuery(
-    api.orders.list,
+  const {
+    results: orders,
+    status: ordersPageStatus,
+    loadMore: loadMoreOrders,
+  } = usePaginatedQuery(
+    api.orders.listPaginated,
     isAuthenticated && selectedStoreId
       ? {
           storeId: selectedStoreId,
           status: statusFilter === "all" ? undefined : statusFilter,
-          limit: 100,
         }
       : "skip",
+    { initialNumItems: ORDERS_PAGE_SIZE },
   );
+  const isLoadingFirstOrdersPage = ordersPageStatus === "LoadingFirstPage";
 
   // Get order details when an order is selected
   const orderDetails = useQuery(
@@ -271,7 +279,7 @@ export default function OrdersPage() {
         onSearchChange={setSearchQuery}
         activeFilterCount={activeFilterCount}
         onReset={resetFilters}
-        resultLabel={`${filteredOrders?.length ?? 0} of ${orders?.length ?? 0} orders`}
+        resultLabel={`${filteredOrders?.length ?? 0} of ${orders.length} loaded orders`}
       >
         <Select
           value={statusFilter}
@@ -375,7 +383,8 @@ export default function OrdersPage() {
             <div>
               <CardTitle>Order History</CardTitle>
               <CardDescription>
-                Latest 100 orders. Filter by operational state, type, total, and date.
+                Filter by operational state, type, total, and date. Use Load more to fetch older
+                orders.
               </CardDescription>
             </div>
             <div className="flex flex-wrap gap-2 text-sm">
@@ -387,7 +396,7 @@ export default function OrdersPage() {
           </div>
         </CardHeader>
         <CardContent>
-          {selectedStoreId && orders && (
+          {selectedStoreId && (
             <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
               {bulkVoid.isSelectionMode
                 ? "Select open orders using the checkboxes, then use the sticky footer to bulk void abandoned orders."
@@ -401,7 +410,7 @@ export default function OrdersPage() {
               <Receipt className="h-8 w-8 mb-2" />
               <p>Please select a store to view orders.</p>
             </div>
-          ) : !orders ? (
+          ) : isLoadingFirstOrdersPage ? (
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
             </div>
@@ -501,6 +510,15 @@ export default function OrdersPage() {
                 </TableBody>
               </Table>
             </div>
+          )}
+          {selectedStoreId && (
+            <LoadMoreFooter
+              status={ordersPageStatus}
+              loadedCount={orders.length}
+              itemLabel="orders"
+              pageSize={ORDERS_PAGE_SIZE}
+              onLoadMore={loadMoreOrders}
+            />
           )}
         </CardContent>
       </Card>
