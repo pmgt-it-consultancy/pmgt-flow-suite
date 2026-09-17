@@ -672,6 +672,24 @@ export const reconcileOrderTotals = internalMutation({
       await ctx.db.patch(jobId, { blockedReason });
       return null;
     }
+    if (order?.status === "voided" && order.paidAt === undefined && !job.checkedPaidSnapshotId) {
+      // Never settled, so no sales to verify. Totals checked while it was still open
+      // cannot reach a report once it is voided.
+      const divergences = await ctx.db
+        .query("totalsDivergences")
+        .withIndex("by_orderId_and_status", (q) =>
+          q.eq("orderId", order._id).eq("status", "unresolved"),
+        )
+        .collect();
+      for (const record of divergences.filter((d) => d.reportDate === job.reportDate))
+        await ctx.db.patch(record._id, {
+          status: "resolved",
+          resolvedAt: Date.now(),
+          resolvedByMutationId: job.mutationId,
+        });
+      await ctx.db.patch(jobId, { status: "complete", blockedReason: undefined });
+      return null;
+    }
     if (order?.status === "voided") {
       const retained = job.checkedPaidSnapshotId
         ? await ctx.db.get(job.checkedPaidSnapshotId)
