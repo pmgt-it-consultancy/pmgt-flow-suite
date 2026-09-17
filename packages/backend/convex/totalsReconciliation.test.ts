@@ -367,6 +367,43 @@ describe("Totals Reconciliation at push and closing boundaries", () => {
     ]);
   });
 
+  it("does not block closing for an order voided before it was ever paid", async () => {
+    const { t, actor, storeId, push } = await setup();
+    const unpaid = { status: "open", paidAt: undefined, paymentMethod: undefined };
+    // Open-order totals may lag the device; the checked mismatch must not outlive the cancel.
+    await push(111, "open-order", true, {}, unpaid);
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    expect(await t.run((ctx) => ctx.db.query("totalsDivergences").collect())).toHaveLength(1);
+    await push(111, "cancel-open-order", false, {}, { ...unpaid, status: "voided" });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    expect(
+      await actor.query(api.closing.getPendingTotalsReconciliations, {
+        storeId,
+        reportDate: "2026-09-15",
+      }),
+    ).toEqual([]);
+    expect(
+      await actor.query(api.closing.getTotalsDivergences, { storeId, reportDate: "2026-09-15" }),
+    ).toEqual([]);
+    await expect(
+      actor.mutation(api.closing.logDayClosing, { storeId, reportDate: "2026-09-15" }),
+    ).resolves.toBeNull();
+  });
+
+  it("does not block closing for an unpaid order voided before its worker ran", async () => {
+    const { t, actor, storeId, push } = await setup();
+    const unpaid = { status: "open", paidAt: undefined, paymentMethod: undefined };
+    await push(112, "open-order", true, {}, unpaid);
+    await push(112, "cancel-open-order", false, {}, { ...unpaid, status: "voided" });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    expect(
+      await actor.query(api.closing.getPendingTotalsReconciliations, {
+        storeId,
+        reportDate: "2026-09-15",
+      }),
+    ).toEqual([]);
+  });
+
   it("blocks a void that changes historical money after the paid snapshot was checked", async () => {
     const { t, actor, storeId, push } = await setup();
     await push(112);

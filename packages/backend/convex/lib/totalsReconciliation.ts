@@ -66,10 +66,13 @@ export async function queueTotalsReconciliation(
     .withIndex("by_orderId_and_generation", (q) => q.eq("orderId", orderId))
     .order("desc")
     .first();
+  // Only a settled sale has historical money for a void to preserve. A draft discarded or
+  // an order cancelled before payment never set paidAt, so its worker has nothing to verify.
+  const settledVoid = order.status === "voided" && order.paidAt !== undefined;
   // The historical paid aggregate is no longer available after a void. Retain its
   // provenance only within the same scope. A moved void also needs its own day gate.
   if (
-    order.status === "voided" &&
+    settledVoid &&
     existing?.status === "pending" &&
     existing.scopeKey === scope.scopeKey &&
     !existing.checkedPaidSnapshotId
@@ -91,9 +94,7 @@ export async function queueTotalsReconciliation(
   }
   const generation = (existing?.generation ?? 0) + 1;
   const blockedReason =
-    order.status === "voided" && !sameScope?.checkedPaidSnapshotId
-      ? "void_snapshot_unavailable"
-      : undefined;
+    settledVoid && !sameScope?.checkedPaidSnapshotId ? "void_snapshot_unavailable" : undefined;
   const jobId = sameScope
     ? sameScope._id
     : await ctx.db.insert("totalsReconciliationJobs", {
