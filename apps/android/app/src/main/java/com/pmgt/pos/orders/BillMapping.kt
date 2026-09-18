@@ -44,7 +44,7 @@ fun CheckoutView.toBill(cashierName: String, printedAt: LocalDateTime): BillDocu
         pax = cart.pax,
         orderType =
             when (cart.orderType) {
-                "take_out" -> OrderType.TAKE_OUT
+                "take_out", "takeout" -> OrderType.TAKE_OUT
                 "delivery" -> OrderType.DELIVERY
                 else -> OrderType.DINE_IN
             },
@@ -88,6 +88,7 @@ fun CheckoutView.toBill(cashierName: String, printedAt: LocalDateTime): BillDocu
         vatableSales = cart.totals.vatableSales,
         vatAmount = cart.totals.vatAmount,
         vatExemptSales = cart.totals.vatExemptSales,
+        nonVatSales = cart.totals.nonVatSales,
         total = cart.totals.netSales,
         orderDefaultServiceType = defaultService,
         printedAt = printedAt,

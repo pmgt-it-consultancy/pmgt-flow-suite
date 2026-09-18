@@ -308,6 +308,8 @@ class OrderEditorUiWorkflowTest {
         val checkout = AtomicReference<CheckoutRoute>()
         val billPrints = AtomicInteger()
         val billedQuantity = AtomicReference<Double>()
+        val billedMarker = AtomicReference<String>()
+        val billedCustomer = AtomicReference<String?>("not printed")
         compose.setContent {
             val scope = rememberCoroutineScope()
             val session = remember {
@@ -321,7 +323,10 @@ class OrderEditorUiWorkflowTest {
                 {},
                 checkout::set,
                 printBill = {
-                    billedQuantity.set(repo.cart("s", it).filterNotNull().first().lines.single().quantity)
+                    val bill = repo.cart("s", it).filterNotNull().first()
+                    billedQuantity.set(bill.lines.single().quantity)
+                    billedMarker.set(bill.tableMarker)
+                    billedCustomer.set(bill.customerName)
                     billPrints.incrementAndGet()
                 },
             )
@@ -329,6 +334,7 @@ class OrderEditorUiWorkflowTest {
         compose.waitUntil(5000) {
             compose.onAllNodesWithTag("customer-name").fetchSemanticsNodes().isNotEmpty()
         }
+        compose.onNodeWithText("View Bill").assertDoesNotExist()
         compose.onNodeWithTag("customer-name").assertTextEquals("Ana")
         compose
             .onNodeWithTag("table-marker")
@@ -347,6 +353,7 @@ class OrderEditorUiWorkflowTest {
         compose.onNodeWithText("Add 1 to Order").performClick()
         compose.waitUntil(5000) { db.select("order_items").isNotEmpty() }
         compose.onNodeWithContentDescription("Increase Chicken quantity").performClick()
+        compose.onNodeWithTag("table-marker").performTextReplacement("16")
         val viewBillTop = compose.onNodeWithText("View Bill").fetchSemanticsNode().boundsInRoot.top
         val paymentTop =
             compose.onNodeWithText("Proceed to Payment").fetchSemanticsNode().boundsInRoot.top
@@ -358,6 +365,8 @@ class OrderEditorUiWorkflowTest {
         compose.onNodeWithText("Print Bill").performClick()
         compose.waitUntil(5000) { billPrints.get() == 1 }
         assertEquals(2.0, billedQuantity.get(), 0.0)
+        assertEquals("16", billedMarker.get())
+        assertNull(billedCustomer.get())
         assertNull(checkout.get())
         assertEquals("draft", db.get("orders", id)!!.string("status"))
         compose.onNodeWithText("Current Bill").assertExists()
@@ -369,7 +378,7 @@ class OrderEditorUiWorkflowTest {
         compose.onNodeWithText("Proceed to Payment").performClick()
         compose.waitUntil(5000) { checkout.get() != null }
         assertEquals("dine_in", checkout.get().orderCategory)
-        assertEquals("15", checkout.get().tableMarker)
+        assertEquals("16", checkout.get().tableMarker)
         assertEquals("takeout", checkout.get().orderType)
         assertNull(checkout.get().tableId)
         assertEquals("open", db.get("orders", id)!!.string("status"))

@@ -94,6 +94,8 @@ class OrderEditorSession(
     private var nextDraft = 0
     private var lastCustomer: String? = null
     private var hadCustomerSnapshot = false
+    private var customerEdited = false
+    private var markerEdited = false
     private var pendingKitchen: KitchenRequest? = null
 
     private data class PendingAdd(
@@ -204,10 +206,12 @@ class OrderEditorSession(
         }
 
     fun customerText(value: String) {
+        customerEdited = true
         mutable.update { it.copy(customer = value) }
     }
 
     fun markerText(value: String) {
+        markerEdited = true
         mutable.update { it.copy(marker = value) }
     }
 
@@ -259,6 +263,15 @@ class OrderEditorSession(
 
     /** Flushes visible cart edits before the bill reads its immutable local order snapshot. */
     suspend fun prepareBill() {
+        val current = state.value
+        if (route.takeout && current.orderId != null) {
+            repository.customer(
+                current.orderId,
+                name = if (customerEdited) current.customer.trim() else null,
+                category = current.category,
+                marker = if (markerEdited) current.marker else null,
+            )
+        }
         edits.flush()
         finishPendingAdd()
     }

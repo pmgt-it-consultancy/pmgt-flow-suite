@@ -115,6 +115,7 @@ export default defineSchema({
     .index("by_parent", ["parentId"])
     .index("by_store_parent", ["storeId", "parentId"])
     .index("by_isActive_sortOrder", ["isActive", "sortOrder"])
+    .index("by_store_sortOrder", ["storeId", "sortOrder"])
     .index("by_store_updatedAt", ["storeId", "updatedAt"])
     .index("by_clientId", ["clientId"]),
 
@@ -137,6 +138,7 @@ export default defineSchema({
     .index("by_store", ["storeId"])
     .index("by_category", ["categoryId"])
     .index("by_store_active", ["storeId", "isActive"])
+    .index("by_store_sortOrder", ["storeId", "sortOrder"])
     .index("by_store_updatedAt", ["storeId", "updatedAt"])
     .index("by_store_name", ["storeId", "name"])
     .index("by_clientId", ["clientId"]),

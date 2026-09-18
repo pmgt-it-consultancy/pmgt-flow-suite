@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
+import type { PaginationStatus } from "convex/react";
 import {
   ArrowDown,
   ArrowUp,
@@ -53,6 +54,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/format";
 import { AdminDataControls } from "../../_shared/AdminDataControls";
+import { LoadMoreFooter } from "../../_shared/LoadMoreFooter";
 import { SortableTableRow } from "../../_shared/SortableTableRow";
 
 interface CategoryData {
@@ -80,7 +82,10 @@ interface ProductData {
 }
 
 interface ProductsDataTableProps {
-  products: ProductData[] | undefined;
+  products: ProductData[];
+  pageStatus: PaginationStatus;
+  pageSize: number;
+  onLoadMore: (numItems: number) => void;
   filteredProducts: ProductData[] | undefined;
   categories: CategoryData[] | undefined;
   selectedStoreId: Id<"stores"> | null;
@@ -99,13 +104,20 @@ interface ProductsDataTableProps {
   sortBy: "menu" | "name" | "category" | "price" | "updated";
   onSortByChange: (value: "menu" | "name" | "category" | "price" | "updated") => void;
   onResetFilters: () => void;
-  onReorder: (productIds: Id<"products">[]) => Promise<void>;
+  onMoveSortOrder: (args: {
+    productId: Id<"products">;
+    beforeId?: Id<"products">;
+    afterId?: Id<"products">;
+  }) => Promise<void>;
   onEdit: (product: ProductData) => void;
   onDuplicate: (product: ProductData) => void;
 }
 
 export function ProductsDataTable({
   products,
+  pageStatus,
+  pageSize,
+  onLoadMore,
   filteredProducts,
   categories,
   selectedStoreId,
@@ -124,7 +136,7 @@ export function ProductsDataTable({
   sortBy,
   onSortByChange,
   onResetFilters,
-  onReorder,
+  onMoveSortOrder,
   onEdit,
   onDuplicate,
 }: ProductsDataTableProps) {
@@ -134,7 +146,9 @@ export function ProductsDataTable({
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   useEffect(() => {
@@ -164,11 +178,19 @@ export function ProductsDataTable({
     ].filter(Boolean).length;
   }, [searchQuery, categoryFilter, statusFilter, priceFilter, vatFilter, modifierFilter, sortBy]);
 
-  const handleReorder = async (nextProducts: ProductData[]) => {
+  const handleReorder = async (
+    productId: Id<"products">,
+    nextProducts: ProductData[],
+    newIndex: number,
+  ) => {
     setOrderedProducts(nextProducts);
     setIsSavingOrder(true);
     try {
-      await onReorder(nextProducts.map((product) => product._id));
+      await onMoveSortOrder({
+        productId,
+        beforeId: nextProducts[newIndex - 1]?._id,
+        afterId: nextProducts[newIndex + 1]?._id,
+      });
       toast.success("Product order updated");
     } catch (error) {
       setOrderedProducts(filteredProducts ?? []);
@@ -186,13 +208,21 @@ export function ProductsDataTable({
     const newIndex = orderedProducts.findIndex((product) => product._id === over.id);
     if (oldIndex === -1 || newIndex === -1) return;
 
-    void handleReorder(arrayMove(orderedProducts, oldIndex, newIndex));
+    void handleReorder(
+      active.id as Id<"products">,
+      arrayMove(orderedProducts, oldIndex, newIndex),
+      newIndex,
+    );
   };
 
   const handleMove = (index: number, direction: -1 | 1) => {
     const newIndex = index + direction;
     if (newIndex < 0 || newIndex >= orderedProducts.length) return;
-    void handleReorder(arrayMove(orderedProducts, index, newIndex));
+    void handleReorder(
+      orderedProducts[index]._id,
+      arrayMove(orderedProducts, index, newIndex),
+      newIndex,
+    );
   };
 
   return (
@@ -203,7 +233,7 @@ export function ProductsDataTable({
         onSearchChange={onSearchChange}
         activeFilterCount={activeFilterCount}
         onReset={onResetFilters}
-        resultLabel={`${filteredProducts?.length ?? 0} of ${products?.length ?? 0} products`}
+        resultLabel={`${filteredProducts?.length ?? 0} of ${products.length} loaded products`}
       >
         <Select
           value={categoryFilter}
@@ -325,7 +355,7 @@ export function ProductsDataTable({
               <Package className="h-8 w-8 mb-2" />
               <p>Please select a store to view products.</p>
             </div>
-          ) : !products ? (
+          ) : pageStatus === "LoadingFirstPage" ? (
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
             </div>
@@ -477,6 +507,15 @@ export function ProductsDataTable({
                 </SortableContext>
               </DndContext>
             </div>
+          )}
+          {selectedStoreId && (
+            <LoadMoreFooter
+              status={pageStatus}
+              loadedCount={products.length}
+              itemLabel="products"
+              pageSize={pageSize}
+              onLoadMore={onLoadMore}
+            />
           )}
         </CardContent>
       </Card>

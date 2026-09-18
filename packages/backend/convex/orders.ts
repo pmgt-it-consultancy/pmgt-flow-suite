@@ -1,6 +1,7 @@
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
-import { mutation, query } from "./_generated/server";
+import { mutation, type QueryCtx, query } from "./_generated/server";
 import { requireAuth } from "./lib/auth";
 import { getBusinessDayBoundaries } from "./lib/businessDay";
 import { publishOrderAggregateEvent } from "./lib/replicationEvents";
@@ -250,7 +251,10 @@ export const createDraftOrder = mutation({
       createdBy: user._id,
       createdAt: now,
     });
-    await publishOrderAggregateEvent(ctx, { orderId, eventKind: "membership_enter" });
+    await publishOrderAggregateEvent(ctx, {
+      orderId,
+      eventKind: "membership_enter",
+    });
     return orderId;
   },
 });
@@ -643,6 +647,52 @@ export const get = query({
   },
 });
 
+const orderSummaryValidator = v.object({
+  _id: v.id("orders"),
+  orderNumber: v.optional(v.string()),
+  orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
+  tableName: v.optional(v.string()),
+  tabNumber: v.optional(v.number()),
+  tabName: v.optional(v.string()),
+  customerName: v.optional(v.string()),
+  status: v.union(v.literal("draft"), v.literal("open"), v.literal("paid"), v.literal("voided")),
+  netSales: v.number(),
+  itemCount: v.number(),
+  createdAt: v.number(),
+});
+
+async function enrichOrderSummary(ctx: QueryCtx, order: Doc<"orders">) {
+  // Get table name
+  let tableName: string | undefined;
+  if (order.tableId) {
+    const table = await ctx.db.get(order.tableId);
+    tableName = table?.name;
+  }
+
+  // Get item count
+  const items = await ctx.db
+    .query("orderItems")
+    .withIndex("by_order", (q) => q.eq("orderId", order._id))
+    .collect();
+
+  const activeItems = items.filter((i) => !i.isVoided);
+  const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
+
+  return {
+    _id: order._id,
+    orderNumber: order.orderNumber,
+    orderType: order.orderType,
+    tableName,
+    tabNumber: order.tabNumber,
+    tabName: order.tabName,
+    customerName: order.customerName,
+    status: order.status,
+    netSales: order.netSales,
+    itemCount,
+    createdAt: order.createdAt,
+  };
+}
+
 // List orders for a store
 export const list = query({
   args: {
@@ -650,26 +700,7 @@ export const list = query({
     status: v.optional(v.union(v.literal("open"), v.literal("paid"), v.literal("voided"))),
     limit: v.optional(v.number()),
   },
-  returns: v.array(
-    v.object({
-      _id: v.id("orders"),
-      orderNumber: v.optional(v.string()),
-      orderType: v.union(v.literal("dine_in"), v.literal("takeout")),
-      tableName: v.optional(v.string()),
-      tabNumber: v.optional(v.number()),
-      tabName: v.optional(v.string()),
-      customerName: v.optional(v.string()),
-      status: v.union(
-        v.literal("draft"),
-        v.literal("open"),
-        v.literal("paid"),
-        v.literal("voided"),
-      ),
-      netSales: v.number(),
-      itemCount: v.number(),
-      createdAt: v.number(),
-    }),
-  ),
+  returns: v.array(orderSummaryValidator),
   handler: async (ctx, args) => {
     // Require authenticated user
     await requireAuth(ctx);
@@ -695,41 +726,55 @@ export const list = query({
     }
 
     // Get additional info for each order
-    const results = await Promise.all(
-      orders.map(async (order) => {
-        // Get table name
-        let tableName: string | undefined;
-        if (order.tableId) {
-          const table = await ctx.db.get(order.tableId);
-          tableName = table?.name;
-        }
+    return await Promise.all(orders.map((order) => enrichOrderSummary(ctx, order)));
+  },
+});
 
-        // Get item count
-        const items = await ctx.db
-          .query("orderItems")
-          .withIndex("by_order", (q) => q.eq("orderId", order._id))
-          .collect();
+// List orders for a store (paginated, newest first)
+export const listPaginated = query({
+  args: {
+    storeId: v.id("stores"),
+    status: v.optional(v.union(v.literal("open"), v.literal("paid"), v.literal("voided"))),
+    paginationOpts: paginationOptsValidator,
+  },
+  returns: v.object({
+    page: v.array(orderSummaryValidator),
+    isDone: v.boolean(),
+    continueCursor: v.string(),
+  }),
+  handler: async (ctx, args) => {
+    // Require authenticated user
+    await requireAuth(ctx);
 
-        const activeItems = items.filter((i) => !i.isVoided);
-        const itemCount = activeItems.reduce((sum, i) => sum + i.quantity, 0);
+    let paginated: {
+      page: Doc<"orders">[];
+      isDone: boolean;
+      continueCursor: string;
+    };
 
-        return {
-          _id: order._id,
-          orderNumber: order.orderNumber,
-          orderType: order.orderType,
-          tableName,
-          tabNumber: order.tabNumber,
-          tabName: order.tabName,
-          customerName: order.customerName,
-          status: order.status,
-          netSales: order.netSales,
-          itemCount,
-          createdAt: order.createdAt,
-        };
-      }),
-    );
+    if (args.status) {
+      const status = args.status;
+      paginated = await ctx.db
+        .query("orders")
+        .withIndex("by_store_status", (q) => q.eq("storeId", args.storeId).eq("status", status))
+        .order("desc")
+        .paginate(args.paginationOpts);
+    } else {
+      paginated = await ctx.db
+        .query("orders")
+        .withIndex("by_store_createdAt", (q) => q.eq("storeId", args.storeId))
+        .filter((q) => q.neq(q.field("status"), "draft"))
+        .order("desc")
+        .paginate(args.paginationOpts);
+    }
 
-    return results;
+    const page = await Promise.all(paginated.page.map((order) => enrichOrderSummary(ctx, order)));
+
+    return {
+      page,
+      isDone: paginated.isDone,
+      continueCursor: paginated.continueCursor,
+    };
   },
 });
 
@@ -997,7 +1042,10 @@ export const updateItemQuantity = mutation({
       throw new Error("Quantity must be positive");
     }
 
-    await ctx.db.patch(args.orderItemId, { quantity: args.quantity, updatedAt: Date.now() });
+    await ctx.db.patch(args.orderItemId, {
+      quantity: args.quantity,
+      updatedAt: Date.now(),
+    });
 
     // Recalculate order totals
     await recalculateOrderTotals(ctx, item.orderId);
@@ -1029,7 +1077,10 @@ export const updateItemNotes = mutation({
       throw new Error("Cannot modify items in a closed order");
     }
 
-    await ctx.db.patch(args.orderItemId, { notes: args.notes, updatedAt: Date.now() });
+    await ctx.db.patch(args.orderItemId, {
+      notes: args.notes,
+      updatedAt: Date.now(),
+    });
     return null;
   },
 });
@@ -1088,7 +1139,10 @@ export const bulkUpdateItemServiceType = mutation({
     const now = Date.now();
     for (const item of items) {
       if (!item.isSentToKitchen && !item.isVoided) {
-        await ctx.db.patch(item._id, { serviceType: args.serviceType, updatedAt: now });
+        await ctx.db.patch(item._id, {
+          serviceType: args.serviceType,
+          updatedAt: now,
+        });
       }
     }
     return null;
@@ -1308,7 +1362,10 @@ export const updateTakeoutStatus = mutation({
       }
     }
 
-    await ctx.db.patch(args.orderId, { takeoutStatus: args.newStatus, updatedAt: Date.now() });
+    await ctx.db.patch(args.orderId, {
+      takeoutStatus: args.newStatus,
+      updatedAt: Date.now(),
+    });
     return null;
   },
 });
@@ -1618,11 +1675,17 @@ export const sendToKitchenWithoutPayment = mutation({
 
     const sendNow = Date.now();
     for (const item of unsentItems) {
-      await ctx.db.patch(item._id, { isSentToKitchen: true, updatedAt: sendNow });
+      await ctx.db.patch(item._id, {
+        isSentToKitchen: true,
+        updatedAt: sendNow,
+      });
     }
 
     // Advance takeout status to preparing (order stays "open"/unpaid)
-    await ctx.db.patch(args.orderId, { takeoutStatus: "preparing", updatedAt: sendNow });
+    await ctx.db.patch(args.orderId, {
+      takeoutStatus: "preparing",
+      updatedAt: sendNow,
+    });
 
     // Audit log
     await ctx.db.insert("auditLogs", {

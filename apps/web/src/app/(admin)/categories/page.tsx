@@ -2,7 +2,7 @@
 
 import { api } from "@packages/backend/convex/_generated/api";
 import type { Id } from "@packages/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation, usePaginatedQuery, useQuery } from "convex/react";
 import { Plus } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { CategoriesDataTable, CategoryFormDialog } from "./_components";
 import { type CategoryFormValues, categoryDefaults } from "./_schemas";
+
+const CATEGORIES_PAGE_SIZE = 50;
 
 export default function CategoriesPage() {
   const { isAuthenticated } = useAuth();
@@ -24,18 +26,32 @@ export default function CategoriesPage() {
   const [typeFilter, setTypeFilter] = useState<"all" | "main" | "sub">("all");
   const [contentFilter, setContentFilter] = useState<"all" | "with-products" | "empty">("all");
   const [sortBy, setSortBy] = useState<"menu" | "name" | "products">("menu");
-  const reorderCategories = useMutation(api.categories.reorder);
+  const moveCategorySortOrder = useMutation(api.categories.moveSortOrder);
 
   // Queries
-  const categories = useQuery(
-    api.categories.list,
+  const {
+    results: categories,
+    status: categoriesPageStatus,
+    loadMore: loadMoreCategories,
+  } = usePaginatedQuery(
+    api.categories.listPaginated,
     isAuthenticated && selectedStoreId
       ? { storeId: selectedStoreId, includeInactive: statusFilter !== "active" }
+      : "skip",
+    { initialNumItems: CATEGORIES_PAGE_SIZE },
+  );
+  // Full, unpaginated category list — needed for parent-name lookups and for
+  // computing a collision-free next sortOrder, neither of which can rely on
+  // only what's currently loaded in the paginated table above.
+  const allCategoriesForLookup = useQuery(
+    api.categories.list,
+    isAuthenticated && selectedStoreId
+      ? { storeId: selectedStoreId, includeInactive: true }
       : "skip",
   );
 
   const filteredCategories = useMemo(() => {
-    const filtered = categories?.filter((category) => {
+    const filtered = categories.filter((category) => {
       if (statusFilter !== "all" && category.isActive !== (statusFilter === "active")) {
         return false;
       }
@@ -50,7 +66,7 @@ export default function CategoriesPage() {
       return true;
     });
 
-    return filtered?.toSorted((a, b) => {
+    return filtered.toSorted((a, b) => {
       switch (sortBy) {
         case "name":
           return a.name.localeCompare(b.name);
@@ -62,10 +78,10 @@ export default function CategoriesPage() {
     });
   }, [categories, statusFilter, typeFilter, contentFilter, searchQuery, sortBy]);
 
-  // Calculate next sort order from current data
+  // Calculate next sort order from the full (unpaginated) category list
   const getNextSortOrder = useCallback(() => {
-    return (categories?.reduce((max, c) => Math.max(max, c.sortOrder), -1) ?? -1) + 1;
-  }, [categories]);
+    return (allCategoriesForLookup?.reduce((max, c) => Math.max(max, c.sortOrder), -1) ?? -1) + 1;
+  }, [allCategoriesForLookup]);
 
   const handleOpenCreate = useCallback(() => {
     setEditingId(null);
@@ -127,6 +143,10 @@ export default function CategoriesPage() {
       {/* Categories Table */}
       <CategoriesDataTable
         categories={categories}
+        pageStatus={categoriesPageStatus}
+        pageSize={CATEGORIES_PAGE_SIZE}
+        onLoadMore={loadMoreCategories}
+        allCategories={allCategoriesForLookup}
         filteredCategories={filteredCategories}
         selectedStoreId={selectedStoreId}
         searchQuery={searchQuery}
@@ -146,8 +166,8 @@ export default function CategoriesPage() {
           setContentFilter("all");
           setSortBy("menu");
         }}
-        onReorder={async (categoryIds) => {
-          await reorderCategories({ categoryIds });
+        onMoveSortOrder={async (args) => {
+          await moveCategorySortOrder(args);
         }}
         onEdit={handleOpenEdit}
         onDuplicate={handleDuplicate}

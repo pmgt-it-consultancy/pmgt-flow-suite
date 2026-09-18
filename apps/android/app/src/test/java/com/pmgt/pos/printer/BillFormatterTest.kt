@@ -47,6 +47,7 @@ class BillFormatterTest {
                 vatableSales = 312.5,
                 vatAmount = 37.5,
                 vatExemptSales = 0.0,
+                nonVatSales = 0.0,
                 total = 350.0,
                 orderDefaultServiceType = ServiceType.TAKEOUT,
                 printedAt = LocalDateTime.of(2026, 9, 16, 10, 12, 0),
@@ -62,6 +63,7 @@ class BillFormatterTest {
         assertTrue(output.contains("Pampano Ihaw"))
         assertTrue(output.contains("Extra rice"))
         assertTrue(output.contains("VAT 12%"))
+        assertTrue(output.contains("Non-VAT Sales"))
         assertTrue(output.contains("TOTAL"))
         assertTrue(output.contains("P 350.00"))
         assertFalse(output.contains("Receipt #:"))
