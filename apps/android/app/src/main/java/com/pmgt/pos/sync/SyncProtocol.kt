@@ -21,12 +21,24 @@ data class SyncState(
     val lastPushedAt: Long? = null,
     val lastError: String? = null,
     val progress: SyncProgress? = null,
+    /** What the server refused on the last push, with its reasons. Empty once it accepts. */
+    val refusals: List<Refusal> = emptyList(),
 )
+
+/**
+ * A row the last push sent that the server would not accept. The row stays in the send queue, so
+ * the till keeps offering it and delivers it by itself once the server stops refusing. This is
+ * only the explanation, which the sync state previously lacked entirely: the till reported
+ * "Synchronization failed. Pending changes are preserved." and nothing about which rows or why,
+ * so a refusal that would never succeed looked identical to a flaky network for nine hours.
+ */
+data class Refusal(val table: String, val id: String, val reason: String)
+
 sealed interface SyncOutcome {
     data class Delivered(val observedAt: Long) : SyncOutcome
     data object Offline : SyncOutcome
     data class Backoff(val retryAt: Long) : SyncOutcome
-    data class Pending(val count: Int) : SyncOutcome
+    data class Pending(val count: Int, val reason: String? = null) : SyncOutcome
     data class Failed(val message: String) : SyncOutcome
 }
 sealed interface ResyncResult {
@@ -56,6 +68,9 @@ sealed interface ResyncResult {
 )
 
 internal const val SAVED_PUSH_KEY = "__kotlin_sync_retry_v1"
+
+/** Carries the refusal reasons into telemetry; it is reported, never thrown at the sync loop. */
+internal class PushRefused(message: String) : Exception(message)
 
 /** Reject unreadable/incomplete retry evidence before a request or startup readiness is allowed. */
 internal fun SavedPush.validate(store: String, device: String) {

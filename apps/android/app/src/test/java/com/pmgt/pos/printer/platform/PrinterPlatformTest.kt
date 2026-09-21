@@ -63,18 +63,18 @@ class PrinterPlatformTest {
         assertEquals(0, denied.deviceRequests)
     }
 
-    @Test fun connectCancelsDiscoveryAndUsesFirstConstructedReflectedChannel() = runBlocking {
+    @Test fun connectCancelsDiscoveryAndPrefersTheAdvertisedServiceRecord() = runBlocking {
         val events = mutableListOf<String>()
         val socket = FakeSocket("printer", events)
         val device = object : PrinterBluetoothDevice {
             override fun reflectedRfcommSocket(channel: Int): PrinterBluetoothSocket? {
                 events += "construct:$channel"
-                return if (channel == 3) socket else null
+                return error("A working service record must not reach the channel sweep")
             }
 
-            override fun serviceRecordSocket(uuid: UUID): PrinterBluetoothSocket? {
+            override fun serviceRecordSocket(uuid: UUID): PrinterBluetoothSocket {
                 events += "construct:uuid:$uuid"
-                return error("SPP UUID must be construction fallback only")
+                return socket
             }
         }
         val platform = FakeBluetoothPlatform(device = device, events = events)
@@ -83,24 +83,27 @@ class PrinterPlatformTest {
             PrinterTransportResult.Connected("printer"),
             ClassicBluetoothPrinterTransport(platform, Dispatchers.IO).connect("printer"),
         )
+        // The service record is the only path that discovers the printer's real RFCOMM channel, so
+        // it is tried first rather than being an unreachable fallback behind a construction sweep.
         assertEquals(
-            listOf("cancelDiscovery", "construct:1", "construct:2", "construct:3", "connect:printer"),
+            listOf("cancelDiscovery", "construct:uuid:00001101-0000-1000-8000-00805f9b34fb", "connect:printer"),
             events,
         )
     }
 
-    @Test fun constructionFailuresReachExactPublicSppFallback() = runBlocking {
+    @Test fun anUnusableServiceRecordFallsThroughToAConnectedChannel() = runBlocking {
         val events = mutableListOf<String>()
-        val socket = FakeSocket("printer", events)
+        val onChannelTwo = FakeSocket("printer", events)
+        val refused = FakeSocket("printer", events, connectFailure = IOException("read failed"))
         val device = object : PrinterBluetoothDevice {
             override fun reflectedRfcommSocket(channel: Int): PrinterBluetoothSocket? {
                 events += "construct:$channel"
-                throw ReflectiveOperationException("unsupported")
+                return if (channel == 2) onChannelTwo else refused
             }
 
-            override fun serviceRecordSocket(uuid: UUID): PrinterBluetoothSocket? {
+            override fun serviceRecordSocket(uuid: UUID): PrinterBluetoothSocket {
                 events += "construct:uuid:$uuid"
-                return socket
+                return refused
             }
         }
         val result = ClassicBluetoothPrinterTransport(
@@ -108,32 +111,38 @@ class PrinterPlatformTest {
             Dispatchers.IO,
         ).connect("printer")
 
+        // A printer answering only on channel 2 used to be unreachable: the old sweep compared
+        // socket *construction*, which never fails for a valid channel, so every connect went to
+        // channel 1 and stopped there.
         assertEquals(PrinterTransportResult.Connected("printer"), result)
         assertEquals(
             listOf(
                 "cancelDiscovery",
-                "construct:1",
-                "construct:2",
-                "construct:3",
                 "construct:uuid:00001101-0000-1000-8000-00805f9b34fb",
+                "connect:printer",
+                "close:printer",
+                "construct:1",
+                "connect:printer",
+                "close:printer",
+                "construct:2",
                 "connect:printer",
             ),
             events,
         )
     }
 
-    @Test fun connectFailureNeverAdvancesToAnotherChannelOrSpp() = runBlocking {
+    @Test fun everyPathIsTriedAndClosedWhenNoneConnects() = runBlocking {
         val events = mutableListOf<String>()
         val socket = FakeSocket("printer", events, connectFailure = IOException("unreachable"))
         val device = object : PrinterBluetoothDevice {
-            override fun reflectedRfcommSocket(channel: Int): PrinterBluetoothSocket? {
+            override fun reflectedRfcommSocket(channel: Int): PrinterBluetoothSocket {
                 events += "construct:$channel"
                 return socket
             }
 
-            override fun serviceRecordSocket(uuid: UUID): PrinterBluetoothSocket? {
+            override fun serviceRecordSocket(uuid: UUID): PrinterBluetoothSocket {
                 events += "construct:uuid:$uuid"
-                return error("Connect failure must not trigger another construction")
+                return socket
             }
         }
         val result = ClassicBluetoothPrinterTransport(
@@ -143,10 +152,45 @@ class PrinterPlatformTest {
 
         assertTrue(result is PrinterTransportResult.Failure)
         assertEquals(PrinterFailureStage.Connect, (result as PrinterTransportResult.Failure).stage)
-        assertEquals(
-            listOf("cancelDiscovery", "construct:1", "connect:printer", "close:printer"),
-            events,
-        )
+        // Immediate failures are what a wrong channel looks like, so all four paths are tried, and
+        // every socket that failed is closed rather than left open to wedge the RFCOMM stack.
+        assertEquals(4, events.count { it == "connect:printer" })
+        assertEquals(4, events.count { it == "close:printer" })
+    }
+
+    @Test fun aTimeoutEndsTheSweepInsteadOfRetryingEveryChannel() = runBlocking {
+        val events = mutableListOf<String>()
+        val silent = object : PrinterBluetoothSocket {
+            override val remoteAddress = "printer"
+            override fun connect() {
+                events += "connect:printer"
+                Thread.sleep(5_000)
+            }
+            override fun write(bytes: ByteArray) = Unit
+            override fun flush() = Unit
+            override fun close() { events += "close:printer" }
+        }
+        val device = object : PrinterBluetoothDevice {
+            override fun reflectedRfcommSocket(channel: Int): PrinterBluetoothSocket {
+                events += "construct:$channel"
+                return silent
+            }
+
+            override fun serviceRecordSocket(uuid: UUID): PrinterBluetoothSocket {
+                events += "construct:uuid:$uuid"
+                return silent
+            }
+        }
+        val result = ClassicBluetoothPrinterTransport(
+            FakeBluetoothPlatform(device = device, events = events),
+            Dispatchers.IO,
+            connectTimeoutMillis = 60,
+        ).connect("printer")
+
+        // A printer that never answers will not answer on another channel either. Sweeping all four
+        // would let one 60s connection poll over two dead printers outlast its own interval.
+        assertTrue(result is PrinterTransportResult.Failure)
+        assertEquals(1, events.count { it == "connect:printer" })
     }
 
     @Test fun timeoutClosesExactInFlightSocketAndLateCompletionCannotBecomeActive() = runBlocking {
@@ -245,7 +289,11 @@ class PrinterPlatformTest {
         assertEquals(listOf(3, 10), socketB.writes.map(ByteArray::size))
         assertEquals(2, socketA.flushes)
         assertEquals(2, socketB.flushes)
-        assertEquals(1, socketA.closes)
+        // Printing to B no longer closes A. One shared socket meant every 60s poll closed one
+        // printer to open the other, and our own close raised ACL_DISCONNECTED, which drove an
+        // auto-reconnect that closed the other again.
+        assertEquals(0, socketA.closes)
+        assertEquals(setOf("A", "B"), transport.connectedAddresses())
     }
 
     @Test fun callerCancellationClosesTheExactBlockedSocketAndPropagates() = runBlocking {
@@ -354,9 +402,9 @@ class PrinterPlatformTest {
         assertEquals(PrinterTransportResult.Connected("printer-A"), transport.connect("printer-A"))
 
         assertEquals(false, transport.disconnect("printer-B"))
-        assertEquals("printer-A", transport.connectedAddress())
+        assertEquals(setOf("printer-A"), transport.connectedAddresses())
         assertEquals(true, transport.disconnect("printer-A"))
-        assertEquals(null, transport.connectedAddress())
+        assertEquals(emptySet<String>(), transport.connectedAddresses())
         assertEquals(1, events.count { it == "close:printer-A" })
     }
 
@@ -389,7 +437,7 @@ class PrinterPlatformTest {
             PrinterTransportResult.PermissionDenied(denied),
             transport.connect("printer"),
         )
-        assertEquals(null, transport.connectedAddress())
+        assertEquals(emptySet<String>(), transport.connectedAddresses())
         assertEquals(1, events.count { it == "close:printer" })
     }
 

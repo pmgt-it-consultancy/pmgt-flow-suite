@@ -30,6 +30,7 @@ import type * as lib_dateUtils from "../lib/dateUtils.js";
 import type * as lib_deviceBinding from "../lib/deviceBinding.js";
 import type * as lib_permissions from "../lib/permissions.js";
 import type * as lib_replicationEvents from "../lib/replicationEvents.js";
+import type * as lib_sortOrder from "../lib/sortOrder.js";
 import type * as lib_stagingLab from "../lib/stagingLab.js";
 import type * as lib_sync from "../lib/sync.js";
 import type * as lib_taxCalculations from "../lib/taxCalculations.js";
@@ -93,6 +94,7 @@ declare const fullApi: ApiFromModules<{
   "lib/deviceBinding": typeof lib_deviceBinding;
   "lib/permissions": typeof lib_permissions;
   "lib/replicationEvents": typeof lib_replicationEvents;
+  "lib/sortOrder": typeof lib_sortOrder;
   "lib/stagingLab": typeof lib_stagingLab;
   "lib/sync": typeof lib_sync;
   "lib/taxCalculations": typeof lib_taxCalculations;

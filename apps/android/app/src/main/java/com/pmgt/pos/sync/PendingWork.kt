@@ -102,7 +102,13 @@ internal fun pendingWork(db: PosDatabase, storeId: String, deviceId: String): Pe
         PendingWork(current, saved)
     } catch (cancelled: CancellationException) {
         throw cancelled
-    } catch (_: Exception) {
-        throw AdoptionBlocked("Pending work has invalid data or unresolved store ownership. Tablet data is preserved; repair is required before continuing.")
+    } catch (failure: Exception) {
+        // Seven ownership checks, every SavedPush check and any decode error share this one
+        // sentence, because none of them is actionable by a cashier. The cause is retained so
+        // support can tell which of them fired.
+        throw AdoptionBlocked(
+            "Pending work has invalid data or unresolved store ownership. Tablet data is preserved; repair is required before continuing.",
+            failure,
+        )
     }
 }

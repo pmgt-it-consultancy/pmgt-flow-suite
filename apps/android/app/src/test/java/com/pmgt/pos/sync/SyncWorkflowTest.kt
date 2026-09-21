@@ -219,20 +219,101 @@ class SyncWorkflowTest {
         }
     }
 
-    @Test fun partialRejectionAndUnsupportedWritesStayPendingAndPreventResync() = runBlocking {
+    @Test fun aRefusedRowStaysQueuedAndIsExplainedInsteadOfFailingTheCycle() = runBlocking {
         Harness(database()).use { h ->
             h.db.setLocalValue("__watermelon_last_pulled_at", "50")
             h.db.insertLocal("orders", row("accepted"))
             h.db.insertLocal("orders", row("rejected"))
             h.db.insertLocal("app_config", buildJsonObject { put("id", "counter"); put("key", "unknown.business"); put("value", "3"); put("store_id", "store") })
-            h.handler = { if (it.path == "/sync/push") response("""{"rejected":[{"table":"orders","clientId":"rejected","reason":"conflict"}]}""") else response(page()) }
+            h.handler = { if (it.path == "/sync/push") response("""{"rejected":[{"table":"orders","clientId":"rejected","reason":"Order is closed"}]}""") else response(page()) }
             h.sync.start("store")
-            eventually { h.sync.state.value.status == SyncStatus.Error }
-            assertEquals("synced", h.db.get("orders", "accepted")!!.string("_status"))
-            assertEquals(2, h.db.pendingCount())
-            assertFalse(h.sync.syncForDelivery() is SyncOutcome.Delivered)
-            assertFalse(h.sync.forceFullResync() is ResyncResult.Ready)
+            eventually { h.sync.state.value.lastPushedAt != null }
+
+            // A refusal is not a transport failure, so it no longer abandons the cycle: the pull
+            // completed and its watermark advanced. Throwing here starved the remaining pull pages
+            // and drove a backoff retry as though the network had failed.
+            assertEquals(SyncStatus.Idle, h.sync.state.value.status)
+            assertNull(h.sync.state.value.lastError)
             assertEquals("100", h.db.localValue("__watermelon_last_pulled_at"))
+            assertEquals("synced", h.db.get("orders", "accepted")!!.string("_status"))
+
+            // The refused rows are real work the till still owes the server, so they stay queued.
+            // Writing them off would lose the sale for good and make self-healing impossible.
+            assertEquals("created", h.db.get("orders", "rejected")!!.string("_status"))
+            assertEquals(2, h.db.pendingCount())
+
+            // What was missing before was the explanation, not the retry.
+            assertEquals(
+                setOf("orders/rejected" to "Order is closed", "app_config/counter" to "This app version does not synchronize app_config"),
+                h.sync.state.value.refusals.mapTo(mutableSetOf()) { "${it.table}/${it.id}" to it.reason },
+            )
+            assertEquals(listOf("sync.push_refused"), telemetry.operations())
+
+            // Day closing still blocks, correctly: the day's sales are genuinely not all recorded.
+            // It now says why instead of "local change(s) are still pending".
+            val outcome = h.sync.syncForDelivery()
+            assertTrue(outcome is SyncOutcome.Pending)
+            assertEquals("Order is closed", (outcome as SyncOutcome.Pending).reason)
+            assertEquals(ResyncResult.Unavailable(ResyncResult.Reason.Pending), h.sync.forceFullResync())
+        }
+    }
+
+    @Test fun aFullyRefusedPushDoesNotAdvanceTheLastSyncTime() = runBlocking {
+        Harness(database()).use { h ->
+            h.db.setLocalValue("__watermelon_last_pulled_at", "50")
+            h.db.insertLocal("orders", row("only"))
+            h.handler = { if (it.path == "/sync/push") response("""{"rejected":[{"table":"orders","clientId":"only","reason":"Order is closed"}]}""") else response(page()) }
+
+            h.sync.start("store")
+            eventually { h.sync.state.value.refusals.isNotEmpty() }
+
+            // The status dropdown reads "Last sync" from the newer of lastPulledAt and lastPushedAt.
+            // Advancing it for a push that delivered nothing is how a till can look healthy while
+            // its sales are being refused — the exact misreading this incident turned on.
+            assertNull(h.sync.state.value.lastPushedAt)
+            assertEquals(1, h.db.pendingCount())
+        }
+    }
+
+    @Test fun aPartlyRefusedPushStillAdvancesIt() = runBlocking {
+        Harness(database()).use { h ->
+            h.db.setLocalValue("__watermelon_last_pulled_at", "50")
+            h.db.insertLocal("orders", row("accepted"))
+            h.db.insertLocal("orders", row("refused"))
+            h.handler = { if (it.path == "/sync/push") response("""{"rejected":[{"table":"orders","clientId":"refused","reason":"Order is closed"}]}""") else response(page()) }
+
+            h.sync.start("store")
+            eventually { h.sync.state.value.refusals.isNotEmpty() }
+
+            // Something really was delivered, so the freshness reading is honest.
+            assertNotNull(h.sync.state.value.lastPushedAt)
+        }
+    }
+
+    @Test fun aRefusedRowDeliversItselfOnceTheServerAcceptsIt() = runBlocking {
+        Harness(database()).use { h ->
+            h.db.setLocalValue("__watermelon_last_pulled_at", "50")
+            h.db.insertLocal("orders", row("sale", "Paid in cash"))
+            var refuse = true
+            h.handler = {
+                if (it.path == "/sync/push" && refuse) {
+                    response("""{"rejected":[{"table":"orders","clientId":"sale","reason":"Order is closed"}]}""")
+                } else if (it.path == "/sync/push") response("""{"success":true}""")
+                else response(page())
+            }
+
+            h.sync.start("store")
+            eventually { h.sync.state.value.refusals.isNotEmpty() }
+            assertEquals(1, h.db.pendingCount())
+
+            // Repairing the server — which is where this conflict actually came from — is enough.
+            // The till re-offers the row on its own and the sale lands, with nothing written off.
+            refuse = false
+            h.sync.syncNow()
+
+            assertEquals(0, h.db.pendingCount())
+            assertEquals(emptyList<Refusal>(), h.sync.state.value.refusals)
+            assertTrue(h.sync.syncForDelivery() is SyncOutcome.Delivered)
         }
     }
 

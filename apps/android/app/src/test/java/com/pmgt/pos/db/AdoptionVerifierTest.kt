@@ -20,6 +20,26 @@ class AdoptionVerifierTest {
         assertEquals(AdoptionState.Ready(evidence), verified.verify())
     }
 
+    @Test fun aBlockedResultKeepsTheThrowableThatCausedIt() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val underlying = IllegalStateException("Pending parent cannot be resolved")
+        val local = AdoptionBlocked("Pending work has invalid data", underlying)
+        val verifier = AdoptionVerifier({ throw local }, { ServerReferenceVerification.Verified }, dispatcher)
+
+        val result = verifier.verify()
+
+        // Reducing this to its message is what left support with a synthetic stack pointing at
+        // whoever re-wrapped it rather than at the check that actually failed.
+        assertEquals(AdoptionState.Blocked("Pending work has invalid data", local), result)
+        assertEquals(underlying, (result as AdoptionState.Blocked).cause?.cause)
+    }
+
+    @Test fun aVerdictBlockedWithoutAThrowableStillHasNone() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val missing = AdoptionVerifier({ evidence }, { ServerReferenceVerification.Missing }, dispatcher)
+        assertNull((missing.verify() as AdoptionState.Blocked).cause)
+    }
+
     @Test fun concurrentLocalChangesInvalidateVerificationAndCancellationPropagates() = runTest {
         var reads = 0
         val dispatcher = StandardTestDispatcher(testScheduler)
