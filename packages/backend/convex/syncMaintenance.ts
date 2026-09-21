@@ -628,3 +628,156 @@ export const fixAug6DuplicatePayment = internalMutation({
     };
   },
 });
+
+// ---------------------------------------------------------------------------
+// Poisoned-push recovery (incident 2026-09-21)
+// ---------------------------------------------------------------------------
+//
+// A second tablet discarded a draft order that another tablet was still
+// holding open. `sync.ts` applyPushedRow accepted that as
+// `isCrossDeviceDraftDiscard`: a bare `patch({ status: "voided" })` with no
+// orderVoids row and no audit log. The owning tablet then settled the order
+// for real and its push has been rejected ever since — "Order is closed" for
+// the order row, then "exceeds amount due" for the payment, because the
+// rejected order row left netSales stale. The rejection is deterministic, so
+// the tablet retries forever, stays red, and cannot close the day.
+//
+// The tablet, not the server, holds the true totals and tender for these
+// orders. So recovery hands the order back rather than guessing amounts:
+// return it to `draft` and point `originDeviceId` at the tablet that is
+// retrying. Its next push (within 60s) is then accepted through the normal
+// path and delivers the real order, items and payment.
+//
+// Read first:
+//   npx convex run --prod syncMaintenance:inspectPoisonedPush '{"clientIds":["..."]}'
+// Then repair:
+//   npx convex run --prod syncMaintenance:releasePoisonedOrders \
+//     '{"clientIds":["..."],"deviceId":"..."}'
+
+type PoisonedOrderReport = {
+  clientId: string;
+  orderId?: string;
+  orderNumber?: string;
+  status?: string;
+  netSales?: number;
+  originDeviceId?: string;
+  paymentCount: number;
+  voidRecordCount: number;
+  /** Whether this row matches the incident signature and is safe to release. */
+  releasable: boolean;
+  note: string;
+};
+
+async function describePoisonedOrder(
+  ctx: { db: any },
+  clientId: string,
+): Promise<PoisonedOrderReport> {
+  const order = await ctx.db
+    .query("orders")
+    .withIndex("by_clientId", (q: any) => q.eq("clientId", clientId))
+    .first();
+  if (!order) {
+    return {
+      clientId,
+      paymentCount: 0,
+      voidRecordCount: 0,
+      releasable: false,
+      note: "not found",
+    };
+  }
+  const payments = await ctx.db
+    .query("orderPayments")
+    .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
+    .collect();
+  const voids = await ctx.db
+    .query("orderVoids")
+    .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
+    .collect();
+
+  const base = {
+    clientId,
+    orderId: order._id as string,
+    orderNumber: order.orderNumber as string,
+    status: order.status as string,
+    netSales: order.netSales as number,
+    originDeviceId: order.originDeviceId as string | undefined,
+    paymentCount: payments.length,
+    voidRecordCount: voids.length,
+  };
+
+  // Only the exact incident signature is releasable: voided with no void
+  // evidence (so it was a silent cross-device discard, not a real cashier
+  // void) and no payment recorded (so releasing cannot double-count money).
+  if (order.status !== "voided") {
+    return {
+      ...base,
+      releasable: false,
+      note: `status is ${order.status}, not voided`,
+    };
+  }
+  if (voids.length > 0) {
+    return {
+      ...base,
+      releasable: false,
+      note: "has a real orderVoids record — genuine void",
+    };
+  }
+  if (payments.length > 0) {
+    return {
+      ...base,
+      releasable: false,
+      note: "already has payments — do not release",
+    };
+  }
+  return {
+    ...base,
+    releasable: true,
+    note: "silent cross-device discard — safe to release",
+  };
+}
+
+/** Read-only. Reports what each poisoned clientId looks like on the server. */
+export const inspectPoisonedPush = internalQuery({
+  args: { clientIds: v.array(v.string()) },
+  returns: v.any(),
+  handler: async (ctx, args): Promise<PoisonedOrderReport[]> =>
+    Promise.all(args.clientIds.map((clientId) => describePoisonedOrder(ctx, clientId))),
+});
+
+/**
+ * Returns silently-discarded orders to `draft` and clears `originDeviceId`, so
+ * whichever tablet is still retrying is accepted through the normal path and
+ * re-stamps itself as the owner. Ownership is cleared rather than reassigned on
+ * purpose: nothing on the server reliably names the retrying tablet, and a
+ * wrong guess would leave the till stuck exactly as it is now.
+ *
+ * Idempotent: an order already released, already settled, or never matching the
+ * incident signature is reported in `skipped` and left untouched.
+ */
+export const releasePoisonedOrders = internalMutation({
+  args: { clientIds: v.array(v.string()) },
+  returns: v.any(),
+  handler: async (ctx, args) => {
+    const released: PoisonedOrderReport[] = [];
+    const skipped: PoisonedOrderReport[] = [];
+    for (const clientId of args.clientIds) {
+      const report = await describePoisonedOrder(ctx, clientId);
+      if (!report.releasable || !report.orderId) {
+        skipped.push(report);
+        continue;
+      }
+      await ctx.db.patch(report.orderId as Id<"orders">, {
+        status: "draft",
+        originDeviceId: undefined,
+        paidAt: undefined,
+        paidBy: undefined,
+        updatedAt: Date.now(),
+      });
+      released.push({
+        ...report,
+        note: "released to draft, ownership cleared",
+      });
+    }
+    return { released, skipped };
+  },
+});

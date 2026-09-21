@@ -687,7 +687,10 @@ export const reconcileOrderTotals = internalMutation({
           resolvedAt: Date.now(),
           resolvedByMutationId: job.mutationId,
         });
-      await ctx.db.patch(jobId, { status: "complete", blockedReason: undefined });
+      await ctx.db.patch(jobId, {
+        status: "complete",
+        blockedReason: undefined,
+      });
       return null;
     }
     if (order?.status === "voided") {
@@ -716,7 +719,11 @@ export const reconcileOrderTotals = internalMutation({
     });
     let checkedPaidSnapshotId = job.checkedPaidSnapshotId;
     if (order?.status === "paid") {
-      const data = { orderId: job.orderId, ...snapshot, mutationId: job.mutationId };
+      const data = {
+        orderId: job.orderId,
+        ...snapshot,
+        mutationId: job.mutationId,
+      };
       if (checkedPaidSnapshotId) await ctx.db.patch(checkedPaidSnapshotId, data);
       else checkedPaidSnapshotId = await ctx.db.insert("totalsReconciliationSnapshots", data);
     }
@@ -753,6 +760,19 @@ async function findExistingSyncedRow(
   syncId: string,
 ): Promise<any | null> {
   return findSyncedDoc(ctx, table, syncId);
+}
+
+/**
+ * Whether a cashier void was recorded for this order. Every void path writes an orderVoids row;
+ * the draft-discard path writes only a bare status patch. That difference is the only thing
+ * separating "the cashier voided this sale" from "some till cleared a draft off the list".
+ */
+async function hasVoidRecord(ctx: any, orderId: Id<"orders">): Promise<boolean> {
+  const record = await ctx.db
+    .query("orderVoids")
+    .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
+    .first();
+  return record !== null;
 }
 
 async function findSyncedDoc(ctx: any, table: string, syncId: string): Promise<any | null> {
@@ -959,6 +979,7 @@ async function applyPushedRow({
       // Conflict rule: paid/voided orders are normally frozen, but allow:
       //   - paid → voided  (offline-first void/refund of a completed order)
       //   - voided → voided (idempotent no-op replay from a retry)
+      //   - a discarded draft → anything (see isDiscardedDraft below)
       const incomingStatus = row.status as Doc<"orders">["status"] | undefined;
       const isPaidToVoided = existing?.status === "paid" && incomingStatus === "voided";
       const isPaidReplay =
@@ -970,37 +991,56 @@ async function applyPushedRow({
         incomingStatus === "paid" &&
         existing.orderType === "takeout" &&
         row.takeoutStatus !== undefined;
-      const isCrossDeviceDraftDiscard =
-        existing?.status === "draft" &&
-        incomingStatus === "voided" &&
-        !!existing.originDeviceId &&
-        existing.originDeviceId !== deviceId;
       const isVoidedReplay = existing?.status === "voided" && incomingStatus === "voided";
+      // A draft discard writes a bare `status: "voided"` patch and no orderVoids row, whereas
+      // every cashier void records one. So a voided order with no void evidence was discarded,
+      // and a till that went on to take money for it must still be able to settle it. Refusing
+      // that push is deterministic: it can never succeed, so the till retried it forever, stayed
+      // red and could not close the day while its sale went unrecorded.
+      const isDiscardedDraft =
+        existing?.status === "voided" && !(await hasVoidRecord(ctx, existing._id));
       if (
         existing &&
         (existing.status === "paid" || existing.status === "voided") &&
         !isPaidToVoided &&
         !isPaidReplay &&
         !isPaidWorkflowUpdate &&
-        !isVoidedReplay
+        !isVoidedReplay &&
+        !isDiscardedDraft
       ) {
         throw new Error("Order is closed");
       }
-      // Origin tablet wins for open orders. For paid → voided we relax this
-      // so a paid order can be refunded/voided from any device in the store.
+      // Draft and open orders are shared work within the store, so any till may add to one and
+      // settle it: that is what serving several cashiers from one order set means. originDeviceId
+      // records who wrote last rather than locking the order. Only a genuinely closed order stays
+      // protected, and paid → voided is relaxed there so any till can refund or void a sale.
+      const closed =
+        (existing?.status === "paid" || existing?.status === "voided") && !isDiscardedDraft;
       if (
+        closed &&
         existing?.originDeviceId &&
         existing.originDeviceId !== deviceId &&
         !isPaidToVoided &&
         !isPaidReplay &&
         !isPaidWorkflowUpdate &&
-        !isCrossDeviceDraftDiscard &&
         !isVoidedReplay
       ) {
         throw new Error(`Order is owned by another device (${existing.originDeviceId})`);
       }
-      if (existing && isCrossDeviceDraftDiscard) {
-        await ctx.db.patch(existing._id, { status: "voided", updatedAt: Date.now() });
+      // A till discarding a draft it does not own may hold a stale copy of that order, so the
+      // discard moves the status and nothing else. The owning till's totals and items survive,
+      // and if it later settles the order for real, isDiscardedDraft lets that push through.
+      if (
+        existing &&
+        existing.status === "draft" &&
+        incomingStatus === "voided" &&
+        !!existing.originDeviceId &&
+        existing.originDeviceId !== deviceId
+      ) {
+        await ctx.db.patch(existing._id, {
+          status: "voided",
+          updatedAt: Date.now(),
+        });
         return { orderId: existing._id, eventKind: "upsert" };
       }
       if (existing && isPaidWorkflowUpdate && !isPaidToVoided && !isPaidReplay) {
