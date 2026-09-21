@@ -25,6 +25,9 @@ data class SystemStatusEvidence(
     val kitchenPrinterLabel: String,
     val lastSuccessfulSyncAt: Long?,
     val overall: SettingsOverallStatus,
+    /** What the server refused on the last push. The till keeps offering these rows. */
+    val refusedReason: String? = null,
+    val refusedCount: Int = 0,
 )
 
 data class SettingsUiState(
@@ -107,6 +110,7 @@ object SystemStatusProjection {
                     server == SettingsConnectionStatus.FAILED ||
                     configured.any { it == SettingsConnectionStatus.FAILED } -> SettingsOverallStatus.CRITICAL
                 server == SettingsConnectionStatus.CHECKING ||
+                    sync.refusals.isNotEmpty() ||
                     configured.any {
                         it == SettingsConnectionStatus.DISCONNECTED ||
                             it == SettingsConnectionStatus.RECONNECTING
@@ -120,6 +124,8 @@ object SystemStatusProjection {
             kitchenPrinterLabel = kitchenLabel,
             lastSuccessfulSyncAt = listOfNotNull(sync.lastPulledAt, sync.lastPushedAt).maxOrNull(),
             overall = overall,
+            refusedReason = sync.refusals.firstOrNull()?.reason,
+            refusedCount = sync.refusals.size,
         )
     }
 

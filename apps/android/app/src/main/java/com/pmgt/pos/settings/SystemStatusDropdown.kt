@@ -113,6 +113,17 @@ fun SystemStatusDropdown(
                     fontSize = 12.sp,
                     color = if (staleSync) Color(0xFFEF4444) else Color(0xFF9CA3AF),
                 )
+                // The reason is the whole point: without it a refusal that can never succeed looks
+                // exactly like a flaky network, which is how this went unnoticed for a full shift.
+                status.refusedReason?.let { reason ->
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "${status.refusedCount} change(s) not accepted: $reason",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFFD97706),
+                    )
+                }
             }
         }
     }

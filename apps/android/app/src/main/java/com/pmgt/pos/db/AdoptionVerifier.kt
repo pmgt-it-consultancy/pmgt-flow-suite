@@ -13,7 +13,12 @@ import kotlinx.coroutines.withContext
 sealed interface AdoptionState {
     data class PendingVerification(val message: String = "Tablet data is preserved. Waiting for authenticated server verification.") : AdoptionState
     data class Ready(val integrity: AdoptionIntegrity) : AdoptionState
-    data class Blocked(val message: String) : AdoptionState
+    /**
+     * [cause] is what support reads. The gate only ever renders [message], but reducing a blocked
+     * adoption to that string discards the stack of the check that failed, and several throw sites
+     * deliberately share one message, so the string alone cannot say which of them fired.
+     */
+    data class Blocked(val message: String, val cause: Throwable? = null) : AdoptionState
 
     /**
      * The replica belongs to a different store than the signed-in user's. Decided from local
@@ -72,7 +77,7 @@ class AdoptionVerifier(
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (blocked: AdoptionBlocked) {
-                AdoptionState.Blocked(blocked.message ?: "Local adoption is blocked.")
+                AdoptionState.Blocked(blocked.message ?: "Local adoption is blocked.", blocked)
             } catch (failure: Exception) {
                 Telemetry.nonFatal("adoption.verify", failure)
                 AdoptionState.PendingVerification()

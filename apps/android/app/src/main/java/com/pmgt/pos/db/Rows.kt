@@ -23,5 +23,12 @@ data class DeletedRowSnapshot(val row: JsonObject, val revision: Long)
 
 internal data class LegacyColumn(val name: String, val type: String, val optional: Boolean)
 
-/** Messages deliberately contain no identity, ciphertext, row IDs or row contents. */
-class AdoptionBlocked(message: String) : IllegalStateException(message)
+/**
+ * Messages deliberately contain no identity, ciphertext, row IDs or row contents.
+ *
+ * The cause is what support reads. Several throw sites collapse a family of distinct checks into one
+ * sentence a cashier can be shown, so without the cause a blocked till reports a generic string and
+ * a stack that points at whoever re-wrapped it rather than at what actually failed.
+ */
+class AdoptionBlocked(message: String, cause: Throwable? = null) :
+    IllegalStateException(message, cause)

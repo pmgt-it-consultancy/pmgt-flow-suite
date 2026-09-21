@@ -68,20 +68,34 @@ interface PrinterBluetoothSocket {
 class ClassicBluetoothPrinterTransport(
     private val platform: PrinterBluetoothPlatform,
     private val io: CoroutineDispatcher,
-    private val connectTimeoutMillis: Long = 3_500,
+    /**
+     * A cold thermal printer regularly needs longer than a few seconds to accept a first connect,
+     * and a premature timeout is indistinguishable to the caller from a printer that is off.
+     */
+    private val connectTimeoutMillis: Long = 8_000,
 ) {
     private val operation = Mutex()
-    private var activeSocket: PrinterBluetoothSocket? = null
+
+    /**
+     * One socket per printer. A single shared socket meant connecting the kitchen printer closed
+     * the receipt printer, every 60 second poll closed one to open the other, and our own close
+     * raised ACL_DISCONNECTED, which drove an auto-reconnect that closed the other again.
+     */
+    private val sockets = LinkedHashMap<String, PrinterBluetoothSocket>()
 
     suspend fun connect(address: String): PrinterTransportResult =
         operation.withLock { connectLocked(address) }
 
-    suspend fun connectedAddress(): String? = operation.withLock { activeSocket?.remoteAddress }
+    suspend fun connectedAddresses(): Set<String> = operation.withLock { sockets.keys.toSet() }
 
+    /** A null address closes every printer; otherwise only the one named. */
     suspend fun disconnect(address: String? = null): Boolean = operation.withLock {
-        val socket = activeSocket ?: return@withLock false
-        if (address != null && socket.remoteAddress != address) return@withLock false
-        activeSocket = null
+        if (address == null) {
+            if (sockets.isEmpty()) return@withLock false
+            closeAll()
+            return@withLock true
+        }
+        val socket = sockets.remove(address) ?: return@withLock false
         closeSocket(socket)
         true
     }
@@ -92,7 +106,7 @@ class ClassicBluetoothPrinterTransport(
     ): PrinterTransportResult = operation.withLock {
         val connection = connectLocked(address)
         if (connection !is PrinterTransportResult.Connected) return@withLock connection
-        val socket = activeSocket
+        val socket = sockets[address]
             ?: return@withLock PrinterTransportResult.Failure(
                 PrinterFailureStage.Connect,
                 "Connected printer socket was unavailable",
@@ -108,11 +122,11 @@ class ClassicBluetoothPrinterTransport(
                 byteCount += bytes.size
             }
         } catch (cancelled: CancellationException) {
-            activeSocket = null
+            sockets.remove(address)
             closeSocket(socket)
             throw cancelled
         } catch (failure: Exception) {
-            activeSocket = null
+            sockets.remove(address)
             closeSocket(socket)
             return@withLock failureResult(PrinterFailureStage.Write, failure)
         }
@@ -121,15 +135,10 @@ class ClassicBluetoothPrinterTransport(
 
     private suspend fun connectLocked(address: String): PrinterTransportResult {
         preflight()?.let { unavailable ->
-            activeSocket?.let { closeSocket(it) }
-            activeSocket = null
+            closeAll()
             return unavailable
         }
-        activeSocket?.takeIf { it.remoteAddress == address }?.let {
-            return PrinterTransportResult.Connected(address)
-        }
-        activeSocket?.let { old -> withContext(io) { runCatching { old.close() } } }
-        activeSocket = null
+        if (sockets.containsKey(address)) return PrinterTransportResult.Connected(address)
 
         try {
             platform.cancelDiscovery()
@@ -142,55 +151,92 @@ class ClassicBluetoothPrinterTransport(
         } catch (failure: Exception) {
             return failureResult(PrinterFailureStage.SocketConstruction, failure)
         }
-        var socket: PrinterBluetoothSocket? = null
-        for (channel in 1..3) {
-            socket = try {
-                device.reflectedRfcommSocket(channel)
+
+        // The service record is tried first because it is the only path that discovers which RFCOMM
+        // channel the printer actually listens on. A reflected createRfcommSocket(n) merely builds an
+        // object — it never touches the radio and never returns null for a valid channel — so
+        // sweeping channels by construction alone always stopped at 1 and left the service-record
+        // path unreachable. Every attempt below is a real connect, and a failed one is closed before
+        // the next is tried.
+        val attempts = buildList<() -> PrinterBluetoothSocket?> {
+            add { device.serviceRecordSocket(SPP_UUID) }
+            for (channel in 1..3) add { device.reflectedRfcommSocket(channel) }
+        }
+        var lastFailure: PrinterTransportResult? = null
+        for (construct in attempts) {
+            val socket = try {
+                construct()
             } catch (_: Exception) {
                 null
+            } ?: continue
+            val attempt = connectSocket(socket, address)
+            when (val outcome = attempt.result) {
+                is PrinterTransportResult.Connected -> {
+                    sockets[address] = socket
+                    return outcome
+                }
+                is PrinterTransportResult.Failure -> {
+                    lastFailure = outcome
+                    // A printer that never answers will not answer on another channel either, so a
+                    // timeout ends the sweep. Without this, an unplugged printer would burn the full
+                    // timeout on all four paths and a 60s poll over two printers could outlast its
+                    // own interval. An immediate failure is the opposite signal — that is what a
+                    // wrong channel looks like — so the sweep continues.
+                    if (attempt.timedOut) return outcome
+                }
+                // A denied permission or a disabled adapter is the same for every remaining path.
+                else -> return outcome
             }
-            if (socket != null) break
         }
-        if (socket == null) {
-            socket = try {
-                device.serviceRecordSocket(SPP_UUID)
-            } catch (failure: Exception) {
-                return failureResult(PrinterFailureStage.SocketConstruction, failure)
-            }
-        }
-        if (socket == null) {
-            return PrinterTransportResult.Failure(
+        return lastFailure
+            ?: PrinterTransportResult.Failure(
                 PrinterFailureStage.SocketConstruction,
                 "No Bluetooth socket was constructed",
             )
-        }
+    }
 
+    private class Attempt(val result: PrinterTransportResult, val timedOut: Boolean = false)
+
+    private suspend fun connectSocket(
+        socket: PrinterBluetoothSocket,
+        address: String,
+    ): Attempt {
         try {
             withTimeout(connectTimeoutMillis) {
                 socketIo(socket) { socket.connect() }
             }
         } catch (timeout: TimeoutCancellationException) {
             closeSocket(socket)
-            return PrinterTransportResult.Failure(
-                PrinterFailureStage.Connect,
-                "Bluetooth connection timed out",
+            return Attempt(
+                PrinterTransportResult.Failure(
+                    PrinterFailureStage.Connect,
+                    "Bluetooth connection timed out",
+                ),
+                timedOut = true,
             )
         } catch (cancelled: CancellationException) {
             closeSocket(socket)
             throw cancelled
         } catch (failure: Exception) {
             closeSocket(socket)
-            return failureResult(PrinterFailureStage.Connect, failure)
+            return Attempt(failureResult(PrinterFailureStage.Connect, failure))
         }
         if (socket.remoteAddress != address) {
-            withContext(io) { runCatching { socket.close() } }
-            return PrinterTransportResult.Failure(
-                PrinterFailureStage.Connect,
-                "Connected socket target did not match the requested printer",
+            closeSocket(socket)
+            return Attempt(
+                PrinterTransportResult.Failure(
+                    PrinterFailureStage.Connect,
+                    "Connected socket target did not match the requested printer",
+                )
             )
         }
-        activeSocket = socket
-        return PrinterTransportResult.Connected(address)
+        return Attempt(PrinterTransportResult.Connected(address))
+    }
+
+    private suspend fun closeAll() {
+        val open = sockets.values.toList()
+        sockets.clear()
+        open.forEach { closeSocket(it) }
     }
 
     private suspend fun <T> socketIo(socket: PrinterBluetoothSocket, block: () -> T): T =
