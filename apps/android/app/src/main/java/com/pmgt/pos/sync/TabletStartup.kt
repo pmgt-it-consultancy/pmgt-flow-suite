@@ -95,7 +95,10 @@ class TabletStartup(
             currentCoroutineContext().ensureActive()
             val ready = synchronized(monitor) {
                 requireSession(epoch, userId, storeId)
-                if (result is AdoptionState.Blocked) Telemetry.nonFatal("startup.adoption_blocked", AdoptionBlocked(result.message))
+                // Report what was actually raised. A replacement built from the message alone
+                // carries a stack pointing at this line rather than at the check that failed.
+                if (result is AdoptionState.Blocked)
+                    Telemetry.nonFatal("startup.adoption_blocked", result.cause ?: AdoptionBlocked(result.message))
                 if (result is AdoptionState.ForeignStore)
                     Telemetry.event("adoption_foreign_store", "store_id" to storeId, "local_store_id" to result.localStoreId)
                 current.value = TabletStartupState(userId, storeId, result)
@@ -105,10 +108,14 @@ class TabletStartup(
                     if (sweptStoreId == storeId) evidence.write(AdoptionEvidence(storeId, adopted.deviceId))
                     SyncManager(adopted.database, http, adopted.deviceId, scope, io, online,
                         sessionIsCurrent = { isCurrent(epoch, userId, storeId) },
-                        onBlocked = { message ->
+                        onBlocked = { blocked ->
                             synchronized(monitor) {
                                 if (isCurrent(epoch, userId, storeId)) {
-                                    current.value = TabletStartupState(userId, storeId, AdoptionState.Blocked(message))
+                                    current.value = TabletStartupState(
+                                        userId,
+                                        storeId,
+                                        AdoptionState.Blocked(blocked.message!!, blocked),
+                                    )
                                     manager.value = null
                                 }
                             }
@@ -124,7 +131,10 @@ class TabletStartup(
             synchronized(monitor) { if (generation == epoch) stop() }
             throw cancelled
         } catch (blocked: AdoptionBlocked) {
-            val result = AdoptionState.Blocked(blocked.message ?: "Local adoption is blocked. Tablet data is preserved.")
+            val result = AdoptionState.Blocked(
+                blocked.message ?: "Local adoption is blocked. Tablet data is preserved.",
+                blocked,
+            )
             synchronized(monitor) {
                 requireSession(epoch, userId, storeId)
                 Telemetry.nonFatal("startup.adoption_blocked", blocked)

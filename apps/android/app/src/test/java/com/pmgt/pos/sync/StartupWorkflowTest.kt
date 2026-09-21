@@ -309,6 +309,13 @@ class StartupWorkflowTest {
             val unreadable = TabletStartup({ throw AdoptionBlocked("Unsupported local schema version") }, http, scope, Dispatchers.IO, MutableStateFlow(true))
             assertTrue(unreadable.adopt("user", "store") is AdoptionState.Blocked)
             assertEquals(listOf("startup.adoption_blocked", "startup.adoption_blocked"), telemetry.operations())
+            // The report has to be the throwable that was raised, not one rebuilt from its message:
+            // a fabricated exception carries a stack pointing here instead of at the real failure.
+            assertEquals(
+                listOf("An existing server reference could not be resolved. Tablet data is preserved; repair the reference before continuing.", "Unsupported local schema version"),
+                telemetry.nonFatals.map { it.error.message },
+            )
+            assertTrue(telemetry.nonFatals.all { it.error is AdoptionBlocked })
             offline.stop(); missing.stop(); unreadable.stop(); scope.cancel()
         }
         db.close()

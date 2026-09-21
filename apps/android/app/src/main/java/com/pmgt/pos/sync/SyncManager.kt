@@ -19,7 +19,7 @@ class SyncManager(
     private val online: StateFlow<Boolean>,
     private val now: () -> Long = System::currentTimeMillis,
     private val sessionIsCurrent: () -> Boolean = { true },
-    private val onBlocked: (String) -> Unit = {},
+    private val onBlocked: (com.pmgt.pos.db.AdoptionBlocked) -> Unit = {},
 ) {
     private val monitor = Any()
     private val current = MutableStateFlow(SyncState())
@@ -146,7 +146,10 @@ class SyncManager(
             quarantine(active, blocked)
             return SyncOutcome.Failed(blocked.message!!)
         }
-        return if (count > 0) SyncOutcome.Pending(count) else SyncOutcome.Delivered(current.value.lastPulledAt ?: now())
+        // Naming the server's reason is the difference between a manager who can act and the nine
+        // hours this incident went undiagnosed behind "local change(s) are still pending".
+        return if (count > 0) SyncOutcome.Pending(count, current.value.refusals.firstOrNull()?.reason)
+        else SyncOutcome.Delivered(current.value.lastPulledAt ?: now())
     }
 
     /** Caller holds monitor. Install lazy work before it can publish state or accept another request. */
@@ -293,27 +296,48 @@ class SyncManager(
             put("clientMutationId", saved.clientMutationId)
         }, mapOf("x-device-id" to deviceId)).jsonObject
         checkActive(active)
-        val rejected = mutableSetOf<Pair<String, String>>()
+        val refused = mutableListOf<Refusal>()
         val rejections = response["rejected"]?.jsonArray
         check(response["success"]?.jsonPrimitive?.booleanOrNull == true || rejections != null) { "Invalid push acknowledgement" }
         rejections?.forEach { item ->
             val rejection = item.jsonObject
-            rejected += snake(rejection.getValue("table").jsonPrimitive.content) to rejection.getValue("clientId").jsonPrimitive.content
+            refused += Refusal(
+                snake(rejection.getValue("table").jsonPrimitive.content),
+                rejection.getValue("clientId").jsonPrimitive.content,
+                rejection["reason"]?.jsonPrimitive?.contentOrNull?.takeIf { it.isNotBlank() }
+                    ?: "The server refused this change",
+            )
         }
         // v1 ignores these buckets without a rejection. They were not delivered.
         deliverySnapshot.changes.filterKeys { it !in PUSH_TABLES }.forEach { (table, value) ->
             val bucket = syncJson.decodeFromJsonElement<ChangeBucket>(value)
-            (bucket.created + bucket.updated).forEach { rejected += table to it.getValue("id").jsonPrimitive.content }
-            bucket.deleted.forEach { rejected += table to it }
+            val unsupported = "This app version does not synchronize $table"
+            (bucket.created + bucket.updated).forEach {
+                refused += Refusal(table, it.getValue("id").jsonPrimitive.content, unsupported)
+            }
+            bucket.deleted.forEach { refused += Refusal(table, it, unsupported) }
         }
+        val rejected = refused.mapTo(mutableSetOf()) { it.table to it.id }
         database(active) {
             db.transaction {
                 db.acknowledge(deliverySnapshot, rejected)
                 db.setLocalValue(SAVED_PUSH_KEY, "")
             }
         }
-        if (rejected.isNotEmpty()) error("Some changes were not delivered")
-        publish(active) { it.copy(lastPushedAt = now()) }
+        if (refused.isNotEmpty()) {
+            // One report per push, naming tables and reasons only: enough to find the cause without
+            // putting order numbers or amounts into telemetry.
+            Telemetry.nonFatal(
+                "sync.push_refused",
+                PushRefused(refused.distinctBy { it.table to it.reason }.joinToString("; ") { "${it.table}: ${it.reason}" }),
+            )
+        }
+        // A refusal is reported, not thrown. The refused rows are real work the till still owes the
+        // server, so they stay in the queue and are offered again on the next cycle: once the server
+        // stops refusing them they deliver themselves, with nothing written off. Throwing here
+        // instead abandoned the rest of the cycle — the remaining pull pages were never fetched —
+        // and drove a backoff retry as if the network had failed, which it had not.
+        publish(active) { it.copy(lastPushedAt = now(), refusals = refused) }
     }
 
     private fun checkActive(active: Session) {
@@ -333,7 +357,7 @@ class SyncManager(
             // Finish the shared flight normally so delivery callers receive a typed failure.
             active.flight?.invokeOnCompletion { active.job.cancel() } ?: active.job.cancel()
         }
-        onBlocked(message)
+        onBlocked(blocked)
     }
 
     /** Serialize session invalidation with commits: a stopped generation cannot acknowledge later. */
