@@ -76,3 +76,15 @@ export const TABLET_WRITABLE_TABLES = new Set<SyncedTable>([
   "orderPayments",
   "auditLogs",
 ]);
+
+/**
+ * Whether an orderVoids record explains a *closed* order.
+ *
+ * A single voided line records an "item" void and leaves the order open, so treating any void record
+ * as "a cashier closed this order" mistakes a line correction for a deliberate closure. That matters
+ * because a voided order with no closing void was discarded by another till, not voided by a
+ * cashier, and only that distinction lets the owning till settle a sale it already took money for.
+ */
+export function isClosingVoidType(voidType: unknown): boolean {
+  return voidType === "full_order" || voidType === "refund";
+}

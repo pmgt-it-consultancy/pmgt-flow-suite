@@ -258,6 +258,38 @@ class SyncWorkflowTest {
         }
     }
 
+    @Test fun aFullyRefusedPushDoesNotAdvanceTheLastSyncTime() = runBlocking {
+        Harness(database()).use { h ->
+            h.db.setLocalValue("__watermelon_last_pulled_at", "50")
+            h.db.insertLocal("orders", row("only"))
+            h.handler = { if (it.path == "/sync/push") response("""{"rejected":[{"table":"orders","clientId":"only","reason":"Order is closed"}]}""") else response(page()) }
+
+            h.sync.start("store")
+            eventually { h.sync.state.value.refusals.isNotEmpty() }
+
+            // The status dropdown reads "Last sync" from the newer of lastPulledAt and lastPushedAt.
+            // Advancing it for a push that delivered nothing is how a till can look healthy while
+            // its sales are being refused — the exact misreading this incident turned on.
+            assertNull(h.sync.state.value.lastPushedAt)
+            assertEquals(1, h.db.pendingCount())
+        }
+    }
+
+    @Test fun aPartlyRefusedPushStillAdvancesIt() = runBlocking {
+        Harness(database()).use { h ->
+            h.db.setLocalValue("__watermelon_last_pulled_at", "50")
+            h.db.insertLocal("orders", row("accepted"))
+            h.db.insertLocal("orders", row("refused"))
+            h.handler = { if (it.path == "/sync/push") response("""{"rejected":[{"table":"orders","clientId":"refused","reason":"Order is closed"}]}""") else response(page()) }
+
+            h.sync.start("store")
+            eventually { h.sync.state.value.refusals.isNotEmpty() }
+
+            // Something really was delivered, so the freshness reading is honest.
+            assertNotNull(h.sync.state.value.lastPushedAt)
+        }
+    }
+
     @Test fun aRefusedRowDeliversItselfOnceTheServerAcceptsIt() = runBlocking {
         Harness(database()).use { h ->
             h.db.setLocalValue("__watermelon_last_pulled_at", "50")

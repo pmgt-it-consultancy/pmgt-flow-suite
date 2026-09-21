@@ -337,7 +337,14 @@ class SyncManager(
         // stops refusing them they deliver themselves, with nothing written off. Throwing here
         // instead abandoned the rest of the cycle — the remaining pull pages were never fetched —
         // and drove a backoff retry as if the network had failed, which it had not.
-        publish(active) { it.copy(lastPushedAt = now(), refusals = refused) }
+        //
+        // lastPushedAt only moves when something was actually accepted. It feeds the "Last sync"
+        // reading, so stamping it for a push that delivered nothing is how a till can look healthy
+        // while every sale it sends is refused.
+        val delivered = deliverySnapshot.rowCount() - refused.size
+        publish(active) {
+            it.copy(lastPushedAt = if (delivered > 0) now() else it.lastPushedAt, refusals = refused)
+        }
     }
 
     private fun checkActive(active: Session) {

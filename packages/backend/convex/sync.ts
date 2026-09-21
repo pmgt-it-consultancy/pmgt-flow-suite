@@ -5,7 +5,7 @@ import type { Doc, Id } from "./_generated/dataModel";
 import { httpAction, internalAction, internalMutation, internalQuery } from "./_generated/server";
 import { activeDeviceBinding } from "./lib/deviceBinding";
 import { publishOrderAggregateEvent } from "./lib/replicationEvents";
-import { deviceCodeFromIndex, newClientId } from "./lib/sync";
+import { deviceCodeFromIndex, isClosingVoidType, newClientId } from "./lib/sync";
 import {
   financialAggregateSnapshotKey,
   paidTotalsSnapshotKey,
@@ -763,16 +763,17 @@ async function findExistingSyncedRow(
 }
 
 /**
- * Whether a cashier void was recorded for this order. Every void path writes an orderVoids row;
+ * Whether a cashier closed this order through a void. A closing void path writes an orderVoids row;
  * the draft-discard path writes only a bare status patch. That difference is the only thing
- * separating "the cashier voided this sale" from "some till cleared a draft off the list".
+ * separating "the cashier voided this sale" from "some till cleared a draft off the list". An "item"
+ * void is excluded because it corrects one line and leaves the order open.
  */
-async function hasVoidRecord(ctx: any, orderId: Id<"orders">): Promise<boolean> {
-  const record = await ctx.db
+async function hasClosingVoid(ctx: any, orderId: Id<"orders">): Promise<boolean> {
+  const records = await ctx.db
     .query("orderVoids")
     .withIndex("by_order", (q: any) => q.eq("orderId", orderId))
-    .first();
-  return record !== null;
+    .collect();
+  return records.some((record: any) => isClosingVoidType(record.voidType));
 }
 
 async function findSyncedDoc(ctx: any, table: string, syncId: string): Promise<any | null> {
@@ -998,7 +999,7 @@ async function applyPushedRow({
       // that push is deterministic: it can never succeed, so the till retried it forever, stayed
       // red and could not close the day while its sale went unrecorded.
       const isDiscardedDraft =
-        existing?.status === "voided" && !(await hasVoidRecord(ctx, existing._id));
+        existing?.status === "voided" && !(await hasClosingVoid(ctx, existing._id));
       if (
         existing &&
         (existing.status === "paid" || existing.status === "voided") &&
@@ -1012,31 +1013,19 @@ async function applyPushedRow({
       }
       // Draft and open orders are shared work within the store, so any till may add to one and
       // settle it: that is what serving several cashiers from one order set means. originDeviceId
-      // records who wrote last rather than locking the order. Only a genuinely closed order stays
-      // protected, and paid → voided is relaxed there so any till can refund or void a sale.
-      const closed =
-        (existing?.status === "paid" || existing?.status === "voided") && !isDiscardedDraft;
-      if (
-        closed &&
-        existing?.originDeviceId &&
-        existing.originDeviceId !== deviceId &&
-        !isPaidToVoided &&
-        !isPaidReplay &&
-        !isPaidWorkflowUpdate &&
-        !isVoidedReplay
-      ) {
-        throw new Error(`Order is owned by another device (${existing.originDeviceId})`);
-      }
+      // records who wrote last rather than locking the order, so there is no separate ownership
+      // refusal: a closed order is already protected by the check above, and paid → voided is
+      // relaxed there so any till can refund or void a sale.
+      //
       // A till discarding a draft it does not own may hold a stale copy of that order, so the
       // discard moves the status and nothing else. The owning till's totals and items survive,
       // and if it later settles the order for real, isDiscardedDraft lets that push through.
-      if (
-        existing &&
-        existing.status === "draft" &&
+      const isCrossDeviceDraftDiscard =
+        existing?.status === "draft" &&
         incomingStatus === "voided" &&
         !!existing.originDeviceId &&
-        existing.originDeviceId !== deviceId
-      ) {
+        existing.originDeviceId !== deviceId;
+      if (existing && isCrossDeviceDraftDiscard) {
         await ctx.db.patch(existing._id, {
           status: "voided",
           updatedAt: Date.now(),

@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { internalAction, internalMutation, internalQuery } from "./_generated/server";
+import { isClosingVoidType } from "./lib/sync";
 import { aggregateDailyData, generatePaymentTransactionsBreakdown } from "./reports";
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
@@ -644,15 +645,16 @@ export const fixAug6DuplicatePayment = internalMutation({
 //
 // The tablet, not the server, holds the true totals and tender for these
 // orders. So recovery hands the order back rather than guessing amounts:
-// return it to `draft` and point `originDeviceId` at the tablet that is
-// retrying. Its next push (within 60s) is then accepted through the normal
-// path and delivers the real order, items and payment.
+// return it to `draft` and clear `originDeviceId`, so whichever tablet is
+// still retrying is accepted through the normal path and re-stamps itself as
+// the owner. Its next push (within 60s) delivers the real order, items and
+// payment. Ownership is cleared rather than reassigned because nothing on the
+// server reliably names the retrying tablet.
 //
 // Read first:
 //   npx convex run --prod syncMaintenance:inspectPoisonedPush '{"clientIds":["..."]}'
 // Then repair:
-//   npx convex run --prod syncMaintenance:releasePoisonedOrders \
-//     '{"clientIds":["..."],"deviceId":"..."}'
+//   npx convex run --prod syncMaintenance:releasePoisonedOrders '{"clientIds":["..."]}'
 
 type PoisonedOrderReport = {
   clientId: string;
@@ -689,10 +691,14 @@ async function describePoisonedOrder(
     .query("orderPayments")
     .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
     .collect();
-  const voids = await ctx.db
-    .query("orderVoids")
-    .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
-    .collect();
+  // Only a closing void explains a voided order. An "item" void corrects one line and leaves the
+  // order open, so counting it would refuse to repair a till that is genuinely stuck.
+  const voids = (
+    await ctx.db
+      .query("orderVoids")
+      .withIndex("by_order", (q: any) => q.eq("orderId", order._id))
+      .collect()
+  ).filter((record: any) => isClosingVoidType(record.voidType));
 
   const base = {
     clientId,
@@ -719,7 +725,7 @@ async function describePoisonedOrder(
     return {
       ...base,
       releasable: false,
-      note: "has a real orderVoids record — genuine void",
+      note: "has a closing orderVoids record — genuine void",
     };
   }
   if (payments.length > 0) {
@@ -727,6 +733,15 @@ async function describePoisonedOrder(
       ...base,
       releasable: false,
       note: "already has payments — do not release",
+    };
+  }
+  // Orders settled before orderPayments existed carry their tender on the order row, so counting
+  // payment rows alone would call a real sale releasable.
+  if (order.paymentMethod !== undefined || order.cashReceived !== undefined) {
+    return {
+      ...base,
+      releasable: false,
+      note: "carries legacy tender on the order row — do not release",
     };
   }
   return {
@@ -739,7 +754,20 @@ async function describePoisonedOrder(
 /** Read-only. Reports what each poisoned clientId looks like on the server. */
 export const inspectPoisonedPush = internalQuery({
   args: { clientIds: v.array(v.string()) },
-  returns: v.any(),
+  returns: v.array(
+    v.object({
+      clientId: v.string(),
+      orderId: v.optional(v.string()),
+      orderNumber: v.optional(v.string()),
+      status: v.optional(v.string()),
+      netSales: v.optional(v.number()),
+      originDeviceId: v.optional(v.string()),
+      paymentCount: v.number(),
+      voidRecordCount: v.number(),
+      releasable: v.boolean(),
+      note: v.string(),
+    }),
+  ),
   handler: async (ctx, args): Promise<PoisonedOrderReport[]> =>
     Promise.all(args.clientIds.map((clientId) => describePoisonedOrder(ctx, clientId))),
 });
@@ -756,7 +784,36 @@ export const inspectPoisonedPush = internalQuery({
  */
 export const releasePoisonedOrders = internalMutation({
   args: { clientIds: v.array(v.string()) },
-  returns: v.any(),
+  returns: v.object({
+    released: v.array(
+      v.object({
+        clientId: v.string(),
+        orderId: v.optional(v.string()),
+        orderNumber: v.optional(v.string()),
+        status: v.optional(v.string()),
+        netSales: v.optional(v.number()),
+        originDeviceId: v.optional(v.string()),
+        paymentCount: v.number(),
+        voidRecordCount: v.number(),
+        releasable: v.boolean(),
+        note: v.string(),
+      }),
+    ),
+    skipped: v.array(
+      v.object({
+        clientId: v.string(),
+        orderId: v.optional(v.string()),
+        orderNumber: v.optional(v.string()),
+        status: v.optional(v.string()),
+        netSales: v.optional(v.number()),
+        originDeviceId: v.optional(v.string()),
+        paymentCount: v.number(),
+        voidRecordCount: v.number(),
+        releasable: v.boolean(),
+        note: v.string(),
+      }),
+    ),
+  }),
   handler: async (ctx, args) => {
     const released: PoisonedOrderReport[] = [];
     const skipped: PoisonedOrderReport[] = [];

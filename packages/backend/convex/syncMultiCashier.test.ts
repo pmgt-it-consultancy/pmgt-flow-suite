@@ -199,6 +199,68 @@ describe("several tills sharing one store's orders", () => {
     );
   });
 
+  it("lets the owning till settle after a line was voided and the draft discarded", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await fixture(t);
+
+    await push(t, storeId, userId, "tablet-a", "i1", {
+      orders: { created: [orderRow({ status: "open" })], updated: [] },
+    });
+    // Voiding one line records an orderVoids row and leaves the order open, so it must not read
+    // as "a cashier closed this order" the way a full-order void does.
+    await push(t, storeId, userId, "tablet-a", "i2", {
+      orderVoids: {
+        created: [
+          {
+            id: "item-void-1",
+            orderId: CLIENT_ID,
+            voidType: "item",
+            reason: "Wrong item rung up",
+            amount: 50,
+            createdAt: now,
+          },
+        ],
+        updated: [],
+      },
+    });
+    await push(t, storeId, userId, "tablet-b", "i3", {
+      orders: { created: [], updated: [orderRow({ status: "voided" })] },
+    });
+
+    expect(await push(t, storeId, userId, "tablet-a", "i4", settlement)).toEqual({
+      success: true,
+    });
+    expect((await orderByClientId(t)).status).toBe("paid");
+  });
+
+  it("still freezes an order closed by a refund void", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await fixture(t);
+
+    await push(t, storeId, userId, "tablet-a", "f1", {
+      orders: { created: [orderRow()], updated: [] },
+    });
+    await push(t, storeId, userId, "tablet-a", "f2", {
+      orders: { created: [], updated: [orderRow({ status: "voided" })] },
+      orderVoids: {
+        created: [
+          {
+            id: "refund-void-1",
+            orderId: CLIENT_ID,
+            voidType: "refund",
+            reason: "Refunded to customer",
+            amount: 200,
+            createdAt: now,
+          },
+        ],
+        updated: [],
+      },
+    });
+
+    const refused = await push(t, storeId, userId, "tablet-a", "f3", settlement);
+    expect(refused.rejected?.[0]).toMatchObject({ reason: "Order is closed" });
+  });
+
   it("lets a second till add to and settle an order the first till opened", async () => {
     const t = convexTest(schema, modules);
     const { storeId, userId } = await fixture(t);
@@ -268,6 +330,31 @@ describe("releasePoisonedOrders recovers a till poisoned by the previous build",
     });
     expect(again.released).toHaveLength(0);
     expect(again.skipped[0].note).toContain("not voided");
+  });
+
+  it("refuses to release an order carrying legacy tender on the order row", async () => {
+    const t = convexTest(schema, modules);
+    const { storeId, userId } = await fixture(t);
+
+    await push(t, storeId, userId, "tablet-a", "l1", {
+      orders: { created: [orderRow()], updated: [] },
+    });
+    // Orders settled before orderPayments existed carry their tender on the order row, so counting
+    // payment rows alone would call a real sale releasable.
+    const order = await orderByClientId(t);
+    await t.run(async (ctx: any) =>
+      ctx.db.patch(order._id, {
+        status: "voided",
+        paymentMethod: "cash",
+        cashReceived: 200,
+      }),
+    );
+
+    const repair = await t.mutation(internal.syncMaintenance.releasePoisonedOrders, {
+      clientIds: [CLIENT_ID],
+    });
+    expect(repair.released).toHaveLength(0);
+    expect(repair.skipped[0].note).toContain("tender");
   });
 
   it("refuses to release an order a cashier genuinely voided", async () => {
