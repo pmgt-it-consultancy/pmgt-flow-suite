@@ -22,7 +22,8 @@ import org.junit.Test
 class PrinterConnectRetryTest {
     @Test
     fun `a failed first connect retries once when the printer did pair`() = runTest {
-        val platform = FlakyPlatform(failuresBeforeSuccess = 1)
+        // Every path fails while the OS is still bonding, so the whole first connect fails.
+        val platform = FlakyPlatform(failuresBeforeSuccess = PATHS_PER_CONNECT)
         val waits = mutableListOf<Long>()
         val transport =
             ClassicBluetoothPrinterSettingsTransport(
@@ -32,7 +33,7 @@ class PrinterConnectRetryTest {
             )
 
         assertTrue(transport.connect("AA:BB"))
-        assertEquals(2, platform.connectAttempts)
+        assertEquals(PATHS_PER_CONNECT + 1, platform.connectAttempts)
         assertEquals(listOf(800L), waits)
     }
 
@@ -48,7 +49,7 @@ class PrinterConnectRetryTest {
             )
 
         assertFalse(transport.connect("AA:BB"))
-        assertEquals(1, platform.connectAttempts)
+        assertEquals(PATHS_PER_CONNECT, platform.connectAttempts)
         assertTrue(waits.isEmpty())
     }
 
@@ -68,6 +69,12 @@ class PrinterConnectRetryTest {
         assertTrue(waits.isEmpty())
     }
 }
+
+/**
+ * This fake answers on both the service record and channel 1, so one settings-level connect makes
+ * that many real connect attempts before reporting failure.
+ */
+private const val PATHS_PER_CONNECT = 2
 
 private class PairedAccess(private val paired: List<PrinterDevice>) : PrinterSettingsDeviceAccess {
     override suspend fun enableBluetooth() = Unit
